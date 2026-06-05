@@ -1,9 +1,10 @@
 package btpos.tf2.popfiledsl.types.bots
 
-import btpos.tf2.popfiledsl.types.IPopFileItem
-import btpos.tf2.popfiledsl.types.PopFileKeyword
+import btpos.tf2.popfiledsl.serialization.IPopFileItem
+import btpos.tf2.popfiledsl.serialization.PopFileKeyword
+import kotlin.jvm.java
 
-enum class BehaviorModifier : IPopFileItem {
+enum class BehaviorModifier : IPopFileItem<PopFileKeyword> {
 	@Deprecated("Once valid, no longer valid")
 	Idle,
 	/** Synonym for [TFBotAttribute.Aggressive]*/
@@ -11,5 +12,5 @@ enum class BehaviorModifier : IPopFileItem {
 	/** Synonym for [TFBotAttribute.Aggressive]*/
 	Mobber;
 	
-	override val popFileRepr: Any = PopFileKeyword(name)
+	override val popFileRepr = PopFileKeyword(name)
 }

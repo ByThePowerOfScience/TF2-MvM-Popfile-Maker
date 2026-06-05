@@ -1,14 +1,14 @@
 package btpos.tf2.popfiledsl.types.bots
 
-import btpos.tf2.popfiledsl.types.IPopFileItem
-import btpos.tf2.popfiledsl.types.NamedMap
+import btpos.tf2.popfiledsl.serialization.IPopFileItem
+import btpos.tf2.popfiledsl.serialization.NamedMap
 import java.util.function.IntFunction
 
 /**
  * Container for [ItemAttribute]s
  */
-class ItemAttributes(val attributes: ArrayList<ItemAttribute> = ArrayList()) : IPopFileItem, MutableList<ItemAttribute> by attributes {
-	override val popFileRepr: Any
+class ItemAttributes(val attributes: ArrayList<ItemAttribute> = ArrayList()) : IPopFileItem<NamedMap>, MutableList<ItemAttribute> by attributes {
+	override val popFileRepr
 		get() = NamedMap("ItemAttributes", attributes.associate { it.key to it.value })
 	
 	@Deprecated(level=DeprecationLevel.HIDDEN, message="Only included because the compiler yells at me if I don't include this.")

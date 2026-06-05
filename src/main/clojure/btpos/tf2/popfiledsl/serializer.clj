@@ -1,7 +1,9 @@
-(ns btpos.tf2.popfiledsl.serialization
+(ns btpos.tf2.popfiledsl.serializer
   (:require [clojure.string :as str])
-  (:import (btpos.tf2.popfiledsl.types IPopFileItem NamedMap PopFileKeyword)
+  (:import (btpos.tf2.popfiledsl.serialization IPopFileItem NamedMap PopFileKeyword)
            (java.util Collection Map)))
+
+(comment "Literal strings are quoted, so keywords are the only way to have unquoted strings.")
 
 (defmulti ^String pop-file-serialize (fn [item] (class item)))
 

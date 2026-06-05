@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.org.apache.http.client.methods.RequestBuilder.options
 import org.gradle.kotlin.dsl.implementation
 import org.gradle.kotlin.dsl.testRuntimeOnly
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -42,18 +43,13 @@ clojure {
 		named("main") {
 			// remove java from clojure classpath to prevent circular dependency
 			classpath.setFrom(sourceSets.main.map { it.compileClasspath })
+			classpath.from(project.layout.buildDirectory.dir("classes/kotlin/main"))
+//			aotAll()
 			
-			// compile everything ahead of time so it can be remapped
-			aotAll()
-			
-			// reflection WILL fail on Minecraft classes
 			reflection = "warn"
 			
 			compiler {
 				directLinking = true
-				
-				// don't stringify classnames that need to be remapped
-				elideMeta.add("tag")
 			}
 		}
 	}
@@ -70,6 +66,15 @@ tasks {
 		options.apply {
 			encoding = "UTF-8"
 		}
+	}
+	compileKotlin {
+		
+	}
+	checkClojure {
+		dependsOn(compileKotlin)
+	}
+	compileClojure {
+		dependsOn(compileKotlin)
 	}
 }
 

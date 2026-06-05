@@ -1,5 +1,7 @@
 package btpos.tf2.popfiledsl.types
 
+import btpos.tf2.popfiledsl.serialization.IPopFileItem
+import btpos.tf2.popfiledsl.serialization.NamedMap
 import btpos.tf2.popfiledsl.types.bots.CharacterAttributes
 import btpos.tf2.popfiledsl.types.bots.EventChangeAttributes
 import btpos.tf2.popfiledsl.types.bots.ItemAttributes
@@ -55,37 +57,26 @@ data class TFBot(
 	val characterAttributes: CharacterAttributes? = null,
 	
 	val eventChangeAttributes: EventChangeAttributes? = null
-) : IPopFileItem {
-	override val popFileRepr: Any
-		get() {
-			return buildString {
-				append(
-					"TFBot\n" + "{"
-				)
-				listOf(
-					"Template" to template,
-					"Class" to tfclass,
-					"ClassIcon" to classIcon,
-					"Health" to health,
-					"Scale" to scale,
-					"Name" to name,
-					"TeleportWhere" to teleportWhere,
-					"AutoJumpMin" to autoJumpMin,
-					"AutoJumpMax" to autoJumpMax,
-					"Skill" to skill,
-					"WeaponRestriction" to weaponRestriction,
-					"BehaviorModifiers" to behaviorModifiers,
-					"MaxVisionRange" to maxVisionRange,
-					"Item" to item,
-					"Attributes" to attributes,
-					"ItemAttributes" to itemAttributes,
-					"CharacterAttributes" to characterAttributes,
-					"EventChangeAttributes" to eventChangeAttributes
-				).forEach { (name, value) ->
-					if (value != null)
-						append("\n\t").append(name).append(" ").append(value)
-				}
-				append("\n}")
-			}
-		}
+) : IPopFileItem<NamedMap> {
+	override val popFileRepr
+		get() = NamedMap("TFBot", mapOf(
+			"Template" to template,
+			"Class" to tfclass,
+			"ClassIcon" to classIcon,
+			"Health" to health,
+			"Scale" to scale,
+			"Name" to name,
+			"TeleportWhere" to teleportWhere,
+			"AutoJumpMin" to autoJumpMin,
+			"AutoJumpMax" to autoJumpMax,
+			"Skill" to skill,
+			"WeaponRestriction" to weaponRestriction,
+			"BehaviorModifiers" to behaviorModifiers,
+			"MaxVisionRange" to maxVisionRange,
+			"Item" to item,
+			"Attributes" to attributes,
+			"ItemAttributes" to itemAttributes,
+			"CharacterAttributes" to characterAttributes,
+			"EventChangeAttributes" to eventChangeAttributes
+		).filterValues { it != null } as Map<Any, Any>)
 }

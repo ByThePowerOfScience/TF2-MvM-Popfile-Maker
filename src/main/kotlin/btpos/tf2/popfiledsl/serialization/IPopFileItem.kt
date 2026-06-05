@@ -1,13 +1,10 @@
-@file:Suppress("JavaDefaultMethodsNotOverriddenByDelegation")
-
-package btpos.tf2.popfiledsl.types
-
+package btpos.tf2.popfiledsl.serialization
 
 /**
  * Anything that has a special popfile representation, such as a keyword, a string, or a map.
  */
-interface IPopFileItem {
-	val popFileRepr: Any
+interface IPopFileItem<T> {
+	val popFileRepr: T
 }
 
 class NamedMap(val name: String, val map: Map<Any, Any>)
