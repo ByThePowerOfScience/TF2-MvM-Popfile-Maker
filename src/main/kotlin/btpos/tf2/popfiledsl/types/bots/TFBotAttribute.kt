@@ -1,11 +1,8 @@
 package btpos.tf2.popfiledsl.types.bots
 
-import btpos.tf2.popfiledsl.serialization.IPopFileItem
-import btpos.tf2.popfiledsl.serialization.PopFileKeyword
+import btpos.tf2.popfiledsl.serialization.IPopFileRepresentable
 
-class TFBotAttribute(override val popFileRepr: PopFileKeyword) : IPopFileItem<PopFileKeyword> {
-	constructor(str: String) : this(PopFileKeyword(str))
-	
+class TFBotAttribute(override val popFileRepr: Any) : IPopFileRepresentable<Any> {
 	companion object {
 		val RemoveOnDeath = TFBotAttribute("RemoveOnDeath")
 		val Aggressive = TFBotAttribute("Aggressive")

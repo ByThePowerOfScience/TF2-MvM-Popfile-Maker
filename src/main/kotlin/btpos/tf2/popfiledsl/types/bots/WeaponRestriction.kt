@@ -1,7 +1,11 @@
 package btpos.tf2.popfiledsl.types.bots
 
-enum class WeaponRestriction {
+import btpos.tf2.popfiledsl.serialization.IPopFileRepresentable
+
+enum class WeaponRestriction : IPopFileRepresentable<String> {
 	PrimaryOnly,
 	SecondaryOnly,
-	MeleeOnly
+	MeleeOnly;
+	
+	override val popFileRepr = name
 }

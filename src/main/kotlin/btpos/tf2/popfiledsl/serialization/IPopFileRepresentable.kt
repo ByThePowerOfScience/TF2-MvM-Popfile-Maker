@@ -1,0 +1,46 @@
+package btpos.tf2.popfiledsl.serialization
+
+
+/**
+ * Anything that has a special popfile representation, such as a keyword, a string, or a map.
+ */
+interface IPopFileRepresentable<T> {
+	/**
+	 * The special representation that should be serialized.
+	 *
+	 * This should be a lazily-evaluated property. (i.e. have a getter)
+	 */
+	val popFileRepr: T
+}
+
+/**
+ * A basic key-value pair: a name, and something assigned to that name.
+ *
+ * These are often members of a [PopFileMap] that represents some scope.
+ *
+ * Note: subtrees are also represented as these with a [PopFileMap] as a value,
+ * as they only differ from the standard "name: value" format in that they have their _own_ names.
+ */
+class PopFileEntry(val key: Any, val value: Any) {
+	companion object {
+		/**
+		 * Factory for easy "Only make the entry if the value is set"
+		 */
+	    operator fun invoke(key: Any, value: Any?): PopFileEntry? {
+	        if (value == null)
+				return null
+			
+			return PopFileEntry(key, value)
+	    }
+	}
+}
+
+/**
+ * Marker class, so we can wrap the collection of pairs in braces when serializing.
+ */
+class PopFileMap(val entries: Collection<PopFileEntry>) {
+	constructor(vararg entries: PopFileEntry?) : this(entries.filterNotNull())
+}
+
+@JvmRecord
+data class PopFileQuotedString(val string: String)

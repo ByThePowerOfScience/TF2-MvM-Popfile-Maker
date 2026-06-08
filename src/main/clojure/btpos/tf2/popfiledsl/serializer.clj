@@ -1,35 +1,33 @@
 (ns btpos.tf2.popfiledsl.serializer
-  (:require [clojure.string :as str])
-  (:import (btpos.tf2.popfiledsl.serialization IPopFileItem NamedMap PopFileKeyword)
-           (java.util Collection Map)))
+  (:import (btpos.tf2.popfiledsl.serialization IPopFileRepresentable PopFileEntry PopFileMap PopFileQuotedString)))
 
-(comment "Literal strings are quoted, so keywords are the only way to have unquoted strings.")
 
-(defmulti ^String pop-file-serialize (fn [item] (class item)))
+(defmulti pop-file-serialize (fn [item] (class item)))
 
-(defmethod pop-file-serialize :default [item] (str item))
+; Primitives
+(defmethod pop-file-serialize :default [item]
+  (str item))
 
-(defmethod pop-file-serialize String [^String item]
-  (str \" item \"))
+(defmethod pop-file-serialize PopFileQuotedString [^PopFileQuotedString item]
+  (str \" (.string item) \"))
 
-(defmethod pop-file-serialize PopFileKeyword [^PopFileKeyword item]
-  (.getKeyword item))
 
-(defmethod pop-file-serialize IPopFileItem [^IPopFileItem item]
+(defmethod pop-file-serialize IPopFileRepresentable [^IPopFileRepresentable item]
   (pop-file-serialize (.getPopFileRepr item)))
 
-(defmethod pop-file-serialize Collection [^Collection coll]
-  (str/join " " (map pop-file-serialize coll)))
 
-(defmethod pop-file-serialize NamedMap [^NamedMap item]
-  (let [name (.getName item)
-        map (.getMap item)]
-    (str name "\n" (pop-file-serialize map))))
+; Really, everything is just identifier-value pairs, it's just that structs have their own identifiers and values tend not to
+(defmethod pop-file-serialize PopFileEntry [^PopFileEntry pair]
+  (str (.getKey pair) (if (instance? PopFileMap (.getValue pair)) "\n" " ") (.getValue pair)))
 
-(defmethod pop-file-serialize Map [^Map item]
-  (str "{"
-       (str/join "\n" (map (fn [[k v]] (str (pop-file-serialize k) " " (pop-file-serialize v))) (seq item)))
-       "\n}"))
+(defmethod pop-file-serialize PopFileMap [^PopFileMap subtree]
+  (str
+    "{"
+    (->> (.getEntries subtree)
+         (map pop-file-serialize)
+         (str "\n"))
+    "\n}"))
+
 
 
 
