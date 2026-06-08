@@ -37,6 +37,9 @@ class TFBotSpawner(name: String? = null) : BaseSpawner() {
 		}
 	}
 	
+	/**
+	 * (name of info_teamspawn entity)
+	 */
 	var teleportWhere: List<String>? by singleKeyedValue("TeleportWhere")
 	
 	var autoJumpMin: Float? by singleKeyedValue("AutoJumpMin")
