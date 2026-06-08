@@ -1,6 +1,6 @@
 package btpos.tf2.popfiledsl.types.spawners
 
-@Deprecated("\"Old and crusty\"")
+@Deprecated("According to sigsegv: \"Old and crusty\"")
 class MobSpawner(count: Int, spawners: List<BaseSpawner>) : BaseSpawner() {
 	var count: Int? by singleKeyedValue("Count")
 	val spawners: MutableList<BaseSpawner> by multiStruct()
