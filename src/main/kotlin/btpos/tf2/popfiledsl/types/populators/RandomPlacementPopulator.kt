@@ -5,12 +5,12 @@ import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
 import btpos.tf2.popfiledsl.types.spawners.BaseSpawner
 import btpos.tf2.popfiledsl.types.specifics.NavArea
 
-class RandomPlacementPopulator : PopulatorBase() {
+class RandomPlacementPopulator : Populator() {
 	override val popFileStructIdentifier: Any
 		get() = "RandomPlacement"
 }
 
-inline fun Populators.RandomPlacement(configure: RandomPlacementPopulator.() -> Unit) = RandomPlacementPopulator().apply(configure)
+inline fun Populator.Companion.RandomPlacement(configure: RandomPlacementPopulator.() -> Unit) = RandomPlacementPopulator().apply(configure)
 
 
 var RandomPlacementPopulator.count: Int? by addField("Count")

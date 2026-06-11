@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.types.populators.PeriodicSpawnPopulator.When
 import btpos.tf2.popfiledsl.types.spawners.BaseSpawner
 import btpos.tf2.popfiledsl.types.specifics.Where
 
-class PeriodicSpawnPopulator : PopulatorBase() {
+class PeriodicSpawnPopulator : Populator() {
 	class When : AbstractMvMStruct() {
 		override val popFileStructIdentifier get() = "When"
 		
@@ -20,7 +20,7 @@ class PeriodicSpawnPopulator : PopulatorBase() {
 		get() = "PeriodicSpawn"
 }
 
-inline fun Populators.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure)
+inline fun Populator.Companion.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure)
 
 var PeriodicSpawnPopulator.where: Where? by addField("Where")
 

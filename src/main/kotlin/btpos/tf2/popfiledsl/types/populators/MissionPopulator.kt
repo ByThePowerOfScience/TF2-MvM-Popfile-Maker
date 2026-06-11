@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.types.populators.MissionPopulator.Objective
 import btpos.tf2.popfiledsl.types.spawners.BaseSpawner
 import btpos.tf2.popfiledsl.types.specifics.Where
 
-class MissionPopulator : PopulatorBase() {
+class MissionPopulator : Populator() {
 	override val popFileStructIdentifier: Any
 		get() = "Mission"
 	
