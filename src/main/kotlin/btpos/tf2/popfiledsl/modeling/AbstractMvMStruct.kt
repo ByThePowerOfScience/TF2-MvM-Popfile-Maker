@@ -169,5 +169,6 @@ interface IMvMSubtree {
 class MvMSubtreeImpl : IMvMSubtree, IPopFileSerializable<PopFileMap> {
 	override val _rawEntries: MutableMap<Any, IPopFileSerializable<Iterable<PopFileEntry>>> = mutableMapOf()
 	
-	override val popFileRepr: PopFileMap = PopFileMap(_rawEntries.values.flatMap { it.popFileRepr })
+	override val popFileRepr: PopFileMap
+		get() = PopFileMap(_rawEntries.values.flatMap { it.popFileRepr })
 }
