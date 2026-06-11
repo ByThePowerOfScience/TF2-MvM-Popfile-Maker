@@ -46,7 +46,7 @@ interface IMvMSubtree {
 		 * This version of the method allows you to specify a codec, which allows the user to input one thing and then it serializes another.
 		 *
 		 * ## Example:
-		 * 
+		 *
 		 * Popfile:
 		 * ```txt
 		 * Mission
@@ -54,12 +54,12 @@ interface IMvMSubtree {
 		 *      Objective "DestroySentries"
 		 * }
 		 * ```
-		 * 
+		 *
 		 * Property:
 		 * ```kotlin
 		 * var MissionPopulator.objective by singleKeyedValue("Objective", StringLiteralCodec)
 		 * ```
-		 * 
+		 *
 		 * @param serializationKey Either a regular string if it should be unquoted in the popfile (e.g. `Objective` instead of `"Objective"`) or a [PopFileLiteralString][btpos.tf2.popfiledsl.serialization.PopFileStringLiteral] if the key should be quoted in the popfile (e.g. `"mark for death"` instead of `mark for death`)
 		 */
 		fun <EXPOSED : Any, SERIALIZED : Any> addField(serializationKey: Any, codec: Codec<EXPOSED, SERIALIZED>) = object : ReadWriteProperty<IMvMSubtree, EXPOSED?> {
@@ -93,7 +93,7 @@ interface IMvMSubtree {
 			}
 		}
 		
-		// because we serialize all lists as Key Value1 Key Value2, 
+		// because we serialize all lists as Key Value1 Key Value2,
 		// properties that allow multiple values are fine to use a list as the entry
 		class NamedValue<K : Any, V : Any>(var key: K, var value: V? = null)
 			: IPopFileSerializable<List<PopFileEntry>>
@@ -166,9 +166,15 @@ interface IMvMSubtree {
 	}
 }
 
-class MvMSubtreeImpl : IMvMSubtree, IPopFileSerializable<PopFileMap> {
-	override val _rawEntries: MutableMap<Any, IPopFileSerializable<Iterable<PopFileEntry>>> = mutableMapOf()
-	
+/**
+ * A nameless subtree
+ */
+interface IMvMSubtreeMap : IMvMSubtree, IPopFileSerializable<PopFileMap> {
 	override val popFileRepr: PopFileMap
 		get() = PopFileMap(_rawEntries.values.flatMap { it.popFileRepr })
+}
+
+class MvMSubtreeImpl : IMvMSubtreeMap {
+	override val _rawEntries: MutableMap<Any, IPopFileSerializable<Iterable<PopFileEntry>>> = mutableMapOf()
+	
 }
