@@ -1,23 +1,25 @@
 package btpos.tf2.popfiledsl.types.spawners
 
-import btpos.tf2.popfiledsl.serialization.PopFileQuotedString
+import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
+import btpos.tf2.popfiledsl.serialization.codecs.StringLiteralCodec
 import btpos.tf2.popfiledsl.types.OutputAction
 
 class TankSpawner : BaseSpawner() {
-	var health: Int? by singleKeyedValue("Health", { require(it >= 0) { "Health may not be negative." }; it }, { it })
-	
-	var speed: Float? by singleKeyedValue("Speed")
-	
-	var name: String? by singleKeyedValue("Name", ::PopFileQuotedString, PopFileQuotedString::string)
-	
-	var skin: Int? by singleKeyedValue("Skin")
-	
-	var startingPathTrackNode: String? by singleKeyedValue("StartingPathTrackNode", ::PopFileQuotedString, PopFileQuotedString::string)
-	
-	var onKilledOutput: OutputAction? by singleKeyedValue("OnKilledOutput")
-	
-	var onBombDroppedOutput: OutputAction? by singleKeyedValue("OnBombDroppedOutput")
 	
 	override val popFileStructIdentifier
 		get() = "Tank"
 }
+
+var TankSpawner.health: Int? by addField("Health")
+
+var TankSpawner.speed: Float? by addField("Speed")
+
+var TankSpawner.name: String? by addField("Name", StringLiteralCodec)
+
+var TankSpawner.skin: Int? by addField("Skin")
+
+var TankSpawner.startingPathTrackNode: String? by addField("StartingPathTrackNode", StringLiteralCodec)
+
+var TankSpawner.onKilledOutput: OutputAction? by addField("OnKilledOutput")
+
+var TankSpawner.onBombDroppedOutput: OutputAction? by addField("OnBombDroppedOutput")

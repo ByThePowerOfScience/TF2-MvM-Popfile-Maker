@@ -1,15 +1,15 @@
 package btpos.tf2.popfiledsl.types.bots
 
-import btpos.tf2.popfiledsl.serialization.IPopFileRepresentable
+import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
 import btpos.tf2.popfiledsl.serialization.PopFileEntry
-import btpos.tf2.popfiledsl.serialization.PopFileQuotedString
+import btpos.tf2.popfiledsl.serialization.PopFileStringLiteral
 import btpos.tf2.popfiledsl.types.bots.Attribute.Internal
 import java.util.function.IntFunction
 
 /**
  * Container for [Attribute]s
  */
-open class AttributeContainer(val identifier: String, val attributes: ArrayList<Attribute> = ArrayList()) : IPopFileRepresentable<PopFileEntry>, MutableList<Attribute> by attributes {
+open class AttributeContainer(val identifier: String, val attributes: ArrayList<Attribute> = ArrayList()) : IPopFileSerializable<PopFileEntry>, MutableList<Attribute> by attributes {
 	override val popFileRepr
 		get() = PopFileEntry(identifier, attributes.map { it.popFileRepr })
 	
@@ -76,7 +76,7 @@ object Paint {
 	
 }
 
-sealed class Attribute : IPopFileRepresentable<Pair<Any, Any>> {
+sealed class Attribute : IPopFileSerializable<Pair<Any, Any>> {
 	abstract val key: Any
 	abstract val value: Any
 	
@@ -92,7 +92,7 @@ sealed class Attribute : IPopFileRepresentable<Pair<Any, Any>> {
 		
 		internal class StringAttribute(override val key: String, override val value: Any) : Attribute() {
 			override val popFileRepr: Pair<Any, Any>
-				get() = Pair(PopFileQuotedString(key), value)
+				get() = Pair(PopFileStringLiteral(key), value)
 		}
 		
 		/**

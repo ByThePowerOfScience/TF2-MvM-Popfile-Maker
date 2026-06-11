@@ -1,11 +1,11 @@
 package btpos.tf2.popfiledsl.types.bots
 
-import btpos.tf2.popfiledsl.serialization.IPopFileRepresentable
-import btpos.tf2.popfiledsl.serialization.PopFileQuotedString
+import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
+import btpos.tf2.popfiledsl.serialization.PopFileStringLiteral
 
-data class TFItem(val name: String, val attributes: ItemAttributeContainer = ItemAttributeContainer(name)) : IPopFileRepresentable<PopFileQuotedString> {
+data class TFItem(val name: String, val attributes: ItemAttributeContainer = ItemAttributeContainer(name)) : IPopFileSerializable<PopFileStringLiteral> {
 	override val popFileRepr
-		get() = PopFileQuotedString(name)
+		get() = PopFileStringLiteral(name)
 	
 	inline fun withAttributes(attributeBuilder: ItemAttributeContainer.() -> Unit): TFItem {
 		return TFItem(this.name, ItemAttributeContainer(this.name).apply(attributeBuilder))

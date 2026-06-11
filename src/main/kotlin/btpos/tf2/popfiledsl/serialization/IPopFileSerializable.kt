@@ -4,7 +4,7 @@ package btpos.tf2.popfiledsl.serialization
 /**
  * Anything that has a special popfile representation, such as a keyword, a string, or a map.
  */
-interface IPopFileRepresentable<T> {
+interface IPopFileSerializable<out T> {
 	/**
 	 * The special representation that should be serialized.
 	 *
@@ -42,5 +42,15 @@ class PopFileMap(val entries: Collection<PopFileEntry>) {
 	constructor(vararg entries: PopFileEntry?) : this(entries.filterNotNull())
 }
 
+/**
+ * Helper for [IPopFileSerializable] to just auto-quote the string
+ */
+interface IPopFileLiteralStringSerializable : IPopFileSerializable<PopFileStringLiteral> {
+	override val popFileRepr: PopFileStringLiteral
+		get() = PopFileStringLiteral(popFileStringValue)
+	
+	val popFileStringValue: String
+}
+
 @JvmRecord
-data class PopFileQuotedString(val string: String)
+data class PopFileStringLiteral(val string: String)

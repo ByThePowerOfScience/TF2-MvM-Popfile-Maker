@@ -1,6 +1,6 @@
 (ns btpos.tf2.popfiledsl.serializer
   (:require [clojure.string :as str])
-  (:import (btpos.tf2.popfiledsl.serialization IPopFileRepresentable PopFileEntry PopFileMap PopFileLiteralString)
+  (:import (btpos.tf2.popfiledsl.serialization IPopFileSerializable PopFileEntry PopFileMap PopFileStringLiteral)
            (clojure.lang ISeq)
            (java.util Collection)))
 
@@ -22,11 +22,11 @@
   (str item))
 
 ; string literals need to be quoted, but any other primitive (including normal strings) can be pasted as-is
-(defmethod pop-file-serialize PopFileLiteralString [^PopFileLiteralString item]
+(defmethod pop-file-serialize PopFileStringLiteral [^PopFileStringLiteral item]
   (str \" (.string item) \"))
 
 ; get the representation from the item
-(defmethod pop-file-serialize IPopFileRepresentable [^IPopFileRepresentable item]
+(defmethod pop-file-serialize IPopFileSerializable [^IPopFileSerializable item]
   (pop-file-serialize (.getPopFileRepr item)))
 
 ; raw lists should have their elements separated by spaces,

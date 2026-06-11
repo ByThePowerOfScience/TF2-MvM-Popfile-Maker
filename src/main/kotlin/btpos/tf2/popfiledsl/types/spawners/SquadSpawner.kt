@@ -1,5 +1,8 @@
 package btpos.tf2.popfiledsl.types.spawners
 
+import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.multiStruct
+import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
+
 class SquadSpawner : BaseSpawner() {
 	/*
 	Squad
@@ -8,12 +11,12 @@ class SquadSpawner : BaseSpawner() {
 	- subtree[] (spawner)
 	 */
 	
-	var formationSize by singleKeyedValue<Float>("FormationSize")
+	var formationSize by addField<Float>("FormationSize")
 	
 	/**
 	 * Note: Squad.ShouldPreserveSquad is parsed correctly, but will cause a spurious error to show up in console; ignore the error
 	 */
-	var shouldPreserveSquad by singleKeyedValue<Boolean>("ShouldPreserveSquad")
+	var shouldPreserveSquad by addField<Boolean>("ShouldPreserveSquad")
 	
 	val spawners: MutableList<BaseSpawner> by multiStruct()
 	
