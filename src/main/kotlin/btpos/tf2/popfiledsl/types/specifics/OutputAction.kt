@@ -1,4 +1,4 @@
-package btpos.tf2.popfiledsl.types
+package btpos.tf2.popfiledsl.types.specifics
 
 import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
 import btpos.tf2.popfiledsl.serialization.PopFileEntry
@@ -13,7 +13,7 @@ class OutputAction
 	
 	override val popFileRepr: PopFileMap
 		get() = PopFileMap(
-			PopFileEntry("Target", target),
-			PopFileEntry("Action", action)
+			PopFileEntry.Companion("Target", target),
+			PopFileEntry.Companion("Action", action)
 		)
 }

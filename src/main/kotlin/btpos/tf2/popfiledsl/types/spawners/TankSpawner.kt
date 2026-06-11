@@ -2,7 +2,7 @@ package btpos.tf2.popfiledsl.types.spawners
 
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.serialization.codecs.StringLiteralCodec
-import btpos.tf2.popfiledsl.types.OutputAction
+import btpos.tf2.popfiledsl.types.specifics.OutputAction
 
 class TankSpawner : BaseSpawner() {
 	
