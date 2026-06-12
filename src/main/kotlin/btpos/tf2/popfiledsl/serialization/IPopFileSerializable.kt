@@ -26,7 +26,7 @@ class PopFileEntry(val key: Any, val value: Any) {
 		/**
 		 * Factory for easy "Only make the entry if the value is set"
 		 */
-	    operator fun invoke(key: Any, value: Any?): PopFileEntry? {
+		fun orNull(key: Any, value: Any?): PopFileEntry? {
 	        if (value == null)
 				return null
 			

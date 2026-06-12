@@ -176,7 +176,7 @@ class NamedValue<K : Any, V : Any>(isRequired: Boolean, var key: K, var value: V
 	: SubtreeEntry(key.toString(), isRequired)
 {
 	override val repr: List<PopFileEntry>
-		get() = value?.let { listOf(PopFileEntry(key, it)) } ?: emptyList()
+		get() = listOfNotNull(PopFileEntry.orNull(key, value))
 }
 
 class SelfNamedValue<T : IPopFileSerializable<PopFileEntry>>(isRequired: Boolean)
