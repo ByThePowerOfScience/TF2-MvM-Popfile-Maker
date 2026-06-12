@@ -38,7 +38,7 @@ var TFBotSpawner.name: String? by addField("Name")
 /**
  * (name of info_teamspawn entity)
  */
-var TFBotSpawner.teleportWhere: List<String>? by addField("TeleportWhere")
+var TFBotSpawner.teleportWhere: MutableList<String>? by addField("TeleportWhere") { mutableListOf() }
 
 var TFBotSpawner.autoJumpMin: Float? by addField("AutoJumpMin")
 
@@ -48,13 +48,13 @@ var TFBotSpawner.skill: BotSkill? by addField("Skill")
 
 var TFBotSpawner.weaponRestriction: WeaponRestriction? by addField("WeaponRestriction")
 
-var TFBotSpawner.behaviorModifiers: List<BehaviorModifier>? by addField("BehaviorModifiers")
+var TFBotSpawner.behaviorModifiers: MutableList<BehaviorModifier>? by addField("BehaviorModifiers") { mutableListOf() }
 
 var TFBotSpawner.maxVisionRange: Float? by addField("MaxVisionRange")
 
-var TFBotSpawner.items: List<TFItem>? by addField("Item")
+var TFBotSpawner.items: MutableList<TFItem>? by addField("Item") { mutableListOf() }
 
-var TFBotSpawner.attributes: List<TFBotAttribute>? by addField("Attributes")
+var TFBotSpawner.attributes: MutableList<TFBotAttribute>? by addField("Attributes") { mutableListOf() }
 
 var TFBotSpawner.characterAttributes: AttributeContainer? by addField("CharacterAttributes")
 
