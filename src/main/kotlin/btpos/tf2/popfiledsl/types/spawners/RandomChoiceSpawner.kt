@@ -10,10 +10,5 @@ class RandomChoiceSpawner : Spawner() {
 }
 
 inline fun Spawner.Companion.RandomChoice(spawners: List<Spawner>, configure: RandomChoiceSpawner.() -> Unit = {}): RandomChoiceSpawner {
-	val newSpawner = TFBotSpawner()
-	if (name != null) {
-		newSpawner.name = name
-	}
-	newSpawner.apply(configure)
-	return newSpawner
+	return RandomChoiceSpawner().apply { this.spawners.addAll(spawners) }.apply(configure)
 }
