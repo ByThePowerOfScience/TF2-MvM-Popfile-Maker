@@ -1,14 +1,14 @@
 package btpos.tf2.popfiledsl.types.spawners
 
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
-import btpos.tf2.popfiledsl.types.bots.AttributeContainer
+import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.customHandler
+import btpos.tf2.popfiledsl.modeling.KeyValueMapImpl
 import btpos.tf2.popfiledsl.types.bots.BehaviorModifier
 import btpos.tf2.popfiledsl.types.bots.BotSkill
 import btpos.tf2.popfiledsl.types.bots.TFBotAttribute
 import btpos.tf2.popfiledsl.types.bots.TFClass
 import btpos.tf2.popfiledsl.types.bots.TFItem
 import btpos.tf2.popfiledsl.types.bots.WeaponRestriction
-import btpos.tf2.popfiledsl.types.spawners.TFBot
 import kotlin.apply
 
 /**
@@ -52,13 +52,15 @@ var TFBotSpawner.behaviorModifiers: MutableList<BehaviorModifier>? by addField("
 
 var TFBotSpawner.maxVisionRange: Float? by addField("MaxVisionRange")
 
-var TFBotSpawner.items: MutableList<TFItem>? by addField("Item") { mutableListOf() }
+var TFBotSpawner.items: MutableList<TFItem> by customHandler(isRequired = true, "Items", ::mutableListOf) { currentMap, thisValue ->
+	currentMap.withEntries(thisValue.flatMap(TFItem::_popFileRepr))
+}
 
 var TFBotSpawner.attributes: MutableList<TFBotAttribute>? by addField("Attributes") { mutableListOf() }
 
-var TFBotSpawner.characterAttributes: AttributeContainer? by addField("CharacterAttributes")
+var TFBotSpawner.characterAttributes: KeyValueMapImpl? by addField("CharacterAttributes")
 
-var TFBotSpawner.eventChangeAttributes: AttributeContainer? by addField("EventChangeAttributes")
+var TFBotSpawner.eventChangeAttributes: KeyValueMapImpl? by addField("EventChangeAttributes")
 
 
 inline fun TFBot(name: String? = null, configure: TFBotSpawner.() -> Unit) = Spawner.TFBot(name, configure)

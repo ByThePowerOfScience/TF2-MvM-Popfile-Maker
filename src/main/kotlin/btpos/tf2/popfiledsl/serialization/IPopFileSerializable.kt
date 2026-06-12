@@ -21,7 +21,7 @@ interface IPopFileSerializable<out T> {
  * Note: structs are represented as entries with a [PopFileMap] as a value,
  * as they only differ from the standard "name: value" format in that they name _themselves_.
  */
-class PopFileEntry(val key: Any, val value: Any) {
+data class PopFileEntry(val key: Any, val value: Any) {
 	companion object {
 		/**
 		 * Factory for easy "Only make the entry if the value is set"
@@ -38,8 +38,12 @@ class PopFileEntry(val key: Any, val value: Any) {
 /**
  * Marker class, so we can wrap the collection of pairs in braces when serializing.
  */
-class PopFileMap(val entries: Collection<PopFileEntry>) {
-	constructor(vararg entries: PopFileEntry?) : this(entries.filterNotNull())
+data class PopFileMap(val entries: Collection<PopFileEntry>) {
+	fun withEntry(entry: PopFileEntry) = PopFileMap(entries + entry)
+	
+	fun withEntries(vararg entries: PopFileEntry) = PopFileMap(this.entries + entries)
+	
+	fun withEntries(entries: Iterable<PopFileEntry>) = PopFileMap(this.entries + entries)
 }
 
 /**
@@ -53,4 +57,8 @@ interface IPopFileLiteralStringSerializable : IPopFileSerializable<PopFileString
 }
 
 @JvmRecord
-data class PopFileStringLiteral(val string: String)
+data class PopFileStringLiteral(val string: String) {
+	companion object {
+		fun String.literal() = PopFileStringLiteral(this)
+	}
+}

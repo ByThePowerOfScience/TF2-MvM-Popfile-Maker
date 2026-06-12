@@ -37,6 +37,8 @@ interface IMvMSubtree {
 	 */
 	val _rawEntries: MutableMap<Any, IPopFileSerializable<Iterable<PopFileEntry>>>
 	
+	val _customHandlers: MutableMap<Any, CustomHandler<*>>
+	
 	/**
 	 * Keep a stacktrace log of where the object was created,
 	 * so we can throw it if a required field isn't set and it gives the line in question.
@@ -154,7 +156,36 @@ interface IMvMSubtree {
 				} as SelfNamedValueList<T>
 			}
 		}
-	}
+		
+		/**
+		 * Gives full control of the subtree to this property before serializing, allowing it to serialize to something completely different than the natural nested-object structure, as well as possibly redefine other parts of the map.
+		 *
+		 * Used for complex behavior or easier-to-write constructs that don't directly mirror the resulting tree.
+		 *
+		 * @param isRequired If true, the user must set this property when creating the subtree.  If they don't, it displays an error message with the [displayName] showing them what property they forgot.
+		 * @param displayName Not used for serialization, just shown to the user in an error message if this property was required but is not included.
+		 *
+		 */
+		fun <T : Any> customHandler(isRequired: Boolean = false, displayName: String? = null, defaultValue: (() -> T)? = null, serializer: (currentMap: PopFileMap, thisValue: T) -> PopFileMap) : ReadWriteProperty<IMvMSubtree, T> {
+			if (isRequired) {
+				requireNotNull(displayName) { "Must provide a display name to required properties." }
+			}
+			
+			return object : ReadWriteProperty<IMvMSubtree, T> {
+				override fun getValue(thisRef: IMvMSubtree, property: KProperty<*>): T {
+					return thisRef._customHandlers.computeIfAbsent(property) {
+						CustomHandler(isRequired, displayName, serializer, defaultValue?.invoke())
+					}.value as T
+				}
+				
+				override fun setValue(thisRef: IMvMSubtree, property: KProperty<*>, value: T) {
+					(thisRef._customHandlers.computeIfAbsent(property) {
+						CustomHandler(isRequired, displayName, serializer, defaultValue?.invoke())
+					} as CustomHandler<T>).value = value
+				}
+			}
+		}
+ 	}
 }
 
 abstract class SubtreeEntry(val fieldName: String, val isRequired: Boolean) : IPopFileSerializable<List<PopFileEntry>> {
@@ -196,6 +227,20 @@ class SelfNamedValueList<T : IPopFileSerializable<PopFileEntry>>(isRequired: Boo
 		get() = innerList.map { it._popFileRepr }
 }
 
+class CustomHandler<T : Any>(val isRequired: Boolean, val displayName: String?, val serializer: (PopFileMap, T) -> PopFileMap, var value: T? = null) {
+	
+	fun transformMapForSerialization(currentMap: PopFileMap): PopFileMap {
+		val value = value
+		if (value == null) {
+			if (isRequired && displayName != null)
+				throw IllegalStateException("Missing required field: $displayName")
+			return currentMap
+		}
+		
+		return serializer(currentMap, value)
+	}
+}
+
 /**
  * A nameless subtree
  */
@@ -203,7 +248,9 @@ interface IMvMSubtreeMap : IMvMSubtree, IPopFileSerializable<PopFileMap> {
 	override val _popFileRepr: PopFileMap
 		get() {
 			try {
-				return PopFileMap(_rawEntries.values.flatMap { it._popFileRepr })
+				return _customHandlers.values.fold(PopFileMap(_rawEntries.values.flatMap { it._popFileRepr })) { map, item: CustomHandler<*> ->
+					item.transformMapForSerialization(map)
+				}
 			} catch (e: Exception) {
 				throw RequiredFieldNotFoundException(_instantiationSite, e)
 			}
@@ -212,6 +259,8 @@ interface IMvMSubtreeMap : IMvMSubtree, IPopFileSerializable<PopFileMap> {
 
 class MvMSubtreeImpl : IMvMSubtreeMap {
 	override val _rawEntries: MutableMap<Any, IPopFileSerializable<Iterable<PopFileEntry>>> = mutableMapOf()
+	
+	override val _customHandlers: MutableMap<Any, CustomHandler<*>> = mutableMapOf()
 	
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
 }
