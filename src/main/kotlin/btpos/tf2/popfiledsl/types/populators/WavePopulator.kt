@@ -17,7 +17,6 @@ val WavePopulator.waveSpawn: MutableList<WaveSpawnPopulator>? by multiStruct()
 
 var WavePopulator.sound: String? by addField("Sound", StringLiteralCodec)
 
-
 var WavePopulator.description: String? by addField("Description", StringLiteralCodec)
 
 var WavePopulator.waitWhenDone: Double? by addField("WaitWhenDone")

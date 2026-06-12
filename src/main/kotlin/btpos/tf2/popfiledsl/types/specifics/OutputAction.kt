@@ -1,22 +1,17 @@
 package btpos.tf2.popfiledsl.types.specifics
 
-import btpos.tf2.popfiledsl.modeling.IMvMSubtree
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
+import btpos.tf2.popfiledsl.modeling.IMvMSubtreeMap
 import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
 import btpos.tf2.popfiledsl.serialization.PopFileEntry
-import btpos.tf2.popfiledsl.serialization.PopFileMap
 
-class OutputAction : IMvMSubtree, IPopFileSerializable<PopFileMap> // doesn't have its own name, it's just a map with a name GIVEN to it
+class OutputAction : IMvMSubtreeMap // doesn't have its own name, it's just a map with a name GIVEN to it
 {
 	override val _rawEntries: MutableMap<Any, IPopFileSerializable<Iterable<PopFileEntry>>> = mutableMapOf()
 	
-	override val popFileRepr: PopFileMap
-		get() = PopFileMap(
-			PopFileEntry.Companion("Target", target),
-			PopFileEntry.Companion("Action", action)
-		)
+	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
 }
 
-var OutputAction.target: String? by addField("Target")
+var OutputAction.target: String? by addField("Target", isRequired = true)
 
-var OutputAction.action: String? by addField("Action")
+var OutputAction.action: String? by addField("Action", isRequired = true)

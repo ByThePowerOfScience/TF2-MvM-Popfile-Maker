@@ -22,6 +22,8 @@ class MissionPopulator : Populator() {
 	}
 }
 
+fun Populator.Companion.Mission(configure: MissionPopulator.() -> Unit) = MissionPopulator().apply(configure)
+
 
 var MissionPopulator.where: Where? by addField("Where")
 
