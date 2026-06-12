@@ -8,6 +8,7 @@ import btpos.tf2.popfiledsl.types.bots.TFBotAttribute
 import btpos.tf2.popfiledsl.types.bots.TFClass
 import btpos.tf2.popfiledsl.types.bots.TFItem
 import btpos.tf2.popfiledsl.types.bots.WeaponRestriction
+import btpos.tf2.popfiledsl.types.spawners.TFBot
 import kotlin.apply
 
 /**
@@ -17,7 +18,7 @@ import kotlin.apply
  * val SYDNEY_SNIPER_BOT = SNIPER_BOT.copy(item = listOf(TFItems.Sniper.SYDNEY_SLEEPER))
  * ```
  */
-class TFBotSpawner : BaseSpawner() {
+class TFBotSpawner : Spawner() {
 	override val popFileStructIdentifier
 		get() = "TFBot"
 }
@@ -60,9 +61,9 @@ var TFBotSpawner.characterAttributes: AttributeContainer? by addField("Character
 var TFBotSpawner.eventChangeAttributes: AttributeContainer? by addField("EventChangeAttributes")
 
 
-inline fun TFBot(name: String? = null, configure: TFBotSpawner.() -> Unit) = Spawners.TFBot(name, configure)
+inline fun TFBot(name: String? = null, configure: TFBotSpawner.() -> Unit) = Spawner.TFBot(name, configure)
 
-inline fun Spawners.Companion.TFBot(name: String? = null, configure: TFBotSpawner.() -> Unit): TFBotSpawner {
+inline fun Spawner.Companion.TFBot(name: String? = null, configure: TFBotSpawner.() -> Unit): TFBotSpawner {
 	val newSpawner = TFBotSpawner()
 	if (name != null) {
 		newSpawner.name = name

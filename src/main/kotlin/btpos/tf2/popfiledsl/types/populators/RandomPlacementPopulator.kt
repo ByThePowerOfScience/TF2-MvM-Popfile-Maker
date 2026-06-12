@@ -2,7 +2,7 @@ package btpos.tf2.popfiledsl.types.populators
 
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
-import btpos.tf2.popfiledsl.types.spawners.BaseSpawner
+import btpos.tf2.popfiledsl.types.spawners.Spawner
 import btpos.tf2.popfiledsl.types.specifics.NavArea
 
 class RandomPlacementPopulator : Populator() {
@@ -24,5 +24,5 @@ var RandomPlacementPopulator.navAreaFilter: NavArea? by addField("NavAreaFilter"
  *
  * [Squad][btpos.tf2.popfiledsl.types.spawners.SquadSpawner] and [Mob (deprecated)][btpos.tf2.popfiledsl.types.spawners.MobSpawner] work as well, but there is no practical use for this.
  */
-var RandomPlacementPopulator.spawner: BaseSpawner? by singleStruct()
+var RandomPlacementPopulator.spawner: Spawner? by singleStruct()
 	

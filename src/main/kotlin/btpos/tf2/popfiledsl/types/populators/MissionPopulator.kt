@@ -4,7 +4,7 @@ import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
 import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
 import btpos.tf2.popfiledsl.types.populators.MissionPopulator.Objective
-import btpos.tf2.popfiledsl.types.spawners.BaseSpawner
+import btpos.tf2.popfiledsl.types.spawners.Spawner
 import btpos.tf2.popfiledsl.types.specifics.Where
 
 class MissionPopulator : Populator() {
@@ -39,7 +39,7 @@ var MissionPopulator.runForThisManyWaves: Int? by addField("RunForThisManyWaves"
 
 var MissionPopulator.desiredCount: Double? by addField("DesiredCount")
 
-var MissionPopulator.spawner: BaseSpawner? by singleStruct()
+var MissionPopulator.spawner: Spawner? by singleStruct()
 
 
 

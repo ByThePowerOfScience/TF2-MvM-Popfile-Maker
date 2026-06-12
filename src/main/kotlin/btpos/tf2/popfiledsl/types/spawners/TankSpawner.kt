@@ -4,11 +4,13 @@ import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.serialization.codecs.StringLiteralCodec
 import btpos.tf2.popfiledsl.types.specifics.OutputAction
 
-class TankSpawner : BaseSpawner() {
+class TankSpawner : Spawner() {
 	
 	override val popFileStructIdentifier
 		get() = "Tank"
 }
+
+fun Spawner.Companion.Tank(configure: TankSpawner.() -> Unit = {}) = TankSpawner().apply(configure)
 
 var TankSpawner.health: Int? by addField("Health")
 

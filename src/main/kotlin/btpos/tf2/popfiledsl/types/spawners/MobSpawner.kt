@@ -4,17 +4,17 @@ import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
 
 @Deprecated("According to sigsegv: \"Old and crusty\"")
-class MobSpawner : BaseSpawner() {
+class MobSpawner : Spawner() {
 	override val popFileStructIdentifier: Any
 		get() = "Mob"
 }
 
 var MobSpawner.count: Int? by addField<Int>("Count")
-var MobSpawner.spawner: BaseSpawner? by singleStruct()
+var MobSpawner.spawner: Spawner? by singleStruct()
 
 
 
-fun Spawners.Mob(count: Int, spawner: BaseSpawner): MobSpawner {
+fun Spawner.Companion.Mob(count: Int, spawner: Spawner): MobSpawner {
 	return MobSpawner().apply {
 		this.count = count
 		this.spawner = spawner

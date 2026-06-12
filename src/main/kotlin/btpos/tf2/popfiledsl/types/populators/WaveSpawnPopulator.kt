@@ -4,7 +4,7 @@ import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
 import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
 import btpos.tf2.popfiledsl.serialization.codecs.StringLiteralCodec
-import btpos.tf2.popfiledsl.types.spawners.BaseSpawner
+import btpos.tf2.popfiledsl.types.spawners.Spawner
 import btpos.tf2.popfiledsl.types.specifics.OutputAction
 import btpos.tf2.popfiledsl.types.specifics.Where
 
@@ -50,7 +50,7 @@ var WaveSpawnPopulator.name: String? by addField("Name")
 var WaveSpawnPopulator.waitForAllSpawned: String? by addField("WaitForAllSpawned")
 var WaveSpawnPopulator.waitForAllDead: String? by addField("WaitForAllDead")
 var WaveSpawnPopulator.randomSpawn: Boolean? by addField("RandomSpawn")
-var WaveSpawnPopulator.spawner: BaseSpawner? by singleStruct()
+var WaveSpawnPopulator.spawner: Spawner? by singleStruct()
 
 /**
  * { enables support; "Limited" => TotalCount enforced, else => TotalCount ignored }

@@ -4,7 +4,7 @@ import btpos.tf2.popfiledsl.modeling.AbstractMvMStruct
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
 import btpos.tf2.popfiledsl.types.populators.PeriodicSpawnPopulator.When
-import btpos.tf2.popfiledsl.types.spawners.BaseSpawner
+import btpos.tf2.popfiledsl.types.spawners.Spawner
 import btpos.tf2.popfiledsl.types.specifics.Where
 
 class PeriodicSpawnPopulator : Populator() {
@@ -29,4 +29,4 @@ var PeriodicSpawnPopulator.where: Where? by addField("Where")
  */
 var PeriodicSpawnPopulator.`when`: Any? by addField("When")
 
-var PeriodicSpawnPopulator.spawner: BaseSpawner? by singleStruct()
+var PeriodicSpawnPopulator.spawner: Spawner? by singleStruct()
