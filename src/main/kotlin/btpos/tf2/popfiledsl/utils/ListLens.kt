@@ -1,6 +1,6 @@
 package btpos.tf2.popfiledsl.utils
 
-class ListView<INNER, EXPOSED>(val backingList: MutableList<INNER>, val reader: (INNER) -> EXPOSED, val writer: (EXPOSED) -> INNER) : MutableList<EXPOSED> {
+class ListLens<INNER, EXPOSED>(val backingList: MutableList<INNER>, val reader: (INNER) -> EXPOSED, val writer: (EXPOSED) -> INNER) : MutableList<EXPOSED> {
 	override fun add(element: EXPOSED) = backingList.add(writer(element))
 	
 	override fun remove(element: EXPOSED) = backingList.remove(writer(element))
@@ -48,7 +48,7 @@ class ListView<INNER, EXPOSED>(val backingList: MutableList<INNER>, val reader: 
 	
 	override fun listIterator(index: Int) = TransformingIterator(index)
 	
-	override fun subList(fromIndex: Int, toIndex: Int) = ListView(backingList.subList(fromIndex, toIndex), reader, writer)
+	override fun subList(fromIndex: Int, toIndex: Int) = ListLens(backingList.subList(fromIndex, toIndex), reader, writer)
 	
 	override val size: Int
 		get() = backingList.size
