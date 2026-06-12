@@ -9,14 +9,14 @@ import btpos.tf2.popfiledsl.types.specifics.Where
 
 class PeriodicSpawnPopulator : Populator() {
 	class When : AbstractMvMStruct() {
-		override val popFileStructIdentifier get() = "When"
+		override val _popFileStructIdentifier get() = "When"
 		
 		var minInterval: Double? by addField("MinInterval")
 		
 		var maxInterval: Double? by addField("MaxInterval")
 	}
 	
-	override val popFileStructIdentifier: Any
+	override val _popFileStructIdentifier: Any
 		get() = "PeriodicSpawn"
 }
 

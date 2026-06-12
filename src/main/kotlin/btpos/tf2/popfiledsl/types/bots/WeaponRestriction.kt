@@ -7,5 +7,5 @@ enum class WeaponRestriction : IPopFileSerializable<String> {
 	SecondaryOnly,
 	MeleeOnly;
 	
-	override val popFileRepr = name
+	override val _popFileRepr = name
 }

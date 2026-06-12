@@ -4,7 +4,7 @@ import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 
 @Deprecated("According to sigsegv: \"Old and crusty\"")
 class SentryGunSpawner : Spawner() {
-	override val popFileStructIdentifier: Any
+	override val _popFileStructIdentifier: Any
 		get() = "SentryGun"
 	
 	var level: Int? by addField("Level")

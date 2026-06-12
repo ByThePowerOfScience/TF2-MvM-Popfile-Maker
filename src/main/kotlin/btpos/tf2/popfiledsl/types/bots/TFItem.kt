@@ -7,10 +7,10 @@ import btpos.tf2.popfiledsl.serialization.PopFileStringLiteral
 data class TFItem(val name: String, val attributes: ItemAttributeContainer = ItemAttributeContainer(name))
 	: IPopFileSerializable<Iterable<PopFileEntry>>
 {
-	override val popFileRepr
+	override val _popFileRepr
 		get() = listOf(
 			PopFileEntry("Item", PopFileStringLiteral(name)),
-			attributes.popFileRepr
+			attributes._popFileRepr
 		)
 	
 	inline fun withAttributes(attributeBuilder: ItemAttributeContainer.() -> Unit): TFItem {

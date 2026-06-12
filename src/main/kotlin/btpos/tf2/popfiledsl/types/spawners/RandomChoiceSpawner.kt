@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.multiStruct
 class RandomChoiceSpawner : Spawner() {
 	val spawners: MutableList<Spawner> by multiStruct()
 	
-	override val popFileStructIdentifier: Any
+	override val _popFileStructIdentifier: Any
 		get() = "RandomChoice"
 }
 

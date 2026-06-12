@@ -6,7 +6,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.StringLiteralCodec
 import btpos.tf2.popfiledsl.types.specifics.OutputAction
 
 class WavePopulator : Populator() {
-	override val popFileStructIdentifier: Any
+	override val _popFileStructIdentifier: Any
 		get() = "Wave"
 }
 

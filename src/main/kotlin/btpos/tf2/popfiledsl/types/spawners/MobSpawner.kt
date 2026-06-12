@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
 
 @Deprecated("According to sigsegv: \"Old and crusty\"")
 class MobSpawner : Spawner() {
-	override val popFileStructIdentifier: Any
+	override val _popFileStructIdentifier: Any
 		get() = "Mob"
 }
 

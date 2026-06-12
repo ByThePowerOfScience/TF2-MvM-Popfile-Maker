@@ -10,8 +10,8 @@ import java.util.function.IntFunction
  * Container for [Attribute]s
  */
 open class AttributeContainer(val identifier: String, val attributes: ArrayList<Attribute> = ArrayList()) : IPopFileSerializable<PopFileEntry>, MutableList<Attribute> by attributes {
-	override val popFileRepr
-		get() = PopFileEntry(identifier, attributes.map { it.popFileRepr })
+	override val _popFileRepr
+		get() = PopFileEntry(identifier, attributes.map { it._popFileRepr })
 	
 	override fun add(element: Attribute): Boolean {
 		if (size >= 15)
@@ -86,12 +86,12 @@ sealed class Attribute : IPopFileSerializable<Pair<Any, Any>> {
 	 */
 	object Internal {
 		internal class LiteralAttribute(override val key: String, override val value: Any) : Attribute() {
-			override val popFileRepr
+			override val _popFileRepr
 				get() = Pair(key, value)
 		}
 		
 		internal class StringAttribute(override val key: String, override val value: Any) : Attribute() {
-			override val popFileRepr: Pair<Any, Any>
+			override val _popFileRepr: Pair<Any, Any>
 				get() = Pair(PopFileStringLiteral(key), value)
 		}
 		

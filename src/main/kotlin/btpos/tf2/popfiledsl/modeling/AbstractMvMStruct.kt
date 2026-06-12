@@ -15,11 +15,11 @@ import kotlin.reflect.KProperty
  *
  * Structs essentially only differ from normal "key: someMap" entries in that they have their own unchanging key that defines their type.
  */
-abstract class AbstractMvMStruct(private val subtree: MvMSubtreeImpl = MvMSubtreeImpl()) : IPopFileSerializable<PopFileEntry>, IMvMSubtree by subtree {
-	final override val popFileRepr: PopFileEntry
-		get() = PopFileEntry(popFileStructIdentifier, subtree.popFileRepr)
+abstract class AbstractMvMStruct(val _subtree: MvMSubtreeImpl = MvMSubtreeImpl()) : IPopFileSerializable<PopFileEntry>, IMvMSubtree by _subtree {
+	final override val _popFileRepr: PopFileEntry
+		get() = PopFileEntry(_popFileStructIdentifier, _subtree._popFileRepr)
 	
-	abstract val popFileStructIdentifier: Any
+	abstract val _popFileStructIdentifier: Any
 }
 
 
@@ -158,14 +158,14 @@ interface IMvMSubtree {
 }
 
 abstract class SubtreeEntry(val fieldName: String, val isRequired: Boolean) : IPopFileSerializable<List<PopFileEntry>> {
-	final override val popFileRepr: List<PopFileEntry>
-		get() = repr.also {
+	final override val _popFileRepr: List<PopFileEntry>
+		get() = _repr.also {
 			if (isRequired && it.isEmpty()) {
 				throw IllegalStateException("Missing required field: $fieldName")
 			}
 		}
 	
-	abstract val repr: List<PopFileEntry>
+	abstract val _repr: List<PopFileEntry>
 }
 
 // because we serialize all lists as Key Value1 Key Value2,
@@ -173,7 +173,7 @@ abstract class SubtreeEntry(val fieldName: String, val isRequired: Boolean) : IP
 class NamedValue<K : Any, V : Any>(isRequired: Boolean, var key: K, var value: V? = null,)
 	: SubtreeEntry(key.toString(), isRequired)
 {
-	override val repr: List<PopFileEntry>
+	override val _repr: List<PopFileEntry>
 		get() = listOfNotNull(PopFileEntry.orNull(key, value))
 }
 
@@ -182,8 +182,8 @@ class SelfNamedValue<T : IPopFileSerializable<PopFileEntry>>(isRequired: Boolean
 {
 	var item: T? = null
 	
-	override val repr: List<PopFileEntry>
-		get() = listOfNotNull(item?.popFileRepr)
+	override val _repr: List<PopFileEntry>
+		get() = listOfNotNull(item?._popFileRepr)
 }
 
 /**
@@ -192,18 +192,18 @@ class SelfNamedValue<T : IPopFileSerializable<PopFileEntry>>(isRequired: Boolean
 class SelfNamedValueList<T : IPopFileSerializable<PopFileEntry>>(isRequired: Boolean, val innerList: MutableList<T> = mutableListOf())
 	: SubtreeEntry("subtrees", isRequired), MutableList<T> by innerList
 {
-	override val repr: List<PopFileEntry>
-		get() = innerList.map { it.popFileRepr }
+	override val _repr: List<PopFileEntry>
+		get() = innerList.map { it._popFileRepr }
 }
 
 /**
  * A nameless subtree
  */
 interface IMvMSubtreeMap : IMvMSubtree, IPopFileSerializable<PopFileMap> {
-	override val popFileRepr: PopFileMap
+	override val _popFileRepr: PopFileMap
 		get() {
 			try {
-				return PopFileMap(_rawEntries.values.flatMap { it.popFileRepr })
+				return PopFileMap(_rawEntries.values.flatMap { it._popFileRepr })
 			} catch (e: Exception) {
 				throw RequiredFieldNotFoundException(_instantiationSite, e)
 			}

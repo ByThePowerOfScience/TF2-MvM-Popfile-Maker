@@ -27,7 +27,7 @@
 
 ; get the representation from the item
 (defmethod pop-file-serialize IPopFileSerializable [^IPopFileSerializable item]
-  (pop-file-serialize (.getPopFileRepr item)))
+  (pop-file-serialize (.get_popFileRepr item)))
 
 ; raw lists should have their elements separated by spaces,
 ; though I'm wondering if this is necessary since we handle collections through `pop-file-serialize-entry`

@@ -4,7 +4,7 @@ import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
 import btpos.tf2.popfiledsl.serialization.PopFileStringLiteral
 
 class NavArea(val name: String) : IPopFileSerializable<PopFileStringLiteral> {
-	override val popFileRepr: PopFileStringLiteral
+	override val _popFileRepr: PopFileStringLiteral
 		get() = PopFileStringLiteral(name)
 	
 	companion object

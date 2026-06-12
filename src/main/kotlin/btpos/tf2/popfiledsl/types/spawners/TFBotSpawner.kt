@@ -19,7 +19,7 @@ import kotlin.apply
  * ```
  */
 class TFBotSpawner : Spawner() {
-	override val popFileStructIdentifier
+	override val _popFileStructIdentifier
 		get() = "TFBot"
 }
 

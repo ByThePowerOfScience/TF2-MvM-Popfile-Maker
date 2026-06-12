@@ -6,7 +6,7 @@ import btpos.tf2.popfiledsl.types.specifics.OutputAction
 
 class TankSpawner : Spawner() {
 	
-	override val popFileStructIdentifier
+	override val _popFileStructIdentifier
 		get() = "Tank"
 }
 

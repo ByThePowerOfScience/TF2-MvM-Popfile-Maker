@@ -9,10 +9,10 @@ import btpos.tf2.popfiledsl.types.specifics.OutputAction
 import btpos.tf2.popfiledsl.types.specifics.Where
 
 class WaveSpawnPopulator : Populator() {
-	override val popFileStructIdentifier: Any
+	override val _popFileStructIdentifier: Any
 		get() = "WaveSpawn"
 	
-	class Support(override val popFileRepr: String) : IPopFileSerializable<String> {
+	class Support(override val _popFileRepr: String) : IPopFileSerializable<String> {
 		companion object {
 			/**
 			 * When set, enables support bots, respecting the maximum number of bots set by [WaveSpawner.totalCount][totalCount].

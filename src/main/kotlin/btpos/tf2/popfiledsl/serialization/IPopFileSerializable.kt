@@ -10,7 +10,7 @@ interface IPopFileSerializable<out T> {
 	 *
 	 * This should be a lazily-evaluated property. (i.e. have a getter)
 	 */
-	val popFileRepr: T
+	val _popFileRepr: T
 }
 
 /**
@@ -46,7 +46,7 @@ class PopFileMap(val entries: Collection<PopFileEntry>) {
  * Helper for [IPopFileSerializable] to just auto-quote the string
  */
 interface IPopFileLiteralStringSerializable : IPopFileSerializable<PopFileStringLiteral> {
-	override val popFileRepr: PopFileStringLiteral
+	override val _popFileRepr: PopFileStringLiteral
 		get() = PopFileStringLiteral(popFileStringValue)
 	
 	val popFileStringValue: String

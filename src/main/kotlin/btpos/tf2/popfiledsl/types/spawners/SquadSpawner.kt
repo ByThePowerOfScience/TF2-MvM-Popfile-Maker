@@ -11,7 +11,7 @@ class SquadSpawner : Spawner() {
 	- subtree[] (spawner)
 	 */
 	
-	override val popFileStructIdentifier: Any
+	override val _popFileStructIdentifier: Any
 		get() = "Squad"
 }
 

@@ -10,5 +10,5 @@ enum class BehaviorModifier : IPopFileSerializable<String> {
 	/** Synonym for [TFBotAttribute.Aggressive]*/
 	Mobber;
 	
-	override val popFileRepr = name
+	override val _popFileRepr = name
 }
