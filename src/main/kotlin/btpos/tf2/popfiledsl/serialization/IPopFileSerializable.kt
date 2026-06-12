@@ -18,8 +18,8 @@ interface IPopFileSerializable<out T> {
  *
  * These are often members of a [PopFileMap] that represents some scope.
  *
- * Note: subtrees are also represented as these with a [PopFileMap] as a value,
- * as they only differ from the standard "name: value" format in that they have their _own_ names.
+ * Note: structs are represented as entries with a [PopFileMap] as a value,
+ * as they only differ from the standard "name: value" format in that they name _themselves_.
  */
 class PopFileEntry(val key: Any, val value: Any) {
 	companion object {

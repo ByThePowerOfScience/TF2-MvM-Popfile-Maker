@@ -4,8 +4,6 @@ import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
 import btpos.tf2.popfiledsl.serialization.PopFileEntry
 import btpos.tf2.popfiledsl.serialization.PopFileMap
 import btpos.tf2.popfiledsl.serialization.codecs.Codec
-import jdk.internal.org.jline.keymap.KeyMap.key
-import java.util.function.IntFunction
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -115,7 +113,7 @@ interface IMvMSubtree {
 		 *
 		 * Note that the only difference between a struct and a named map is that structs have their _own_ names.
 		 * As such, there is no way to name these.
-		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [btpos.tf2.popfiledsl.types.spawners.BaseSpawner] and its subclasses),
+		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [btpos.tf2.popfiledsl.types.spawners.Spawner] and its subclasses),
 		 * use [addField] with a [PopFileMap][btpos.tf2.popfiledsl.serialization.PopFileMap]
 		 * as its value to allow the parent scope to decide its name.
 		 */

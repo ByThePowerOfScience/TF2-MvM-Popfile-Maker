@@ -9,12 +9,12 @@ import btpos.tf2.popfiledsl.serialization.PopFileStringLiteral
 class Where private constructor(override val popFileRepr: Any) : IPopFileSerializable<Any> {
 	companion object {
 		/**
-		 * Will be unquoted in the pop file
+		 * Will be unquoted in the popfile. (e.g. `Ahead`)
 		 */
 	    fun unquoted(location: String) = Where(location)
 		
 		/**
-		 *
+		 * The name of an `info_teamspawn` entity.  Will be a quoted string in the popfile. (e.g. `"somewhere"`)
 		 */
 		fun teamspawn(entName: String) = Where(PopFileStringLiteral(entName))
 		
