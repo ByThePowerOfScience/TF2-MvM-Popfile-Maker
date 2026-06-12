@@ -50,7 +50,7 @@ var WaveSpawnPopulator.name: String? by addField("Name")
 var WaveSpawnPopulator.waitForAllSpawned: String? by addField("WaitForAllSpawned")
 var WaveSpawnPopulator.waitForAllDead: String? by addField("WaitForAllDead")
 var WaveSpawnPopulator.randomSpawn: Boolean? by addField("RandomSpawn")
-var WaveSpawnPopulator.spawner: Spawner? by singleStruct()
+var WaveSpawnPopulator.spawner: Spawner? by singleStruct(isRequired = true)
 
 /**
  * { enables support; "Limited" => TotalCount enforced, else => TotalCount ignored }
