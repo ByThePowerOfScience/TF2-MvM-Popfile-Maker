@@ -1,13 +1,13 @@
 package btpos.tf2.popfiledsl.types
 
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
-import btpos.tf2.popfiledsl.serialization.PopFileStringLiteral
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
+import btpos.tf2.popfiledsl.serialization.VDFStringLiteral
 import btpos.tf2.popfiledsl.types.bots.TFItem
 import java.awt.Color
 
-class PaintColors(val color: Color) : IPopFileSerializable<PopFileStringLiteral> {
-	override val _popFileRepr: PopFileStringLiteral
-		get() = PopFileStringLiteral(rgbToString(color.red, color.blue, color.green))
+class PaintColors(val color: Color) : IVDFSerializableValue<VDFStringLiteral> {
+	override val _vdfRepr: VDFStringLiteral
+		get() = VDFStringLiteral(rgbToString(color.red, color.blue, color.green))
 	
 	companion object {
 		val `An Air of Debonair (RED)` = Color(101, 71, 64)

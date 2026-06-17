@@ -1,12 +1,12 @@
 package btpos.tf2.popfiledsl.types.specifics
 
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
-import btpos.tf2.popfiledsl.serialization.PopFileStringLiteral
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
+import btpos.tf2.popfiledsl.serialization.VDFStringLiteral
 
 /**
  * The name of an info_teamspawn entity, or a [preset][Companion].
  */
-class Where private constructor(override val _popFileRepr: Any) : IPopFileSerializable<Any> {
+class Where private constructor(override val _vdfRepr: Any) : IVDFSerializableValue<Any> {
 	companion object {
 		/**
 		 * Will be unquoted in the popfile. (e.g. `Ahead`)
@@ -16,7 +16,7 @@ class Where private constructor(override val _popFileRepr: Any) : IPopFileSerial
 		/**
 		 * The name of an `info_teamspawn` entity.  Will be a quoted string in the popfile. (e.g. `"somewhere"`)
 		 */
-		fun teamspawn(entName: String) = Where(PopFileStringLiteral(entName))
+		fun teamspawn(entName: String) = Where(VDFStringLiteral(entName))
 		
 		val AHEAD = unquoted("Ahead")
 		val BEHIND = unquoted("Behind")

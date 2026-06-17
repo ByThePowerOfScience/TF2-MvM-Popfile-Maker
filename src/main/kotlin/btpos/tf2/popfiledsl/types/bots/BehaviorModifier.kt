@@ -1,8 +1,8 @@
 package btpos.tf2.popfiledsl.types.bots
 
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
 
-enum class BehaviorModifier : IPopFileSerializable<String> {
+enum class BehaviorModifier : IVDFSerializableValue<String> {
 	@Deprecated("Once valid, no longer valid")
 	Idle,
 	/** Synonym for [TFBotAttribute.Aggressive]*/
@@ -10,5 +10,5 @@ enum class BehaviorModifier : IPopFileSerializable<String> {
 	/** Synonym for [TFBotAttribute.Aggressive]*/
 	Mobber;
 	
-	override val _popFileRepr = name
+	override val _vdfRepr = name
 }

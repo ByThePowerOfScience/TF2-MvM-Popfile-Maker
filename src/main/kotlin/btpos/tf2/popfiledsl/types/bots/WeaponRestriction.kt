@@ -1,11 +1,11 @@
 package btpos.tf2.popfiledsl.types.bots
 
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
 
-enum class WeaponRestriction : IPopFileSerializable<String> {
+enum class WeaponRestriction : IVDFSerializableValue<String> {
 	PrimaryOnly,
 	SecondaryOnly,
 	MeleeOnly;
 	
-	override val _popFileRepr = name
+	override val _vdfRepr = name
 }

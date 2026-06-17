@@ -2,7 +2,7 @@ package btpos.tf2.popfiledsl.types.populators
 
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
 import btpos.tf2.popfiledsl.serialization.codecs.StringLiteralCodec
 import btpos.tf2.popfiledsl.types.spawners.Spawner
 import btpos.tf2.popfiledsl.types.specifics.OutputAction
@@ -12,7 +12,7 @@ class WaveSpawnPopulator : Populator() {
 	override val _popFileStructIdentifier: Any
 		get() = "WaveSpawn"
 	
-	class Support(override val _popFileRepr: String) : IPopFileSerializable<String> {
+	class Support(override val _vdfRepr: String) : IVDFSerializableValue<String> {
 		companion object {
 			/**
 			 * When set, enables support bots, respecting the maximum number of bots set by [WaveSpawner.totalCount][totalCount].

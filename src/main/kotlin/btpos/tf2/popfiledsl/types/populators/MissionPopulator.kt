@@ -2,7 +2,7 @@ package btpos.tf2.popfiledsl.types.populators
 
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.singleStruct
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
 import btpos.tf2.popfiledsl.types.populators.MissionPopulator.Objective
 import btpos.tf2.popfiledsl.types.spawners.Spawner
 import btpos.tf2.popfiledsl.types.specifics.Where
@@ -11,7 +11,7 @@ class MissionPopulator : Populator() {
 	override val _popFileStructIdentifier: Any
 		get() = "Mission"
 	
-	data class Objective(override val _popFileRepr: Any) : IPopFileSerializable<Any> {
+	data class Objective(override val _vdfRepr: Any) : IVDFSerializableValue<Any> {
 		companion object {
 			val DESTROY_SENTRIES = Objective("DestroySentries")
 			val SEEK_AND_DESTROY = Objective("SeekAndDestroy")

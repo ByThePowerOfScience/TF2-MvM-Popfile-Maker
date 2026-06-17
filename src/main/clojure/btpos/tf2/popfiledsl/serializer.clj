@@ -1,69 +1,63 @@
 (ns btpos.tf2.popfiledsl.serializer
   (:require [clojure.string :as str])
-  (:import (btpos.tf2.popfiledsl.serialization IPopFileSerializable PopFileEntry PopFileMap PopFileStringLiteral)
+  (:import (btpos.tf2.popfiledsl.serialization VDFKeyValue VDFSubtree VDFStringLiteral)
            (clojure.lang ISeq)
            (java.util Collection)))
 
-
-
+; By the time we get here, EVERYTHING should be a serializable representation.
 (derive Collection ::collection)
 (derive ISeq ::collection)
 
-; Serialize some item to a popfile form
-(defmulti pop-file-serialize (fn [item] (class item)))
 
 ; Different kinds of entries do need to be formatted differently
-(defmulti pop-file-serialize-entry (fn [_key value] (type (.getValue value))))
+(defmulti pop-file-serialize-keyvalue (fn [_key value] (type (.getValue value))))
+
+; Serialize some item to a popfile form
+(defmulti pop-file-serialize-key-or-value (fn [item] (class item)))
 
 
 
-; default, just `toString` it
-(defmethod pop-file-serialize :default [item]
-  (str item))
 
-; string literals need to be quoted, but any other primitive (including normal strings) can be pasted as-is
-(defmethod pop-file-serialize PopFileStringLiteral [^PopFileStringLiteral item]
-  (str \" (.string item) \"))
-
-; get the representation from the item
-(defmethod pop-file-serialize IPopFileSerializable [^IPopFileSerializable item]
-  (pop-file-serialize (.get_popFileRepr item)))
-
-; raw lists should have their elements separated by spaces,
-; though I'm wondering if this is necessary since we handle collections through `pop-file-serialize-entry`
-; TODO
-(defmethod pop-file-serialize Collection [^Collection item]
-  (->> item
-       (map pop-file-serialize)
-       (str/join " ")))
-
-
-
-; Really, everything is just identifier-value pairs, it's just that structs have their own identifiers.
-(defmethod pop-file-serialize PopFileEntry [^PopFileEntry entry]
-  (pop-file-serialize-entry (.getKey entry) (.getValue entry)))
-
-; surround maps' elements with braces
-(defmethod pop-file-serialize PopFileMap [^PopFileMap subtree]
-  (str
-    "{\n"
-    (pop-file-serialize (.getEntries subtree))
-    "\n}"))
-
+; This should ONLY be called on the top-level. Anywhere else, this is an error...
+(defmethod pop-file-serialize-key-or-value VDFKeyValue [^VDFKeyValue entry]
+  (pop-file-serialize-keyvalue (.getKey entry) (.getValue entry)))
 
 
 ; ===== FORMATTING ENTRIES =====
 
-(defmethod pop-file-serialize-entry PopFileMap [key value]
-  (str (pop-file-serialize key) "\n"
-       (pop-file-serialize value)))
+; If the value is a Map, add a newline between the key and the value
+(defmethod pop-file-serialize-keyvalue VDFSubtree [key value]
+  (str (pop-file-serialize-key-or-value key) "\n"
+       (pop-file-serialize-key-or-value value)))
 
-; Convert a list of [key [value1 value2 value3]] into a [[key value1] [key value2] ...]
-(defmethod pop-file-serialize-entry ::collection [key ^Collection value]
-  (pop-file-serialize (map #(.PopFileEntry key %) (seq value))))
+; If the value isn't a map we need to offset with a newline, just write both normally
+(defmethod pop-file-serialize-keyvalue :default [key value]
+  (str (pop-file-serialize-key-or-value key) " " (pop-file-serialize-key-or-value value)))
 
-; If the value isn't a list we need to destructure or a map we need to offset with a newline, just write both normally
-(defmethod pop-file-serialize-entry :default [key value]
-  (str (pop-file-serialize key) " " (pop-file-serialize value)))
+
+
+
+; default, just `toString` it
+(defmethod pop-file-serialize-key-or-value :default [item]
+  (str item))
+
+; I swear I saw this done once, but this might be an error.
+(defmethod pop-file-serialize-key-or-value ::collection [item]
+  (str/join " " (seq item)))
+
+; string literals need to be quoted, but any other primitive (including normal strings) can be pasted as-is
+(defmethod pop-file-serialize-key-or-value VDFStringLiteral [^VDFStringLiteral item]
+  (str \" (.string item) \"))
+
+
+; surround subtrees' elements with braces
+(defmethod pop-file-serialize-key-or-value VDFSubtree [^VDFSubtree subtree]
+  (str
+    "{\n"
+    (str/join "\n" (map pop-file-serialize-keyvalue (.getEntries subtree)))
+    "\n}"))
+
+
+
 
 

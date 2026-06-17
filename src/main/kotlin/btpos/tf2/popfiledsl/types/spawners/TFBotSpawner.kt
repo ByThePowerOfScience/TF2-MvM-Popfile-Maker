@@ -1,7 +1,7 @@
 package btpos.tf2.popfiledsl.types.spawners
 
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
-import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.customHandler
+import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.multiStruct
 import btpos.tf2.popfiledsl.modeling.KeyValueMapImpl
 import btpos.tf2.popfiledsl.types.bots.BehaviorModifier
 import btpos.tf2.popfiledsl.types.bots.BotSkill
@@ -52,9 +52,7 @@ var TFBotSpawner.behaviorModifiers: MutableList<BehaviorModifier>? by addField("
 
 var TFBotSpawner.maxVisionRange: Float? by addField("MaxVisionRange")
 
-var TFBotSpawner.items: MutableList<TFItem> by customHandler(isRequired = true, "Items", ::mutableListOf) { currentMap, thisValue ->
-	currentMap.withEntries(thisValue.flatMap(TFItem::_popFileRepr))
-}
+val TFBotSpawner.items: MutableList<TFItem> by multiStruct()
 
 var TFBotSpawner.attributes: MutableList<TFBotAttribute>? by addField("Attributes") { mutableListOf() }
 

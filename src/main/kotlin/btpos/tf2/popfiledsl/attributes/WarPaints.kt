@@ -1,8 +1,8 @@
 package btpos.tf2.popfiledsl.attributes
 
 import btpos.tf2.popfiledsl.modeling.IKeyValueMap
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
-import btpos.tf2.popfiledsl.serialization.PopFileStringLiteral.Companion.literal
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
+import btpos.tf2.popfiledsl.serialization.VDFStringLiteral.Companion.literal
 
 class WarPaintsScope(private val container: IKeyValueMap)  {
 	var id: Int?
@@ -13,8 +13,8 @@ class WarPaintsScope(private val container: IKeyValueMap)  {
 		get() = container.getTyped("set_item_texture_wear".literal())
 		set(value) = container.setNullable("set_item_texture_wear".literal(), value)
 	
-	class Wear(val id: Double) : IPopFileSerializable<Double> {
-		override val _popFileRepr: Double
+	class Wear(val id: Double) : IVDFSerializableValue<Double> {
+		override val _vdfRepr: Double
 			get() = id
 		
 		companion object {

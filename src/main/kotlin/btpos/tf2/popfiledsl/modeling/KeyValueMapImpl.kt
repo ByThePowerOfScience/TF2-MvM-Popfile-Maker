@@ -1,8 +1,8 @@
 package btpos.tf2.popfiledsl.modeling
 
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
-import btpos.tf2.popfiledsl.serialization.PopFileEntry
-import btpos.tf2.popfiledsl.serialization.PopFileMap
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
+import btpos.tf2.popfiledsl.serialization.VDFKeyValue
+import btpos.tf2.popfiledsl.serialization.VDFSubtree
 import btpos.tf2.popfiledsl.serialization.codecs.Codec
 import kotlin.collections.set
 import kotlin.properties.ReadWriteProperty
@@ -15,10 +15,10 @@ interface IKeyValueMap : MutableMap<Any, Any> {
 }
 
 class KeyValueMapImpl(private val _attributes: MutableMap<Any, Any> = mutableMapOf())
-	: IPopFileSerializable<PopFileMap>, IKeyValueMap, MutableMap<Any, Any> by _attributes
+	: IVDFSerializableValue<VDFSubtree>, IKeyValueMap, MutableMap<Any, Any> by _attributes
 {
-	override val _popFileRepr: PopFileMap
-		get() = PopFileMap(_attributes.map { (k, v) -> PopFileEntry(k, v) })
+	override val _vdfRepr: VDFSubtree
+		get() = VDFSubtree(_attributes.map { (k, v) -> VDFKeyValue(k, v) })
 	
 	override fun <T> getTyped(key: Any): T? {
 		return _attributes[key] as T?

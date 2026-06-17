@@ -1,19 +1,16 @@
 package btpos.tf2.popfiledsl.types
 
-import btpos.tf2.popfiledsl.modeling.CustomHandler
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.addField
 import btpos.tf2.popfiledsl.modeling.IMvMSubtree.Companion.multiStruct
 import btpos.tf2.popfiledsl.modeling.IMvMSubtreeMap
 import btpos.tf2.popfiledsl.modeling.PopFileDSL
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
-import btpos.tf2.popfiledsl.serialization.PopFileEntry
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableKeyValue
 import btpos.tf2.popfiledsl.serialization.codecs.Codec
 import btpos.tf2.popfiledsl.types.populators.Populator
 
 @PopFileDSL
 class PopulationManager : IMvMSubtreeMap {
-	override val _rawEntries: MutableMap<Any, IPopFileSerializable<Iterable<PopFileEntry>>> = mutableMapOf()
-	override val _customHandlers: MutableMap<Any, CustomHandler<*>> = mutableMapOf()
+	override val _rawEntries: MutableMap<Any, IVDFSerializableKeyValue> = mutableMapOf()
 	
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
 }

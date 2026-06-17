@@ -1,8 +1,8 @@
 package btpos.tf2.popfiledsl.types.bots
 
-import btpos.tf2.popfiledsl.serialization.IPopFileSerializable
+import btpos.tf2.popfiledsl.serialization.IVDFSerializableValue
 
-class BotSkill(override val _popFileRepr: String) : IPopFileSerializable<String> {
+class BotSkill(override val _vdfRepr: String) : IVDFSerializableValue<String> {
 	companion object {
 		val Easy = BotSkill("Easy")
 		val Normal = BotSkill("Normal")
