@@ -52,7 +52,7 @@ object WikiTableParser {
 	}.plus().named("V1")
 	
 	
-	val K = Parser.phrase
+	val K = Parser.conditional("[^\\{\\}=]") { it != '{' && it != '}' && it != '=' && it != '|' }.plus()
 	
 	val VValues: NamedParser<Either<Map<String, StringOrMap?>, String>?> = ((::table::get.thunk() or V1).optional()).named("(?:V1|table|empty)")
 	
@@ -78,24 +78,24 @@ object WikiTableParser {
 				.then(::table::get.thunk()) { _, it -> it })
 				.plus()
 		) { _, it -> it }
-		.then(string("|}").optional()) { it, _ -> it }
+		.then((Parser.whitespace.star().then(string("|}")) { _, _ -> null }).optional()) { it, _ -> it }
 		
 	
-	
-	fun parseWiki(): List<NamedAttribute> {
-		val base = baseParser.parse(Path(BuildConfig.WIKI_TABLE_FILE).readText()) ?: error("Failed to parse file.")
-		return base.mapNotNull { it: Map<String, StringOrMap?> ->
-			val id = it["id"]!!
-			val name = it["name"] ?: return@mapNotNull null
-			val desc = it.get("description")?.mapOrNull()?.get("en")?.stringOrNull()
-			val valueType = it["value-type"]
-			val cls = it["class"]
-			val effectType = it["effect-type"]
-			val notes = it.get("notes")?.mapOrNull()?.keys?.toList().orEmpty()
-			
-			NamedAttribute(name.stringOrNull()!!, id.stringOrNull()!!.toInt(), desc.orEmpty(), cls?.stringOrNull(), valueType?.stringOrNull(), effectType?.stringOrNull(), notes)
-		}
-	}
+//
+//	fun parseWiki(): List<NamedAttribute> {
+//		val base = baseParser.parse(Path(BuildConfig.WIKI_TABLE_FILE).readText()) ?: error("Failed to parse file.")
+//		return base.mapNotNull { it: Map<String, StringOrMap?> ->
+//			val id = it["id"]!!
+//			val name = it["name"] ?: return@mapNotNull null
+//			val desc = it.get("description")?.mapOrNull()?.get("en")?.stringOrNull()
+//			val valueType = it["value-type"]
+//			val cls = it["class"]
+//			val effectType = it["effect-type"]
+//			val notes = it.get("notes")?.mapOrNull()?.keys?.toList().orEmpty()
+//
+//			NamedAttribute(name.stringOrNull()!!, id.stringOrNull()!!.toInt(), desc.orEmpty(), cls?.stringOrNull(), valueType?.stringOrNull(), effectType?.stringOrNull(), notes)
+//		}
+//	}
 }
 
 data class NamedAttribute(
@@ -104,6 +104,5 @@ data class NamedAttribute(
 	val englishInGameDesc: String,
 	val attrClass: String?,
 	val valueType: String?,
-	val effectType: String?,
-	val notes: List<String>
+	val effectType: String?
 )

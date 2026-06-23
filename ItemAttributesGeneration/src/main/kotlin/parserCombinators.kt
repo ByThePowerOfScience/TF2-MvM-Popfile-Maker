@@ -48,7 +48,7 @@ fun interface Parser<T> {
 				val nextIter = iter.next()
 				if (nextIter.char == literal)
 					return literal to nextIter.nextIter;
-				return debug_fail();
+				return null;
 			}
 			
 			override fun toString(): String {
@@ -68,7 +68,7 @@ fun interface Parser<T> {
 					
 					val (nextChar, nextIter) = currentIter.next()
 					if (nextChar != c)
-						return debug_fail();
+						return null;
 					
 					currentIter = nextIter
 				}
@@ -138,7 +138,10 @@ fun interface Parser<T> {
 		private data class MapParser<T, U>(val parser: Parser<T>, val mapper: (T) -> U) : Parser<U> {
 			override fun invoke(iter: CopyableStringIterator): Pair<U, CopyableStringIterator>? {
 				return parser(iter)?.run { mapper(first) to second }
-				       ?: debug_fail()
+			}
+			
+			override fun toString(): String {
+				return parser.toString()
 			}
 		}
 		
@@ -216,7 +219,7 @@ fun interface Parser<T> {
 				
 				val currItems = StringBuilder()
 				val (item, niter) = parser(iter)
-				                    ?: return debug_fail()
+				                    ?: return null
 				currItems.append(item)
 				
 				var currIter = niter
@@ -250,7 +253,7 @@ fun interface Parser<T> {
 				val (nextChar, nextIter) = iter.next()
 				if (predicate.test(nextChar))
 					return nextChar to nextIter;
-				return debug_fail();
+				return null;
 			}
 			
 			override fun toString(): String {
