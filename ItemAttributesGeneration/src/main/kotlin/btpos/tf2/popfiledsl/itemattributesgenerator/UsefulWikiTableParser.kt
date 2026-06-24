@@ -95,7 +95,7 @@ object UsefulWikiTableParser {
 				val valuetype = valueType.find(it)?.groupValues?.get(1) ?: return@mapNotNull null
 				val effecttype = effectType.find(it)?.groupValues?.get(1)
 				
-				NamedAttribute(attrName = name, desc = desc.orEmpty(), type = valuetype, className = cls, effectType= effecttype.orEmpty())
+				NamedAttribute(attrName = name, inGameDesc = desc, attrType = valuetype, className = cls, effectType = effecttype.orEmpty())
 			}
 	}
 }

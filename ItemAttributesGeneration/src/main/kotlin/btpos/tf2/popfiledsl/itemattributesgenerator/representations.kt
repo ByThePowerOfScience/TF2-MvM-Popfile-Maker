@@ -7,13 +7,10 @@ fun String.camelCase(): String {
 }
 
 sealed class ISortedNamedAttribute {
-	abstract val varName: String?
+	abstract val varName: String
 	
-	open val note: String?
-		get() = null
-	
-	open val desc: String?
-		get() = null
+	abstract var comments: List<String>
+	abstract fun addCommentsNested(comments: List<String>)
 	
 	/**
 	 * Expose the comment for anything that overrides the property creation
@@ -41,32 +38,54 @@ sealed class ISortedNamedAttribute {
 	abstract fun withVarName(name: String): ISortedNamedAttribute
 	
 	
-	fun buildComment() = "/**\n" +
-	                     " * ${makeComment().joinToString("\n * ")}\n" +
-	                     " */"
+	fun buildComment() = makeComment().takeIf { it.isNotEmpty() }?.let {"/**\n" +
+	                     " * ${it.joinToString("\n * ")}\n" +
+	                     " */" } ?: ""
 	
 	abstract fun getKotlinType(): String
+	
+	abstract fun setCodec(codec: (NamedAttribute) -> FakeCodec?)
+	
 }
 
-data class NamedAttribute(val attrName: String, override val desc: String, val type: String, val className: String, override val varName: String = attrName.camelCase(), val effectType: String? = null, val codec: FakeCodec? = null, override val note: String? = null, val isUnimplemented: Boolean = false, val forceType: String? = null) : ISortedNamedAttribute() {
+data class NamedAttribute(
+	val attrName: String,
+	val inGameDesc: String?,
+	/** Like `additive_percentage` */
+	val attrType: String,
+	val className: String,
+	override val varName: String = attrName.camelCase(),
+	/** positive, negative, or null */
+	val effectType: String? = null,
+	var codec: FakeCodec? = null,
+	override var comments: List<String> = listOf(),
+	val isUnimplemented: Boolean = false,
+	var forceType: String? = null
+) : ISortedNamedAttribute() {
 //	init {
 //		if (type == "set_weapon_mode" && codec == null)
 //			error("Forgot the weapon mode on $this")
 //	}
-//
-	init {
-		if (varName == "negative")
-			error(this.toString())
+	override fun addCommentsNested(comments: List<String>) {
+		this.comments += comments
+	}
+	
+	val positiveOrNegative get() = when (effectType) {
+		"positive" -> true
+		"negative" -> false
+		else -> null
 	}
 	
 	override fun getKotlinType(): String {
 		if (codec != null)
-			return codec.visibleType
+			return codec!!.visibleType
+		else if (forceType != null)
+			return forceType!!
 		
-		if ("percentage" in type)
+		if ("percentage" in attrType)
 			return "Float"
 		
-		return when (type) {
+		return when (attrType) {
 			"additive" -> "Int"
 			"particle_index" -> "ParticleIndex"
 			"or" -> "Boolean"
@@ -77,8 +96,12 @@ data class NamedAttribute(val attrName: String, override val desc: String, val t
 			"killstreakeffect_index" -> "KillstreakEffectIndex"
 			"killstreak_idleeffect_index" -> "KillstreakIdleEffect"
 			"from_lookup_table" -> "FromLookupTable"
-			else -> error("unexpected type: $type")
+			else -> error("unexpected type: $attrType")
 		}
+	}
+	
+	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {
+		this.codec = codec(this)
 	}
 	
 	override fun propertyString(): String {
@@ -93,9 +116,13 @@ data class NamedAttribute(val attrName: String, override val desc: String, val t
 	
 	override fun makeComment(): List<String> {
 		return buildList(2) {
-			add("${desc.replace("'''%s1'''", "N")} - $type")
-			if (note != null)
-				add("($note)")
+			inGameDesc?.let { add(it.replace("'''%s1'''", "N")); add("") }
+			
+			add("Value type: $attrType")
+			if (comments.isNotEmpty()) {
+				add("")
+				addAll(comments)
+			}
 		}
 	}
 	
@@ -108,7 +135,7 @@ data class NamedAttribute(val attrName: String, override val desc: String, val t
 	}
 	
 	override fun toString(): String {
-		return """Attr("$attrName", "$desc", "$type", "$className", "$varName", "$codec", "$isUnimplemented", "$note", "$forceType")"""
+		return """Attr("$attrName", "$inGameDesc", "$attrType", "$className", "$varName", "$codec", "$isUnimplemented", "$comments", "$forceType")"""
 	}
 }
 
@@ -119,18 +146,22 @@ data class PenaltyBonus private constructor(
 	override val varName: String,
 	val penalty: ISortedNamedAttribute,
 	val bonus: ISortedNamedAttribute,
-	override val note: String? = null
-) : ISortedNamedAttribute(), IContainMultipleAttributes {
+	override var comments: List<String> = emptyList()
+) : IContainMultipleAttributes() {
 	override fun toString(): String {
-		return """PenaltyBonus("$varName", $penalty, $bonus, "$note")"""
+		return """PenaltyBonus("$varName", $penalty, $bonus, "$comments")"""
 	}
+	
+	override val containedAttributes: Collection<ISortedNamedAttribute>
+		get() = listOf(penalty, bonus)
+	
 	companion object {
 		const val NEITHER_NESTED = "BonusPenalty"
 		const val BOTH_NESTED = "BonusPenalty_BothNested"
 		const val BONUS_IS_NESTED = "BonusPenalty_BonusNested"
 		const val PENALTY_IS_NESTED = "BonusPenalty_PenaltyNested"
 		
-		operator fun invoke(varName: String, decrease: ISortedNamedAttribute, increase: ISortedNamedAttribute, note: String? = null) = PenaltyBonus(varName, decrease.withVarName("decrease"), increase.withVarName("increase"), note)
+		operator fun invoke(varName: String, decrease: ISortedNamedAttribute, increase: ISortedNamedAttribute, note: String? = null) = PenaltyBonus(varName, decrease.withVarName("decrease"), increase.withVarName("increase"), listOfNotNull(note))
 	}
 	
 	private val whenThing
@@ -138,8 +169,7 @@ data class PenaltyBonus private constructor(
 			penalty is NamedAttribute && bonus is NamedAttribute -> 0
 			penalty !is NamedAttribute && bonus !is NamedAttribute -> 1
 			bonus is NamedAttribute -> 2
-			penalty is NamedAttribute -> 3
-			else -> error("won't happen")
+			else -> 3
 		}
 	
 	override fun propertyValue(): String {
@@ -170,16 +200,12 @@ data class PenaltyBonus private constructor(
 	
 	override fun makeComment(): List<String> {
 		return buildList {
-			note?.let { add(it); add("") }
+			addAll(comments)
 			add("Bonus:")
-			addAll(
-				bonus.makeComment()
-					.map { "\t" + it })
+			addAll(penalty.makeComment().map { "\t" + it })
 			add("")
 			add("Penalty:")
-			addAll(
-				penalty.makeComment()
-					.map { "\t" + it })
+			addAll(penalty.makeComment().map { "\t" + it })
 		}
 	}
 	
@@ -203,9 +229,22 @@ data class PenaltyBonus private constructor(
 	}
 }
 
-interface IContainMultipleAttributes : Iterable<ISortedNamedAttribute> {
+abstract class IContainMultipleAttributes : Iterable<ISortedNamedAttribute>, ISortedNamedAttribute() {
+	abstract val containedAttributes: Collection<ISortedNamedAttribute>
+	
 	fun writeAttributesInClassBody(attrs: List<ISortedNamedAttribute>, indent: String): String {
 		return attrs.joinToString("\n\n") { it.buildComment() + "\n" + it.propertyString() }.prependIndent(indent)
+	}
+	
+	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {
+		containedAttributes.forEach {
+			it.setCodec(codec)
+		}
+	}
+	
+	override fun addCommentsNested(comments: List<String>) {
+		this.comments += comments
+		this.containedAttributes.forEach { it.addCommentsNested(comments) }
 	}
 }
 
@@ -218,15 +257,15 @@ val BASE_GUN = "AllGunAttributes"
 open class NamedAttributeScope(
 	val scopeName: String,
 	vararg val attrs: ISortedNamedAttribute,
-	override val note: String? = null,
+	override var comments: List<String> = emptyList(),
 	override val varName: String = scopeName.decapitalize()
-) : ISortedNamedAttribute(), IContainMultipleAttributes {
+) : IContainMultipleAttributes() {
 	override fun toString(): String {
-		return """Scope("$scopeName", ${attrs.joinToString(", ")}, "$note", "$varName")"""
+		return """Scope("$scopeName", ${attrs.joinToString(", ")}, "$comments", "$varName")"""
 	}
 	
-	override val desc: String?
-		get() = note
+	override val containedAttributes: Collection<ISortedNamedAttribute>
+		get() = attrs.asList()
 	
 	constructor(scopeName: String, vararg namesToAttrs: Pair<String, NamedAttribute>) : this(scopeName, *namesToAttrs.map { it.second.copy(varName = it.first) }
 		.toTypedArray())
@@ -240,17 +279,18 @@ open class NamedAttributeScope(
 	}
 	
 	override fun withVarName(name: String): ISortedNamedAttribute {
-		return NamedAttributeScope(scopeName = name.capitalize(), attrs = attrs, note = note)
+		return NamedAttributeScope(scopeName = name.capitalize(), attrs = attrs, comments = comments)
 	}
 	
 	override fun generateTopLevelMembers(): List<String> {
+		val clsname = scopeName + "Attributes"
 		return listOf(
-			buildComment().prependIndent() + "\n" + """object $scopeName {
-	operator fun invoke(scope: $scopeName.() -> Unit) {
+			buildComment() + "\n" + """object $clsname {
+	operator fun invoke(scope: $clsname.() -> Unit) {
 		this.apply(scope)
 	}
 	
-	${writeAttributesInClassBody(attrs.asList(), "\t")}
+${writeAttributesInClassBody(attrs.asList(), "\t")}
 }"""
 		) + attrs.flatMap { it.generateTopLevelMembers() }
 	}
@@ -264,28 +304,31 @@ open class NamedAttributeScope(
 	}
 	
 	override fun makeComment(): List<String> {
-		return listOfNotNull(note)
+		return comments
 	}
 }
 
 val hierarchiesByName = mutableMapOf<String, HierarchyNamedAttributeScope>()
 
-class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, vararg attrs: ISortedNamedAttribute, note: String? = null) : NamedAttributeScope(scopeName, attrs = attrs, note) {
+class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, vararg attrs: ISortedNamedAttribute, note: String? = null) : NamedAttributeScope(scopeName, attrs = attrs, listOfNotNull(note)) {
 	init {
 		hierarchiesByName[scopeName] = this
 	}
 	
 	override fun generateTopLevelMembers(): List<String> {
+		val clsname = scopeName + "Attributes"
 		return listOf(
-			buildComment().prependIndent() + "\n" +
-			"""open class $scopeName${extendsFrom?.let { ": I$it" } ?: ""} {
-	companion object : $scopeName
-	
-	operator fun invoke(scope: $scopeName.() -> Unit) {
-		this.apply(scope)
+			buildComment() + "\n" +
+			"""abstract class $clsname ${extendsFrom?.let { ": $it()" } ?: ""}{
+	companion object : ${clsname}() {
+		operator fun invoke(scope: ${clsname}.Companion.() -> Unit) {
+			this.apply(scope)
+		}
 	}
 	
-	${writeAttributesInClassBody(attrs.asList(), "\t")}
+	
+	
+${writeAttributesInClassBody(attrs.asList(), "\t")}
 }""") + attrs.flatMap { it.generateTopLevelMembers() }
 	}
 }
@@ -295,7 +338,7 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
  *
  * Actually this is really just a scope...
  */
-class Custom(override val varName: String, fields: List<ISortedNamedAttribute>, desc: String? = null) : NamedAttributeScope(scopeName = varName.capitalize(), attrs = fields.toTypedArray(), note = desc, varName = varName) {
+class Custom(override val varName: String, fields: List<ISortedNamedAttribute>, desc: String? = null) : NamedAttributeScope(scopeName = varName.capitalize(), attrs = fields.toTypedArray(), comments = listOfNotNull(desc), varName = varName) {
 	constructor(varName: String, vararg fields: Pair<String, ISortedNamedAttribute>, note: String? = null) : this(varName, fields.map { it.second.withVarName(it.first) }, note)
 	
 	constructor(vararg fields: Pair<String, ISortedNamedAttribute>) : this("", fields.map { it.second.withVarName(it.first) })
@@ -305,18 +348,18 @@ data class Vis(
 	val visible: NamedAttribute,
 	val hidden: NamedAttribute,
 	val additionalItems: List<NamedAttribute>,
-	override val varName: String? = null
-) : ISortedNamedAttribute(), IContainMultipleAttributes {
+	override val varName: String = visible.varName
+) : IContainMultipleAttributes() {
 	override fun toString(): String {
 		return """Vis($visible, $hidden, listOf(${additionalItems.joinToString(", ")}), "$varName")"""
 	}
 	
-	constructor(visible: NamedAttribute, hidden: NamedAttribute, vararg additionalItems: NamedAttribute, varName: String? = null) : this(visible, hidden, additionalItems.asList(), varName)
+	override val containedAttributes: Collection<ISortedNamedAttribute>
+		get() = listOf(visible, hidden) + additionalItems
 	
-	override val note: String?
-		get() = null
-	override val desc: String?
-		get() = null
+	constructor(visible: NamedAttribute, hidden: NamedAttribute, vararg additionalItems: NamedAttribute, varName: String = visible.varName) : this(visible, hidden, additionalItems.asList(), varName)
+	
+	override var comments: List<String> = emptyList()
 	
 	override fun makeComment(): List<String> {
 		return buildList {
@@ -340,7 +383,7 @@ data class Vis(
 	
 	fun inheritedTemplate(): String {
 		return """class $customClassName<VIS : Any, HIDDEN : Any, FROM1 : Any, TO1 : Any, FROM2 : Any, TO2 : Any>(vis_attrName: String, hidden_attrName: String) : VisHidden<VIS, HIDDEN>(vis_attrName, hidden_attrName) {
-	${writeAttributesInClassBody(additionalItems, "\t")}
+${writeAttributesInClassBody(additionalItems, "\t")}
 }"""
 	}
 	

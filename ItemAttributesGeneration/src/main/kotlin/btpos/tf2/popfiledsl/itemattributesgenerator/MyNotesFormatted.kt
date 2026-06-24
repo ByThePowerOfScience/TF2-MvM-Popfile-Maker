@@ -4,7 +4,7 @@ object MyNotesFormatted {
 	sealed interface IAttrThing {
 		operator fun contains(clsName: String): Boolean
 		
-		fun absorb(classToNamed: Map<String, List<NamedAttribute>>): List<ISortedNamedAttribute>
+		fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute?
 	}
 	
 	private fun String.comma() = this.split(", ")
@@ -13,6 +13,7 @@ object MyNotesFormatted {
 		companion object {
 			val attrRegex = Regex("""^\s*-\s*(?:On (\w+):)?\s*`(\w+)`: (\w+)$""")
 			val noteRegex = Regex("""^\s*- (.+)$""")
+			val linkRegex = Regex("""\[\w+]\(#(\w+)\)""")
 			
 		    operator fun invoke(string: String, notes: List<String> = listOf()): AttrClassUsage {
 			    val (cls, type) = attrRegex.matchEntire(string)?.destructured ?: error("Failed to parse attr entry for $string")
@@ -33,18 +34,40 @@ object MyNotesFormatted {
 				
 				return AttrClassUsage(name, type, notes)
 			}
+			
+			val attrToSelector = mapOf(
+				"fists have radial buff" to 1,
+				"set cloak is movement based" to 1,
+				"set cloak is feign death" to 2,
+				"mod bat launches balls" to 1,
+				"mod bat launches ornaments" to 2,
+				"revolver use hit locations" to 1,
+				"mod shovel damage boost" to 1,
+				"mod shovel speed boost" to 2,
+				"lunchbox adds maxhealth bonus" to 1,
+				"sniper no headshots" to 1,
+				"set icicle knife mode" to 3,
+				"mod flaregun fires pellets with knockback" to 3
+			)
 		}
 		
 		override fun contains(clsName: String): Boolean {
 			return attr_class == clsName
 		}
 		
-		override fun absorb(classToNamed: Map<String, List<NamedAttribute>>): List<ISortedNamedAttribute> {
-			if (attr_class in classToNamed) {
-				val `our class's named attributes` = classToNamed[attr_class]
-				return `our class's named attributes`!!
-			} else {
-				return emptyList();
+		
+		override fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute? {
+			return classToNamed[attr_class]?.apply {
+				setCodec {
+					if (attr_class == "set_weapon_mode") {
+						selectorCodec(attrToSelector[it.attrName] ?: error("no selector found for ${it.attrName}"))
+					} else if (kType == "Boolean") {
+						bool
+					} else {
+						it.codec
+					}
+				}
+				addCommentsNested(notes)
 			}
 		}
 	}
@@ -62,16 +85,16 @@ object MyNotesFormatted {
 		/**
 		 * Turn this nested scoped mess of CLASSES into a nested scoped mess of NAMED ATTRIBUTES
 		 */
-		override fun absorb(classToNamed: Map<String, List<NamedAttribute>>): List<ISortedNamedAttribute> {
-			val mapped = attrClassesOrNestedScopes.flatMap { it.absorb(classToNamed) }
-			return listOf(NamedAttributeScope(this.name, *mapped.toTypedArray(), note="Items: ${applicableWeapons.flatten().joinToString(", ")}"))
+		override fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute? {
+			val mapped = attrClassesOrNestedScopes.mapNotNull { it.absorb(classToNamed) }
+			return NamedAttributeScope(this.name, *mapped.toTypedArray(), comments=listOf("Items: ${applicableWeapons.flatten().joinToString(", ")}"))
 		}
 	}
 	
 	class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAttrThing>, applicableWeapons: List<Any> = listOf()) : AttrClassScope(name, attrClassesOrNestedScopes, applicableWeapons) {
-		override fun absorb(classToNamed: Map<String, List<NamedAttribute>>): List<ISortedNamedAttribute> {
-			val mapped = attrClassesOrNestedScopes.flatMap { it.absorb(classToNamed) }
-			return listOf(HierarchyNamedAttributeScope(this.name, getParent(this.name), *mapped.toTypedArray(), note="Items: ${applicableWeapons.flatten().joinToString(", ")}"))
+		override fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute? {
+			val mapped = attrClassesOrNestedScopes.mapNotNull { it.absorb(classToNamed) }
+			return HierarchyNamedAttributeScope(this.name, getParent(this.name), *mapped.toTypedArray(), note= applicableWeapons.takeIf { it.isNotEmpty()}?.flatten()?.joinToString(", ")?.let { "Items: $it" } )
 		}
 	}
 	
@@ -301,9 +324,7 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage("mult_reload_time_while_healed", "Float", listOf()),
 				AttrClassUsage(
-					"weapon_allow_inspect", "Boolean (technically float)", listOf(
-						"treated as boolean in `CanInspect` method"
-					)
+					"weapon_allow_inspect", "Boolean", listOf()
 				)
 			)
 		),
@@ -467,8 +488,7 @@ object MyNotesFormatted {
 						"Determines flame particle effect",
 						"1 = phlog",
 						"2 = MvM giant pyrobot",
-						"3 = rainblower",
-						"Also makes a bubble wand while taunting"
+						"3 = rainblower (Also makes a bubble wand while taunting)"
 					)
 				),
 				AttrClassUsage(

@@ -1,7 +1,6 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
-import btpos.tf2.popfiledsl.itemattributesgenerator.filterKeysNotNull
-import kotlin.collections.map
+import kotlin.collections.mapValues
 
 data class ObjectInProgress(val name: String, val doc: String, val attrs: MutableList<ISortedNamedAttribute> = mutableListOf())
 
@@ -29,19 +28,53 @@ fun main() {
 	 */
 	
 	
-	val hierarchy = MyNotesFormatted.hierarchy
-	
 	val UNKNOWN_SCOPE = MyNotesFormatted.AttrClassScope("Uncategorized")
 	
 	val attrClassesByBaseClassFromNotes = MyNotesFormatted.attrsByClass
+	val hierarchy = MyNotesFormatted.hierarchy
 	
-	val namedAttrsFromWiki =
-		UsefulWikiTableParser.parseWiki().groupBy { it.className }
+	/**
+	 * Sort all named attributes by their class, group them up into scopes
+	 */
+	val namedAttributeScopesByClassName: Map<String, ISortedNamedAttribute> =
+		UsefulWikiTableParser.parseWiki()
+			.groupBy { it.className }
+			.mapValues<_, _, ISortedNamedAttribute> { (_, attrsForAClass) ->
+				if (attrsForAClass.size == 1)
+					return@mapValues attrsForAClass.first()
+				
+				attrsForAClass.groupBy { it.positiveOrNegative }
+					.mapValues { (isPos, posOrNegItem) ->
+						if (posOrNegItem.isEmpty())
+							error("I don't think this should happen but posneg is empty list for $isPos for $attrsForAClass")
+						else if (posOrNegItem.size == 1) {
+							return@mapValues posOrNegItem.first()
+						}
+						
+						val isHidden = posOrNegItem.groupBy { "hidden" in it.attrName.lowercase() }
+						when (isHidden.size) {
+							1 -> isHidden.values.first().first()
+							2 -> Vis(isHidden[false]!!.first(), isHidden[true]!!.first())
+							else -> Custom(posOrNegItem.first().varName, posOrNegItem)
+						}
+					}
+					.let { sortedByIsPositive ->
+						// convert this into a PenaltyBonus
+						if (true in sortedByIsPositive && false in sortedByIsPositive && null !in sortedByIsPositive) {
+							PenaltyBonus(
+								sortedByIsPositive[false]?.varName ?: sortedByIsPositive[true]?.varName ?: error("No var name for $sortedByIsPositive"),
+								sortedByIsPositive[false]!!,
+								sortedByIsPositive[true]!!
+							)
+						} else {
+							NamedAttributeScope(sortedByIsPositive.values.first().varName!!.capitalize(), *sortedByIsPositive.values.toTypedArray())
+						}
+					}
+			}
 	
 
-	val scopes = namedAttrsFromWiki.flatMap { (clsName, attrs) ->
-		// get the scope containing this attribute
-		(attrClassesByBaseClassFromNotes.firstOrNull { (clsName in it) } ?: UNKNOWN_SCOPE).absorb(namedAttrsFromWiki)
+	val scopes = attrClassesByBaseClassFromNotes.mapNotNull { baseClassScope ->
+		baseClassScope.absorb(namedAttributeScopesByClassName)
 	}
 
 	println(scopes.first().generateTopLevelMembers())
