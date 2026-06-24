@@ -4,12 +4,12 @@ import btpos.tf2.popfiledsl.itemattributesgenerator.ItemAttributesGeneration.Bui
 import java.io.FileReader
 
 object UsefulWikiTableParser {
-	val attrName = Regex("""name=(.+?)\|""")
-	val attrId = Regex("""id=(.+?)\|""")
-	val englishInGameDesc = Regex("""en=(.+?)\|""")
-	val attrClass = Regex("""class=(.+?)\|""")
-	val valueType = Regex("""value-type=(.+?)\|""")
-	val effectType = Regex("""effect-type=(.+?)\|""")
+	val attrName = Regex("""\|name=([^|]+)\|""")
+	val attrId = Regex("""\|id=([^|]+)\|""")
+	val englishInGameDesc = Regex("""\|en=([^|]+)\|""")
+	val attrClass = Regex("""\|class=([^|]+)\|""")
+	val valueType = Regex("""\|value-type=([^|]+)\|""")
+	val effectType = Regex("""\|effect-type=([^|]+)\|""")
 	
 
 	class FileToCharIteratorAdapter(val reader: FileReader) : CharIterator() {
@@ -88,29 +88,14 @@ object UsefulWikiTableParser {
 		return wikiFile.asSequence()
 			.map { it.replace("\n", " ") }
 			.mapNotNull {
-				val (name) = attrName.find(it)?.destructured ?: return@mapNotNull null
-				val (id) = attrId.find(it)?.destructured ?: return@mapNotNull null
+				val name = attrName.find(it)?.groupValues?.get(1) ?: return@mapNotNull null
+//				val (id) = attrId.find(it)?.destructured ?: return@mapNotNull null
 				val desc = englishInGameDesc.find(it)?.groupValues?.get(1)
-				val cls = attrClass.find(it)?.groupValues?.get(1)
-				val valuetype = valueType.find(it)?.groupValues?.get(1)
+				val cls = attrClass.find(it)?.groupValues?.get(1) ?: return@mapNotNull null
+				val valuetype = valueType.find(it)?.groupValues?.get(1) ?: return@mapNotNull null
 				val effecttype = effectType.find(it)?.groupValues?.get(1)
 				
-				NamedAttribute(name, id.toInt(), desc.orEmpty(), cls, valuetype, effecttype)
+				NamedAttribute(attrName = name, desc = desc.orEmpty(), type = valuetype, className = cls, effectType= effecttype.orEmpty())
 			}
-	}
-}
-
-data class NamedAttribute(
-	val namedAttr: String,
-	val attrId: Int,
-	val englishInGameDesc: String,
-	val attrClass: String?,
-	val valueType: String?,
-	val effectType: String?
-) {
-	val positiveNegativeOrNull get() = when (effectType) {
-		"positive" -> true
-		"negative" -> false
-		else -> null
 	}
 }
