@@ -38,7 +38,7 @@ fun interface Parser<T> {
 		fun literal(c: Char) = LiteralParser(c)
 		
 		val empty: Parser<Nothing?> = Parser { iter ->
-			null to iter
+			Pair(null, iter)
 		}.named("λ")
 		
 		class LiteralParser(val literal: Char) : Parser<Char> {
@@ -47,7 +47,7 @@ fun interface Parser<T> {
 					return debug_eof();
 				val nextIter = iter.next()
 				if (nextIter.char == literal)
-					return literal to nextIter.nextIter;
+					return Pair(literal, nextIter.nextIter);
 				return null;
 			}
 			
@@ -72,7 +72,7 @@ fun interface Parser<T> {
 					
 					currentIter = nextIter
 				}
-				return stringToMatchAgainst to currentIter
+				return Pair(stringToMatchAgainst, currentIter)
 			}
 			
 			override fun toString(): String {
@@ -96,8 +96,8 @@ fun interface Parser<T> {
 		
 		private data class OrParser_Either<T, U>(val x: Parser<T>, val y: Parser<U>) : Parser<Either<T, U>> {
 			override fun invoke(iter: CopyableStringIterator): Pair<Either<T, U>, CopyableStringIterator>? {
-				return x(iter)?.run { Left<T, U>(first) to second }
-				       ?: y(iter)?.run { Right<T, U>(first) to second }
+				return x(iter)?.run { Pair<Left<T, U>, CopyableStringIterator>(Left<T, U>(first), second) }
+				       ?: y(iter)?.run { Pair<Right<T, U>, CopyableStringIterator>(Right<T, U>(first), second) }
 				       ?: debug_fail()
 			}
 			
@@ -137,7 +137,7 @@ fun interface Parser<T> {
 		
 		private data class MapParser<T, U>(val parser: Parser<T>, val mapper: (T) -> U) : Parser<U> {
 			override fun invoke(iter: CopyableStringIterator): Pair<U, CopyableStringIterator>? {
-				return parser(iter)?.run { mapper(first) to second }
+				return parser(iter)?.run { Pair(mapper(first), second) }
 			}
 			
 			override fun toString(): String {
@@ -153,7 +153,7 @@ fun interface Parser<T> {
 			override fun invoke(iter: CopyableStringIterator): Pair<V, CopyableStringIterator>? {
 				return first(iter)?.let { (item, next) ->
 					second(next)?.let { (nextitem, after) ->
-						collector(item, nextitem) to after
+						Pair(collector(item, nextitem), after)
 					}
 					?: debug_fail()
 				} ?: debug_fail()
@@ -187,7 +187,7 @@ fun interface Parser<T> {
 					currIter = nextIter
 				}
 				
-				return currItems.after() to currIter;
+				return Pair(currItems.after(), currIter);
 			}
 			
 			override fun toString(): String {
@@ -229,7 +229,7 @@ fun interface Parser<T> {
 					currIter = nextIter
 				}
 				
-				return currItems.toString() to currIter;
+				return Pair(currItems.toString(), currIter);
 			}
 			
 			override fun toString(): String {
@@ -252,7 +252,7 @@ fun interface Parser<T> {
 				
 				val (nextChar, nextIter) = iter.next()
 				if (predicate.test(nextChar))
-					return nextChar to nextIter;
+					return Pair(nextChar, nextIter);
 				return null;
 			}
 			
@@ -267,7 +267,7 @@ fun interface Parser<T> {
 		
 		class OptionalParser<T>(val parser: Parser<T>) : Parser<T?> {
 			override fun invoke(iter: CopyableStringIterator): Pair<T?, CopyableStringIterator>? {
-				return parser(iter) ?: (null to iter)
+				return parser(iter) ?: (Pair(null, iter))
 			}
 			
 			override fun toString(): String {

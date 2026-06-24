@@ -1,0 +1,1441 @@
+package btpos.tf2.popfiledsl.itemattributesgenerator
+
+class MyNotesFormatted {
+	sealed interface IAttrThing
+	
+	private fun String.comma() = this.split(", ")
+	
+	class AttributeEntry(val attr_class: String, val kType: String, val notes: List<String> = listOf()) : IAttrThing {
+		companion object {
+			val attrRegex = Regex("""^\s*-(?: On (\w+):)? `(\w+)`: (\w+)$""")
+			val noteRegex = Regex("""^\s*- (.+)$""")
+			
+		    operator fun invoke(string: String, notes: List<String> = listOf()): AttributeEntry {
+			    val (cls, type) = attrRegex.matchEntire(string)?.destructured ?: error("Failed to parse attr entry for $string")
+				
+				return AttributeEntry(cls, type, notes.map { noteRegex.matchEntire(it)!!.groupValues[1] })
+		    }
+			
+			operator fun invoke(string: String): AttributeEntry {
+				val split = string.split("\n")
+				val (onWhat, name, type) = attrRegex.matchEntire(split[0])?.destructured ?: error("Failed to match attr entry ${split[0]}")
+				val notes = split.drop(1).map {
+					noteRegex.matchEntire(it)!!.groupValues[0]
+				}.run {
+					onWhat.takeIf { !it.isEmpty() } ?.let {
+						this + "Checked on $onWhat"
+					} ?: this
+				}
+				
+				return AttributeEntry(name, type, notes)
+			}
+		}
+	}
+	
+	
+	class Scope(val name: String, val attrs: List<IAttrThing>, applicableWeapons: List<Any> = listOf()) : IAttrThing {
+		
+		val applicableWeapons = applicableWeapons.map { if (it is String) it.split(", ") else it as List<String> }
+		
+		constructor(name: String, vararg attrs: IAttrThing, applicableWeapons: List<Any> = listOf()) : this(name, attrs.asList(), applicableWeapons)
+	}
+	
+	val hierarchy get() = mapOf(
+		Pair("BaseCombatWeapon", listOf("WeaponBase")),
+		
+		Pair(
+			"WeaponBase", listOf(
+				"BaseGun",
+				"BaseMelee",
+				"Flamethrower",
+				"Invis",
+				"Lunchbox",
+				"Builder"
+			)
+		),
+		
+		Pair(
+			"BaseGun", listOf(
+				"SMG",
+				"Minigun",
+				"Pistol",
+				"Revolver",
+				"SyringeGun",
+				"PipebombLauncher",
+				"RocketLauncher",
+				"GrenadeLauncher",
+				"Jar",
+				"MechanicalArm",
+				"Shotgun",
+				"FlareGun",
+				"SniperRifle",
+				"Medigun"
+			)
+		),
+		
+		Pair("SMG", listOf("ChargedSMG")),
+		
+		Pair("Pistol", listOf("ScoutPistol")),
+		
+		Pair("Shotgun", listOf("Scattergun", "ShotgunRevenge")),
+		
+		Pair("Bottle", listOf("StickBomb")),
+		
+		Pair("Jar", listOf("Throwable")),
+		
+		Pair("Builder", listOf("Sapper")),
+		
+		Pair(
+			"BaseMelee", listOf(
+				"Fists",
+				"Shovel",
+				"Bottle",
+				"FireAxe",
+				"Bonesaw",
+				"RocketPack",
+				"BuffItem",
+				"Wrench",
+				"Knife",
+				"Sword",
+				"Bat"
+			)
+		),
+		
+		Pair("PipebombLauncher", listOf("CompoundBow")),
+		
+		Pair(
+			"RocketLauncher", listOf(
+				"RocketLauncher_AirStrike",
+				"Crossbow",
+				"RayGun"
+			)
+		),
+		
+		Pair("RayGun", listOf("Raygun_Revenge")),
+		
+		Pair("Wearable", listOf("WearableDemoShield"))
+	)
+	
+	val attrsByClass get() = listOf(
+		Scope(
+			"BaseCombatWeapon", listOf(
+				AttributeEntry(
+					"mod_use_metal_ammo_type", "Boolean", listOf(
+						"Reminder: non-engies start with 100 metal."
+					)
+				),
+				AttributeEntry(
+					"mod_max_primary_clip_override", "Int", listOf(
+						"Overwrites the max clipsize to a flat value. Applied before other multipliers."
+					)
+				),
+				AttributeEntry(
+					"mod_no_reload_display_only", "Float", listOf(
+						"In the \"DoesReloadSingly\" check, this _is_ actually checked, so it's actually _not_ \"display-only\".",
+						"If != 1.0 (if present), says the weapon \"does not reload one shot at a time\"."
+					)
+				),
+				AttributeEntry(
+					"set_scattergun_no_reload_single", "Boolean", listOf(
+						"Checked in the same place.  If true, weapon does not reload one shot at a time. (e.g. FaN)",
+						"Note that for the most part, this logic is set inside the weapon itself. The scattergun thing is weirdly the only way to control this with attributes."
+					)
+				)
+			)
+		),
+		
+		Scope(
+			"WeaponBase", listOf(
+				AttributeEntry(
+					"custom_charge_meter", "Boolean", listOf(
+						"if true, do not render demoman's charge meter",
+						"Note: this might not actually be implemented"
+					)
+				),
+				AttributeEntry(
+					"ammo_gives_charge", "Boolean", listOf(
+						"If 1, and player has a demoman charge meter, add charge based on ammo pack size"
+					)
+				),
+				AttributeEntry("no_primary_ammo_from_dispensers", "Boolean", listOf()),
+				AttributeEntry("no_metal_from_dispensers_while_active", "Boolean", listOf()),
+				AttributeEntry("mult_dmg_vs_buildings", "Float", listOf()),
+				AttributeEntry("mult_clipsize", "Float", listOf()),
+				AttributeEntry("mult_clipsize_upgrade", "Int", listOf()),
+				AttributeEntry(
+					"mult_clipsize_upgrade_atomic", "Int", listOf(
+						"MVM attribute that specifically handles rocket and grenade launchers",
+						"Note that all three of these are different classes, which means they stack."
+					)
+				),
+				AttributeEntry("clipsize_increase_on_kill", "Int", listOf()),
+				AttributeEntry(
+					"wrench_builds_minisentry", "Float(?)", listOf(
+						"cast to an int, used as a boolean, so idk",
+						"Determines the hand used in the model"
+					)
+				),
+				AttributeEntry(
+					"mult_deploy_time", "Float", listOf(
+						"On player"
+					)
+				),
+				AttributeEntry("mult_single_wep_deploy_time", "Float", listOf()),
+				AttributeEntry("mult_switch_from_wep_deploy_time", "Float", listOf()),
+				AttributeEntry("mult_rocketjump_deploy_time", "Float", listOf()),
+				AttributeEntry(
+					"is_a_sword", "Boolean", listOf(
+						"If true, make weapon deploy and holster 75% slower"
+					)
+				),
+				AttributeEntry(
+					"mod_medic_healed_deploy_time", "Float", listOf(
+						"On player",
+						"Multiplier applied if NOT being healed by a medic"
+					)
+				),
+				AttributeEntry(
+					"force_weapon_switch", "Boolean", listOf(
+						"Should force switch to this item when... something happens.  Probably when your current weapon is unavailable?"
+					)
+				),
+				AttributeEntry(
+					"provide_on_active", "Boolean", listOf(
+						"If true, only applies attributes when weapon is active, and unapplies them when switching off.",
+						"I think this also means you can't have \"only active when holding weapon\" and \"always active\" attributes on the same weapon, since the order you specify attributes in doesn't matter."
+					)
+				),
+				AttributeEntry(
+					"projectile_penetration", "Int", listOf(
+						"How many players your \"projectile\" (*including bullets*) should penetrate."
+					)
+				),
+				AttributeEntry("mult_bullets_per_shot", "Float", listOf()),
+				AttributeEntry("mult_dmg", "Float", listOf()),
+				AttributeEntry(
+					"mult_crit_chance", "Float", listOf(
+						"\"No random crits\" sets this to `0.0`"
+					)
+				),
+				AttributeEntry("auto_fires_full_clip", "Boolean", listOf()),
+				AttributeEntry("auto_fires_full_clip_all_at_once", "Boolean", listOf()),
+				AttributeEntry(
+					"can_overload", "Boolean", listOf(
+						"Deals damage to the player when overloaded."
+					)
+				),
+				AttributeEntry(
+					"mult_postfiredelay", "Float", listOf(
+						"After firing, you wait a bit before you can fire again. That's the \"delay\"."
+					)
+				),
+				AttributeEntry(
+					"kill_combo_fire_rate_boost", "Float", listOf(
+						"Subtract `this * \"kill combo\"` from the post-fire delay"
+					)
+				),
+				AttributeEntry("auto_fires_when_full", "Boolean", listOf()),
+				AttributeEntry("mult_reload_time", "Float", listOf()),
+				AttributeEntry("mult_reload_time_hidden", "Float", listOf()),
+				AttributeEntry(
+					"fast_reload", "Float", listOf(
+						"This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle."
+					)
+				),
+				AttributeEntry(
+					"hwn_mult_reload_time", "Float", listOf(
+						"On player",
+						"Halloween reload time multiplier."
+					)
+				),
+				AttributeEntry("mult_reload_time_while_healed", "Float", listOf()),
+				AttributeEntry(
+					"weapon_allow_inspect", "Boolean (technically float)", listOf(
+						"treated as boolean in `CanInspect` method"
+					)
+				)
+			)
+		),
+		
+		Scope(
+			"BaseGun", listOf(
+				AttributeEntry(
+					"keep_disguise_on_attack", "Boolean", listOf(
+						"If true, spies will keep their disguise when attacking with this weapon."
+					)
+				),
+				AttributeEntry(
+					"override_projectile_type", "Int", listOf(
+						"If unset, uses the weapon's default projectile type.",
+						"Else use a numbered [projectile type](#ProjectileTypes)"
+					)
+				),
+				AttributeEntry(
+					"mod_ammo_per_shot", "Int", listOf(
+						"How much ammo is used per shot. If 0, uses default."
+					)
+				),
+				AttributeEntry(
+					"mult_projectile_range", "Float", listOf(
+						"Used when firing any projectile, including pipe bombs"
+					)
+				),
+				AttributeEntry(
+					"grenade_no_spin", "Boolean", listOf(
+						"Don't spin loch n load pills"
+					)
+				),
+				AttributeEntry(
+					"projectile_penetration", "Boolean", listOf(
+						"Also on WeaponBase, but noted here because it's specifically used in gun's \"fire arrow\" logic."
+					)
+				),
+				AttributeEntry(
+					"mult_spread_scale", "Float", listOf(
+						"Modifies bullet spread."
+					)
+				),
+				AttributeEntry(
+					"panic_attack_negative", "Float", listOf(
+						"Multiplier applied to bullet spread as health gets lower."
+					)
+				),
+				AttributeEntry(
+					"mult_spread_scales_consecutive", "Float", listOf(
+						"Scales weapon spread when firing consecutive shots, like the _New_ Panic Attack."
+					)
+				),
+				AttributeEntry(
+					"mult_dmg_disguised", "Float", listOf(
+						"When disguised (only checks if the player has the condition, doesn't check class), multiply damage by this amount."
+					)
+				),
+				AttributeEntry(
+					"accuracy_scales_damage", "Float", listOf(
+						"If the projectile being fired is a bullet, multiply damage by your hit ratio over the past few seconds."
+					)
+				),
+				AttributeEntry(
+					"fixed_shot_pattern", "Boolean", listOf(
+						"Enables fixed weapon spread on the weapon as though `tf_use_fixed_weaponspreads` were set."
+					)
+				),
+				AttributeEntry("mod_pierce_resists_absorbs", "Boolean", listOf())
+			), listOf("The Wrangler, Festive Wrangler, The Giger Counter".split(", "))
+		),
+		
+		Scope(
+			"BaseMelee", listOf(
+				AttributeEntry(
+					"*self_mark_for_death", "Boolean", listOf(
+						"Marked for death when switching to weapon"
+					)
+				),
+				AttributeEntry(
+					"is_a_sword", "Boolean", listOf(
+						"If 1, set swing range to 72, else 48"
+					)
+				),
+				AttributeEntry(
+					"melee_bounds_multiplier", "Float", listOf(
+						"Multiplier applied to the bounding box of the swing to detect if a player is inside it",
+						"Yes, it DOES use a bounding box. I think. That's what this implies, I guess."
+					)
+				),
+				AttributeEntry(
+					"set_dmg_apply_to_sapper", "Int", listOf(
+						"Damage sappers with swing"
+					)
+				),
+				AttributeEntry(
+					"speed_buff_ally", "Boolean", listOf(
+						"Applies speed boost cond to yourself and the teammate you hit"
+					)
+				),
+				AttributeEntry(
+					"add_give_health_to_teammate_on_hit", "Int", listOf(
+						"Transfer some amount of health from yourself to your teammate on hitting them."
+					)
+				),
+				AttributeEntry(
+					"melee_cleave_attack", "Int", listOf(
+						"If greater than 0, hit all targets in swing instead of just the first valid one."
+					)
+				),
+				AttributeEntry(
+					"hit_self_on_miss", "Boolean", listOf(
+						"Idiot."
+					)
+				),
+				AttributeEntry(
+					"speed_boost_on_hit_enemy", "Float", listOf(
+						"Used as arg to addcond speedboost"
+					)
+				),
+				AttributeEntry("crit_from_behind", "Boolean", listOf()),
+				AttributeEntry("crit_forces_victim_to_laugh", "Boolean", listOf()),
+				AttributeEntry(
+					"tickle_enemies_wielding_same_weapon", "Boolean", listOf(
+						"Force enemies to laugh if they're also wielding this weapon."
+					)
+				),
+				AttributeEntry(
+					"crit_does_no_damage", "Boolean", listOf(
+						"These past four are Holiday Punch attributes, obviously"
+					)
+				),
+				AttributeEntry(
+					"mult_dmg_bonus_while_half_dead", "Float", listOf(
+						"If health < 50%, apply mult."
+					)
+				),
+				AttributeEntry(
+					"mult_dmg_penalty_while_half_alive", "Float", listOf(
+						"If health >= 50%, apply mult",
+						"Shahanshahanshanhansa attributes"
+					)
+				),
+				AttributeEntry(
+					"mult_dmg_with_reduced_health", "Float", listOf(
+						"Apply multiplier scaled by player's current health proportion",
+						"You'll see later that there's a \"Shovel 'Equalizer' mode\", but the real logic for that is here."
+					)
+				),
+				AttributeEntry(
+					"mult_crit_chance", "Float", listOf(
+						"Noted because it's interesting that it's used here too."
+					)
+				)
+			)
+		),
+		
+		Scope(
+			"Flamethrower", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"Determines flame particle effect",
+						"1 = phlog",
+						"2 = MvM giant pyrobot",
+						"3 = rainblower",
+						"Also makes a bubble wand while taunting"
+					)
+				),
+				AttributeEntry(
+					"set_buff_type", "Int", listOf(
+						"If greater than 0, enables Phlog crits on having full rage"
+					)
+				),
+				AttributeEntry("airblast_disabled", "Boolean", listOf()),
+				AttributeEntry(
+					"set_charged_airblast", "Boolean", listOf(
+						"Enables charging an airblast for longer for higher push",
+						"Fun fact: apparently this was going to be a FLAME ROCKET, but got changed later to be an airblast"
+					)
+				),
+				AttributeEntry("mult_airblast_cost", "Float", listOf()),
+				AttributeEntry("set_flamethrower_back_crit", "Boolean", listOf()),
+				AttributeEntry("mult_flame_ammopersec", "Float", listOf()),
+				AttributeEntry(
+					"airblast_functionality_flags", "Int", listOf(
+						"If 0, can do all kinds of airblast as long as airblasting itself isn't disabled.",
+						"If not 0, can only do whatever functionalities of airblasting are specified by the number. (add any values below to combine them)",
+						"1 = PUSHBACK",
+						"2 = PUT_OUT_TEAMMATES",
+						"4 = REFLECT_PROJECTILES",
+						"8 = PUSHBACK_STUN (requires PUSHBACK)",
+						"16 = PUSHBACK_VIEW_PUNCH (requires PUSHBACK)"
+					)
+				),
+				AttributeEntry(
+					"airblast_dashes", "Boolean", listOf(
+						"If true, fly into the direction you're looking when you airblast.  Will not reflect projectiles."
+					)
+				),
+				AttributeEntry(
+					"mult_airblast_refire_time", "Float", listOf(
+						"Multiplier for how long after airblasting until you can fire a primary OR secondary attack",
+						"Secondary attack delay = 0.75 * this"
+					)
+				),
+				AttributeEntry(
+					"mult_airblast_primary_refire_time", "Float", listOf(
+						"Multiplier for how long before you can use your flamethrower again after airblasting.",
+						"Primary attack delay = refire_time * primary_refire_time"
+					)
+				),
+				AttributeEntry(
+					"mod_flamethrower_spinup_time", "Float", listOf(
+						"Yes, like a minigun."
+					)
+				),
+				AttributeEntry(
+					"firing_forward_pull", "Float", listOf(
+						"Actually a Boolean, so a `0.0` or `1.0` value.",
+						"If true, you get a speedboost while firing your flamethrower.",
+						"(Oh god, they planned on making a literal W+M1 weapon. Jungle Inferno could've been a _lot_ worse.)"
+					)
+				),
+				AttributeEntry(
+					"deflection_size_multiplier", "Float", listOf(
+						"Scales the reflect hitbox for your airblast"
+					)
+				),
+				AttributeEntry(
+					"extinguish_restores_health", "Int", listOf(
+						"How much health your extinguish restores"
+					)
+				),
+				AttributeEntry(
+					"reverse_airblast", "Boolean", listOf(
+						"If the airblast isn't disallowed from pushing players back, and this is set, airblasting will pull players instead."
+					)
+				),
+				AttributeEntry(
+					"mult_airblast_cone_scale", "Float", listOf(
+						"Cone used for pushing players"
+					)
+				),
+				AttributeEntry("airblast_pushback_scale", "Float", listOf()),
+				AttributeEntry("airblast_vertical_pushback_scale", "Float", listOf()),
+				AttributeEntry("halloween_green_flames", "Boolean", listOf()),
+				AttributeEntry(
+					"mult_flame_size", "Float", listOf(
+						"On owner"
+					)
+				),
+				AttributeEntry(
+					"mult_flame_life", "Float", listOf(
+						"On owner"
+					)
+				),
+				AttributeEntry("airblast_destroy_projectile", "Boolean", listOf()),
+				AttributeEntry("airblast_pushback_disabled", "Boolean", listOf())
+			), listOf("TF_WEAPON_FLAMETHROWER, The Backburner, Upgradeable TF_WEAPON_FLAMETHROWER, The Degreaser, The Phlogistinator, Festive Flamethrower 2011, The Rainblower, Silver Botkiller Flame Thrower Mk.I, Gold Botkiller Flame Thrower Mk.I, Rust Botkiller Flame Thrower Mk.I, Blood Botkiller Flame Thrower Mk.I, Carbonado Botkiller Flame Thrower Mk.I, Diamond Botkiller Flame Thrower Mk.I, Silver Botkiller Flame Thrower Mk.II, Gold Botkiller Flame Thrower Mk.II, Festive Backburner 2014, The Nostromo Napalmer".split(", "))
+		),
+		
+		Scope(
+			"SMG", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"If 1, can headshot"
+					)
+				)
+			), listOf("Stock SMG + Reskins".split(", "))
+		),
+		
+		Scope(
+			"ChargedSMG", listOf(
+				AttributeEntry(
+					"minicrit_boost_when_charged", "Float", listOf(
+						"Minicrit buff duration"
+					)
+				)
+			), listOf("The Cleaner's Carbine".split(", "))
+		),
+		
+		Scope(
+			"Sapper", listOf(
+				AttributeEntry(
+					"sapper_degenerates_buildings", "Float", listOf(
+						"On player",
+						"How fast the building should reverse construction"
+					)
+				),
+				AttributeEntry(
+					"robo_sapper", "Int", listOf(
+						"When the sapper is applied to a player (including MvM bots):",
+						"2 - stun time is 5.5 seconds, radius is 225 hammer units",
+						"3 - stuns for 7 seconds, radius is 250 hammer units",
+						"else stuns for 4 seconds and radius is 200 HU"
+					)
+				),
+				AttributeEntry(
+					"sapper_deploy_time", "Float", listOf(
+						"If greater than 0, the sapper takes time to place (UNIMPLEMENTED)"
+					)
+				)
+			), listOf("Stock Sapper, The Red-Tape Recorder, Promo Red-Tape Recorder, The Ap-Sap, Festive Sapper, The Snack Attack".split(", "))
+		),
+		
+		Scope(
+			"Fists", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"Used to specify \"fist type\""
+					)
+				),
+				AttributeEntry(
+					"breadgloves_properties", "Boolean", listOf(
+						"UNIMPLEMENTED",
+						"Note that despite being present in the item schema, this is explicitly COMMENTED OUT of the code, and has no gameplay effects at least."
+					)
+				)
+			), listOf("Stock Fists, The Killing Gloves of Boxing, Warrior's Spirit, Fists of Steel, The Eviction Notice, Apoco-Fists, The Holiday Punch, The Bread Bite, Gloves of Running Urgently MvM".split(", "))
+		),
+		
+		Scope(
+			"Shovel", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"Used to specify \"shovel type\"",
+						"0 = Standard",
+						"1 = Equalizer",
+						"2 = Escape Plan",
+						"I do not know what this does."
+					)
+				),
+				AttributeEntry(
+					"air_jump_on_attack", "Boolean", listOf(
+						"On primary attack, send player flying in the direction they're facing."
+					)
+				),
+			), listOf("TF_WEAPON_SHOVEL, The Equalizer, The Pain Train, Upgradeable TF_WEAPON_SHOVEL, The Market Gardener, The Disciplinary Action, The Escape Plan".split(", "))
+		),
+		Scope("Bottle", emptyList<IAttrThing>(), listOf("TF_WEAPON_BOTTLE, Upgradeable TF_WEAPON_BOTTLE, The Scottish Handshake".comma())),
+		
+		Scope(
+			"StickBomb", listOf(
+				AttributeEntry("halloween_pumpkin_explosions", "Boolean", listOf())
+			), listOf(listOf("The Ullapool Caber"))
+		),
+		
+		Scope(
+			"FireAxe", listOf(
+				AttributeEntry(
+					"set_dmgtype_ignite", "Boolean", listOf(
+						"Ignite enemies on hit",
+						"Yeah, sadly this is just checked on fire axes..."
+					)
+				)
+			), listOf("TF_WEAPON_FIREAXE, The Axtinguisher, The Homewrecker, Upgradeable TF_WEAPON_FIREAXE, The Powerjack, The Back Scratcher, Sharpened Volcano Fragment, The Postal Pummeler, The Maul, The Third Degree, The Lollichop, Festive Axtinguisher".comma())
+		),
+		
+		Scope(
+			"Bonesaw", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"Used to specify \"bonesaw type\""
+					)
+				),
+				AttributeEntry(
+					"special_taunt", "Boolean", listOf(
+						"If the player should taunt on right click"
+					)
+				),
+				AttributeEntry(
+					"add_head_on_hit", "Boolean", listOf(
+						"If the player should take a \"head\" when dealing damage with a melee",
+						"Also, is there a \"speed modifier\" for taking heads??????"
+					)
+				),
+				AttributeEntry("ubercharge_preserved_on_spawn_max", "Float", listOf()),
+				AttributeEntry(
+					"add_head_on_kill", "Boolean", listOf(
+						"On kill, take an organ (uses \"heads\" field like usual)"
+					)
+				)
+			), listOf("TF_WEAPON_BONESAW, The Ubersaw, The Vita-Saw, Upgradeable TF_WEAPON_BONESAW, The Amputator, The Solemn Vow, Festive Ubersaw, Festive Bonesaw 2014".comma())
+		),
+		
+		Scope(
+			"Minigun", listOf(
+				AttributeEntry("minigun_no_spin_sounds", "Boolean", listOf()),
+				AttributeEntry("mod_minigun_can_holster_while_spinning", "Boolean", listOf()),
+				AttributeEntry("mult_minigun_spinup_time", "Float", listOf()),
+				AttributeEntry(
+					"attack_projectiles", "Boolean", listOf(
+						"Overridden by \"raid gamemode\" to 1"
+					)
+				),
+				AttributeEntry("ring_of_fire_while_aiming", "Int", listOf()),
+				AttributeEntry(
+					"uses_ammo_while_aiming", "Int", listOf(
+						"Amount of ammo drained per second"
+					)
+				)
+			), listOf("All Stock Minigun skins, Natascha, The Brass Beast, Tomislav".comma())
+		),
+		
+		Scope("Pistol", listOf<IAttrThing>(), listOf("TF_WEAPON_PISTOL, TF_WEAPON_PISTOL_SCOUT, TTG Max Pistol, Upgradeable TF_WEAPON_PISTOL, The C.A.P.P.E.R".comma())),
+		
+		Scope(
+			"ScoutPistol", listOf(
+				AttributeEntry(
+					"back_headshot", "Boolean", listOf(
+						"If true, can headshot"
+					)
+				)
+			), listOf("The Shortstop, The Winger, Pretty Boy's Pocket Pistol".comma())
+		),
+		
+		Scope(
+			"Revolver", listOf(
+				AttributeEntry(
+					"extra_damage_on_hit", "Boolean", listOf(
+						"If true, increases damage by 1% per \"head\" collected (note: this is not the diamondback's \"revenge crit\" mechanic)"
+					)
+				),
+				AttributeEntry(
+					"extra_damage_on_hit_penalty", "Int", listOf(
+						"Lowers your head count by this amount every time you fire a shot"
+					)
+				)
+			), listOf("TF_WEAPON_REVOLVER, The Ambassador, TTG Sam Revolver, Upgradeable TF_WEAPON_REVOLVER, L'Etranger, The Enforcer, The Diamondback, Festive Ambassador, Festive Revolver 2014".comma())
+		),
+		
+		Scope(
+			"SyringeGun", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"Used to specify \"syringe type\""
+					)
+				)
+			), listOf("Stock Syringe Gun, The Blutsauger, The Overdose".comma())
+		),
+		
+		Scope(
+			"RocketPack", listOf(
+				AttributeEntry(
+					"thermal_thruster_air_launch", "Boolean", listOf(
+						"The MvM upgrade that lets you launch while launching"
+					)
+				)
+			), listOf(listOf("The Thermal Thruster"))
+		),
+		
+		Scope(
+			"Invis", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"Used to specify \"invis type\""
+					)
+				),
+				AttributeEntry(
+					"mult_decloak_rate", "Float", listOf(
+						"How many seconds it takes to decloak (or a multiplier?)",
+						"Note that values less than or equal to `0.0` become `1.0`"
+					)
+				),
+				AttributeEntry(
+					"mult_cloak_meter_consume_rate", "Float", listOf(
+						"On player",
+						"Multiply cloak consumption rate by this value."
+					)
+				),
+				AttributeEntry("mult_cloak_meter_regen_rate", "Float", listOf())
+			), listOf("TF_WEAPON_INVIS, The Dead Ringer, The Cloak and Dagger, Upgradeable TF_WEAPON_INVIS, The Quackenbirdt".comma())
+		),
+		
+		Scope(
+			"PipebombLauncher", listOf(
+				AttributeEntry(
+					"stickybomb_charge_rate", "Float", listOf(
+						"Not actually the \"rate\", rather the time it takes to fully charge a stickybomb launch when holding MOUSE1."
+					)
+				),
+				AttributeEntry(
+					"set_detonate_mode", "Int", listOf(
+						"If 0, default \"detonate all stickies on rclick\" mode. If 1, uses Scottish Resistance's \"look at sticky to detonate\" mechanic."
+					)
+				),
+				AttributeEntry(
+					"stickies_detonate_stickies", "Boolean", listOf(
+						"If 1, stickies destroy other stickies."
+					)
+				),
+				AttributeEntry(
+					"stickybomb_charge_damage_increase", "Float", listOf(
+						"damage = `2*basedamage * (this - 1.0) * currentChargeProportion`"
+					)
+				),
+				AttributeEntry("add_max_pipebombs", "Int", listOf())
+			), listOf("TF_WEAPON_PIPEBOMBLAUNCHER, The Scottish Resistance, Upgradeable TF_WEAPON_PIPEBOMBLAUNCHER, Stickybomb Jumper, Festive Stickybomb Launcher 2011, Silver Botkiller Stickybomb Launcher Mk.I, Gold Botkiller Stickybomb Launcher Mk.I, Rust Botkiller Stickybomb Launcher Mk.I, Blood Botkiller Stickybomb Launcher Mk.I, Carbonado Botkiller Stickybomb Launcher Mk.I, Diamond Botkiller Stickybomb Launcher Mk.I, Silver Botkiller Stickybomb Launcher Mk.II, Gold Botkiller Stickybomb Launcher Mk.II, The Quickiebomb Launcher".comma())
+		),
+		
+		Scope(
+			"BuffItem", listOf(
+				AttributeEntry(
+					"set_buff_type", "Int", listOf(
+						"Sets which banner is used",
+						"0 = Buff Banner",
+						"1 = Battalion's Backup",
+						"2 = Concheror"
+					)
+				),
+				AttributeEntry(
+					"mod_buff_duration", "Float", listOf(
+						"Multiplier to buff duration",
+						"Weirdly it just modifies when the \"BuffBanner Flag\" (the prop) detaches from the player, which means it's actually the _flag_ that does the buffing, lmao"
+					)
+				)
+			), listOf("The Buff Banner, The Battalion's Backup, The Concheror, Festive Buff Banner".comma())
+		),
+		
+		Scope(
+			"Wrench", listOf(
+				AttributeEntry(
+					"alt_fire_teleport_to_spawn", "Boolean", listOf(
+						"If set, pressing reload shows the Eureka Effect menu"
+					)
+				),
+				AttributeEntry(
+					"wrench_builds_minisentry", "Boolean", listOf(
+						"Detonates leveled sentries when equipping a wrench with this attribute",
+						"If not in MvM (player is not on team \"PVE_DEFENDERS\"), detonate minis when unequipping a wrench with this attribute",
+						"Removes engineer's glove on his model",
+						"Also determines if it's a \"PDQ\", which obviously builds minisentries"
+					)
+				),
+				AttributeEntry(
+					"mult_construction_value", "Float", listOf(
+						"Passive build rate multiplier, same as the convar `tf_construction_build_rate_multiplier`"
+					)
+				),
+				AttributeEntry(
+					"mult_reScope_value", "Float", listOf(
+						"Multiplier, determines how much health is given per wrench hit"
+					)
+				)
+			), listOf("Stock Wrench + Reskins, Golden Wrench, The Southern Hospitality, The Jag, The Eureka Effect".comma(), listOf("The Gunslinger"))
+		),
+		Scope(
+			"RocketLauncher", listOf(
+				AttributeEntry(
+					"override_projectile_type", "Int", listOf(
+						"If unset, uses the weapon's default projectile type.",
+						"Else it can be used with anything in `ProjectileType_t`, as seen in BaseGun"
+					)
+				),
+				AttributeEntry(
+					"mod_rocket_launch_impulse", "Boolean", listOf(
+						"Allows the player to rocket jump with the projectile. (note that \"rocket launcher\" is the base for most projectile launchers, including the Crossbow :3)"
+					)
+				)
+			), listOf("TF_WEAPON_ROCKETLAUNCHER, Upgradeable TF_WEAPON_ROCKETLAUNCHER, The Black Box, Rocket Jumper, The Liberty Launcher, The Original, Festive Rocket Launcher 2011, The Beggar's Bazooka, Silver Botkiller Rocket Launcher Mk.I, Gold Botkiller Rocket Launcher Mk.I, Rust Botkiller Rocket Launcher Mk.I, Blood Botkiller Rocket Launcher Mk.I, Carbonado Botkiller Rocket Launcher Mk.I, Diamond Botkiller Rocket Launcher Mk.I, Silver Botkiller Rocket Launcher Mk.II, Gold Botkiller Rocket Launcher Mk.II, Festive Black Box".comma())
+		),
+		
+		Scope(
+			"RocketLauncher_AirStrike", listOf(
+				AttributeEntry(
+					"clipsize_increase_on_kill", "Int", listOf(
+						"This attribute is on all weapons, but it's specifically checked for here as well."
+					)
+				)
+			), listOf(listOf("The Air Strike"))
+		),
+		
+		Scope(
+			"GrenadeLauncher", listOf(
+				AttributeEntry(
+					"grenade_detonation_damage_penalty", "Float", listOf(
+						"Flat multiplier applied to initial damage"
+					)
+				),
+				AttributeEntry("mult_projectile_speed", "Float", listOf()),
+				AttributeEntry(
+					"set_detonate_mode", "Int", listOf(
+						"If 0, uses standard \"detonate all stickies on rclick\". Else, uses Scottish Resistance's \"only detonate stickies on crosshair\" function."
+					)
+				),
+				AttributeEntry(
+					"grenade_launcher_mortar_mode", "Float", listOf(
+						"\"Mortar\" (loose cannon) detonation time length"
+					)
+				)
+			), listOf("TF_WEAPON_GRENADELAUNCHER, Upgradeable TF_WEAPON_GRENADELAUNCHER, The Loch-n-Load, Festive Grenade Launcher, The Iron Bomber".comma(), listOf("The Loose Cannon"))
+		),
+		
+		Scope(
+			"Crossbow", listOf(
+				AttributeEntry("mult_reload_time", "Float", listOf()),
+				AttributeEntry("mult_reload_time_hidden", "Float", listOf()),
+				AttributeEntry(
+					"fast_reload", "Float", listOf(
+						"Honestly I don't know why `fast_reload` is different if it's just going to use the standard reload time mults anyway..."
+					)
+				),
+				AttributeEntry(
+					"fires_milk_bolt", "Boolean", listOf(
+						"If `1`, alt-fire fires a mad-milked crossbow bolt with a meter??? (meter is unimplemented, but milk bolt is)"
+					)
+				)
+			), listOf("The Crusader's Crossbow, Festive Crusader's Crossbow".comma())
+		),
+		
+		Scope(
+			"RayGun", listOf(
+				AttributeEntry(
+					"energy_weapon_no_drain", "Boolean", listOf(
+						"Removes ammo requirement to fire weapon."
+					)
+				)
+			), listOf(listOf("The Righteous Bison"), listOf("The Pomson 6000"))
+		),
+		
+		Scope(
+			"Raygun_Revenge", listOf(
+				AttributeEntry(
+					"energy_weapon_no_drain", "Boolean", listOf(
+						"Removes ammo requirement to fire weapon."
+					)
+				)
+			), listOf(listOf("NONE (but it's there at least?)"))
+		),
+		
+		Scope(
+			"Lunchbox", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"0 = LUNCHBOX_STANDARD",
+						"Used for both the bonk atomic punch or the sandvich",
+						"1 = LUNCHBOX_ADDS_MAXHEALTH,",
+						"2 = LUNCHBOX_ADDS_MINICRITS,",
+						"3 = LUNCHBOX_STANDARD_ROBO,",
+						"4 = LUNCHBOX_STANDARD_FESTIVE,",
+						"5 = LUNCHBOX_ADDS_AMMO,",
+						"Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented"
+					)
+				),
+				AttributeEntry("lunchbox_healing_scale", "Float", listOf())
+			), listOf("The Sandvich, The Dalokohs Bar, The Buffalo Steak Sandvich, Fishcake, The Robo-Sandvich, Festive Sandvich, The Second Banana".comma(), "Bonk! Atomic Punch, Crit-a-Cola, Festive Bonk 2014".comma())
+		),
+		
+		Scope("Shotgun", emptyList<IAttrThing>(), listOf("Stock Shotgun, Reserve Shooter".comma(), "The Frontier Justice, Festive Frontier Justice".comma(), listOf("The Widowmaker"), listOf("The Rescue Ranger"))),
+		
+		Scope(
+			"Scattergun", listOf(
+				AttributeEntry(
+					"set_scattergun_has_knockback", "Boolean", listOf(
+						"Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary."
+					)
+				),
+				AttributeEntry("scattergun_knockback_mult", "Float", listOf()),
+				AttributeEntry(
+					"set_scattergun_no_reload_single", "Boolean", listOf(
+						"If 1, reloads entire clip at once."
+					)
+				)
+			), listOf("TF_WEAPON_SCATTERGUN, The Force-a-Nature, Upgradeable TF_WEAPON_SCATTERGUN, Festive Scattergun 2011, Silver Botkiller Scattergun Mk.I, Gold Botkiller Scattergun Mk.I, Rust Botkiller Scattergun Mk.I, Blood Botkiller Scattergun Mk.I, Carbonado Botkiller Scattergun Mk.I, Diamond Botkiller Scattergun Mk.I, Silver Botkiller Scattergun Mk.II, Gold Botkiller Scattergun Mk.II, Festive Force-a-Nature, The Back Scatter".comma())
+		),
+		
+		Scope(
+			"ShotgunRevenge", listOf(
+				AttributeEntry(
+					"sentry_killed_revenge", "Boolean", listOf(
+						"Specifically checked here when it tries to gain revenge crits, which means removing this attribute from the Frontier Justice will remove its ability to gain revenge crits."
+					)
+				)
+			), listOf("Frontier Justice")
+		),
+		
+		Scope(
+			"Knife", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"0: Stock",
+						"1: Your Eternal Reward",
+						"2: Cloak and Dagger (idk why)",
+						"3: Spycicle"
+					)
+				),
+				AttributeEntry("melts_in_fire", "Boolean", listOf()),
+				AttributeEntry("set_disguise_on_backstab", "Boolean", listOf()),
+				AttributeEntry(
+					"mult_dmg", "Float", listOf(
+						"Base backstab damage against minibosses is 250 * this proportion."
+					)
+				),
+				AttributeEntry(
+					"armor_piercing", "Float", listOf(
+						"On player",
+						"Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%",
+						"Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.",
+						"Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots."
+					)
+				),
+				AttributeEntry(
+					"sanguisuge", "Boolean", listOf(
+						"Gain health on backstab. (Kunai)"
+					)
+				)
+			), listOf("TF_WEAPON_KNIFE, Upgradeable TF_WEAPON_KNIFE, Your Eternal Reward, Conniver's Kunai, The Big Earner, The Wanga Prick, The Sharp Dresser, The Spy-cicle, Festive Knife 2011, The Black Rose, Stock Botkiller Knives")
+		),
+		
+		Scope(
+			"Sword", listOf(
+				AttributeEntry(
+					"decapitate_type", "Int", listOf(
+						"More like a boolean, doesn't actually determine any kind of decapitation, just if it CAN decapitate."
+					)
+				)
+			), listOf("The Eyelander, The Scotsman's Skullcutter, The Horseless Headless Horseman's Headtaker, The Claidheamohmor (sic), The Persian Persuader, Nessie's Nine Iron, Festive Eyelander", "The Half-Zatoichi")
+		),
+		
+		Scope("Wearable", listOf<IAttrThing>()),
+		
+		Scope(
+			"WearableDemoShield", listOf(
+				AttributeEntry("attack_not_cancel_charge", "Boolean", listOf()),
+				AttributeEntry(
+					"mod_charge_time", "Float", listOf(
+						"On player",
+						"Charge time mult"
+					)
+				),
+				AttributeEntry(
+					"charge_impact_damage", "Float", listOf(
+						"On player",
+						"Impact damage mult"
+					)
+				)
+			), listOf("The Chargin' Targe, The Splendid Screen, The Tide Turner, Festive Targe 2014")
+		),
+		Scope(
+			"FlareGun", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"0: Normal",
+						"1: Detonator",
+						"2: UNUSED",
+						"3: Scorch Shot"
+					)
+				)
+			), listOf("The Flare Gun, The Scorch Shot, The Detonator", "The Manmelter")
+		),
+		
+		Scope(
+			"Jar", listOf(
+				AttributeEntry(
+					"override_projectile_type", "Int", listOf(
+						"Used to select the model",
+						"Select between `TF_PROJECTILE_FESTIVE_JAR`, `TF_PROJECTILE_BREADMONSTER_JARATE`, and `TF_PROJECTILE_BREADMONSTER_MADMILK`",
+						"Otherwise uses default for its class"
+					)
+				),
+				AttributeEntry(
+					"applies_snare_effect", "Float", listOf(
+						"On player",
+						"If NOT `1.0`, stun the victim"
+					)
+				),
+				AttributeEntry(
+					"extinguish_reduces_cooldown", "Float", listOf(
+						"Subtracts this value from the cooldown"
+					)
+				)
+			), listOf(
+				"Jarate, Festive Jarate, The Self-Aware Beauty Mark",
+				"Mad Milk, Mutated Milk",
+				"The Flying Guillotine",
+				"The Gas Passer",
+				"Unimplemented Spy Decoy Weapon",
+			)
+		),
+		
+		Scope(
+			"MechanicalArm", listOf(
+				AttributeEntry("mod_ammo_per_shot", "Int", listOf())
+			), listOf("The Short Circuit")
+		),
+		
+		Scope(
+			"Throwable", listOf(
+				AttributeEntry("throwable_recharge_time", "Float", listOf()),
+				AttributeEntry("throwable_detonation_time", "Float", listOf()),
+				AttributeEntry(
+					"is_throwable_primable", "Boolean", listOf(
+						"For timed explosions"
+					)
+				),
+				AttributeEntry(
+					"is_throwable_chargeable", "Boolean", listOf(
+						"For things like distance/power increases"
+					)
+				)
+			), listOf("Spellbook")
+		),
+		
+		Scope(
+			"SniperRifle", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"0: Normal",
+						"1: Sydney Sleeper",
+						"2: Machina",
+						"3: Classic"
+					)
+				),
+				AttributeEntry(
+					"set_buff_type", "Int", listOf(
+						"If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full)."
+					)
+				),
+				AttributeEntry(
+					"sniper_full_charge_damage_bonus", "Float", listOf(
+						"If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge."
+					)
+				),
+				AttributeEntry(
+					"fast_reload", "Float", listOf(
+						"Mult to zoom and unzoom delay on clipless weapons",
+						"Fun fact: this is also affected by the Precision mannpower powerup"
+					)
+				),
+				AttributeEntry(
+					"ability_master_sniper", "Int", listOf(
+						"Mult to zoom/unzoom delay on clipless weapons",
+						"mult by level: 1=0.6, 2=0.3",
+						"Mult to charge speed",
+						"1=1.5, 2=3.0"
+					)
+				),
+				AttributeEntry("mult_sniper_charge_per_sec", "Float", listOf()),
+				AttributeEntry("mult_sniper_charge_per_sec_with_enemy_under_crosshair", "Float", listOf()),
+				AttributeEntry(
+					"sniper_beep_with_enemy_under_crosshair", "Float", listOf(
+						"Cast to an int, treated like a boolean",
+						"plays `doomsday.warhead` sound when an enemy appears under your crosshair"
+					)
+				),
+				AttributeEntry("sniper_only_fire_zoomed", "Boolean", listOf()),
+				AttributeEntry("sniper_penetrate_players_when_charged", "Boolean", listOf()),
+				AttributeEntry("sniper_no_headshot_without_full_charge", "Boolean", listOf()),
+				AttributeEntry(
+					"sniper_crit_no_scope", "Boolean", listOf(
+						"Funnily enough, it checks if your FOV is lower than your default FOV to see if you're zoomed."
+					)
+				),
+				AttributeEntry(
+					"explosive_sniper_shot", "Int", listOf(
+						"On attacker",
+						"Level of explosive headshot"
+					)
+				),
+				AttributeEntry(
+					"jarate_duration", "Float", listOf(
+						"If greater than 0:",
+						"Makes weapon not eject brass",
+						"Makes weapon only penetrate non-burning teammates, as opposed to penetrating all teammates",
+						"Note: Not actually used in Sydney Sleeper Jarate calculation, as far as I could tell."
+					)
+				)
+			), listOf("TF_WEAPON_SNIPERRIFLE, Upgradeable TF_WEAPON_SNIPERRIFLE, The Sydney Sleeper, The Machina, Festive Sniper Rifle 2011, The Hitman's Heatmaker, Silver Botkiller Sniper Rifle Mk.I, Gold Botkiller Sniper Rifle Mk.I, The AWPer Hand, Rust Botkiller Sniper Rifle Mk.I, Blood Botkiller Sniper Rifle Mk.I, Carbonado Botkiller Sniper Rifle Mk.I, Diamond Botkiller Sniper Rifle Mk.I, Silver Botkiller Sniper Rifle Mk.II, Gold Botkiller Sniper Rifle Mk.II, Shooting Star", "The Bazaar Bargain", "The Classic")
+		),
+		
+		Scope(
+			"Medigun", listOf(
+				AttributeEntry("mult_medigun_healrate", "Float", listOf()),
+				AttributeEntry(
+					"preserve_ubercharge", "Int", listOf(
+						"On player",
+						"Percentage saved on death or dropping weapon (e.g. `25` = 25% uber)"
+					)
+				),
+				AttributeEntry("healing_mastery", "Int", listOf()),
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"Determines medigun type"
+					)
+				),
+				AttributeEntry(
+					"set_charge_type", "Int", listOf(
+						"Ubercharge type. Each resist uber also has its own entry"
+					)
+				),
+				AttributeEntry(
+					"medic_machinery_beam", "Boolean", listOf(
+						"Allows medigun to target buildings"
+					)
+				),
+				AttributeEntry(
+					"mult_medigun_overheal_amount", "Float", listOf(
+						"Bonuses are additive, penalties are percentage"
+					)
+				),
+				AttributeEntry("mult_medigun_overheal_decay", "Float", listOf()),
+				AttributeEntry(
+					"overheal_expert", "Float", listOf(
+						"On owner",
+						"Overheal bonus = overheal bonus + overhealexpert/4 or just overheal bonus, whichever is higher",
+						"decay mult is same but divided by 2"
+					)
+				),
+				AttributeEntry(
+					"permanent_medic_shield", "Boolean", listOf(
+						"UNIMPLEMENTED",
+						"Only allowed in MvM"
+					)
+				),
+				AttributeEntry(
+					"mult_medigun_overheal_uberchargerate", "Float", listOf(
+						"On owner"
+					)
+				),
+				AttributeEntry(
+					"mult_medigun_uberchargerate", "Float", listOf(
+						"On owner"
+					)
+				),
+				AttributeEntry(
+					"add_uber_time", "Int", listOf(
+						"On owner"
+					)
+				),
+				AttributeEntry(
+					"generate_rage_on_heal", "Int", listOf(
+						"On owner",
+						"This is your shield level"
+					)
+				)
+			), listOf("TF_WEAPON_MEDIGUN, The Kritzkrieg, Upgradeable TF_WEAPON_MEDIGUN, The Quick-Fix, Festive Medigun 2011, Silver Botkiller Medi Gun Mk.I, Gold Botkiller Medi Gun Mk.I, Rust Botkiller Medi Gun Mk.I, Blood Botkiller Medi Gun Mk.I, Carbonado Botkiller Medi Gun Mk.I, Diamond Botkiller Medi Gun Mk.I, Silver Botkiller Medi Gun Mk.II, Gold Botkiller Medi Gun Mk.II, The Vaccinator")
+		),
+		
+		Scope(
+			"Builder", listOf(
+				AttributeEntry(
+					"mark_for_death_on_building_pickup", "Boolean", listOf(
+						"On owner"
+					)
+				),
+				AttributeEntry(
+					"sapper_voice_pak", "Float", listOf(
+						"If 1.0, it's a wheatley sapper"
+					)
+				),
+				AttributeEntry(
+					"robo_sapper", "Boolean", listOf(
+						"If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot):",
+						"Gives the sapper a radius instead of being single-target"
+					)
+				)
+			), listOf("Engineer PDA, Sapper")
+		),
+		
+		Scope(
+			"CompoundBow", listOf(
+				AttributeEntry(
+					"fast_reload", "Float", listOf(
+						"Mult applied to reload speed"
+					)
+				),
+				AttributeEntry(
+					"ability_master_sniper", "Int", listOf(
+						"Applies mult to reload speed: 1 = 0.6, 2 = 0.3",
+						"does not stack with Haste powerup"
+					)
+				)
+			), listOf("The Huntsman, Festive Huntsman, The Fortified Compound")
+		),
+		
+		Scope(
+			"Bat", listOf(
+				AttributeEntry(
+					"set_weapon_mode", "Int", listOf(
+						"If 0, cannot create a ball"
+					)
+				)
+			), listOf("TF_WEAPON_BAT, Upgradeable TF_WEAPON_BAT, The Candy Cane, The Boston Basher, Sun-on-a-Stick, The Fan O'War, The Atomizer, Three-Rune Blade, Festive Bat 2011, Batsaber", "The Sandman (tf_weapon_bat_wood)", "The Holy Mackerel, Unarmed Combat, Festive Holy Mackerel (tf_weapon_bat_fish)")
+		),
+		
+		Scope(
+			"Entity", listOf(
+				AttributeEntry("cannot_be_backstabbed", "Boolean"),
+				Scope(
+					"Buildings",
+					Scope(
+						"AllBuildings",
+						AttributeEntry("mod_build_rate", "Float", listOf("Multiplies building build time by this amount")),
+						AttributeEntry("- `upgrade_rate_mod`: Int", listOf("- Add x metal to any building hit using player's metal reserve", "- Recall that all players have 100 hidden metal")),
+						AttributeEntry("- `mult_engy_building_health`: Int", listOf("- Only applied if the building is NOT a disposable sentry")),
+					),
+					Scope(
+						"Sentry",
+						AttributeEntry("- `mvm_sentry_ammo`: Float", listOf("- Multiplier to max ammo")),
+						AttributeEntry("- `mult_sentry_range`: Float", listOf()),
+						AttributeEntry("- `build_small_sentries`: Boolean", listOf(" - If true, creates a sentry that's 80% size that upgrades with 150 metal instead of 200.")),
+					),
+					Scope(
+						"Dispenser",
+						AttributeEntry("- `mult_dispenser_rate`: Float", listOf("- Dispenser resupply rate")),
+						AttributeEntry("- `mult_dispenser_radius`: Float", listOf()),
+					),
+					Scope(
+						"Teleporter",
+						AttributeEntry("- `mod_teleporter_speed_boost`: Boolean", listOf("- If true, teleporter adds speed boost condition with arg 4.0 to teleported player")),
+						AttributeEntry(" - `mod_teleporter_cost`: Float", listOf("   - Flat mult to metal cost to upgrade teleporter")),
+						AttributeEntry("- `bidirectional_teleport`: Boolean", listOf()),
+						AttributeEntry("- `mult_teleporter_recharge_rate`: Float", listOf()),
+						
+						),
+					AttributeEntry("- `cannot_swim`: Boolean"),
+					AttributeEntry("- `mod_jump_height`: Float"),
+					AttributeEntry("- `mult_health_frompacks`: Float"),
+					AttributeEntry("- `mult_healing_from_medics`: Float", listOf("- Only on crossbow impacts?")),
+					AttributeEntry("- `hype_resets_on_jump`: Int", listOf("- Lose this amount of hype if you airdash", " - Note that this only applies to scout hype, not rage in general")),
+					AttributeEntry("- `parachute_attribute`: Boolean", listOf("- Allows parachute to be deployed")),
+					AttributeEntry("- `parachute_disabled`: Boolean", listOf("- Prevents parachute from being deployed, but still allows it to be retracted.")),
+					AttributeEntry("- `set_custom_buildmenu`: Int", listOf("- Only used if the build menu is actually shown", "- 0 = default", "- 1 = pipboy")),
+					AttributeEntry("- `appear_as_mvm_robot`: Boolean", listOf("- If true, appear as an MvM robot in your hud when selecting a class")),
+				),
+				
+				)
+		),
+		Scope(
+			"Player", listOf(
+				AttributeEntry("see_enemy_health", "Boolean",),
+				AttributeEntry("hide_enemy_health", "Boolean", listOf("Always true in MvM")),
+				Scope(
+					"SpyOnly",
+					AttributeEntry("set_custom_buildmenu", "Int", listOf("You can set a spy build menu??")),
+					AttributeEntry("override_engineer_object_type", "Int", listOf("Default = -1", "If 0, build a catapult??? I don't know if this is implemented or not, but it's definitely there.")),
+					
+					),
+			)
+		),
+		
+		Scope(
+			"MvMBot", listOf(
+				AttributeEntry("bot_custom_jump_particle", "Boolean", listOf("If true, spawns a rocketjump particle whenever the robot jumps")),
+				AttributeEntry("bot_medic_uber_health_threshold", "Int", listOf("Defaults to 50, I guess it's a percentage")),
+				AttributeEntry("bot_medic_uber_deploy_delay_duration", "Int", listOf("Defaults to -1")),
+				
+				)
+		),
+		Scope(
+			"ProjectileBase", listOf(
+				AttributeEntry(
+					"- `mad_milk_syringes`: Boolean\n" +
+					"    - If true, applies mad milk on hit. Yes, this is in the base projectile.\n"
+				)
+			)
+		),
+		Scope(
+			"ProjectileRocket", listOf(
+				AttributeEntry(
+					"- `halloween_pumpkin_explosions`: Boolean\n" +
+					"    - Checks on owner or sentry's owner"
+				)
+			)
+		),
+		Scope(
+			"WeaponRocket", listOf(
+				AttributeEntry(
+					"- `mini_rockets`: Boolean\n" +
+					"    - Uses the \"mini rockets\" model"
+				),
+				AttributeEntry(
+					"- `rocketjump_attackrate_bonus`: Float\n" +
+					"    - If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80%"
+				),
+				AttributeEntry("- `mult_projectile_speed`: Float"),
+				AttributeEntry("- `rocket_specialist`: Int"),
+				AttributeEntry(
+					"- `halloween_pumpkin_explosions`: Int\n" +
+					"    - Does pumpkin bombs particle effect"
+				),
+				AttributeEntry(
+					"- `use_large_smoke_explosion`: Int\n" +
+					"    - Use the big MvM particle when it explodes"
+				),
+				AttributeEntry("- `mult_explosion_radius`: Float"),
+				AttributeEntry(
+					"- `no_self_blast_damage`: Boolean\n" +
+					"    - Also uses plunger model"
+				),
+				AttributeEntry("- `mult_explosion_radius`: Float"),
+			)
+		),
+		Scope(
+			"ProjectileFlare", ("- On launcher: `mult_projectile_speed`: Float\n" +
+			                   "- On launcher: `mult_explosion_radius`: Float\n" +
+			                   "- On launcher:  `mod_projectile_heat_seek_power`: Float").split("\n")
+				                   .map { AttributeEntry(it) }),
+		
+		Scope(
+			"ProjectileGrenade", ("- On launcher: `use_large_smoke_explosion`: Boolean\n" +
+			                     "- On launcher: `halloween_pumpkin_explosions`: Boolean\n" +
+			                     "- On launcher: `mult_explosion_radius`: Float\n" +
+			                     "- On owner: `fuse_mult`: Float").split("\n")
+				                     .map { AttributeEntry(it) }),
+		
+		Scope("ProjectileEnergyRing", listOf(AttributeEntry("- On owner: `energy_weapon_penetration`: Boolean"))),
+		Scope("ProjectileArrow", listOf(AttributeEntry("- On player: `arrow_heals_buildings`: Boolean"))),
+		
+		Scope(
+			"ProjectilePipebomb", ("- On launcher: `stickybomb_fizzle_time`: Float\n" +
+			                      "- On launcher: `grenade_no_bounce`: Boolean\n" +
+			                      "- On launcher: `sticky_arm_time`: Float\n" +
+			                      "- On launcher: `grenade_damage_reduction_on_world_contact`: Float").split("\n")
+				                      .map { AttributeEntry(it) }),
+		
+		Scope(
+			"Flame", ("- `flame_spread_degree`: FLOAT\n" +
+			         "- `redirected_flame_size_mult`: FLOAT\n" +
+			         "- `mult_flame_size`: FLOAT\n" +
+			         "- `mult_end_flame_size`: FLOAT\n" +
+			         "- `flame_ignore_player_velocity`: FLOAT\n" +
+			         "- `flame_reflection_add_life_time`: FLOAT\n" +
+			         "- `reflected_flame_dmg_reduction`: FLOAT\n" +
+			         "- `max_flame_reflection_count`: INT\n" +
+			         "- `flame_reflect_on_collision`: INT\n" +
+			         "- `flame_speed`: FLOAT\n" +
+			         "- `flame_lifetime`: FLOAT\n" +
+			         "- `flame_random_life_time_offset`: FLOAT\n" +
+			         "- `flame_gravity`: FLOAT\n" +
+			         "- `flame_drag`: FLOAT\n" +
+			         "- `flame_up_speed`: FLOAT").split("\n")
+				         .map { it.replace("FLOAT", "Float") }
+				         .map(AttributeEntry::invoke)
+		),
+		
+		Scope(
+			"PowerUpBottle", ("- `powerup_duration`: Float\n" +
+			                 "- On player - `canteen_specialist`: Int\n" +
+			                 "    - Adds extra time to the base powerup duration based on level?\n" +
+			                 "- `powerup_max_charges`: Int\n" +
+			                 "- `set_weapon_mode`: Int\n" +
+			                 "    - If 1, is \"base\" powerup canteen").split("\n")
+				                 .map(AttributeEntry::invoke) +
+			                 Scope(
+				                 "Type", *(("- `critboost`: Boolean\n" +
+				                            "- `ubercharge`: Boolean\n" +
+				                            "- `recall`: Boolean\n" +
+				                            "- `refill_ammmo`: Boolean\n" +
+				                            "- `building_instant_upgrade`: Boolean").split("\n")
+					                 .map { AttributeEntry(it) }
+					                 .toTypedArray())
+			                 )
+		),
+		
+		Scope(
+			"Particles", ("- `particle_effect_use_head_origin`: Boolean\n" +
+			             "- `particle_effect_vertical_offset`: Float").split("\n")
+				             .map(AttributeEntry::invoke)
+		),
+		
+		Scope(
+			"EconEntity", listOf(
+				AttributeEntry(
+					"- `is_festivized`: Boolean\n" +
+					"    - Attaches festivizer"
+				),
+				AttributeEntry(
+					"- `set_attached_particle_static`: Int\n" +
+					"- (index into ItemSchema AttributeControlledParticleSystem)\n" +
+					"    - Attaches static particle, such as smoking a pipe\n" +
+					"    - Cosmetics can only have one"
+				),
+				AttributeEntry(
+					"- `set_attached_particle`: Int\n" +
+					" - (index into ItemSchema AttributeControlledParticleSystem)\n" +
+					"    - Dynamic particle systems, such as unusuals"
+				),
+				AttributeEntry(
+					"- `throwable_particle_trail_only`: Boolean\n" +
+					"    - If false, attaches the `set_attached_particle` to the item itself\n" +
+					"    - If true, the particle only applies to the throwable particle trail? Though I don't actually see that occurring anywhere in here"
+				),
+			)
+		)
+	)
+}

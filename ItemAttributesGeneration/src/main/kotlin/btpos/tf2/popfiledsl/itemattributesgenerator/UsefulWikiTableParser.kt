@@ -1,7 +1,6 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
 import btpos.tf2.popfiledsl.itemattributesgenerator.ItemAttributesGeneration.BuildConfig
-import java.io.FileInputStream
 import java.io.FileReader
 
 object UsefulWikiTableParser {
@@ -98,5 +97,20 @@ object UsefulWikiTableParser {
 				
 				NamedAttribute(name, id.toInt(), desc.orEmpty(), cls, valuetype, effecttype)
 			}
+	}
+}
+
+data class NamedAttribute(
+	val namedAttr: String,
+	val attrId: Int,
+	val englishInGameDesc: String,
+	val attrClass: String?,
+	val valueType: String?,
+	val effectType: String?
+) {
+	val positiveNegativeOrNull get() = when (effectType) {
+		"positive" -> true
+		"negative" -> false
+		else -> null
 	}
 }

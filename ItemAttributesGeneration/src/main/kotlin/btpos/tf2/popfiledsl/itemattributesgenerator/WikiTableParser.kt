@@ -1,24 +1,17 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
-import btpos.tf2.popfiledsl.itemattributesgenerator.ItemAttributesGeneration.BuildConfig
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.NamedParser
-import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.empty
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.literal
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.map
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.named
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.optional
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.or
-import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.parse
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.plus
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.star
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.string
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.then
 import btpos.tf2.popfiledsl.itemattributesgenerator.Parser.Companion.thunk
 import btpos.tf2.popfiledsl.itemattributesgenerator.WikiTableParser.StringOrMap.Companion.toStringOrMap
-import java.time.chrono.JapaneseEra.values
-import kotlin.io.path.Path
-import kotlin.io.path.readText
-import kotlin.io.path.reader
 
 object WikiTableParser {
 	class StringOrMap(val item: Any) {
@@ -58,7 +51,7 @@ object WikiTableParser {
 	
 	val V = literal('=').then(VValues) { _, j -> j }.named("V")
 	
-	val kv = literal('|').then(K.then(V) { i, j -> i to j?.toStringOrMap() }.named("KV")) { _, j -> j }.star().map { it.toMap() }.named("|KV")
+	val kv = literal('|').then(K.then(V) { i, j -> Pair<String, StringOrMap?>(i, j?.toStringOrMap()) }.named("KV")) { _, j -> j }.star().map { it.toMap() }.named("|KV")
 	val doubleopen = literal('{').then(literal('{')) { _, _ -> null }.named("{{")
 	val doubleclose = literal('}').then(literal('}')) { _, _ -> null }.map { null }.named("}}")
 	
@@ -98,11 +91,3 @@ object WikiTableParser {
 //	}
 }
 
-data class NamedAttribute(
-	val namedAttr: String,
-	val attrId: Int,
-	val englishInGameDesc: String,
-	val attrClass: String?,
-	val valueType: String?,
-	val effectType: String?
-)
