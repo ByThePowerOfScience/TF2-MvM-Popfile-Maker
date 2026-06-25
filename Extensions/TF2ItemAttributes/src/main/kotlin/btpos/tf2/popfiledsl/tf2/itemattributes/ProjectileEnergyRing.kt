@@ -7,19 +7,20 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class ProjectileEnergyRingAttributes : BaseProjectileAttributes() {
-	companion object : ProjectileEnergyRingAttributes() {
-		operator fun invoke(scope: ProjectileEnergyRingAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
+	companion object : ProjectileEnergyRingAttributes
 	
 	/**
 	 * Checked on owner
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var energyWeaponPenetration: Boolean?
 		get() = attrs.getTyped("energy weapon penetration", BinaryIntCodec)
 		set(value) = attrs.setNullable("energy weapon penetration", value, BinaryIntCodec)
+}
+
+operator fun ProjectileEnergyRingAttributes.invoke(scope: ProjectileEnergyRingAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

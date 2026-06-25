@@ -8,12 +8,8 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: All Stock Minigun skins, Natascha, The Brass Beast, Tomislav
  * 
  */
-abstract class MinigunAttributes : BaseGunAttributes() {
-	companion object : MinigunAttributes() {
-		operator fun invoke(scope: MinigunAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface MinigunAttributes : BaseGunAttributes {
+	companion object : MinigunAttributes
 	
 	
 	context(attrs: IKeyValueMap)
@@ -24,17 +20,18 @@ abstract class MinigunAttributes : BaseGunAttributes() {
 	/**
 	 * 
 	 * Bonus:
-	 * 	Value type: inverted_percentage
-	 * 	
+	 * 	- Value type: inverted_percentage
+	 * 	- N% faster spin up time
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% slower spin up time
 	 */
-	val minigunSpinupTimeIncreased = BonusPenalty<Float, Float>("minigun spinup time decreased", "minigun spinup time increased")
+	val minigunSpinupTimeIncreased get() = BonusPenalty<Float, Float>("minigun spinup time decreased", "minigun spinup time increased")
 	
 	/**
 	 * Overridden by "raid gamemode" to 1
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var attackProjectiles: Boolean?
@@ -49,10 +46,15 @@ abstract class MinigunAttributes : BaseGunAttributes() {
 	
 	/**
 	 * Amount of ammo drained per second
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var usesAmmoWhileAiming: Int?
 		get() = attrs.getTyped("uses ammo while aiming")
 		set(value) = attrs.setNullable("uses ammo while aiming", value)
+}
+
+operator fun MinigunAttributes.invoke(scope: MinigunAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

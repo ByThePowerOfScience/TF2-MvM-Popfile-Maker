@@ -7,17 +7,15 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
-	companion object : BaseMeleeAttributes() {
-		operator fun invoke(scope: BaseMeleeAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface BaseMeleeAttributes : WeaponBaseAttributes {
+	companion object : BaseMeleeAttributes
 	
 	/**
 	 * If true, make weapon deploy and holster 75% slower
 	 * 
+	 * 
 	 * If true, set swing range to 72, else 48
+	 * 
 	 */
 	override context(attrs: IKeyValueMap)
 	var isASword: Boolean?
@@ -28,7 +26,9 @@ abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
 	 * Value type: percentage
 	 * 
 	 * Multiplier applied to the bounding box of the swing to detect if a player is inside it
+	 * 
 	 * Yes, it DOES use a bounding box.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var meleeBoundsMultiplier: Float?
@@ -37,6 +37,7 @@ abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
 	
 	/**
 	 * Damage sappers with swing.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var damageAppliesToSappers: Int?
@@ -45,6 +46,7 @@ abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
 	
 	/**
 	 * Applies speed boost cond to yourself and the teammate you hit
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var speedBuffAlly: Boolean?
@@ -53,6 +55,7 @@ abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
 	
 	/**
 	 * Idiot.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var hitSelfOnMiss: Boolean?
@@ -61,6 +64,7 @@ abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
 	
 	/**
 	 * Used as arg to addcond speedboost
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var speedBoostOnHitEnemy: Int?
@@ -81,6 +85,7 @@ abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
 	
 	/**
 	 * Force enemies to laugh if they're also wielding this weapon.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var tickleEnemiesWieldingSameWeapon: Boolean?
@@ -97,6 +102,7 @@ abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
 	 * Value type: percentage
 	 * 
 	 * If health < 50%, apply mult.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var dmgBonusWhileHalfDead: Float?
@@ -107,10 +113,15 @@ abstract class BaseMeleeAttributes : WeaponBaseAttributes() {
 	 * Value type: percentage
 	 * 
 	 * If health >= 50%, apply mult
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var dmgPenaltyWhileHalfAlive: Float?
 		get() = attrs.getTyped("dmg penalty while half alive")
 		set(value) = attrs.setNullable("dmg penalty while half alive", value)
+}
+
+operator fun BaseMeleeAttributes.invoke(scope: BaseMeleeAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

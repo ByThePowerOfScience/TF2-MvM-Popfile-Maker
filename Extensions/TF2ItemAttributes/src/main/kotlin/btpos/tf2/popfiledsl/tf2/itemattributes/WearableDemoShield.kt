@@ -8,41 +8,47 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: The Chargin' Targe, The Splendid Screen, The Tide Turner, Festive Targe 2014
  * 
  */
-abstract class WearableDemoShieldAttributes : WearableAttributes() {
-	companion object : WearableDemoShieldAttributes() {
-		operator fun invoke(scope: WearableDemoShieldAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface WearableDemoShieldAttributes : WearableAttributes {
+	companion object : WearableDemoShieldAttributes
 	
 	
 	context(attrs: IKeyValueMap)
-	var AttackNotCancelCharge: Boolean?
+	var attackNotCancelCharge: Boolean?
 		get() = attrs.getTyped("Attack not cancel charge", BinaryIntCodec)
 		set(value) = attrs.setNullable("Attack not cancel charge", value, BinaryIntCodec)
 	
 	/**
 	 * On player
+	 * 
 	 * Charge time mult
 	 * 
+	 * 
 	 * Bonus:
+	 * 	- N sec increase in charge duration
 	 * 
 	 * Penalty:
+	 * 	- N sec decrease in charge duration
 	 */
-	val chargeTimeDecreased = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
+	val chargeTimeDecreased get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
 	
 	/**
 	 * On player
+	 * 
 	 * Impact damage mult
 	 * 
+	 * 
 	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- +N% increase in charge impact damage
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% decrease in charge impact damage
 	 */
-	val chargeImpactDamageDecreased = BonusPenalty<Float, Float>("charge impact damage increased", "charge impact damage decreased")
+	val chargeImpactDamageDecreased get() = BonusPenalty<Float, Float>("charge impact damage increased", "charge impact damage decreased")
+}
+
+operator fun WearableDemoShieldAttributes.invoke(scope: WearableDemoShieldAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

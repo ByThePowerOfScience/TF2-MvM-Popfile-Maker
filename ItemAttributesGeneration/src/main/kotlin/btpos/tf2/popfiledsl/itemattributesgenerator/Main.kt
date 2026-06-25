@@ -2,16 +2,12 @@ package btpos.tf2.popfiledsl.itemattributesgenerator
 
 import btpos.tf2.popfiledsl.itemattributesgenerator.ItemAttributesGeneration.BuildConfig
 import java.io.File
-import java.nio.file.Files
 import kotlin.collections.mapValues
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
-import kotlin.io.path.createDirectory
 import kotlin.io.path.deleteExisting
-import kotlin.io.path.deleteIfExists
 import kotlin.io.path.exists
-import kotlin.io.path.notExists
 import kotlin.io.path.useDirectoryEntries
 
 data class ObjectInProgress(val name: String, val doc: String, val attrs: MutableList<ISortedNamedAttribute> = mutableListOf())
@@ -49,31 +45,36 @@ fun main() {
 	/**
 	 * Sort all named attributes by their class, group them up into scopes
 	 */
-	val namedAttributeScopesByClassName: Map<String, ISortedNamedAttribute> =
+	val namedAttributeScopesByClassName: Map<String, List<ISortedNamedAttribute>> =
 		UsefulWikiTableParser.parseWiki()
 			.groupBy { it.className }
-			.mapValues<_, _, ISortedNamedAttribute> { (_, attrsForAClass) ->
+			.mapValues<_, _, List<ISortedNamedAttribute>> { (clsName, attrsForAClass) ->
+				if (clsName == "set_weapon_mode")
+					return@mapValues attrsForAClass
+				
 				if (attrsForAClass.size == 1)
-					return@mapValues attrsForAClass.first()
+					return@mapValues attrsForAClass
+				
 				
 				val groupedByPositiveOrNegative = attrsForAClass.groupBy { it.positiveOrNegative }
 				if (groupedByPositiveOrNegative.size == 1) {
-					return@mapValues groupedByPositiveOrNegative.values.first().first()
+					return@mapValues groupedByPositiveOrNegative.values.single()
 				}
-				groupedByPositiveOrNegative.mapValues { (isPos, posOrNegItem) ->
-						if (posOrNegItem.isEmpty())
-							error("I don't think this should happen but posneg is empty list for $isPos for $attrsForAClass")
-						else if (posOrNegItem.size == 1) {
-							return@mapValues posOrNegItem.single()
-						}
-						
-						val isHidden = posOrNegItem.groupBy { "hidden" in it.attrName.lowercase() }
-						when (isHidden.size) {
-							1 -> isHidden.values.first().first()
-							2 -> Vis(isHidden[false]!!.first(), isHidden[true]!!.first())
-							else -> Custom(posOrNegItem.first().varName, posOrNegItem)
-						}
+				return@mapValues listOf(groupedByPositiveOrNegative.mapValues { (isPos, posOrNegItem) ->
+					if (posOrNegItem.isEmpty())
+						error("I don't think this should happen but posneg is empty list for $isPos for $attrsForAClass")
+					else if (posOrNegItem.size == 1) {
+						return@mapValues posOrNegItem.single()
 					}
+					
+					val isHidden = posOrNegItem.groupBy { "hidden" in it.attrName.lowercase() }
+					when (isHidden.size) {
+						1 -> isHidden.values.first()
+							.first()
+						2 -> Vis(isHidden[false]!!.first(), isHidden[true]!!.first())
+						else -> Custom(posOrNegItem.first().varName, posOrNegItem)
+					}
+				}
 					.let { sortedByIsPositive ->
 						if (sortedByIsPositive.size == 1) {
 							return@let sortedByIsPositive.values.single()
@@ -81,19 +82,18 @@ fun main() {
 						// convert this into a PenaltyBonus
 						if (true in sortedByIsPositive && false in sortedByIsPositive && null !in sortedByIsPositive) {
 							PenaltyBonus(
-								sortedByIsPositive[false]?.varName ?: sortedByIsPositive[true]?.varName ?: error("No var name for $sortedByIsPositive"),
 								sortedByIsPositive[false]!!,
 								sortedByIsPositive[true]!!
 							)
 						} else {
 							NamedAttributeScope(sortedByIsPositive.values.first().varName.capitalize(), *sortedByIsPositive.values.toTypedArray())
 						}
-					}
+					})
 			}
 	
 
 	val scopes = attrClassesByBaseClassFromNotes.mapNotNull { baseClassScope ->
-		baseClassScope.absorb(namedAttributeScopesByClassName) as NamedAttributeScope?
+		baseClassScope.absorb(namedAttributeScopesByClassName).singleOrNull() as NamedAttributeScope?
 	}
 	
 	val outDir = Path(BuildConfig.GENERATED_FILES_DIR).resolve(BuildConfig.GENERATED_FILE_PACKAGE.replace('.', File.separatorChar)).also {

@@ -7,21 +7,23 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class ProjectileRocketAttributes : BaseRocketAttributes() {
-	companion object : ProjectileRocketAttributes() {
-		operator fun invoke(scope: ProjectileRocketAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface ProjectileRocketAttributes : BaseRocketAttributes {
+	companion object : ProjectileRocketAttributes
 	
 	/**
-	 *     - Does pumpkin bombs particle effect
+	 * Does pumpkin bombs particle effect
 	 * 
-	 *     - Checks on owner or sentry's owner
+	 * 
+	 * Checks on owner or sentry's owner
+	 * 
 	 */
 	override context(attrs: IKeyValueMap)
-	var SPELLHalloweenPumpkinExplosions: Boolean?
+	var sPELLHalloweenPumpkinExplosions: Boolean?
 		get() = attrs.getTyped("SPELL: Halloween pumpkin explosions", BinaryIntCodec)
 		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value, BinaryIntCodec)
+}
+
+operator fun ProjectileRocketAttributes.invoke(scope: ProjectileRocketAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

@@ -8,19 +8,20 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: The Cleaner's Carbine
  * 
  */
-abstract class ChargedSMGAttributes : SMGAttributes() {
-	companion object : ChargedSMGAttributes() {
-		operator fun invoke(scope: ChargedSMGAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface ChargedSMGAttributes : SMGAttributes {
+	companion object : ChargedSMGAttributes
 	
 	/**
 	 * Minicrit buff duration
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var minicritBoostWhenCharged: Int?
 		get() = attrs.getTyped("minicrit_boost_when_charged")
 		set(value) = attrs.setNullable("minicrit_boost_when_charged", value)
+}
+
+operator fun ChargedSMGAttributes.invoke(scope: ChargedSMGAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

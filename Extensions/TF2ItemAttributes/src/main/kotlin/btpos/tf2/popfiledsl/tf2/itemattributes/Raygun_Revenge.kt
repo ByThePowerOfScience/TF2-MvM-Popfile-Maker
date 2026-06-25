@@ -8,21 +8,23 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: NONE (but it's there at least?)
  * 
  */
-abstract class Raygun_RevengeAttributes : RayGunAttributes() {
-	companion object : Raygun_RevengeAttributes() {
-		operator fun invoke(scope: Raygun_RevengeAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface Raygun_RevengeAttributes : RayGunAttributes {
+	companion object : Raygun_RevengeAttributes
 	
 	/**
 	 * Removes ammo requirement to fire weapon.
 	 * 
+	 * 
 	 * Removes ammo requirement to fire weapon.
+	 * 
 	 */
 	override context(attrs: IKeyValueMap)
 	var energyWeaponNoDrain: Boolean?
 		get() = attrs.getTyped("energy weapon no drain", BinaryIntCodec)
 		set(value) = attrs.setNullable("energy weapon no drain", value, BinaryIntCodec)
+}
+
+operator fun Raygun_RevengeAttributes.invoke(scope: Raygun_RevengeAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

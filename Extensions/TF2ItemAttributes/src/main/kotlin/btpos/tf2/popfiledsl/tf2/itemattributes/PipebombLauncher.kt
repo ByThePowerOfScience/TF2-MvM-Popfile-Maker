@@ -8,17 +8,14 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: TF_WEAPON_PIPEBOMBLAUNCHER, The Scottish Resistance, Upgradeable TF_WEAPON_PIPEBOMBLAUNCHER, Stickybomb Jumper, Festive Stickybomb Launcher 2011, Silver Botkiller Stickybomb Launcher Mk.I, Gold Botkiller Stickybomb Launcher Mk.I, Rust Botkiller Stickybomb Launcher Mk.I, Blood Botkiller Stickybomb Launcher Mk.I, Carbonado Botkiller Stickybomb Launcher Mk.I, Diamond Botkiller Stickybomb Launcher Mk.I, Silver Botkiller Stickybomb Launcher Mk.II, Gold Botkiller Stickybomb Launcher Mk.II, The Quickiebomb Launcher
  * 
  */
-abstract class PipebombLauncherAttributes : BaseGunAttributes() {
-	companion object : PipebombLauncherAttributes() {
-		operator fun invoke(scope: PipebombLauncherAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface PipebombLauncherAttributes : BaseGunAttributes {
+	companion object : PipebombLauncherAttributes
 	
 	/**
 	 * Value type: inverted_percentage
 	 * 
 	 * Not actually the "rate", rather the time it takes to fully charge a stickybomb launch when holding MOUSE1.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var stickybombChargeRate: Float?
@@ -28,14 +25,18 @@ abstract class PipebombLauncherAttributes : BaseGunAttributes() {
 	/**
 	 * If 0, default "detonate all stickies on rclick" mode. If true, uses Scottish Resistance's "look at sticky to detonate" mechanic.
 	 * 
+	 * 
 	 * Bonus:
+	 * 	- Detonates stickybombs near the crosshair and directly under your feet
 	 * 
 	 * Penalty:
+	 * 	- Launched bombs shatter on surfaces
 	 */
-	val stickyAirBurstMode = BonusPenalty<Int, Int>("sticky detonate mode", "sticky air burst mode")
+	val stickyAirBurstMode get() = BonusPenalty<Int, Int>("sticky detonate mode", "sticky air burst mode")
 	
 	/**
 	 * If true, stickies destroy other stickies.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var stickiesDetonateStickies: Boolean?
@@ -46,6 +47,7 @@ abstract class PipebombLauncherAttributes : BaseGunAttributes() {
 	 * Value type: percentage
 	 * 
 	 * damage = `2*basedamage * (this - 1.0) * currentChargeProportion`
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var stickybombChargeDamageIncrease: Float?
@@ -55,9 +57,15 @@ abstract class PipebombLauncherAttributes : BaseGunAttributes() {
 	/**
 	 * 
 	 * Bonus:
+	 * 	- +N max stickybombs out
 	 * 
 	 * Penalty:
+	 * 	- N max stickybombs out
 	 */
-	val maxPipebombsDecreased = BonusPenalty<Int, Int>("max pipebombs increased", "max pipebombs decreased")
+	val maxPipebombsDecreased get() = BonusPenalty<Int, Int>("max pipebombs increased", "max pipebombs decreased")
+}
+
+operator fun PipebombLauncherAttributes.invoke(scope: PipebombLauncherAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

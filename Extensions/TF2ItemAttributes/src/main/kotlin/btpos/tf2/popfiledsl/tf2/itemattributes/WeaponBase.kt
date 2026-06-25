@@ -7,15 +7,12 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
-	companion object : WeaponBaseAttributes() {
-		operator fun invoke(scope: WeaponBaseAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
+	companion object : WeaponBaseAttributes
 	
 	/**
 	 * If true, and player has a demoman charge meter, add charge based on ammo pack size
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var ammoGivesCharge: Boolean?
@@ -37,35 +34,30 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	/**
 	 * 
 	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- +N% damage vs buildings
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% damage penalty vs buildings
 	 */
-	val dmgPenaltyVsBuildings = BonusPenalty<Float, Float>("dmg bonus vs buildings", "dmg penalty vs buildings")
+	val dmgPenaltyVsBuildings get() = BonusPenalty<Float, Float>("dmg bonus vs buildings", "dmg penalty vs buildings")
 	
 	/**
 	 * 
 	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- +N% clip size
 	 * 
 	 * Penalty:
-	 * 	Visible:
-	 * 		Value type: percentage
-	 * 		
-	 * 		N% clip size
-	 * 		
-	 * 	
-	 * 	Hidden:
-	 * 		Value type: percentage
-	 * 		
-	 * 		N% clip size
-	 * 		
+	 * 	- Visible:
+	 * 	- 	- Value type: percentage
+	 * 	- 	- N% clip size
+	 * 	- Hidden:
+	 * 	- 	- Value type: percentage
+	 * 	- 	- N% clip size
 	 */
-	val clipSizePenalty = BonusPenalty_PenaltyNested<Float, VisHidden<Float, Float>>("clip size bonus", VisHidden<Float, Float>("clip size penalty", "clip size penalty HIDDEN"))
+	val clipSizePenalty get() = BonusPenalty_PenaltyNested<Float, VisHidden<Float, Float>>("clip size bonus", VisHidden<Float, Float>("clip size penalty", "clip size penalty HIDDEN"))
 	
 	/**
 	 * Value type: percentage
@@ -78,7 +70,9 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	
 	/**
 	 * MVM attribute that specifically handles rocket and grenade launchers
+	 * 
 	 * Note that all three of these are different classes, which means they stack.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var clipSizeUpgradeAtomic: Int?
@@ -86,15 +80,16 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 		set(value) = attrs.setNullable("clip size upgrade atomic", value)
 	
 	
-	open context(attrs: IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var clipsizeIncreaseOnKill: Int?
 		get() = attrs.getTyped("clipsize increase on kill")
 		set(value) = attrs.setNullable("clipsize increase on kill", value)
 	
 	/**
 	 * Determines the hand used in the model
+	 * 
 	 */
-	open context(attrs: IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var modWrenchBuildsMinisentry: Int?
 		get() = attrs.getTyped("mod wrench builds minisentry")
 		set(value) = attrs.setNullable("mod wrench builds minisentry", value)
@@ -102,44 +97,46 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	/**
 	 * On player
 	 * 
+	 * 
 	 * Bonus:
-	 * 	Value type: inverted_percentage
-	 * 	
+	 * 	- Value type: inverted_percentage
+	 * 	- N% faster weapon switch
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% longer weapon switch
 	 */
-	val deployTimeIncreased = BonusPenalty<Float, Float>("deploy time decreased", "deploy time increased")
+	val deployTimeIncreased get() = BonusPenalty<Float, Float>("deploy time decreased", "deploy time increased")
 	
 	/**
 	 * 
 	 * Bonus:
-	 * 	Value type: inverted_percentage
-	 * 	
+	 * 	- Value type: inverted_percentage
+	 * 	- This weapon deploys N% faster
 	 * 
 	 * Penalty:
-	 * 	Value type: inverted_percentage
-	 * 	
+	 * 	- Value type: inverted_percentage
+	 * 	- This weapon deploys N% slower
 	 */
-	val singleWepDeployTimeIncreased = BonusPenalty<Float, Float>("single wep deploy time decreased", "single wep deploy time increased")
+	val singleWepDeployTimeIncreased get() = BonusPenalty<Float, Float>("single wep deploy time decreased", "single wep deploy time increased")
 	
 	/**
 	 * 
 	 * Bonus:
-	 * 	Value type: inverted_percentage
-	 * 	
+	 * 	- Value type: inverted_percentage
+	 * 	- This weapon holsters N% faster
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- This weapon holsters N% slower
 	 */
-	val singleWepHolsterTimeIncreased = BonusPenalty<Float, Float>("switch from wep deploy time decreased", "single wep holster time increased")
+	val singleWepHolsterTimeIncreased get() = BonusPenalty<Float, Float>("switch from wep deploy time decreased", "single wep holster time increased")
 	
 	/**
 	 * If true, make weapon deploy and holster 75% slower
+	 * 
 	 */
-	open context(attrs: IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var isASword: Boolean?
 		get() = attrs.getTyped("is_a_sword", BinaryIntCodec)
 		set(value) = attrs.setNullable("is_a_sword", value, BinaryIntCodec)
@@ -148,7 +145,9 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	 * Value type: percentage
 	 * 
 	 * On player
+	 * 
 	 * Multiplier applied if NOT being healed by a medic
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var modMedicHealedDeployTimePenalty: Float?
@@ -157,6 +156,7 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	
 	/**
 	 * Should force switch to this item
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var forceWeaponSwitch: Boolean?
@@ -165,7 +165,9 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	
 	/**
 	 * If true, only applies attributes when weapon is active, and unapplies them when switching off.
+	 * 
 	 * This also means you can't have "only active when holding weapon" and "always active" attributes on the same weapon (excluding the specific attributes that are _always_ "only when active"), since the order you specify attributes in doesn't matter.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var provideOnActive: Boolean?
@@ -174,11 +176,21 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	
 	/**
 	 * How many players your "projectile" (*including bullets*) should penetrate.
+	 * 
 	 */
-	open context(attrs: IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var projectilePenetration: Int?
 		get() = attrs.getTyped("projectile penetration")
 		set(value) = attrs.setNullable("projectile penetration", value)
+	
+	/**
+	 * How many players your "projectile" (*including bullets*) should penetrate.
+	 * 
+	 */
+	context(attrs: IKeyValueMap)
+	var projectilePenetrationHeavy: Int?
+		get() = attrs.getTyped("projectile penetration heavy")
+		set(value) = attrs.setNullable("projectile penetration heavy", value)
 	
 	/**
 	 * Value type: percentage
@@ -192,28 +204,24 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	/**
 	 * 
 	 * Bonus:
-	 * 	Visible:
-	 * 		Value type: percentage
-	 * 		
-	 * 		+N% damage bonus
-	 * 		
-	 * 	
-	 * 	Hidden:
-	 * 		Value type: percentage
-	 * 		
-	 * 		+N% damage bonus
-	 * 		
+	 * 	- Visible:
+	 * 		- Value type: percentage
+	 * 		- +N% damage bonus
+	 * 	- Hidden:
+	 * 		- Value type: percentage
+	 * 		- +N% damage bonus
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% damage penalty
 	 */
-	open val damagePenalty = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("damage bonus", "damage bonus HIDDEN"), "damage penalty")
+	val damagePenalty get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("damage bonus", "damage bonus HIDDEN"), "damage penalty")
 	
 	/**
 	 * Value type: percentage
 	 * 
 	 * "No random crits" sets this to `0.0`
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var critModDisabled: Float?
@@ -221,12 +229,25 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 		set(value) = attrs.setNullable("crit mod disabled", value)
 	
 	/**
+	 * Value type: percentage
+	 * 
+	 * "No random crits" sets this to `0.0`
+	 * 
+	 */
+	context(attrs: IKeyValueMap)
+	var critModDisabledHidden: Float?
+		get() = attrs.getTyped("crit mod disabled hidden")
+		set(value) = attrs.setNullable("crit mod disabled hidden", value)
+	
+	/**
 	 * 
 	 * Bonus:
+	 * 	- Hold Fire to load up to three rockets Release Fire to unleash the barrage
 	 * 
 	 * Penalty:
+	 * 	- Attrib_AutoFiresFullClipNegative}}
 	 */
-	val autoFiresFullClipPenalty = BonusPenalty<Boolean, Boolean>("auto fires full clip", "auto fires full clip penalty")
+	val autoFiresFullClipPenalty get() = BonusPenalty<Boolean, Boolean>("auto fires full clip", "auto fires full clip penalty")
 	
 	
 	context(attrs: IKeyValueMap)
@@ -236,6 +257,7 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	
 	/**
 	 * Deals damage to the player when overloaded.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var canOverload: Boolean?
@@ -245,31 +267,23 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	/**
 	 * After firing, you wait a bit before you can fire again. That's the "delay".
 	 * 
+	 * 
 	 * Bonus:
-	 * 	Visible:
-	 * 		Value type: inverted_percentage
-	 * 		
-	 * 		+N% faster firing speed
-	 * 		
-	 * 	
-	 * 	Hidden:
-	 * 		Value type: inverted_percentage
-	 * 		
-	 * 		+N% faster firing speed
-	 * 		
+	 * 	- Visible:
+	 * 		- Value type: inverted_percentage
+	 * 		- +N% faster firing speed
+	 * 	- Hidden:
+	 * 		- Value type: inverted_percentage
+	 * 		- +N% faster firing speed
 	 * 
 	 * Penalty:
-	 * 	Visible:
-	 * 		Value type: inverted_percentage
-	 * 		
-	 * 		N% slower firing speed
-	 * 		
-	 * 	
-	 * 	Hidden:
-	 * 		Value type: inverted_percentage
-	 * 		
+	 * 	- Visible:
+	 * 	- 	- Value type: inverted_percentage
+	 * 	- 	- N% slower firing speed
+	 * 	- Hidden:
+	 * 	- 	- Value type: inverted_percentage
 	 */
-	val fireRatePenalty = BonusPenalty_BothNested<VisHidden<Float, Float>, VisHidden<Float, Float>>(VisHidden<Float, Float>("fire rate bonus", "fire rate bonus HIDDEN"), VisHidden<Float, Float>("fire rate penalty", "fire rate penalty HIDDEN"))
+	val fireRatePenalty get() = BonusPenalty_BothNested<VisHidden<Float, Float>, VisHidden<Float, Float>>(VisHidden<Float, Float>("fire rate bonus", "fire rate bonus HIDDEN"), VisHidden<Float, Float>("fire rate penalty", "fire rate penalty HIDDEN"))
 	
 	
 	context(attrs: IKeyValueMap)
@@ -280,20 +294,20 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	/**
 	 * 
 	 * Bonus:
-	 * 	Value type: inverted_percentage
-	 * 	
+	 * 	- Value type: inverted_percentage
+	 * 	- N% faster reload time
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% slower reload time
 	 */
-	open val ReloadTimeIncreased = BonusPenalty<Float, Float>("Reload time decreased", "Reload time increased")
+	val reloadTimeIncreased get() = BonusPenalty<Float, Float>("Reload time decreased", "Reload time increased")
 	
 	/**
 	 * Value type: percentage
 	 * 
 	 */
-	open context(attrs: IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var reloadTimeIncreasedHidden: Float?
 		get() = attrs.getTyped("reload time increased hidden")
 		set(value) = attrs.setNullable("reload time increased hidden", value)
@@ -302,8 +316,9 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	 * Value type: inverted_percentage
 	 * 
 	 * This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle.
+	 * 
 	 */
-	open context(attrs: IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var fasterReloadRate: Float?
 		get() = attrs.getTyped("faster reload rate")
 		set(value) = attrs.setNullable("faster reload rate", value)
@@ -312,7 +327,9 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	 * Value type: inverted_percentage
 	 * 
 	 * On player
+	 * 
 	 * Halloween reload time multiplier.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var halloweenReloadTimeDecreased: Float?
@@ -333,5 +350,9 @@ abstract class WeaponBaseAttributes : BaseCombatWeaponAttributes() {
 	var weaponAllowInspect: Boolean?
 		get() = attrs.getTyped("weapon_allow_inspect", BinaryIntCodec)
 		set(value) = attrs.setNullable("weapon_allow_inspect", value, BinaryIntCodec)
+}
+
+operator fun WeaponBaseAttributes.invoke(scope: WeaponBaseAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

@@ -1,9 +1,10 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
 fun String.camelCase(): String {
-	return this[0] + this.zipWithNext { a, b -> if ((a == ' ' || a == '_') && b.isLetter()) b.uppercaseChar() else b }
+	return this[0].lowercaseChar() + this.zipWithNext { a, b -> if ((a == ' ' || a == '_') && b.isLetter()) b.uppercaseChar() else b }
 		.filter { it != ' ' && it != '_' }
 		.joinToString("")
+	
 }
 
 sealed class ISortedNamedAttribute {
@@ -166,18 +167,22 @@ data class NamedAttribute(
 	}
 }
 
+val removeFromPBName = listOf("decreased?", "lower(?:ed)?", ).map { Regex(it) }
 /**
  * Penalty and bonus combined into a single little namespace
  */
 data class PenaltyBonus private constructor(
-	override val varName: String,
 	val penalty: ISortedNamedAttribute,
 	val bonus: ISortedNamedAttribute,
 ) : IContainMultipleAttributes() {
 	override fun toString(): String {
-		return """PenaltyBonus("$varName", $penalty, $bonus)"""
+		return """PenaltyBonus($penalty, $bonus)"""
 	}
 	
+	override val varName: String
+		get() = penalty.varName.let { name ->
+			removeFromPBName.fold(name) { it, re -> it.replace(re, "") }
+		}
 	override val containedAttributes: Collection<ISortedNamedAttribute>
 		get() = listOf(penalty, bonus)
 	
@@ -187,7 +192,7 @@ data class PenaltyBonus private constructor(
 		const val BONUS_IS_NESTED = "BonusPenalty_BonusNested"
 		const val PENALTY_IS_NESTED = "BonusPenalty_PenaltyNested"
 		
-		operator fun invoke(varName: String, decrease: ISortedNamedAttribute, increase: ISortedNamedAttribute, note: String? = null) = PenaltyBonus(varName, decrease.withVarName("decrease"), increase.withVarName("increase")).apply {
+		operator fun invoke(decrease: ISortedNamedAttribute, increase: ISortedNamedAttribute, note: String? = null) = PenaltyBonus(decrease, increase).apply {
 			note?.let { commentsNotFromNotes.add(it) }
 		}
 	}
@@ -218,7 +223,7 @@ data class PenaltyBonus private constructor(
 	
 	
 	override fun propertyString(): String {
-		return "val $varName = ${propertyValue()}"
+		return "val $varName get() = ${propertyValue()}"
 	}
 	
 	
@@ -229,10 +234,10 @@ data class PenaltyBonus private constructor(
 	init {
 		this.commentsNotFromNotes.run {
 			add("Bonus:")
-			addAll(bonus.commentsNotFromNotes.map { "\t" + it })
+			addAll(bonus.commentsNotFromNotes.filter { it.isNotBlank() }.map { if (!it.trimStart().startsWith("- ")) "- $it" else it  }.map { "\t" + it })
 			add("")
 			add("Penalty:")
-			addAll(penalty.commentsNotFromNotes.map { "\t" + it })
+			addAll(penalty.commentsNotFromNotes.filter { it.isNotBlank() }.map { "\t- $it" })
 		}
 	}
 	
@@ -250,7 +255,7 @@ data class PenaltyBonus private constructor(
 	}
 	
 	override fun withVarName(name: String): ISortedNamedAttribute {
-		return this.copy(varName = name)
+		return this.copy()
 	}
 	
 	override fun getKotlinType(): String {
@@ -264,11 +269,14 @@ data class PenaltyBonus private constructor(
 	}
 }
 
+val removeFromThing = listOf("hidden").map { Regex(it) }
 data class Vis(
 	val visible: NamedAttribute,
 	val hidden: NamedAttribute,
 	val additionalItems: List<NamedAttribute>,
-	override val varName: String = visible.varName
+	override val varName: String = visible.varName.run {
+		removeFromThing.fold(this) { el: String, it: Regex -> el.replace(it, "") }
+	}
 ) : IContainMultipleAttributes() {
 	override fun toString(): String {
 		return """Vis($visible, $hidden, listOf(${additionalItems.joinToString(", ")}), "$varName")"""
@@ -281,14 +289,14 @@ data class Vis(
 	
 	override val commentsNotFromNotes: MutableList<String> = mutableListOf<String>().apply {
 		add("Visible:")
-		addAll(visible.commentsNotFromNotes.map { "\t" + it })
+		addAll(visible.commentsNotFromNotes.filter{ it.isNotBlank() }.map { "\t- $it" })
 		add("")
 		add("Hidden:")
-		addAll(hidden.commentsNotFromNotes.map { "\t" + it })
+		addAll(hidden.commentsNotFromNotes.filter{ it.isNotBlank() }.map { "\t- $it" })
 		for (item in additionalItems) {
 			add("")
 			add(item.varName.capitalize() + ":")
-			addAll(item.commentsNotFromNotes.map { "\t" + it })
+			addAll(item.commentsNotFromNotes.filter{ it.isNotBlank() }.map { "\t- $it" })
 		}
 	}
 	
@@ -313,7 +321,7 @@ ${writeAttributesInClassBody(additionalItems, "\t")}
 	
 	
 	override fun propertyString(): String {
-		return "val $varName = ${propertyValue()}"
+		return "val $varName get() = ${propertyValue()}"
 	}
 	
 	override fun propertyValue(): String {
@@ -368,7 +376,7 @@ abstract class IContainMultipleAttributes : Iterable<ISortedNamedAttribute>, ISo
  */
 open class NamedAttributeScope(
 	val scopeName: String,
-	vararg val attrs: ISortedNamedAttribute,
+	vararg attrs: ISortedNamedAttribute,
 	override val commentsNotFromNotes: MutableList<String> = mutableListOf(),
 	override val varName: String = scopeName.decapitalize()
 ) : IContainMultipleAttributes() {
@@ -376,10 +384,12 @@ open class NamedAttributeScope(
 		return """Scope("$scopeName", ${attrs.joinToString(", ")}, "$commentsNotFromNotes", "$varName")"""
 	}
 	
-	override val containedAttributes: Collection<ISortedNamedAttribute>
-		get() = attrs.asList()
+	val attrs = attrs.distinct()
 	
-	constructor(scopeName: String, vararg namesToAttrs: Pair<String, NamedAttribute>) : this(scopeName, *namesToAttrs.map { it.second.copy(varName = it.first) }.toTypedArray())
+	override val containedAttributes: Collection<ISortedNamedAttribute>
+		get() = attrs
+	
+	constructor(scopeName: String, vararg namesToAttrs: Pair<String, NamedAttribute>) : this(scopeName, attrs=namesToAttrs.map { it.second.copy(varName = it.first) }.toTypedArray())
 	
 	override fun iterator(): Iterator<ISortedNamedAttribute> {
 		return attrs.iterator()
@@ -392,7 +402,7 @@ open class NamedAttributeScope(
 	val clsname = scopeName + "Attributes"
 	
 	override fun withVarName(name: String): ISortedNamedAttribute {
-		return NamedAttributeScope(scopeName = name.capitalize(), attrs = attrs, commentsNotFromNotes)
+		return NamedAttributeScope(scopeName = name.capitalize(), attrs = attrs.toTypedArray(), commentsNotFromNotes)
 	}
 	
 	override fun generateTopLevelMembers(): List<String> {
@@ -402,7 +412,7 @@ open class NamedAttributeScope(
 		this.apply(scope)
 	}
 	
-${writeAttributesInClassBody(attrs.asList(), "\t")}
+${writeAttributesInClassBody(attrs, "\t")}
 }"""
 		) + attrs.flatMap { it.generateTopLevelMembers() }
 	}
@@ -427,12 +437,6 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 	fun getParentsRecursive(): Sequence<HierarchyNamedAttributeScope> {
 		return generateSequence(this.extendsFrom?.let { hierarchiesByName[it] }) { it.extendsFrom?.let { that -> hierarchiesByName[that] } }
 	}
-	// I don't give a shit if this is bad, I just need to be FUCKING DONE WITH THIS OH MY GOD
-	fun getChildrenRecursive(): Sequence<HierarchyNamedAttributeScope> {
-		return MyNotesFormatted.hierarchy[this.scopeName]
-			?.asSequence().orEmpty().mapNotNull { hierarchiesByName[it] }
-			.flatMap { sequenceOf(it) + it.getChildrenRecursive().mapNotNull { hierarchiesByName[it.scopeName] } }
-	}
 	
 	init {
 		hierarchiesByName[scopeName] = this
@@ -441,25 +445,22 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 	override fun generateTopLevelMembers(): List<String> {
 		return listOf(
 			buildCommentForProperty(this) + "\n" +
-			"""abstract class $clsname ${extendsFrom?.let { ": ${it}Attributes() " } ?: ""}{
-	companion object : ${clsname}() {
-		operator fun invoke(scope: ${clsname}.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+			"""interface $clsname ${extendsFrom?.let { ": ${it}Attributes " } ?: ""}{
+	companion object : $clsname
 	
-${writeAttributesInClassBody(attrs.asList(), "\t")}
-}""") + attrs.flatMap { it.generateTopLevelMembers() }
+${writeAttributesInClassBody(attrs, "\t")}
+}""") +
+"""operator fun ${clsname}.invoke(scope: ${clsname}.() -> Unit) {
+	this.apply(scope)
+}"""+ attrs.flatMap { it.generateTopLevelMembers() }
 	}
 	
 	override fun writeAttributesInClassBody(attrs: List<ISortedNamedAttribute>, indent: String): String {
 		val allParentAttrNames =  getParentsRecursive().flatMap { it.attrs.asSequence() }.toList()
-		val allChildAttrNames = getChildrenRecursive().flatMap { it.attrs.asSequence() }.map { it.varName }.toSet()
 		return attrs.map { attr ->
 			val fromParent = allParentAttrNames.filter { it.varName == attr.varName }
-			val needsOpen = attr.varName in allChildAttrNames
-			Triple(fromParent, needsOpen, attr)
-		}.joinToString("\n\n") { (fromParent, needsOpen, attr) ->
+			Pair(fromParent, attr)
+		}.joinToString("\n\n") { (fromParent, attr) ->
 			val comment = if (fromParent.isEmpty()) {
 				attr.commentForOwnProperty()
 			} else {
@@ -468,7 +469,7 @@ ${writeAttributesInClassBody(attrs.asList(), "\t")}
 			
 			val isOverride = fromParent.isNotEmpty()
 			
-			buildCommentForProperty(comment) + "\n" + (if (isOverride) "override " else if (needsOpen) "open " else "") + attr.propertyString()
+			buildCommentForProperty(comment) + "\n" + (if (isOverride) "override " else "") + attr.propertyString()
 		}.prependIndent(indent)
 	}
 }

@@ -8,15 +8,12 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: Stock Wrench + Reskins, Golden Wrench, The Southern Hospitality, The Jag, The Eureka Effect, The Gunslinger
  * 
  */
-abstract class WrenchAttributes : BaseMeleeAttributes() {
-	companion object : WrenchAttributes() {
-		operator fun invoke(scope: WrenchAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface WrenchAttributes : BaseMeleeAttributes {
+	companion object : WrenchAttributes
 	
 	/**
 	 * If set, pressing reload shows the Eureka Effect menu
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var altFireTeleportToSpawn: Boolean?
@@ -26,10 +23,15 @@ abstract class WrenchAttributes : BaseMeleeAttributes() {
 	/**
 	 * Determines the hand used in the model
 	 * 
+	 * 
 	 * Detonates leveled sentries when equipping a wrench with this attribute
+	 * 
 	 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute
+	 * 
 	 * Removes engineer's glove on his model
+	 * 
 	 * Also determines if it's a "PDQ", which obviously builds minisentries
+	 * 
 	 */
 	override context(attrs: IKeyValueMap)
 	var modWrenchBuildsMinisentry: Boolean?
@@ -39,14 +41,19 @@ abstract class WrenchAttributes : BaseMeleeAttributes() {
 	/**
 	 * Passive build rate multiplier, same as the convar `tf_construction_build_rate_multiplier`
 	 * 
+	 * 
 	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- Construction hit speed boost increased by N%
 	 * 
 	 * Penalty:
-	 * 	Value type: inverted_percentage
-	 * 	
+	 * 	- Value type: inverted_percentage
+	 * 	- Construction hit speed boost decreased by N%
 	 */
-	val ConstructionRateDecreased = BonusPenalty<Float, Float>("Construction rate increased", "Construction rate decreased")
+	val constructionRateDecreased get() = BonusPenalty<Float, Float>("Construction rate increased", "Construction rate decreased")
+}
+
+operator fun WrenchAttributes.invoke(scope: WrenchAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

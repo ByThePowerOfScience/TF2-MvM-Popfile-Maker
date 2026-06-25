@@ -7,81 +7,65 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class ProjectileFlareAttributes : BaseRocketAttributes() {
-	companion object : ProjectileFlareAttributes() {
-		operator fun invoke(scope: ProjectileFlareAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface ProjectileFlareAttributes : BaseRocketAttributes {
+	companion object : ProjectileFlareAttributes
 	
 	/**
 	 * 
 	 * Bonus:
-	 * 	Visible:
-	 * 		Value type: percentage
-	 * 		
-	 * 		+N% projectile speed
-	 * 		
-	 * 	
-	 * 	Hidden:
-	 * 		Value type: percentage
-	 * 		
-	 * 		+N% projectile speed
-	 * 		
+	 * 	- Visible:
+	 * 		- Value type: percentage
+	 * 		- +N% projectile speed
+	 * 	- Hidden:
+	 * 		- Value type: percentage
+	 * 		- +N% projectile speed
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% projectile speed
 	 * 
 	 * Checked on launcher
 	 * 
+	 * 
 	 * Bonus:
-	 * 	Visible:
-	 * 		Value type: percentage
-	 * 		
-	 * 		+N% projectile speed
-	 * 		
-	 * 	
-	 * 	Hidden:
-	 * 		Value type: percentage
-	 * 		
-	 * 		+N% projectile speed
-	 * 		
+	 * 	- Visible:
+	 * 		- Value type: percentage
+	 * 		- +N% projectile speed
+	 * 	- Hidden:
+	 * 		- Value type: percentage
+	 * 		- +N% projectile speed
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% projectile speed
 	 */
-	override val ProjectileSpeedDecreased = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
+	override val projectileSpeedDecreased get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
 	
 	/**
 	 * 
 	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- +N% explosion radius
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
-	 * 
-	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
-	 * 
-	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% explosion radius
 	 * 
 	 * Checked on launcher
 	 * 
+	 * 
 	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- +N% explosion radius
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% explosion radius
 	 */
-	override val BlastRadiusDecreased = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
+	override val blastRadiusDecreased get() = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
+}
+
+operator fun ProjectileFlareAttributes.invoke(scope: ProjectileFlareAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

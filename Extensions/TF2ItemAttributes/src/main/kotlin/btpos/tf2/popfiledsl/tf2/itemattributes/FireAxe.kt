@@ -8,20 +8,22 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: TF_WEAPON_FIREAXE, The Axtinguisher, The Homewrecker, Upgradeable TF_WEAPON_FIREAXE, The Powerjack, The Back Scratcher, Sharpened Volcano Fragment, The Postal Pummeler, The Maul, The Third Degree, The Lollichop, Festive Axtinguisher
  * 
  */
-abstract class FireAxeAttributes : BaseMeleeAttributes() {
-	companion object : FireAxeAttributes() {
-		operator fun invoke(scope: FireAxeAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface FireAxeAttributes : BaseMeleeAttributes {
+	companion object : FireAxeAttributes
 	
 	/**
 	 * Ignite enemies on hit
+	 * 
 	 * Yeah, sadly this is just checked on fire axes...
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
-	var SetDamageTypeIgnite: Boolean?
+	var setDamageTypeIgnite: Boolean?
 		get() = attrs.getTyped("Set DamageType Ignite", BinaryIntCodec)
 		set(value) = attrs.setNullable("Set DamageType Ignite", value, BinaryIntCodec)
+}
+
+operator fun FireAxeAttributes.invoke(scope: FireAxeAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

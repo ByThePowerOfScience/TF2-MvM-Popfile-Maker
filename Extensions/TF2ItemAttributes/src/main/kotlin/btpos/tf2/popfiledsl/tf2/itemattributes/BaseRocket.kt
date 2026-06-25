@@ -7,15 +7,12 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class BaseRocketAttributes : BaseProjectileAttributes() {
-	companion object : BaseRocketAttributes() {
-		operator fun invoke(scope: BaseRocketAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface BaseRocketAttributes : BaseProjectileAttributes {
+	companion object : BaseRocketAttributes
 	
 	/**
-	 *     - Uses the "mini rockets" model
+	 * Uses the "mini rockets" model
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var miniRockets: Boolean?
@@ -25,7 +22,8 @@ abstract class BaseRocketAttributes : BaseProjectileAttributes() {
 	/**
 	 * Value type: percentage
 	 * 
-	 *     - If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80%
+	 * If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80%
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var rocketjumpAttackrateBonus: Float?
@@ -35,23 +33,18 @@ abstract class BaseRocketAttributes : BaseProjectileAttributes() {
 	/**
 	 * 
 	 * Bonus:
-	 * 	Visible:
-	 * 		Value type: percentage
-	 * 		
-	 * 		+N% projectile speed
-	 * 		
-	 * 	
-	 * 	Hidden:
-	 * 		Value type: percentage
-	 * 		
-	 * 		+N% projectile speed
-	 * 		
+	 * 	- Visible:
+	 * 		- Value type: percentage
+	 * 		- +N% projectile speed
+	 * 	- Hidden:
+	 * 		- Value type: percentage
+	 * 		- +N% projectile speed
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% projectile speed
 	 */
-	open val ProjectileSpeedDecreased = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
+	val projectileSpeedDecreased get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
 	
 	
 	context(attrs: IKeyValueMap)
@@ -60,15 +53,17 @@ abstract class BaseRocketAttributes : BaseProjectileAttributes() {
 		set(value) = attrs.setNullable("rocket specialist", value)
 	
 	/**
-	 *     - Does pumpkin bombs particle effect
+	 * Does pumpkin bombs particle effect
+	 * 
 	 */
-	open context(attrs: IKeyValueMap)
-	var SPELLHalloweenPumpkinExplosions: Int?
+	context(attrs: IKeyValueMap)
+	var sPELLHalloweenPumpkinExplosions: Int?
 		get() = attrs.getTyped("SPELL: Halloween pumpkin explosions")
 		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value)
 	
 	/**
-	 *     - Use the big MvM particle when it explodes
+	 * Use the big MvM particle when it explodes
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var useLargeSmokeExplosion: Int?
@@ -78,25 +73,17 @@ abstract class BaseRocketAttributes : BaseProjectileAttributes() {
 	/**
 	 * 
 	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- +N% explosion radius
 	 * 
 	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
+	 * 	- Value type: percentage
+	 * 	- N% explosion radius
 	 */
-	open val BlastRadiusDecreased = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
-	
-	/**
-	 * 
-	 * Bonus:
-	 * 	Value type: percentage
-	 * 	
-	 * 
-	 * Penalty:
-	 * 	Value type: percentage
-	 * 	
-	 */
-	open val BlastRadiusDecreased = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
+	val blastRadiusDecreased get() = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
+}
+
+operator fun BaseRocketAttributes.invoke(scope: BaseRocketAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

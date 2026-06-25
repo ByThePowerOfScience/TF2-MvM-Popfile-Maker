@@ -8,19 +8,20 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: The Shortstop, The Winger, Pretty Boy's Pocket Pistol
  * 
  */
-abstract class ScoutPistolAttributes : PistolAttributes() {
-	companion object : ScoutPistolAttributes() {
-		operator fun invoke(scope: ScoutPistolAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface ScoutPistolAttributes : PistolAttributes {
+	companion object : ScoutPistolAttributes
 	
 	/**
 	 * If true, can headshot
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var backHeadshot: Boolean?
 		get() = attrs.getTyped("back headshot", BinaryIntCodec)
 		set(value) = attrs.setNullable("back headshot", value, BinaryIntCodec)
+}
+
+operator fun ScoutPistolAttributes.invoke(scope: ScoutPistolAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

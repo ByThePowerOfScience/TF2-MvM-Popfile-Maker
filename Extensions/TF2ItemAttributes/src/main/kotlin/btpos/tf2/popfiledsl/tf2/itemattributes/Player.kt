@@ -7,12 +7,8 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class PlayerAttributes : EntityAttributes() {
-	companion object : PlayerAttributes() {
-		operator fun invoke(scope: PlayerAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface PlayerAttributes : EntityAttributes {
+	companion object : PlayerAttributes
 	
 	
 	context(attrs: IKeyValueMap)
@@ -22,6 +18,7 @@ abstract class PlayerAttributes : EntityAttributes() {
 	
 	/**
 	 * Always true in MvM
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var hideEnemyHealth: Boolean?
@@ -35,6 +32,10 @@ abstract class PlayerAttributes : EntityAttributes() {
 	val spyOnly get() = SpyOnlyAttributes
 }
 
+operator fun PlayerAttributes.invoke(scope: PlayerAttributes.() -> Unit) {
+	this.apply(scope)
+}
+
 /**
  * Items: 
  * 
@@ -46,6 +47,7 @@ object SpyOnlyAttributes {
 	
 	/**
 	 * You can set a spy build menu??
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var hasPipboyBuildInterface: Int?

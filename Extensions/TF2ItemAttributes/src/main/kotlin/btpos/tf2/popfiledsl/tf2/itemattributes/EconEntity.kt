@@ -14,7 +14,8 @@ object EconEntityAttributes {
 	}
 	
 	/**
-	 *     - Attaches festivizer
+	 * Attaches festivizer
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var isFestivized: Boolean?
@@ -24,9 +25,10 @@ object EconEntityAttributes {
 	/**
 	 * Value type: particle_index
 	 * 
-	 * - (index into ItemSchema AttributeControlledParticleSystem)
-	 *     - Attaches static particle, such as smoking a pipe
-	 *     - Cosmetics can only have one
+	 * Attaches static particle, such as smoking a pipe
+	 * 
+	 * Cosmetics can only have one
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var attachParticleEffectStatic: ParticleIndex?
@@ -36,8 +38,8 @@ object EconEntityAttributes {
 	/**
 	 * Value type: particle_index
 	 * 
-	 *  - (index into ItemSchema AttributeControlledParticleSystem)
-	 *     - Dynamic particle systems, such as unusuals
+	 * Dynamic particle systems, such as unusuals
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var attachParticleEffect: ParticleIndex?
@@ -45,8 +47,10 @@ object EconEntityAttributes {
 		set(value) = attrs.setNullable("attach particle effect", value)
 	
 	/**
-	 *     - If false, attaches the `set_attached_particle` to the item itself
-	 *     - If true, the particle only applies to the throwable particle trail? Though I don't actually see that occurring anywhere in here
+	 * If false, attaches the `set_attached_particle` to the item itself
+	 * 
+	 * If true, the particle only applies to the throwable particle trail? Though I don't actually see that occurring anywhere in here
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var throwableParticleTrailOnly: Boolean?

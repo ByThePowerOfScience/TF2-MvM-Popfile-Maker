@@ -7,15 +7,12 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class BaseCombatWeaponAttributes {
-	companion object : BaseCombatWeaponAttributes() {
-		operator fun invoke(scope: BaseCombatWeaponAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface BaseCombatWeaponAttributes {
+	companion object : BaseCombatWeaponAttributes
 	
 	/**
 	 * Reminder: non-engies start with 100 metal.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var modUseMetalAmmoType: Boolean?
@@ -24,6 +21,7 @@ abstract class BaseCombatWeaponAttributes {
 	
 	/**
 	 * Overwrites the max clipsize to a flat value. Applied before other multipliers.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var modMaxPrimaryClipOverride: Int?
@@ -32,7 +30,9 @@ abstract class BaseCombatWeaponAttributes {
 	
 	/**
 	 * In the `DoesReloadSingly` check, this _is_ actually checked, so it's actually _not_ "display-only".
+	 * 
 	 * If != 1.0 (if present), says the weapon "does not reload one shot at a time".
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var modNoReloadDISPLAYONLY: Int?
@@ -41,11 +41,17 @@ abstract class BaseCombatWeaponAttributes {
 	
 	/**
 	 * Checked in `DoesReloadSingly`.  If true, weapon does not reload one shot at a time. (e.g. FaN)
+	 * 
 	 * Note that for the most part, this logic is set inside the weapon itself. The scattergun thing is weirdly the only way to control this with attributes.
+	 * 
 	 */
-	open context(attrs: IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var scattergunNoReloadSingle: Boolean?
 		get() = attrs.getTyped("scattergun no reload single", BinaryIntCodec)
 		set(value) = attrs.setNullable("scattergun no reload single", value, BinaryIntCodec)
+}
+
+operator fun BaseCombatWeaponAttributes.invoke(scope: BaseCombatWeaponAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

@@ -7,13 +7,13 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class WearableAttributes {
-	companion object : WearableAttributes() {
-		operator fun invoke(scope: WearableAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface WearableAttributes {
+	companion object : WearableAttributes
 	
 	
+}
+
+operator fun WearableAttributes.invoke(scope: WearableAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

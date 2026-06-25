@@ -8,13 +8,13 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: TF_WEAPON_REVOLVER, The Ambassador, TTG Sam Revolver, Upgradeable TF_WEAPON_REVOLVER, L'Etranger, The Enforcer, The Diamondback, Festive Ambassador, Festive Revolver 2014
  * 
  */
-abstract class RevolverAttributes : BaseGunAttributes() {
-	companion object : RevolverAttributes() {
-		operator fun invoke(scope: RevolverAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface RevolverAttributes : BaseGunAttributes {
+	companion object : RevolverAttributes
 	
 	
+}
+
+operator fun RevolverAttributes.invoke(scope: RevolverAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

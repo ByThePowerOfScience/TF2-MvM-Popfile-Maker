@@ -1,31 +1,34 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
+import btpos.tf2.popfiledsl.itemattributesgenerator.MyNotesFormatted.AttrClassUsage.Companion.attrToSelector
+import kotlin.collections.flatten
+
 object MyNotesFormatted {
 	sealed interface IAttrThing {
 		operator fun contains(clsName: String): Boolean
 		
-		fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute?
+		fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute>
 	}
 	
 	private fun String.comma() = this.split(", ")
 	
 	class AttrClassUsage(val attr_class: String, val kType: String, val notes: List<String> = listOf()) : IAttrThing {
 		companion object {
-			val attrRegex = Regex("""^\s*-\s*(?:On (\w+):)?\s*`(\w+)`: (\w+)$""")
-			val noteRegex = Regex("""^\s*- (.+)$""")
+			val attrRegex = Regex("""^\s*-\s*(?:On (\w+):)?\s*`(\w+)`: (\w+)(\s*\W.+)?$""")
+			val noteRegex = Regex("""^\s*-\s*(\w.+)$""")
 			val linkRegex = Regex("""\[\w+]\(#(\w+)\)""")
 			
 		    operator fun invoke(string: String, notes: List<String> = listOf()): AttrClassUsage {
-			    val (cls, type) = attrRegex.matchEntire(string)?.destructured ?: error("Failed to parse attr entry for $string")
+			    val (onWhat, cls, type, _extratypeinfo) = attrRegex.matchEntire(string)?.destructured ?: error("Failed to parse attr entry for $string")
 				
 				return AttrClassUsage(cls, type, notes.map { noteRegex.matchEntire(it)!!.groupValues[1] })
 		    }
 			
 			operator fun invoke(string: String): AttrClassUsage {
 				val split = string.split("\n")
-				val (onWhat, name, type) = attrRegex.matchEntire(split[0])?.destructured ?: error("Failed to match attr entry ${split[0]}")
+				val (onWhat, name, type, _) = attrRegex.matchEntire(split[0])?.destructured ?: error("Failed to match attr entry ${split[0]}")
 				val notes = split.drop(1).mapNotNull {
-					noteRegex.matchEntire(it)?.groupValues[0]
+					noteRegex.matchEntire(it)?.groupValues[1]
 				}.run {
 					onWhat.takeIf { !it.isEmpty() } ?.let {
 						this + "Checked on $onWhat"
@@ -36,18 +39,19 @@ object MyNotesFormatted {
 			}
 			
 			val attrToSelector = mapOf(
-				"fists have radial buff" to 1,
-				"set cloak is movement based" to 1,
-				"set cloak is feign death" to 2,
-				"mod bat launches balls" to 1,
-				"mod bat launches ornaments" to 2,
-				"revolver use hit locations" to 1,
-				"mod shovel damage boost" to 1,
-				"mod shovel speed boost" to 2,
-				"lunchbox adds maxhealth bonus" to 1,
-				"sniper no headshots" to 1,
-				"set icicle knife mode" to 3,
-				"mod flaregun fires pellets with knockback" to 3
+				"Fists" to mapOf("fists have radial buff" to 1),
+				"Invis" to mapOf("set cloak is movement based" to 1,
+				"set cloak is feign death" to 2),
+				"Bat" to mapOf("mod bat launches balls" to 1,
+				"mod bat launches ornaments" to 2),
+				"Revolver" to mapOf("revolver use hit locations" to 1),
+				"Shovel" to mapOf ("mod shovel damage boost" to 1,
+				"mod shovel speed boost" to 2),
+				"Lunchbox" to mapOf("lunchbox adds maxhealth bonus" to 1,
+				"lunchbox adds minicrits" to 2),
+				"SniperRifle" to mapOf("sniper no headshots" to 1),
+				"Knife" to mapOf("set icicle knife mode" to 3),
+				"FlareGun" to mapOf("mod flaregun fires pellets with knockback" to 3)
 			)
 		}
 		
@@ -56,23 +60,21 @@ object MyNotesFormatted {
 		}
 		
 		
-		override fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute? {
-			if (attr_class == "set_weapon_mode")
-				return null; // TODO figure out how the hell we do this except by hand, cause this is used all over the place...
-			return classToNamed[attr_class]?.let {
-				it.withVarName(it.varName).apply {
+		override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
+			return classToNamed[attr_class]?.map { attr ->
+				attr.withVarName(attr.varName).apply {
 					setCodec {
 						if (attr_class == "set_weapon_mode") {
-							selectorCodec(attrToSelector[it.attrName] ?: error("no selector found for ${it.attrName}"))
+							selectorCodec(attrToSelector.values.flatMap { it.entries }.find { (k, v) -> k == it.attrName }?.value ?: error("no selector found for ${it.attrName}"))
 						} else if (kType == "Boolean") {
 							bool
 						} else {
 							it.codec
 						}
 					}
-					addCommentsFromNotes(notes)
+					addCommentsFromNotes(notes.flatMap { listOf(it, "") })
 				}
-			}
+			}.orEmpty()
 		}
 	}
 	
@@ -89,16 +91,23 @@ object MyNotesFormatted {
 		/**
 		 * Turn this nested scoped mess of CLASSES into a nested scoped mess of NAMED ATTRIBUTES
 		 */
-		override fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute? {
-			val mapped = attrClassesOrNestedScopes.mapNotNull { it.absorb(classToNamed) }
-			return NamedAttributeScope(this.name, *mapped.toTypedArray(), commentsNotFromNotes =mutableListOf("Items: ${applicableWeapons.flatten().joinToString(", ")}"))
+		override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
+			val mapped = attrClassesOrNestedScopes.flatMap { it.absorb(classToNamed) }
+			return listOf(NamedAttributeScope(this.name, *mapped.toTypedArray(), commentsNotFromNotes =mutableListOf("Items: ${applicableWeapons.flatten().joinToString(", ")}")))
 		}
 	}
 	
 	class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAttrThing>, applicableWeapons: List<Any> = listOf()) : AttrClassScope(name, attrClassesOrNestedScopes, applicableWeapons) {
-		override fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute? {
-			val mapped = attrClassesOrNestedScopes.mapNotNull { it.absorb(classToNamed) }
-			return HierarchyNamedAttributeScope(this.name, getParent(this.name), *mapped.toTypedArray(), note= applicableWeapons.takeIf { it.isNotEmpty()}?.flatten()?.joinToString(", ")?.let { "Items: $it" } )
+		override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
+			val classToNamed = attrToSelector[this.name]?.keys?.let { applicableWeaponModeAttrs ->
+				classToNamed.toMutableMap().also { map ->
+				
+				map["set_weapon_mode"]?.let { weaponModeAttrs ->
+					map["set_weapon_mode"] = weaponModeAttrs.filter { it is NamedAttribute && it.attrName in applicableWeaponModeAttrs }
+				}
+			}} ?: classToNamed
+			val mapped = attrClassesOrNestedScopes.flatMap { it.absorb(classToNamed) }
+			return listOf(HierarchyNamedAttributeScope(this.name, getParent(this.name), *mapped.toTypedArray(), note= applicableWeapons.takeIf { it.isNotEmpty()}?.flatten()?.joinToString(", ")?.let { "Items: $it" } ))
 		}
 	}
 	

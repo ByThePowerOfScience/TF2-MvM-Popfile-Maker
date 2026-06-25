@@ -8,19 +8,20 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
  * Items: The Righteous Bison, The Pomson 6000
  * 
  */
-abstract class RayGunAttributes : RocketLauncherAttributes() {
-	companion object : RayGunAttributes() {
-		operator fun invoke(scope: RayGunAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface RayGunAttributes : RocketLauncherAttributes {
+	companion object : RayGunAttributes
 	
 	/**
 	 * Removes ammo requirement to fire weapon.
+	 * 
 	 */
-	open context(attrs: IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var energyWeaponNoDrain: Boolean?
 		get() = attrs.getTyped("energy weapon no drain", BinaryIntCodec)
 		set(value) = attrs.setNullable("energy weapon no drain", value, BinaryIntCodec)
+}
+
+operator fun RayGunAttributes.invoke(scope: RayGunAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

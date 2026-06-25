@@ -7,19 +7,20 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class BaseProjectileAttributes {
-	companion object : BaseProjectileAttributes() {
-		operator fun invoke(scope: BaseProjectileAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface BaseProjectileAttributes {
+	companion object : BaseProjectileAttributes
 	
 	/**
-	 *     - If true, applies mad milk on hit. Yes, this is in the base projectile.
+	 * If true, applies mad milk on hit. Yes, this is in the base projectile.
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var madMilkSyringes: Boolean?
 		get() = attrs.getTyped("mad milk syringes", BinaryIntCodec)
 		set(value) = attrs.setNullable("mad milk syringes", value, BinaryIntCodec)
+}
+
+operator fun BaseProjectileAttributes.invoke(scope: BaseProjectileAttributes.() -> Unit) {
+	this.apply(scope)
 }
 

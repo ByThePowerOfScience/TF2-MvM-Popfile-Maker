@@ -7,15 +7,12 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * 
  */
-abstract class MvMBotAttributes : EntityAttributes() {
-	companion object : MvMBotAttributes() {
-		operator fun invoke(scope: MvMBotAttributes.Companion.() -> Unit) {
-			this.apply(scope)
-		}
-	}
+interface MvMBotAttributes : EntityAttributes {
+	companion object : MvMBotAttributes
 	
 	/**
 	 * If true, spawns a rocketjump particle whenever the robot jumps
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var botCustomJumpParticle: Boolean?
@@ -24,6 +21,7 @@ abstract class MvMBotAttributes : EntityAttributes() {
 	
 	/**
 	 * Defaults to 50, I guess it's a percentage
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var botMedicUberHealthThreshold: Int?
@@ -32,10 +30,15 @@ abstract class MvMBotAttributes : EntityAttributes() {
 	
 	/**
 	 * Defaults to -1
+	 * 
 	 */
 	context(attrs: IKeyValueMap)
 	var botMedicUberDeployDelayDuration: Int?
 		get() = attrs.getTyped("bot medic uber deploy delay duration")
 		set(value) = attrs.setNullable("bot medic uber deploy delay duration", value)
+}
+
+operator fun MvMBotAttributes.invoke(scope: MvMBotAttributes.() -> Unit) {
+	this.apply(scope)
 }
 
