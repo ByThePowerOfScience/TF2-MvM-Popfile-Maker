@@ -1,6 +1,18 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
+import btpos.tf2.popfiledsl.itemattributesgenerator.ItemAttributesGeneration.BuildConfig
+import java.io.File
+import java.nio.file.Files
 import kotlin.collections.mapValues
+import kotlin.io.path.Path
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createDirectory
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.exists
+import kotlin.io.path.notExists
+import kotlin.io.path.useDirectoryEntries
 
 data class ObjectInProgress(val name: String, val doc: String, val attrs: MutableList<ISortedNamedAttribute> = mutableListOf())
 
@@ -31,7 +43,8 @@ fun main() {
 	val UNKNOWN_SCOPE = MyNotesFormatted.AttrClassScope("Uncategorized")
 	
 	val attrClassesByBaseClassFromNotes = MyNotesFormatted.attrsByClass
-	val hierarchy = MyNotesFormatted.hierarchy
+	
+	
 	
 	/**
 	 * Sort all named attributes by their class, group them up into scopes
@@ -43,12 +56,15 @@ fun main() {
 				if (attrsForAClass.size == 1)
 					return@mapValues attrsForAClass.first()
 				
-				attrsForAClass.groupBy { it.positiveOrNegative }
-					.mapValues { (isPos, posOrNegItem) ->
+				val groupedByPositiveOrNegative = attrsForAClass.groupBy { it.positiveOrNegative }
+				if (groupedByPositiveOrNegative.size == 1) {
+					return@mapValues groupedByPositiveOrNegative.values.first().first()
+				}
+				groupedByPositiveOrNegative.mapValues { (isPos, posOrNegItem) ->
 						if (posOrNegItem.isEmpty())
 							error("I don't think this should happen but posneg is empty list for $isPos for $attrsForAClass")
 						else if (posOrNegItem.size == 1) {
-							return@mapValues posOrNegItem.first()
+							return@mapValues posOrNegItem.single()
 						}
 						
 						val isHidden = posOrNegItem.groupBy { "hidden" in it.attrName.lowercase() }
@@ -59,6 +75,9 @@ fun main() {
 						}
 					}
 					.let { sortedByIsPositive ->
+						if (sortedByIsPositive.size == 1) {
+							return@let sortedByIsPositive.values.single()
+						}
 						// convert this into a PenaltyBonus
 						if (true in sortedByIsPositive && false in sortedByIsPositive && null !in sortedByIsPositive) {
 							PenaltyBonus(
@@ -67,15 +86,37 @@ fun main() {
 								sortedByIsPositive[true]!!
 							)
 						} else {
-							NamedAttributeScope(sortedByIsPositive.values.first().varName!!.capitalize(), *sortedByIsPositive.values.toTypedArray())
+							NamedAttributeScope(sortedByIsPositive.values.first().varName.capitalize(), *sortedByIsPositive.values.toTypedArray())
 						}
 					}
 			}
 	
 
 	val scopes = attrClassesByBaseClassFromNotes.mapNotNull { baseClassScope ->
-		baseClassScope.absorb(namedAttributeScopesByClassName)
+		baseClassScope.absorb(namedAttributeScopesByClassName) as NamedAttributeScope?
 	}
-
-	println(scopes.first().generateTopLevelMembers())
+	
+	val outDir = Path(BuildConfig.GENERATED_FILES_DIR).resolve(BuildConfig.GENERATED_FILE_PACKAGE.replace('.', File.separatorChar)).also {
+		if (it.exists())
+			it.useDirectoryEntries("*.kt") { it.forEach { it.deleteExisting() } }
+		else
+			it.createDirectories()
+	}
+	
+	scopes.forEach { scope ->
+		outDir.resolve(scope.scopeName + ".kt").run {
+			bufferedWriter().use { writer ->
+				writer.write("package ${BuildConfig.GENERATED_FILE_PACKAGE}\n\n" +
+				             "import btpos.tf2.popfiledsl.modeling.*\n" +
+				             "import btpos.tf2.popfiledsl.serialization.codecs.*\n")
+				writer.newLine()
+				writer.newLine()
+				scope.generateTopLevelMembers().forEach { topLevel ->
+					writer.write(topLevel)
+					writer.newLine()
+					writer.newLine()
+				}
+			}
+		}
+	}
 }

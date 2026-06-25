@@ -37,6 +37,8 @@ dependencies {
 buildConfig {
 	buildConfigField("String", "WIKI_TABLE_FILE", projectDir.toPath().resolve("wikitable.txt").toString().let { "\"$it\"" })
 	buildConfigField("String", "MY_NOTES_FILE", projectDir.toPath().resolve("mynotes.md").toString().let { "\"$it\"" })
+	buildConfigField("String", "GENERATED_FILES_DIR", "\"${rootProject.project(":Extensions:TF2ItemAttributes").projectDir.toPath().resolve("src/main/kotlin")}\"")
+	buildConfigField("String", "GENERATED_FILE_PACKAGE", "\"btpos.tf2.popfiledsl.tf2.itemattributes\"")
 }
 
 kotlin {

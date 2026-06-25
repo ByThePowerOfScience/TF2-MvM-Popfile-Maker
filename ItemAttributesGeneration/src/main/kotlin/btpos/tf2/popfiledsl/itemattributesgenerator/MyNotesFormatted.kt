@@ -57,17 +57,21 @@ object MyNotesFormatted {
 		
 		
 		override fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute? {
-			return classToNamed[attr_class]?.apply {
-				setCodec {
-					if (attr_class == "set_weapon_mode") {
-						selectorCodec(attrToSelector[it.attrName] ?: error("no selector found for ${it.attrName}"))
-					} else if (kType == "Boolean") {
-						bool
-					} else {
-						it.codec
+			if (attr_class == "set_weapon_mode")
+				return null; // TODO figure out how the hell we do this except by hand, cause this is used all over the place...
+			return classToNamed[attr_class]?.let {
+				it.withVarName(it.varName).apply {
+					setCodec {
+						if (attr_class == "set_weapon_mode") {
+							selectorCodec(attrToSelector[it.attrName] ?: error("no selector found for ${it.attrName}"))
+						} else if (kType == "Boolean") {
+							bool
+						} else {
+							it.codec
+						}
 					}
+					addCommentsFromNotes(notes)
 				}
-				addCommentsNested(notes)
 			}
 		}
 	}
@@ -87,7 +91,7 @@ object MyNotesFormatted {
 		 */
 		override fun absorb(classToNamed: Map<String, ISortedNamedAttribute>): ISortedNamedAttribute? {
 			val mapped = attrClassesOrNestedScopes.mapNotNull { it.absorb(classToNamed) }
-			return NamedAttributeScope(this.name, *mapped.toTypedArray(), comments=listOf("Items: ${applicableWeapons.flatten().joinToString(", ")}"))
+			return NamedAttributeScope(this.name, *mapped.toTypedArray(), commentsNotFromNotes =mutableListOf("Items: ${applicableWeapons.flatten().joinToString(", ")}"))
 		}
 	}
 	
@@ -205,13 +209,13 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"mod_no_reload_display_only", "Float", listOf(
-						"In the \"DoesReloadSingly\" check, this _is_ actually checked, so it's actually _not_ \"display-only\".",
+						"In the `DoesReloadSingly` check, this _is_ actually checked, so it's actually _not_ \"display-only\".",
 						"If != 1.0 (if present), says the weapon \"does not reload one shot at a time\"."
 					)
 				),
 				AttrClassUsage(
 					"set_scattergun_no_reload_single", "Boolean", listOf(
-						"Checked in the same place.  If true, weapon does not reload one shot at a time. (e.g. FaN)",
+						"Checked in `DoesReloadSingly`.  If true, weapon does not reload one shot at a time. (e.g. FaN)",
 						"Note that for the most part, this logic is set inside the weapon itself. The scattergun thing is weirdly the only way to control this with attributes."
 					)
 				)
@@ -228,7 +232,7 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"ammo_gives_charge", "Boolean", listOf(
-						"If 1, and player has a demoman charge meter, add charge based on ammo pack size"
+						"If true, and player has a demoman charge meter, add charge based on ammo pack size"
 					)
 				),
 				AttrClassUsage("no_primary_ammo_from_dispensers", "Boolean", listOf()),
@@ -244,8 +248,7 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage("clipsize_increase_on_kill", "Int", listOf()),
 				AttrClassUsage(
-					"wrench_builds_minisentry", "Float(?)", listOf(
-						"cast to an int, used as a boolean, so idk",
+					"wrench_builds_minisentry", "Float", listOf(
 						"Determines the hand used in the model"
 					)
 				),
@@ -270,13 +273,13 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"force_weapon_switch", "Boolean", listOf(
-						"Should force switch to this item when... something happens.  Probably when your current weapon is unavailable?"
+						"Should force switch to this item"
 					)
 				),
 				AttrClassUsage(
 					"provide_on_active", "Boolean", listOf(
 						"If true, only applies attributes when weapon is active, and unapplies them when switching off.",
-						"I think this also means you can't have \"only active when holding weapon\" and \"always active\" attributes on the same weapon, since the order you specify attributes in doesn't matter."
+						"This also means you can't have \"only active when holding weapon\" and \"always active\" attributes on the same weapon (excluding the specific attributes that are _always_ \"only when active\"), since the order you specify attributes in doesn't matter."
 					)
 				),
 				AttrClassUsage(
@@ -358,7 +361,7 @@ object MyNotesFormatted {
 					)
 				),
 				AttrClassUsage(
-					"projectile_penetration", "Boolean", listOf(
+					"projectile_penetration", "Int", listOf(
 						"Also on WeaponBase, but noted here because it's specifically used in gun's \"fire arrow\" logic."
 					)
 				),
@@ -405,18 +408,18 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"is_a_sword", "Boolean", listOf(
-						"If 1, set swing range to 72, else 48"
+						"If true, set swing range to 72, else 48"
 					)
 				),
 				AttrClassUsage(
 					"melee_bounds_multiplier", "Float", listOf(
 						"Multiplier applied to the bounding box of the swing to detect if a player is inside it",
-						"Yes, it DOES use a bounding box. I think. That's what this implies, I guess."
+						"Yes, it DOES use a bounding box."
 					)
 				),
 				AttrClassUsage(
 					"set_dmg_apply_to_sapper", "Int", listOf(
-						"Damage sappers with swing"
+						"Damage sappers with swing."
 					)
 				),
 				AttrClassUsage(
@@ -453,7 +456,6 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"crit_does_no_damage", "Boolean", listOf(
-						"These past four are Holiday Punch attributes, obviously"
 					)
 				),
 				AttrClassUsage(
@@ -463,19 +465,13 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"mult_dmg_penalty_while_half_alive", "Float", listOf(
-						"If health >= 50%, apply mult",
-						"Shahanshahanshanhansa attributes"
+						"If health >= 50%, apply mult"
 					)
 				),
 				AttrClassUsage(
 					"mult_dmg_with_reduced_health", "Float", listOf(
 						"Apply multiplier scaled by player's current health proportion",
 						"You'll see later that there's a \"Shovel 'Equalizer' mode\", but the real logic for that is here."
-					)
-				),
-				AttrClassUsage(
-					"mult_crit_chance", "Float", listOf(
-						"Noted because it's interesting that it's used here too."
 					)
 				)
 			)
@@ -571,12 +567,12 @@ object MyNotesFormatted {
 				AttrClassUsage("halloween_green_flames", "Boolean", listOf()),
 				AttrClassUsage(
 					"mult_flame_size", "Float", listOf(
-						"On owner"
+						"Checked on owner"
 					)
 				),
 				AttrClassUsage(
 					"mult_flame_life", "Float", listOf(
-						"On owner"
+						"Checked on owner"
 					)
 				),
 				AttrClassUsage("airblast_destroy_projectile", "Boolean", listOf()),
@@ -597,7 +593,7 @@ object MyNotesFormatted {
 					          "- `flame_gravity`: FLOAT\n" +
 					          "- `flame_drag`: FLOAT\n" +
 					          "- `flame_up_speed`: FLOAT").split("\n")
-						.map { it.replace("FLOAT", "Float") }
+						.map { it.replace("FLOAT", "Float").replace("INT", "Int") }
 						.map(AttrClassUsage::invoke)
 				),
 			), listOf("TF_WEAPON_FLAMETHROWER, The Backburner, Upgradeable TF_WEAPON_FLAMETHROWER, The Degreaser, The Phlogistinator, Festive Flamethrower 2011, The Rainblower, Silver Botkiller Flame Thrower Mk.I, Gold Botkiller Flame Thrower Mk.I, Rust Botkiller Flame Thrower Mk.I, Blood Botkiller Flame Thrower Mk.I, Carbonado Botkiller Flame Thrower Mk.I, Diamond Botkiller Flame Thrower Mk.I, Silver Botkiller Flame Thrower Mk.II, Gold Botkiller Flame Thrower Mk.II, Festive Backburner 2014, The Nostromo Napalmer".split(", "))
@@ -607,7 +603,7 @@ object MyNotesFormatted {
 			"SMG", listOf(
 				AttrClassUsage(
 					"set_weapon_mode", "Int", listOf(
-						"If 1, can headshot"
+						"If true, can headshot"
 					)
 				)
 			), listOf("Stock SMG + Reskins".split(", "))
@@ -825,12 +821,12 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"set_detonate_mode", "Int", listOf(
-						"If 0, default \"detonate all stickies on rclick\" mode. If 1, uses Scottish Resistance's \"look at sticky to detonate\" mechanic."
+						"If 0, default \"detonate all stickies on rclick\" mode. If true, uses Scottish Resistance's \"look at sticky to detonate\" mechanic."
 					)
 				),
 				AttrClassUsage(
 					"stickies_detonate_stickies", "Boolean", listOf(
-						"If 1, stickies destroy other stickies."
+						"If true, stickies destroy other stickies."
 					)
 				),
 				AttrClassUsage(
@@ -1002,7 +998,7 @@ object MyNotesFormatted {
 				AttrClassUsage("scattergun_knockback_mult", "Float", listOf()),
 				AttrClassUsage(
 					"set_scattergun_no_reload_single", "Boolean", listOf(
-						"If 1, reloads entire clip at once."
+						"If true, reloads entire clip at once."
 					)
 				)
 			), listOf("TF_WEAPON_SCATTERGUN, The Force-a-Nature, Upgradeable TF_WEAPON_SCATTERGUN, Festive Scattergun 2011, Silver Botkiller Scattergun Mk.I, Gold Botkiller Scattergun Mk.I, Rust Botkiller Scattergun Mk.I, Blood Botkiller Scattergun Mk.I, Carbonado Botkiller Scattergun Mk.I, Diamond Botkiller Scattergun Mk.I, Silver Botkiller Scattergun Mk.II, Gold Botkiller Scattergun Mk.II, Festive Force-a-Nature, The Back Scatter".comma())
@@ -1289,7 +1285,7 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"sapper_voice_pak", "Float", listOf(
-						"If 1.0, it's a wheatley sapper"
+						"If true.0, it's a wheatley sapper"
 					)
 				),
 				AttrClassUsage(
@@ -1393,7 +1389,7 @@ object MyNotesFormatted {
 		),
 		
 		HierarchyAttrClassScope(
-			"ProjectileBase", listOf(
+			"BaseProjectile", listOf(
 				AttrClassUsage(
 					"- `mad_milk_syringes`: Boolean\n" +
 					"    - If true, applies mad milk on hit. Yes, this is in the base projectile.\n"
@@ -1467,7 +1463,7 @@ object MyNotesFormatted {
 			                                "    - Adds extra time to the base powerup duration based on level?"),
 			                 AttrClassUsage("- `powerup_max_charges`: Int"),
 			                AttrClassUsage("- `set_weapon_mode`: Int\n" +
-			                               "    - If 1, is \"base\" powerup canteen"),
+			                               "    - If true, is \"base\" powerup canteen"),
 			                 AttrClassScope(
 				                 "Type", *(("- `critboost`: Boolean\n" +
 				                            "- `ubercharge`: Boolean\n" +
