@@ -44,7 +44,7 @@ interface ScattergunAttributes : ShotgunAttributes {
 		set(value) = attrs.setNullable("scattergun no reload single", value, BinaryIntCodec)
 }
 
-operator fun ScattergunAttributes.invoke(scope: ScattergunAttributes.() -> Unit) {
+inline operator fun ScattergunAttributes.invoke(scope: ScattergunAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

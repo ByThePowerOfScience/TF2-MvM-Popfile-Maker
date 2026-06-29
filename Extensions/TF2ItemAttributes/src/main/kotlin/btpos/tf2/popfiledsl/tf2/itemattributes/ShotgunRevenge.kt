@@ -21,7 +21,7 @@ interface ShotgunRevengeAttributes : ShotgunAttributes {
 		set(value) = attrs.setNullable("mod sentry killed revenge", value, BinaryIntCodec)
 }
 
-operator fun ShotgunRevengeAttributes.invoke(scope: ShotgunRevengeAttributes.() -> Unit) {
+inline operator fun ShotgunRevengeAttributes.invoke(scope: ShotgunRevengeAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

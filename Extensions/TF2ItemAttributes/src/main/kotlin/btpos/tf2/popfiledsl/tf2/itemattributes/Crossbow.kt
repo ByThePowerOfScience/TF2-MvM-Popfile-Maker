@@ -30,7 +30,7 @@ interface CrossbowAttributes : RocketLauncherAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% slower reload time
 	 */
-	override val reloadTimeIncreased get() = BonusPenalty<Float, Float>("Reload time decreased", "Reload time increased")
+	override val reloadTime get() = BonusPenalty<Float, Float>("Reload time decreased", "Reload time increased")
 	
 	/**
 	 * Value type: percentage
@@ -61,7 +61,7 @@ interface CrossbowAttributes : RocketLauncherAttributes {
 		set(value) = attrs.setNullable("faster reload rate", value)
 }
 
-operator fun CrossbowAttributes.invoke(scope: CrossbowAttributes.() -> Unit) {
+inline operator fun CrossbowAttributes.invoke(scope: CrossbowAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

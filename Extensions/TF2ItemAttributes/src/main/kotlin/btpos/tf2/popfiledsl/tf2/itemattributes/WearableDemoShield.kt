@@ -29,7 +29,7 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	 * Penalty:
 	 * 	- N sec decrease in charge duration
 	 */
-	val chargeTimeDecreased get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
+	val chargeTime get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
 	
 	/**
 	 * On player
@@ -45,10 +45,10 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% decrease in charge impact damage
 	 */
-	val chargeImpactDamageDecreased get() = BonusPenalty<Float, Float>("charge impact damage increased", "charge impact damage decreased")
+	val chargeImpactDamage get() = BonusPenalty<Float, Float>("charge impact damage increased", "charge impact damage decreased")
 }
 
-operator fun WearableDemoShieldAttributes.invoke(scope: WearableDemoShieldAttributes.() -> Unit) {
+inline operator fun WearableDemoShieldAttributes.invoke(scope: WearableDemoShieldAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

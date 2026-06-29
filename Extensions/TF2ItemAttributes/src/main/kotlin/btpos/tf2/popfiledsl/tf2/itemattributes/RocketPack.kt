@@ -21,7 +21,7 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 		set(value) = attrs.setNullable("thermal_thruster_air_launch", value, BinaryIntCodec)
 }
 
-operator fun RocketPackAttributes.invoke(scope: RocketPackAttributes.() -> Unit) {
+inline operator fun RocketPackAttributes.invoke(scope: RocketPackAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

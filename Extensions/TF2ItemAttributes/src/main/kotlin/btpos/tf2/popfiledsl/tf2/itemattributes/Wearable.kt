@@ -13,7 +13,7 @@ interface WearableAttributes {
 	
 }
 
-operator fun WearableAttributes.invoke(scope: WearableAttributes.() -> Unit) {
+inline operator fun WearableAttributes.invoke(scope: WearableAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

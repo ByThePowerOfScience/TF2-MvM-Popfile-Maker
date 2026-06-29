@@ -38,7 +38,7 @@ interface MvMBotAttributes : EntityAttributes {
 		set(value) = attrs.setNullable("bot medic uber deploy delay duration", value)
 }
 
-operator fun MvMBotAttributes.invoke(scope: MvMBotAttributes.() -> Unit) {
+inline operator fun MvMBotAttributes.invoke(scope: MvMBotAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

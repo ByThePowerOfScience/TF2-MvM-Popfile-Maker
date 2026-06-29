@@ -24,7 +24,7 @@ interface Raygun_RevengeAttributes : RayGunAttributes {
 		set(value) = attrs.setNullable("energy weapon no drain", value, BinaryIntCodec)
 }
 
-operator fun Raygun_RevengeAttributes.invoke(scope: Raygun_RevengeAttributes.() -> Unit) {
+inline operator fun Raygun_RevengeAttributes.invoke(scope: Raygun_RevengeAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

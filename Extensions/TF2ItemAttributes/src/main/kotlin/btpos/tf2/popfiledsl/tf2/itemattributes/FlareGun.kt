@@ -27,7 +27,7 @@ interface FlareGunAttributes : BaseGunAttributes {
 		set(value) = attrs.setNullable("mod flaregun fires pellets with knockback", value, NumberSelectorCodec(3))
 }
 
-operator fun FlareGunAttributes.invoke(scope: FlareGunAttributes.() -> Unit) {
+inline operator fun FlareGunAttributes.invoke(scope: FlareGunAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

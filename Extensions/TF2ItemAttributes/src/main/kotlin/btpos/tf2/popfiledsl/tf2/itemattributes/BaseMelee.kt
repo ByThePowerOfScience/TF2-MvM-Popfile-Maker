@@ -11,6 +11,15 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	companion object : BaseMeleeAttributes
 	
 	/**
+	 * Marked for death when switching to weapon
+	 * 
+	 */
+	context(attrs: IKeyValueMap)
+	var selfMarkForDeath: Boolean?
+		get() = attrs.getTyped("self mark for death", BinaryIntCodec)
+		set(value) = attrs.setNullable("self mark for death", value, BinaryIntCodec)
+	
+	/**
 	 * If true, make weapon deploy and holster 75% slower
 	 * 
 	 * 
@@ -121,7 +130,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 		set(value) = attrs.setNullable("dmg penalty while half alive", value)
 }
 
-operator fun BaseMeleeAttributes.invoke(scope: BaseMeleeAttributes.() -> Unit) {
+inline operator fun BaseMeleeAttributes.invoke(scope: BaseMeleeAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

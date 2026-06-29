@@ -32,7 +32,7 @@ interface PipebombLauncherAttributes : BaseGunAttributes {
 	 * Penalty:
 	 * 	- Launched bombs shatter on surfaces
 	 */
-	val stickyAirBurstMode get() = BonusPenalty<Int, Int>("sticky detonate mode", "sticky air burst mode")
+	val stickyAirBurste get() = BonusPenalty<Int, Int>("sticky detonate mode", "sticky air burst mode")
 	
 	/**
 	 * If true, stickies destroy other stickies.
@@ -62,10 +62,10 @@ interface PipebombLauncherAttributes : BaseGunAttributes {
 	 * Penalty:
 	 * 	- N max stickybombs out
 	 */
-	val maxPipebombsDecreased get() = BonusPenalty<Int, Int>("max pipebombs increased", "max pipebombs decreased")
+	val maxPipebombs get() = BonusPenalty<Int, Int>("max pipebombs increased", "max pipebombs decreased")
 }
 
-operator fun PipebombLauncherAttributes.invoke(scope: PipebombLauncherAttributes.() -> Unit) {
+inline operator fun PipebombLauncherAttributes.invoke(scope: PipebombLauncherAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

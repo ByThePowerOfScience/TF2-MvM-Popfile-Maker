@@ -43,7 +43,7 @@ interface SapperAttributes : BuilderAttributes {
 		set(value) = attrs.setNullable("robo sapper", value)
 }
 
-operator fun SapperAttributes.invoke(scope: SapperAttributes.() -> Unit) {
+inline operator fun SapperAttributes.invoke(scope: SapperAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

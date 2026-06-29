@@ -20,7 +20,7 @@ interface ProjectileArrowAttributes : BaseRocketAttributes {
 		set(value) = attrs.setNullable("arrow heals buildings", value, BinaryIntCodec)
 }
 
-operator fun ProjectileArrowAttributes.invoke(scope: ProjectileArrowAttributes.() -> Unit) {
+inline operator fun ProjectileArrowAttributes.invoke(scope: ProjectileArrowAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

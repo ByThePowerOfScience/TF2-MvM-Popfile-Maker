@@ -20,7 +20,7 @@ interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
 		set(value) = attrs.setNullable("energy weapon penetration", value, BinaryIntCodec)
 }
 
-operator fun ProjectileEnergyRingAttributes.invoke(scope: ProjectileEnergyRingAttributes.() -> Unit) {
+inline operator fun ProjectileEnergyRingAttributes.invoke(scope: ProjectileEnergyRingAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

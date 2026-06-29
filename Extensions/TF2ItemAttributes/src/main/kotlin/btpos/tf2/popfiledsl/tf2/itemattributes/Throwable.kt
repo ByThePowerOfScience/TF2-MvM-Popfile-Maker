@@ -42,7 +42,7 @@ interface ThrowableAttributes : JarAttributes {
 		set(value) = attrs.setNullable("is throwable chargeable", value, BinaryIntCodec)
 }
 
-operator fun ThrowableAttributes.invoke(scope: ThrowableAttributes.() -> Unit) {
+inline operator fun ThrowableAttributes.invoke(scope: ThrowableAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

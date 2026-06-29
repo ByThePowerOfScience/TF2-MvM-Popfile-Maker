@@ -20,7 +20,7 @@ interface BaseProjectileAttributes {
 		set(value) = attrs.setNullable("mad milk syringes", value, BinaryIntCodec)
 }
 
-operator fun BaseProjectileAttributes.invoke(scope: BaseProjectileAttributes.() -> Unit) {
+inline operator fun BaseProjectileAttributes.invoke(scope: BaseProjectileAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

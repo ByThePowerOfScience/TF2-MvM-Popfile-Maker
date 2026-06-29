@@ -21,7 +21,7 @@ interface RayGunAttributes : RocketLauncherAttributes {
 		set(value) = attrs.setNullable("energy weapon no drain", value, BinaryIntCodec)
 }
 
-operator fun RayGunAttributes.invoke(scope: RayGunAttributes.() -> Unit) {
+inline operator fun RayGunAttributes.invoke(scope: RayGunAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

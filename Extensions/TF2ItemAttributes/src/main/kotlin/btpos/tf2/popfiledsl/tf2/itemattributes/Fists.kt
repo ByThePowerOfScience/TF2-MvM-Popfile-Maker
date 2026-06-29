@@ -32,7 +32,7 @@ interface FistsAttributes : BaseMeleeAttributes {
 		set(value) = attrs.setNullable("breadgloves properties", value, BinaryIntCodec)
 }
 
-operator fun FistsAttributes.invoke(scope: FistsAttributes.() -> Unit) {
+inline operator fun FistsAttributes.invoke(scope: FistsAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

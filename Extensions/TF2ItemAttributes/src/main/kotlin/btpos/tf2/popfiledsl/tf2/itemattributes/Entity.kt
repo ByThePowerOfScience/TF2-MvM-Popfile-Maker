@@ -17,45 +17,39 @@ interface EntityAttributes {
 		set(value) = attrs.setNullable("cannot be backstabbed", value, BinaryIntCodec)
 	
 	/**
-	 * Items: 
 	 * 
 	 */
 	val buildings get() = BuildingsAttributes
 }
 
-operator fun EntityAttributes.invoke(scope: EntityAttributes.() -> Unit) {
+inline operator fun EntityAttributes.invoke(scope: EntityAttributes.() -> Unit) {
 	this.apply(scope)
 }
 
 /**
- * Items: 
  * 
  */
 object BuildingsAttributes {
-	operator fun invoke(scope: BuildingsAttributes.() -> Unit) {
+	inline operator fun invoke(scope: BuildingsAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	
 	/**
-	 * Items: 
 	 * 
 	 */
 	val allBuildings get() = AllBuildingsAttributes
 	
 	/**
-	 * Items: 
 	 * 
 	 */
 	val sentry get() = SentryAttributes
 	
 	/**
-	 * Items: 
 	 * 
 	 */
 	val dispenser get() = DispenserAttributes
 	
 	/**
-	 * Items: 
 	 * 
 	 */
 	val teleporter get() = TeleporterAttributes
@@ -88,7 +82,7 @@ object BuildingsAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% health from packs on wearer
 	 */
-	val healthFromPacksDecreased get() = BonusPenalty<Float, Float>("health from packs increased", "health from packs decreased")
+	val healthFromPacks get() = BonusPenalty<Float, Float>("health from packs increased", "health from packs decreased")
 	
 	/**
 	 * Value type: percentage
@@ -136,11 +130,10 @@ object BuildingsAttributes {
 }
 
 /**
- * Items: 
  * 
  */
 object AllBuildingsAttributes {
-	operator fun invoke(scope: AllBuildingsAttributes.() -> Unit) {
+	inline operator fun invoke(scope: AllBuildingsAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	
@@ -181,11 +174,10 @@ object AllBuildingsAttributes {
 }
 
 /**
- * Items: 
  * 
  */
 object SentryAttributes {
-	operator fun invoke(scope: SentryAttributes.() -> Unit) {
+	inline operator fun invoke(scope: SentryAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	
@@ -200,11 +192,10 @@ object SentryAttributes {
 }
 
 /**
- * Items: 
  * 
  */
 object DispenserAttributes {
-	operator fun invoke(scope: DispenserAttributes.() -> Unit) {
+	inline operator fun invoke(scope: DispenserAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	
@@ -219,11 +210,10 @@ object DispenserAttributes {
 }
 
 /**
- * Items: 
  * 
  */
 object TeleporterAttributes {
-	operator fun invoke(scope: TeleporterAttributes.() -> Unit) {
+	inline operator fun invoke(scope: TeleporterAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	

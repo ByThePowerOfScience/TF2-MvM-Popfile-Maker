@@ -14,7 +14,7 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	/**
 	 * If unset, uses the weapon's default projectile type.
 	 * 
-	 * Else use a numbered [projectile type](#ProjectileTypes)
+	 * Else use a numbered [ProjectileType]
 	 * 
 	 * 
 	 * If unset, uses the weapon's default projectile type.
@@ -37,7 +37,7 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 		set(value) = attrs.setNullable("rocket launch impulse", value, BinaryIntCodec)
 }
 
-operator fun RocketLauncherAttributes.invoke(scope: RocketLauncherAttributes.() -> Unit) {
+inline operator fun RocketLauncherAttributes.invoke(scope: RocketLauncherAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

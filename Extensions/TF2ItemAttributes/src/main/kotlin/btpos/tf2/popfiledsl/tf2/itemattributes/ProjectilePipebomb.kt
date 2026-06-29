@@ -38,7 +38,7 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes {
 	 * Penalty:
 	 * 	- N sec slower bomb arm time
 	 */
-	val stickyArmTimePenalty get() = BonusPenalty<Int, Int>("sticky arm time bonus", "sticky arm time penalty")
+	val stickyArmTime get() = BonusPenalty<Int, Int>("sticky arm time bonus", "sticky arm time penalty")
 	
 	/**
 	 * Value type: percentage
@@ -52,7 +52,7 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes {
 		set(value) = attrs.setNullable("grenade damage reduction on world contact", value)
 }
 
-operator fun ProjectilePipebombAttributes.invoke(scope: ProjectilePipebombAttributes.() -> Unit) {
+inline operator fun ProjectilePipebombAttributes.invoke(scope: ProjectilePipebombAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

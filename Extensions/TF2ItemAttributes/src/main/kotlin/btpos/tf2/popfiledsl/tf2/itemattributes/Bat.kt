@@ -30,7 +30,7 @@ interface BatAttributes : BaseMeleeAttributes {
 		set(value) = attrs.setNullable("mod bat launches ornaments", value, NumberSelectorCodec(2))
 }
 
-operator fun BatAttributes.invoke(scope: BatAttributes.() -> Unit) {
+inline operator fun BatAttributes.invoke(scope: BatAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

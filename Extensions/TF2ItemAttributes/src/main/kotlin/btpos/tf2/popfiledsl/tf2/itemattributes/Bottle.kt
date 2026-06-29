@@ -14,7 +14,7 @@ interface BottleAttributes : BaseMeleeAttributes {
 	
 }
 
-operator fun BottleAttributes.invoke(scope: BottleAttributes.() -> Unit) {
+inline operator fun BottleAttributes.invoke(scope: BottleAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

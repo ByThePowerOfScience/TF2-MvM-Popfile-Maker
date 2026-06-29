@@ -18,7 +18,7 @@ interface StickBombAttributes : BottleAttributes {
 		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value, BinaryIntCodec)
 }
 
-operator fun StickBombAttributes.invoke(scope: StickBombAttributes.() -> Unit) {
+inline operator fun StickBombAttributes.invoke(scope: StickBombAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

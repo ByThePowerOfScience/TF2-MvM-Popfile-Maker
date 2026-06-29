@@ -28,7 +28,7 @@ interface CompoundBowAttributes : PipebombLauncherAttributes {
 		set(value) = attrs.setNullable("faster reload rate", value)
 }
 
-operator fun CompoundBowAttributes.invoke(scope: CompoundBowAttributes.() -> Unit) {
+inline operator fun CompoundBowAttributes.invoke(scope: CompoundBowAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

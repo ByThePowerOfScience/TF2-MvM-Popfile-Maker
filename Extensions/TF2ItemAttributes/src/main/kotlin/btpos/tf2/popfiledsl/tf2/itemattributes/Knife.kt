@@ -67,7 +67,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% damage penalty
 	 */
-	override val damagePenalty get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("damage bonus", "damage bonus HIDDEN"), "damage penalty")
+	override val damage get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("damage bonus", "damage bonus HIDDEN"), "damage penalty")
 	
 	/**
 	 * On player
@@ -94,7 +94,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		set(value) = attrs.setNullable("sanguisuge", value, BinaryIntCodec)
 }
 
-operator fun KnifeAttributes.invoke(scope: KnifeAttributes.() -> Unit) {
+inline operator fun KnifeAttributes.invoke(scope: KnifeAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

@@ -40,7 +40,7 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% explosion radius
 	 */
-	val blastRadiusDecreased get() = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
+	val blastRadius get() = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
 	
 	/**
 	 * Value type: percentage
@@ -54,7 +54,7 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 		set(value) = attrs.setNullable("fuse bonus", value)
 }
 
-operator fun ProjectileGrenadeAttributes.invoke(scope: ProjectileGrenadeAttributes.() -> Unit) {
+inline operator fun ProjectileGrenadeAttributes.invoke(scope: ProjectileGrenadeAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

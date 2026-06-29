@@ -51,7 +51,7 @@ interface BaseCombatWeaponAttributes {
 		set(value) = attrs.setNullable("scattergun no reload single", value, BinaryIntCodec)
 }
 
-operator fun BaseCombatWeaponAttributes.invoke(scope: BaseCombatWeaponAttributes.() -> Unit) {
+inline operator fun BaseCombatWeaponAttributes.invoke(scope: BaseCombatWeaponAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

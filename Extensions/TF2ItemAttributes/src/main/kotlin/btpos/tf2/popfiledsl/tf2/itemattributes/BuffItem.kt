@@ -68,7 +68,7 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 		set(value) = attrs.setNullable("increase buff duration HIDDEN", value)
 }
 
-operator fun BuffItemAttributes.invoke(scope: BuffItemAttributes.() -> Unit) {
+inline operator fun BuffItemAttributes.invoke(scope: BuffItemAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

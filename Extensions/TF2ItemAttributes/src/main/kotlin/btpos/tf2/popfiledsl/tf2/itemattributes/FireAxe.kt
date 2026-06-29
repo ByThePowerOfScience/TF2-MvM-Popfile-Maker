@@ -23,7 +23,7 @@ interface FireAxeAttributes : BaseMeleeAttributes {
 		set(value) = attrs.setNullable("Set DamageType Ignite", value, BinaryIntCodec)
 }
 
-operator fun FireAxeAttributes.invoke(scope: FireAxeAttributes.() -> Unit) {
+inline operator fun FireAxeAttributes.invoke(scope: FireAxeAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

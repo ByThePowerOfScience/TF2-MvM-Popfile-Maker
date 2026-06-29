@@ -5,11 +5,10 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 /**
- * Items: 
  * 
  */
 object ParticlesAttributes {
-	operator fun invoke(scope: ParticlesAttributes.() -> Unit) {
+	inline operator fun invoke(scope: ParticlesAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	

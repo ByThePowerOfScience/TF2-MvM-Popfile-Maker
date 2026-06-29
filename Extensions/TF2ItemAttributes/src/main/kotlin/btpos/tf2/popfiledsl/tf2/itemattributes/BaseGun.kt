@@ -14,7 +14,7 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	/**
 	 * If unset, uses the weapon's default projectile type.
 	 * 
-	 * Else use a numbered [projectile type](#ProjectileTypes)
+	 * Else use a numbered [ProjectileType]
 	 * 
 	 */
 	context(attrs: IKeyValueMap)
@@ -43,7 +43,7 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% projectile range
 	 */
-	val projectileRangeDecreased get() = BonusPenalty<Float, Float>("Projectile range increased", "Projectile range decreased")
+	val projectileRange get() = BonusPenalty<Float, Float>("Projectile range increased", "Projectile range decreased")
 	
 	/**
 	 * Don't spin loch n load pills
@@ -90,7 +90,7 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% less accurate
 	 */
-	val spreadPenalty get() = BonusPenalty<Float, Float>("weapon spread bonus", "spread penalty")
+	val spread get() = BonusPenalty<Float, Float>("weapon spread bonus", "spread penalty")
 	
 	/**
 	 * Value type: inverted_percentage
@@ -152,7 +152,7 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 		set(value) = attrs.setNullable("dmg pierces resists absorbs", value, BinaryIntCodec)
 }
 
-operator fun BaseGunAttributes.invoke(scope: BaseGunAttributes.() -> Unit) {
+inline operator fun BaseGunAttributes.invoke(scope: BaseGunAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

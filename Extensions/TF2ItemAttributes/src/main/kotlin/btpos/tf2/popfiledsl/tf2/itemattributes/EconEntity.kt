@@ -5,11 +5,10 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 /**
- * Items: 
  * 
  */
 object EconEntityAttributes {
-	operator fun invoke(scope: EconEntityAttributes.() -> Unit) {
+	inline operator fun invoke(scope: EconEntityAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	

@@ -66,10 +66,10 @@ interface InvisAttributes : WeaponBaseAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% cloak regeneration rate
 	 */
-	val cloakRegenRateDecreased get() = BonusPenalty<Float, Float>("mult cloak meter regen rate", "cloak regen rate decreased")
+	val cloakRegenRate get() = BonusPenalty<Float, Float>("mult cloak meter regen rate", "cloak regen rate decreased")
 }
 
-operator fun InvisAttributes.invoke(scope: InvisAttributes.() -> Unit) {
+inline operator fun InvisAttributes.invoke(scope: InvisAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

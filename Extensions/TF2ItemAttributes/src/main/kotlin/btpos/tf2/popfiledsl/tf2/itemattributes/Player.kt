@@ -26,22 +26,20 @@ interface PlayerAttributes : EntityAttributes {
 		set(value) = attrs.setNullable("hide enemy health", value, BinaryIntCodec)
 	
 	/**
-	 * Items: 
 	 * 
 	 */
 	val spyOnly get() = SpyOnlyAttributes
 }
 
-operator fun PlayerAttributes.invoke(scope: PlayerAttributes.() -> Unit) {
+inline operator fun PlayerAttributes.invoke(scope: PlayerAttributes.() -> Unit) {
 	this.apply(scope)
 }
 
 /**
- * Items: 
  * 
  */
 object SpyOnlyAttributes {
-	operator fun invoke(scope: SpyOnlyAttributes.() -> Unit) {
+	inline operator fun invoke(scope: SpyOnlyAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	

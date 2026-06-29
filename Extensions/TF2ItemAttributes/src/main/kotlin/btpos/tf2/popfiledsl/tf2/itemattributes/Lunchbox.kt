@@ -67,7 +67,7 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 		set(value) = attrs.setNullable("lunchbox healing decreased", value)
 }
 
-operator fun LunchboxAttributes.invoke(scope: LunchboxAttributes.() -> Unit) {
+inline operator fun LunchboxAttributes.invoke(scope: LunchboxAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

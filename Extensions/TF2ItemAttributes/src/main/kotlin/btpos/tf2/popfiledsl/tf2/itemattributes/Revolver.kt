@@ -14,7 +14,7 @@ interface RevolverAttributes : BaseGunAttributes {
 	
 }
 
-operator fun RevolverAttributes.invoke(scope: RevolverAttributes.() -> Unit) {
+inline operator fun RevolverAttributes.invoke(scope: RevolverAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

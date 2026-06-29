@@ -41,7 +41,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% damage penalty vs buildings
 	 */
-	val dmgPenaltyVsBuildings get() = BonusPenalty<Float, Float>("dmg bonus vs buildings", "dmg penalty vs buildings")
+	val dmgVsBuildings get() = BonusPenalty<Float, Float>("dmg bonus vs buildings", "dmg penalty vs buildings")
 	
 	/**
 	 * 
@@ -57,7 +57,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * 	- 	- Value type: percentage
 	 * 	- 	- N% clip size
 	 */
-	val clipSizePenalty get() = BonusPenalty_PenaltyNested<Float, VisHidden<Float, Float>>("clip size bonus", VisHidden<Float, Float>("clip size penalty", "clip size penalty HIDDEN"))
+	val clipSize get() = BonusPenalty_PenaltyNested<Float, VisHidden<Float, Float>>("clip size bonus", VisHidden<Float, Float>("clip size penalty", "clip size penalty HIDDEN"))
 	
 	/**
 	 * Value type: percentage
@@ -95,7 +95,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		set(value) = attrs.setNullable("mod wrench builds minisentry", value)
 	
 	/**
-	 * On player
+	 * Checked on player
 	 * 
 	 * 
 	 * Bonus:
@@ -106,7 +106,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% longer weapon switch
 	 */
-	val deployTimeIncreased get() = BonusPenalty<Float, Float>("deploy time decreased", "deploy time increased")
+	val deployTime get() = BonusPenalty<Float, Float>("deploy time decreased", "deploy time increased")
 	
 	/**
 	 * 
@@ -118,7 +118,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * 	- Value type: inverted_percentage
 	 * 	- This weapon deploys N% slower
 	 */
-	val singleWepDeployTimeIncreased get() = BonusPenalty<Float, Float>("single wep deploy time decreased", "single wep deploy time increased")
+	val singleWepDeployTime get() = BonusPenalty<Float, Float>("single wep deploy time decreased", "single wep deploy time increased")
 	
 	/**
 	 * 
@@ -130,7 +130,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * 	- Value type: percentage
 	 * 	- This weapon holsters N% slower
 	 */
-	val singleWepHolsterTimeIncreased get() = BonusPenalty<Float, Float>("switch from wep deploy time decreased", "single wep holster time increased")
+	val singleWepHolsterTime get() = BonusPenalty<Float, Float>("switch from wep deploy time decreased", "single wep holster time increased")
 	
 	/**
 	 * If true, make weapon deploy and holster 75% slower
@@ -215,7 +215,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% damage penalty
 	 */
-	val damagePenalty get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("damage bonus", "damage bonus HIDDEN"), "damage penalty")
+	val damage get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("damage bonus", "damage bonus HIDDEN"), "damage penalty")
 	
 	/**
 	 * Value type: percentage
@@ -247,7 +247,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * Penalty:
 	 * 	- Attrib_AutoFiresFullClipNegative}}
 	 */
-	val autoFiresFullClipPenalty get() = BonusPenalty<Boolean, Boolean>("auto fires full clip", "auto fires full clip penalty")
+	val autoFiresFullClip get() = BonusPenalty<Boolean, Boolean>("auto fires full clip", "auto fires full clip penalty")
 	
 	
 	context(attrs: IKeyValueMap)
@@ -283,7 +283,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * 	- Hidden:
 	 * 	- 	- Value type: inverted_percentage
 	 */
-	val fireRatePenalty get() = BonusPenalty_BothNested<VisHidden<Float, Float>, VisHidden<Float, Float>>(VisHidden<Float, Float>("fire rate bonus", "fire rate bonus HIDDEN"), VisHidden<Float, Float>("fire rate penalty", "fire rate penalty HIDDEN"))
+	val fireRate get() = BonusPenalty_BothNested<VisHidden<Float, Float>, VisHidden<Float, Float>>(VisHidden<Float, Float>("fire rate bonus", "fire rate bonus HIDDEN"), VisHidden<Float, Float>("fire rate penalty", "fire rate penalty HIDDEN"))
 	
 	
 	context(attrs: IKeyValueMap)
@@ -301,7 +301,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% slower reload time
 	 */
-	val reloadTimeIncreased get() = BonusPenalty<Float, Float>("Reload time decreased", "Reload time increased")
+	val reloadTime get() = BonusPenalty<Float, Float>("Reload time decreased", "Reload time increased")
 	
 	/**
 	 * Value type: percentage
@@ -352,7 +352,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		set(value) = attrs.setNullable("weapon_allow_inspect", value, BinaryIntCodec)
 }
 
-operator fun WeaponBaseAttributes.invoke(scope: WeaponBaseAttributes.() -> Unit) {
+inline operator fun WeaponBaseAttributes.invoke(scope: WeaponBaseAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

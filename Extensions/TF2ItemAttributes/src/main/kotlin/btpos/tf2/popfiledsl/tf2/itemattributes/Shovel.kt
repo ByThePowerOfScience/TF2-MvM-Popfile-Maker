@@ -55,7 +55,7 @@ interface ShovelAttributes : BaseMeleeAttributes {
 		set(value) = attrs.setNullable("air jump on attack", value, BinaryIntCodec)
 }
 
-operator fun ShovelAttributes.invoke(scope: ShovelAttributes.() -> Unit) {
+inline operator fun ShovelAttributes.invoke(scope: ShovelAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

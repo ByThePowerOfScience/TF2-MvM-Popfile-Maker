@@ -23,7 +23,7 @@ interface ProjectileRocketAttributes : BaseRocketAttributes {
 		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value, BinaryIntCodec)
 }
 
-operator fun ProjectileRocketAttributes.invoke(scope: ProjectileRocketAttributes.() -> Unit) {
+inline operator fun ProjectileRocketAttributes.invoke(scope: ProjectileRocketAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

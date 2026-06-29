@@ -50,10 +50,10 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	 * 	- Value type: inverted_percentage
 	 * 	- Construction hit speed boost decreased by N%
 	 */
-	val constructionRateDecreased get() = BonusPenalty<Float, Float>("Construction rate increased", "Construction rate decreased")
+	val constructionRate get() = BonusPenalty<Float, Float>("Construction rate increased", "Construction rate decreased")
 }
 
-operator fun WrenchAttributes.invoke(scope: WrenchAttributes.() -> Unit) {
+inline operator fun WrenchAttributes.invoke(scope: WrenchAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

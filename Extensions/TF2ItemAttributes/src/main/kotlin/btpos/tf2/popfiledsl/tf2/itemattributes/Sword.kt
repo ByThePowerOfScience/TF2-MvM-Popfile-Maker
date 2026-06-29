@@ -21,7 +21,7 @@ interface SwordAttributes : BaseMeleeAttributes {
 		set(value) = attrs.setNullable("decapitate type", value)
 }
 
-operator fun SwordAttributes.invoke(scope: SwordAttributes.() -> Unit) {
+inline operator fun SwordAttributes.invoke(scope: SwordAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

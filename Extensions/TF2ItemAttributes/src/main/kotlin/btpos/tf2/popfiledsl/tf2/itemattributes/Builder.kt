@@ -41,7 +41,7 @@ interface BuilderAttributes : WeaponBaseAttributes {
 		set(value) = attrs.setNullable("robo sapper", value, BinaryIntCodec)
 }
 
-operator fun BuilderAttributes.invoke(scope: BuilderAttributes.() -> Unit) {
+inline operator fun BuilderAttributes.invoke(scope: BuilderAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

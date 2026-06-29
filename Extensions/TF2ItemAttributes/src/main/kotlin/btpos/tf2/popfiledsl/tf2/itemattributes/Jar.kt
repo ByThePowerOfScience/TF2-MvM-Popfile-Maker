@@ -14,7 +14,7 @@ interface JarAttributes : BaseGunAttributes {
 	/**
 	 * If unset, uses the weapon's default projectile type.
 	 * 
-	 * Else use a numbered [projectile type](#ProjectileTypes)
+	 * Else use a numbered [ProjectileType]
 	 * 
 	 * 
 	 * Used to select the model
@@ -54,7 +54,7 @@ interface JarAttributes : BaseGunAttributes {
 		set(value) = attrs.setNullable("extinguish reduces cooldown", value)
 }
 
-operator fun JarAttributes.invoke(scope: JarAttributes.() -> Unit) {
+inline operator fun JarAttributes.invoke(scope: JarAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

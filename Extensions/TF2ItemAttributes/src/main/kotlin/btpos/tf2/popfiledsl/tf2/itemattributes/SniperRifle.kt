@@ -83,7 +83,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 * 	- Value type: inverted_percentage
 	 * 	- N% slower power charge
 	 */
-	val sRifleChargeRateDecreased get() = BonusPenalty<Float, Float>("sniper charge per sec", "SRifle Charge rate decreased")
+	val sRifleChargeRate get() = BonusPenalty<Float, Float>("sniper charge per sec", "SRifle Charge rate decreased")
 	
 	
 	context(attrs: IKeyValueMap)
@@ -139,7 +139,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		set(value) = attrs.setNullable("jarate duration", value)
 }
 
-operator fun SniperRifleAttributes.invoke(scope: SniperRifleAttributes.() -> Unit) {
+inline operator fun SniperRifleAttributes.invoke(scope: SniperRifleAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

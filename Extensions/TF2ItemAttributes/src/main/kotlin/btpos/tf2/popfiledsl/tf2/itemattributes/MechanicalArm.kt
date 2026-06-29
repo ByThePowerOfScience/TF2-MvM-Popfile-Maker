@@ -22,7 +22,7 @@ interface MechanicalArmAttributes : BaseGunAttributes {
 		set(value) = attrs.setNullable("mod ammo per shot", value)
 }
 
-operator fun MechanicalArmAttributes.invoke(scope: MechanicalArmAttributes.() -> Unit) {
+inline operator fun MechanicalArmAttributes.invoke(scope: MechanicalArmAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

@@ -21,7 +21,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% heal rate
 	 */
-	val healRatePenalty get() = BonusPenalty<Float, Float>("heal rate bonus", "heal rate penalty")
+	val healRate get() = BonusPenalty<Float, Float>("heal rate bonus", "heal rate penalty")
 	
 	/**
 	 * On player
@@ -39,123 +39,6 @@ interface MedigunAttributes : BaseGunAttributes {
 	var healingMastery: Int?
 		get() = attrs.getTyped("healing mastery")
 		set(value) = attrs.setNullable("healing mastery", value)
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var fistsHaveRadialBuff: Boolean?
-		get() = attrs.getTyped("fists have radial buff", NumberSelectorCodec(1))
-		set(value) = attrs.setNullable("fists have radial buff", value, NumberSelectorCodec(1))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var setCloakIsFeignDeath: Boolean?
-		get() = attrs.getTyped("set cloak is feign death", NumberSelectorCodec(2))
-		set(value) = attrs.setNullable("set cloak is feign death", value, NumberSelectorCodec(2))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var modBatLaunchesBalls: Boolean?
-		get() = attrs.getTyped("mod bat launches balls", NumberSelectorCodec(1))
-		set(value) = attrs.setNullable("mod bat launches balls", value, NumberSelectorCodec(1))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var sniperNoHeadshots: Boolean?
-		get() = attrs.getTyped("sniper no headshots", NumberSelectorCodec(1))
-		set(value) = attrs.setNullable("sniper no headshots", value, NumberSelectorCodec(1))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var setCloakIsMovementBased: Boolean?
-		get() = attrs.getTyped("set cloak is movement based", NumberSelectorCodec(1))
-		set(value) = attrs.setNullable("set cloak is movement based", value, NumberSelectorCodec(1))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var revolverUseHitLocations: Boolean?
-		get() = attrs.getTyped("revolver use hit locations", NumberSelectorCodec(1))
-		set(value) = attrs.setNullable("revolver use hit locations", value, NumberSelectorCodec(1))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var modShovelDamageBoost: Boolean?
-		get() = attrs.getTyped("mod shovel damage boost", NumberSelectorCodec(1))
-		set(value) = attrs.setNullable("mod shovel damage boost", value, NumberSelectorCodec(1))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var lunchboxAddsMaxhealthBonus: Boolean?
-		get() = attrs.getTyped("lunchbox adds maxhealth bonus", NumberSelectorCodec(1))
-		set(value) = attrs.setNullable("lunchbox adds maxhealth bonus", value, NumberSelectorCodec(1))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var lunchboxAddsMinicrits: Boolean?
-		get() = attrs.getTyped("lunchbox adds minicrits", NumberSelectorCodec(2))
-		set(value) = attrs.setNullable("lunchbox adds minicrits", value, NumberSelectorCodec(2))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var modShovelSpeedBoost: Boolean?
-		get() = attrs.getTyped("mod shovel speed boost", NumberSelectorCodec(2))
-		set(value) = attrs.setNullable("mod shovel speed boost", value, NumberSelectorCodec(2))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var modBatLaunchesOrnaments: Boolean?
-		get() = attrs.getTyped("mod bat launches ornaments", NumberSelectorCodec(2))
-		set(value) = attrs.setNullable("mod bat launches ornaments", value, NumberSelectorCodec(2))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var setIcicleKnifeMode: Boolean?
-		get() = attrs.getTyped("set icicle knife mode", NumberSelectorCodec(3))
-		set(value) = attrs.setNullable("set icicle knife mode", value, NumberSelectorCodec(3))
-	
-	/**
-	 * Determines medigun type
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var modFlaregunFiresPelletsWithKnockback: Boolean?
-		get() = attrs.getTyped("mod flaregun fires pellets with knockback", NumberSelectorCodec(3))
-		set(value) = attrs.setNullable("mod flaregun fires pellets with knockback", value, NumberSelectorCodec(3))
 	
 	/**
 	 * 
@@ -176,7 +59,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	 * 	- Value type: inverted_percentage
 	 * 	- N% max overheal
 	 */
-	val overhealPenalty get() = BonusPenalty<Float, Float>("overheal bonus", "overheal penalty")
+	val overheal get() = BonusPenalty<Float, Float>("overheal bonus", "overheal penalty")
 	
 	/**
 	 * 
@@ -188,7 +71,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	 * 	- Value type: inverted_percentage
 	 * 	- N% shorter overheal time
 	 */
-	val overhealDecayPenalty get() = BonusPenalty<Float, Float>("overheal decay bonus", "overheal decay penalty")
+	val overhealDecay get() = BonusPenalty<Float, Float>("overheal decay bonus", "overheal decay penalty")
 	
 	/**
 	 * On owner
@@ -226,7 +109,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% ÜberCharge rate
 	 */
-	val uberchargeRatePenalty get() = BonusPenalty<Float, Float>("ubercharge rate bonus", "ubercharge rate penalty")
+	val uberchargeRate get() = BonusPenalty<Float, Float>("ubercharge rate bonus", "ubercharge rate penalty")
 	
 	/**
 	 * On owner
@@ -249,7 +132,7 @@ interface MedigunAttributes : BaseGunAttributes {
 		set(value) = attrs.setNullable("generate rage on heal", value)
 }
 
-operator fun MedigunAttributes.invoke(scope: MedigunAttributes.() -> Unit) {
+inline operator fun MedigunAttributes.invoke(scope: MedigunAttributes.() -> Unit) {
 	this.apply(scope)
 }
 
@@ -259,7 +142,7 @@ operator fun MedigunAttributes.invoke(scope: MedigunAttributes.() -> Unit) {
  * 
  */
 object MedigunChargeIsCritBoostAttributes {
-	operator fun invoke(scope: MedigunChargeIsCritBoostAttributes.() -> Unit) {
+	inline operator fun invoke(scope: MedigunChargeIsCritBoostAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	
@@ -278,7 +161,7 @@ object MedigunChargeIsCritBoostAttributes {
 	 * Press your reload key to cycle through resist types. While healing, provides you and your target with a constant 10% resistance to the selected damage type.
 	 * 
 	 * Ubercharge type. Each resist uber also has its own entry
-	 * 
+	 *
 	 */
 	context(attrs: IKeyValueMap)
 	var medigunChargeIsResists: Int?

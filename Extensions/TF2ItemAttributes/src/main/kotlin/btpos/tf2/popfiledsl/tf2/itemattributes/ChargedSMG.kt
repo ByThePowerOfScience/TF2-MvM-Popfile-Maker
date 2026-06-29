@@ -21,7 +21,7 @@ interface ChargedSMGAttributes : SMGAttributes {
 		set(value) = attrs.setNullable("minicrit_boost_when_charged", value)
 }
 
-operator fun ChargedSMGAttributes.invoke(scope: ChargedSMGAttributes.() -> Unit) {
+inline operator fun ChargedSMGAttributes.invoke(scope: ChargedSMGAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

@@ -36,7 +36,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% projectile speed
 	 */
-	val projectileSpeedDecreased get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
+	val projectileSpeed get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
 	
 	/**
 	 * If 0, uses standard "detonate all stickies on rclick". Else, uses Scottish Resistance's "only detonate stickies on crosshair" function.
@@ -48,7 +48,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	 * Penalty:
 	 * 	- Launched bombs shatter on surfaces
 	 */
-	val stickyAirBurstMode get() = BonusPenalty<Int, Int>("sticky detonate mode", "sticky air burst mode")
+	val stickyAirBurste get() = BonusPenalty<Int, Int>("sticky detonate mode", "sticky air burst mode")
 	
 	/**
 	 * "Mortar" (loose cannon) detonation time length
@@ -60,7 +60,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 		set(value) = attrs.setNullable("grenade launcher mortar mode", value)
 }
 
-operator fun GrenadeLauncherAttributes.invoke(scope: GrenadeLauncherAttributes.() -> Unit) {
+inline operator fun GrenadeLauncherAttributes.invoke(scope: GrenadeLauncherAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

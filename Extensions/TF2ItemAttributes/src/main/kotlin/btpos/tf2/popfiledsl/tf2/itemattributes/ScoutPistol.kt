@@ -21,7 +21,7 @@ interface ScoutPistolAttributes : PistolAttributes {
 		set(value) = attrs.setNullable("back headshot", value, BinaryIntCodec)
 }
 
-operator fun ScoutPistolAttributes.invoke(scope: ScoutPistolAttributes.() -> Unit) {
+inline operator fun ScoutPistolAttributes.invoke(scope: ScoutPistolAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

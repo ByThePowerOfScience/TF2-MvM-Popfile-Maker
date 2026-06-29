@@ -14,7 +14,7 @@ interface ShotgunAttributes : BaseGunAttributes {
 	
 }
 
-operator fun ShotgunAttributes.invoke(scope: ShotgunAttributes.() -> Unit) {
+inline operator fun ShotgunAttributes.invoke(scope: ShotgunAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

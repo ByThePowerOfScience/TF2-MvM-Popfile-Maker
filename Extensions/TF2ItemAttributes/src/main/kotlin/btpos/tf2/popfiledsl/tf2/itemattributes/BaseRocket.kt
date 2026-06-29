@@ -44,7 +44,7 @@ interface BaseRocketAttributes : BaseProjectileAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% projectile speed
 	 */
-	val projectileSpeedDecreased get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
+	val projectileSpeed get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
 	
 	
 	context(attrs: IKeyValueMap)
@@ -80,10 +80,10 @@ interface BaseRocketAttributes : BaseProjectileAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% explosion radius
 	 */
-	val blastRadiusDecreased get() = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
+	val blastRadius get() = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
 }
 
-operator fun BaseRocketAttributes.invoke(scope: BaseRocketAttributes.() -> Unit) {
+inline operator fun BaseRocketAttributes.invoke(scope: BaseRocketAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

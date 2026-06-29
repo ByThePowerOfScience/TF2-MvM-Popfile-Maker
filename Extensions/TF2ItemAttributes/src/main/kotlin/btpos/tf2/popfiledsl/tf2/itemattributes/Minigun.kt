@@ -27,7 +27,7 @@ interface MinigunAttributes : BaseGunAttributes {
 	 * 	- Value type: percentage
 	 * 	- N% slower spin up time
 	 */
-	val minigunSpinupTimeIncreased get() = BonusPenalty<Float, Float>("minigun spinup time decreased", "minigun spinup time increased")
+	val minigunSpinupTime get() = BonusPenalty<Float, Float>("minigun spinup time decreased", "minigun spinup time increased")
 	
 	/**
 	 * Overridden by "raid gamemode" to 1
@@ -54,7 +54,7 @@ interface MinigunAttributes : BaseGunAttributes {
 		set(value) = attrs.setNullable("uses ammo while aiming", value)
 }
 
-operator fun MinigunAttributes.invoke(scope: MinigunAttributes.() -> Unit) {
+inline operator fun MinigunAttributes.invoke(scope: MinigunAttributes.() -> Unit) {
 	this.apply(scope)
 }
 

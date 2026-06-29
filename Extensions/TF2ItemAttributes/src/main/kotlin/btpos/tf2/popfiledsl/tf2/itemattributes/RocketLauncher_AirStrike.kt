@@ -22,7 +22,7 @@ interface RocketLauncher_AirStrikeAttributes : RocketLauncherAttributes {
 		set(value) = attrs.setNullable("clipsize increase on kill", value)
 }
 
-operator fun RocketLauncher_AirStrikeAttributes.invoke(scope: RocketLauncher_AirStrikeAttributes.() -> Unit) {
+inline operator fun RocketLauncher_AirStrikeAttributes.invoke(scope: RocketLauncher_AirStrikeAttributes.() -> Unit) {
 	this.apply(scope)
 }
 
