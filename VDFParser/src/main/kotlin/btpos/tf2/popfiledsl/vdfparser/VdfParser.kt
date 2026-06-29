@@ -67,7 +67,7 @@ object VdfParser {
 	
 	data class LineWithOnlyComment(val comment: String?)
 	
-	val quote = literal('"')
+	val quote = literal('"').discard()
 	val anySpaces = whitespace.star().discard()
 	
 	val newline = literal('\n').discard()
