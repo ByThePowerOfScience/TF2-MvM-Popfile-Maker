@@ -28,7 +28,7 @@ class MultiMap<K : Any, V : Any> : Iterable<Pair<K, V>> {
 	}
 	
 	fun add(key: K, value: V) {
-		backingList.add(key to value)
+		backingList.add(Pair(key, value))
 	}
 	
 	fun set(key: K, value: V) {
