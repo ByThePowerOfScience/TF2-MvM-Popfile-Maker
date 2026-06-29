@@ -1,4 +1,3 @@
-import org.gradle.internal.impldep.org.apache.http.client.methods.RequestBuilder.options
 import org.gradle.kotlin.dsl.implementation
 import org.gradle.kotlin.dsl.testRuntimeOnly
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -68,7 +67,7 @@ tasks {
 		}
 	}
 	compileKotlin {
-		
+	
 	}
 	checkClojure {
 		dependsOn(compileKotlin)
