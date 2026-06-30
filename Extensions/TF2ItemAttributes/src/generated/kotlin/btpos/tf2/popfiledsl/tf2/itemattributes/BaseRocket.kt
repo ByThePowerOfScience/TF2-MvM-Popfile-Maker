@@ -5,13 +5,13 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface BaseRocketAttributes : BaseProjectileAttributes {
+interface BaseRocketAttributes : BaseProjectileAttributes, IBlockScoped {
 	companion object : BaseRocketAttributes
 	
 	/**
 	 * 
 	 *
-	 * Uses the "mini rockets" model
+	 * Uses the "mini rockets" model.
 	 */
 	context(attrs: IKeyValueMap)
 	var miniRockets: Boolean?
@@ -23,7 +23,7 @@ interface BaseRocketAttributes : BaseProjectileAttributes {
 	 *
 	 * 
 	 *
-	 * If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80%
+	 * If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80%.
 	 */
 	context(attrs: IKeyValueMap)
 	var rocketjumpAttackrateBonus: Float?
@@ -66,7 +66,7 @@ interface BaseRocketAttributes : BaseProjectileAttributes {
 	 *
 	 * 
 	 *
-	 * Does pumpkin bombs particle effect
+	 * Does pumpkin bombs particle effect.
 	 */
 	context(attrs: IKeyValueMap)
 	var spellHalloweenPumpkinExplosions: Boolean?
@@ -76,7 +76,7 @@ interface BaseRocketAttributes : BaseProjectileAttributes {
 	/**
 	 * 
 	 *
-	 * Use the big MvM particle when it explodes
+	 * Use the big MvM particle when it explodes.
 	 */
 	context(attrs: IKeyValueMap)
 	var useLargeSmokeExplosion: Int?
@@ -97,9 +97,5 @@ interface BaseRocketAttributes : BaseProjectileAttributes {
 	 * 
 	 */
 	val blastRadius get() = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
-}
-
-inline operator fun BaseRocketAttributes.invoke(scope: BaseRocketAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

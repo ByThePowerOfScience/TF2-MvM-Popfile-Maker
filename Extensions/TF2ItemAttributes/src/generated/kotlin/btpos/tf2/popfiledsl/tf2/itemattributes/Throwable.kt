@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: Spellbook
  */
-interface ThrowableAttributes : JarAttributes {
+interface ThrowableAttributes : JarAttributes, IBlockScoped {
 	companion object : ThrowableAttributes
 	
 	/**
@@ -29,7 +29,7 @@ interface ThrowableAttributes : JarAttributes {
 	/**
 	 * 
 	 *
-	 * For timed explosions
+	 * For timed explosions.
 	 */
 	context(attrs: IKeyValueMap)
 	var isThrowablePrimable: Boolean?
@@ -39,15 +39,11 @@ interface ThrowableAttributes : JarAttributes {
 	/**
 	 * 
 	 *
-	 * For things like distance/power increases
+	 * For things like distance/power increases.
 	 */
 	context(attrs: IKeyValueMap)
 	var isThrowableChargeable: Boolean?
 		get() = attrs.getTyped("is throwable chargeable", BinaryIntCodec)
 		set(value) = attrs.setNullable("is throwable chargeable", value, BinaryIntCodec)
-}
-
-inline operator fun ThrowableAttributes.invoke(scope: ThrowableAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

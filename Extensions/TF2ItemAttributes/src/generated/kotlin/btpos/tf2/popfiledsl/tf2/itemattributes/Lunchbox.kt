@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Sandvich, The Dalokohs Bar, The Buffalo Steak Sandvich, Fishcake, The Robo-Sandvich, Festive Sandvich, The Second Banana, Bonk! Atomic Punch, Crit-a-Cola, Festive Bonk 2014
  */
-interface LunchboxAttributes : WeaponBaseAttributes {
+interface LunchboxAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : LunchboxAttributes
 	
 	/**
@@ -15,21 +15,21 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * 0 = LUNCHBOX_STANDARD
+	 * 0 = LUNCHBOX_STANDARD.
 	 *
-	 * Used for both the bonk atomic punch or the sandvich
+	 * 1 = LUNCHBOX_ADDS_MAXHEALTH.
 	 *
-	 * 1 = LUNCHBOX_ADDS_MAXHEALTH,
+	 * 2 = LUNCHBOX_ADDS_MINICRITS.
 	 *
-	 * 2 = LUNCHBOX_ADDS_MINICRITS,
+	 * 3 = LUNCHBOX_STANDARD_ROBO.
 	 *
-	 * 3 = LUNCHBOX_STANDARD_ROBO,
+	 * 4 = LUNCHBOX_STANDARD_FESTIVE.
 	 *
-	 * 4 = LUNCHBOX_STANDARD_FESTIVE,
+	 * 5 = LUNCHBOX_ADDS_AMMO (fully implemented).
 	 *
-	 * 5 = LUNCHBOX_ADDS_AMMO,
+	 * 6 = LUNCHBOX_BANANA.
 	 *
-	 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented
+	 * 7 = LUNCHBOX_FISHCAKE.
 	 */
 	context(attrs: IKeyValueMap)
 	var lunchboxAddsMaxhealthBonus: Boolean?
@@ -41,21 +41,21 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * 0 = LUNCHBOX_STANDARD
+	 * 0 = LUNCHBOX_STANDARD.
 	 *
-	 * Used for both the bonk atomic punch or the sandvich
+	 * 1 = LUNCHBOX_ADDS_MAXHEALTH.
 	 *
-	 * 1 = LUNCHBOX_ADDS_MAXHEALTH,
+	 * 2 = LUNCHBOX_ADDS_MINICRITS.
 	 *
-	 * 2 = LUNCHBOX_ADDS_MINICRITS,
+	 * 3 = LUNCHBOX_STANDARD_ROBO.
 	 *
-	 * 3 = LUNCHBOX_STANDARD_ROBO,
+	 * 4 = LUNCHBOX_STANDARD_FESTIVE.
 	 *
-	 * 4 = LUNCHBOX_STANDARD_FESTIVE,
+	 * 5 = LUNCHBOX_ADDS_AMMO (fully implemented).
 	 *
-	 * 5 = LUNCHBOX_ADDS_AMMO,
+	 * 6 = LUNCHBOX_BANANA.
 	 *
-	 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented
+	 * 7 = LUNCHBOX_FISHCAKE.
 	 */
 	context(attrs: IKeyValueMap)
 	var lunchboxAddsMinicrits: Boolean?
@@ -71,9 +71,5 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	var lunchboxHealingDecreased: Float?
 		get() = attrs.getTyped("lunchbox healing decreased")
 		set(value) = attrs.setNullable("lunchbox healing decreased", value)
-}
-
-inline operator fun LunchboxAttributes.invoke(scope: LunchboxAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

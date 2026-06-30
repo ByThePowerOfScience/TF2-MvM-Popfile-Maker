@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Righteous Bison, The Pomson 6000
  */
-interface RayGunAttributes : RocketLauncherAttributes {
+interface RayGunAttributes : RocketLauncherAttributes, IBlockScoped {
 	companion object : RayGunAttributes
 	
 	/**
@@ -19,9 +19,5 @@ interface RayGunAttributes : RocketLauncherAttributes {
 	var energyWeaponNoDrain: Boolean?
 		get() = attrs.getTyped("energy weapon no drain", BinaryIntCodec)
 		set(value) = attrs.setNullable("energy weapon no drain", value, BinaryIntCodec)
-}
-
-inline operator fun RayGunAttributes.invoke(scope: RayGunAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

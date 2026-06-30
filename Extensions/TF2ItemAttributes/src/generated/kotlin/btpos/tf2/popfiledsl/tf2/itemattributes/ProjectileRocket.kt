@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface ProjectileRocketAttributes : BaseRocketAttributes {
+interface ProjectileRocketAttributes : BaseRocketAttributes, IBlockScoped {
 	companion object : ProjectileRocketAttributes
 	
 	/**
@@ -13,17 +13,13 @@ interface ProjectileRocketAttributes : BaseRocketAttributes {
 	 *
 	 * 
 	 *
-	 * Does pumpkin bombs particle effect
+	 * Does pumpkin bombs particle effect.
 	 *
-	 * Checks on owner or sentry's owner
+	 * Checks on owner or sentry's owner.
 	 */
 	context(attrs: IKeyValueMap)
 	override var spellHalloweenPumpkinExplosions: Boolean?
 		get() = super.spellHalloweenPumpkinExplosions
 		set(value) { super.spellHalloweenPumpkinExplosions = value }
-}
-
-inline operator fun ProjectileRocketAttributes.invoke(scope: ProjectileRocketAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Flare Gun, The Scorch Shot, The Detonator, The Manmelter
  */
-interface FlareGunAttributes : BaseGunAttributes {
+interface FlareGunAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : FlareGunAttributes
 	
 	/**
@@ -15,21 +15,17 @@ interface FlareGunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * 0: Normal
+	 * 0: Normal.
 	 *
-	 * 1: Detonator
+	 * 1: Detonator.
 	 *
-	 * 2: UNUSED
+	 * 2: Manmelter.
 	 *
-	 * 3: Scorch Shot
+	 * 3: Scorch Shot.
 	 */
 	context(attrs: IKeyValueMap)
 	var flaregunFiresPelletsWithKnockback: Boolean?
 		get() = attrs.getTyped("mod flaregun fires pellets with knockback", NumberSelectorCodec(3))
 		set(value) = attrs.setNullable("mod flaregun fires pellets with knockback", value, NumberSelectorCodec(3))
-}
-
-inline operator fun FlareGunAttributes.invoke(scope: FlareGunAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

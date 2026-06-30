@@ -7,13 +7,9 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: Stock SMG + Reskins
  */
-interface SMGAttributes : BaseGunAttributes {
+interface SMGAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : SMGAttributes
 	
 	
-}
-
-inline operator fun SMGAttributes.invoke(scope: SMGAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

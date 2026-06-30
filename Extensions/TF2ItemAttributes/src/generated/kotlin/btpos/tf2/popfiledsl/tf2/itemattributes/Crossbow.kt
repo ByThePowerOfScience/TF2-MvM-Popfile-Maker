@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Crusader's Crossbow, Festive Crusader's Crossbow
  */
-interface CrossbowAttributes : RocketLauncherAttributes {
+interface CrossbowAttributes : RocketLauncherAttributes, IBlockScoped {
 	companion object : CrossbowAttributes
 	
 	/**
@@ -46,9 +46,5 @@ interface CrossbowAttributes : RocketLauncherAttributes {
 	override var fasterReloadRate: Float?
 		get() = super.fasterReloadRate
 		set(value) { super.fasterReloadRate = value }
-}
-
-inline operator fun CrossbowAttributes.invoke(scope: CrossbowAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

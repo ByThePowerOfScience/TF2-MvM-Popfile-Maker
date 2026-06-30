@@ -7,19 +7,21 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_KNIFE, Upgradeable TF_WEAPON_KNIFE, Your Eternal Reward, Conniver's Kunai, The Big Earner, The Wanga Prick, The Sharp Dresser, The Spy-cicle, Festive Knife 2011, The Black Rose, Stock Botkiller Knives
  */
-interface KnifeAttributes : BaseMeleeAttributes {
+interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : KnifeAttributes
 	
 	/**
 	 * 
 	 *
-	 * 0: Stock
+	 * 0: Stock.
 	 *
-	 * 1: Your Eternal Reward
+	 * 1: Your Eternal Reward.
 	 *
-	 * 2: Cloak and Dagger (idk why)
+	 * 2: Cloak and Dagger (UNCHECKED).
 	 *
-	 * 3: Spycicle
+	 * 3: Spycicle.
+	 *
+	 * The 'Your Eternal Reward' setting is used by sentries to not target spies after a stab, and the 'Spycicle' setting is used to display the recharge meter.
 	 */
 	context(attrs: IKeyValueMap)
 	var setIcicleKnifeMode: Boolean?
@@ -65,7 +67,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	 *
 	 * 
 	 *
-	 * Base backstab damage against minibosses is 250 * this proportion.
+	 * Base backstab damage against minibosses is `250 * <this proportion>`.
 	 */
 	override val damage get() = super.damage
 	
@@ -74,9 +76,9 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	 *
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
-	 * Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%
+	 * Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%.
 	 *
 	 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.
 	 *
@@ -92,15 +94,11 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	 *
 	 * 
 	 *
-	 * Gain health on backstab. (Kunai)
+	 * Gain health on backstab. (Kunai).
 	 */
 	context(attrs: IKeyValueMap)
 	var gainHealthOnBackstab: Boolean?
 		get() = attrs.getTyped("sanguisuge", BinaryIntCodec)
 		set(value) = attrs.setNullable("sanguisuge", value, BinaryIntCodec)
-}
-
-inline operator fun KnifeAttributes.invoke(scope: KnifeAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

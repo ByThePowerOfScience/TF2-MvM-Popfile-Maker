@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Cleaner's Carbine
  */
-interface ChargedSMGAttributes : SMGAttributes {
+interface ChargedSMGAttributes : SMGAttributes, IBlockScoped {
 	companion object : ChargedSMGAttributes
 	
 	/**
@@ -15,15 +15,11 @@ interface ChargedSMGAttributes : SMGAttributes {
 	 *
 	 * 
 	 *
-	 * Minicrit buff duration
+	 * Minicrit buff duration.
 	 */
 	context(attrs: IKeyValueMap)
 	var minicritBoostWhenCharged: Int?
 		get() = attrs.getTyped("minicrit_boost_when_charged")
 		set(value) = attrs.setNullable("minicrit_boost_when_charged", value)
-}
-
-inline operator fun ChargedSMGAttributes.invoke(scope: ChargedSMGAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

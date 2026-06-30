@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: Stock Wrench + Reskins, Golden Wrench, The Southern Hospitality, The Jag, The Eureka Effect, The Gunslinger
  */
-interface WrenchAttributes : BaseMeleeAttributes {
+interface WrenchAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : WrenchAttributes
 	
 	/**
@@ -15,7 +15,7 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	 *
 	 * 
 	 *
-	 * If set, pressing reload shows the Eureka Effect menu
+	 * If set, pressing reload shows the Eureka Effect menu.
 	 */
 	context(attrs: IKeyValueMap)
 	var altFireTeleportToSpawn: Boolean?
@@ -27,15 +27,15 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	 *
 	 * 
 	 *
-	 * Determines the hand used in the model
+	 * Determines the hand used in the model.
 	 *
-	 * Detonates leveled sentries when equipping a wrench with this attribute
+	 * Detonates leveled sentries when equipping a wrench with this attribute.
 	 *
-	 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute
+	 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute.
 	 *
-	 * Removes engineer's glove on his model
+	 * Removes engineer's glove on his model.
 	 *
-	 * Also determines if it's a "PDQ", which obviously builds minisentries
+	 * Also determines if it's a "PDQ", which obviously builds minisentries.
 	 */
 	context(attrs: IKeyValueMap)
 	override var wrenchBuildsMinisentry: Boolean?
@@ -55,12 +55,8 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	 *
 	 * 
 	 *
-	 * Passive build rate multiplier, same as the convar `tf_construction_build_rate_multiplier`
+	 * Passive build rate multiplier, same as the convar `tf_construction_build_rate_multiplier`.
 	 */
 	val constructionRate get() = BonusPenalty<Float, Float>("Construction rate increased", "Construction rate decreased")
-}
-
-inline operator fun WrenchAttributes.invoke(scope: WrenchAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

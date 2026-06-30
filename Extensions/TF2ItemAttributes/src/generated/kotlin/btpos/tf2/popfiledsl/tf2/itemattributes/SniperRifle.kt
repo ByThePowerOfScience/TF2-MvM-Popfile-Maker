@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_SNIPERRIFLE, Upgradeable TF_WEAPON_SNIPERRIFLE, The Sydney Sleeper, The Machina, Festive Sniper Rifle 2011, The Hitman's Heatmaker, Silver Botkiller Sniper Rifle Mk.I, Gold Botkiller Sniper Rifle Mk.I, The AWPer Hand, Rust Botkiller Sniper Rifle Mk.I, Blood Botkiller Sniper Rifle Mk.I, Carbonado Botkiller Sniper Rifle Mk.I, Diamond Botkiller Sniper Rifle Mk.I, Silver Botkiller Sniper Rifle Mk.II, Gold Botkiller Sniper Rifle Mk.II, Shooting Star, The Bazaar Bargain, The Classic
  */
-interface SniperRifleAttributes : BaseGunAttributes {
+interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : SniperRifleAttributes
 	
 	/**
@@ -15,13 +15,13 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * 0: Normal
+	 * 0: Normal.
 	 *
-	 * 1: Sydney Sleeper
+	 * 1: Sydney Sleeper.
 	 *
-	 * 2: Machina
+	 * 2: Machina.
 	 *
-	 * 3: Classic
+	 * 3: Classic.
 	 */
 	context(attrs: IKeyValueMap)
 	var cannotHeadshot: Boolean?
@@ -67,9 +67,9 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 *
 	 * This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle.
 	 *
-	 * Mult to zoom and unzoom delay on clipless weapons
+	 * Mult to zoom and unzoom delay on clipless weapons.
 	 *
-	 * Fun fact: this is also affected by the Precision mannpower powerup
+	 * Fun fact: this is also affected by the Precision mannpower powerup.
 	 */
 	context(attrs: IKeyValueMap)
 	override var fasterReloadRate: Float?
@@ -138,9 +138,9 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * On attacker
+	 * On attacker.
 	 *
-	 * Level of explosive headshot
+	 * Level of explosive headshot.
 	 */
 	context(attrs: IKeyValueMap)
 	var explosiveHeadshotLevel: Int?
@@ -152,11 +152,11 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * If greater than 0:
+	 * If greater than 0:.
 	 *
-	 * Makes weapon not eject brass
+	 * Makes weapon not eject brass.
 	 *
-	 * Makes weapon only penetrate non-burning teammates, as opposed to penetrating all teammates
+	 * Makes weapon only penetrate non-burning teammates, as opposed to penetrating all teammates.
 	 *
 	 * Note: Not actually used in Sydney Sleeper Jarate calculation, as far as I could tell.
 	 */
@@ -164,9 +164,5 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	var jarateDuration: Int?
 		get() = attrs.getTyped("jarate duration")
 		set(value) = attrs.setNullable("jarate duration", value)
-}
-
-inline operator fun SniperRifleAttributes.invoke(scope: SniperRifleAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

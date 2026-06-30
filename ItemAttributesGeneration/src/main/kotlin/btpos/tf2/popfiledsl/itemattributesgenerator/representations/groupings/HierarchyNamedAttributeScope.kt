@@ -36,12 +36,10 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 		
 		return listOf(
 			buildComment(this.innateDescription) + "\n" +
-"""interface $clsname ${extendsFrom?.let { ": ${it}Attributes " } ?: ""}{
+"""interface $clsname : ${extendsFrom?.let { "${it}Attributes, " } ?: ""}IBlockScoped {
 	companion object : $clsname
 	
 ${attrsInBody.prependIndent("\t")}
-}""", """inline operator fun ${clsname}.invoke(scope: ${clsname}.() -> Unit) {
-	this.apply(scope)
 }""") + attrs.filter { getOverriddenAttribute(it) == null }.flatMap { it.generateTopLevelMembers() }
 	}
 }

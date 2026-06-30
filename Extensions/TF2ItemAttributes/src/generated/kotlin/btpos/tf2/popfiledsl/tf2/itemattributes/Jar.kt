@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: Jarate, Festive Jarate, The Self-Aware Beauty Mark, Mad Milk, Mutated Milk, The Flying Guillotine, The Gas Passer, Unimplemented Spy Decoy Weapon
  */
-interface JarAttributes : BaseGunAttributes {
+interface JarAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : JarAttributes
 	
 	/**
@@ -17,13 +17,13 @@ interface JarAttributes : BaseGunAttributes {
 	 *
 	 * If unset, uses the weapon's default projectile type.
 	 *
-	 * Else use a numbered [ProjectileType]
+	 * Else use a numbered [ProjectileType].
 	 *
-	 * Used to select the model
+	 * Used to select the model.
 	 *
-	 * Select between `TF_PROJECTILE_FESTIVE_JAR`, `TF_PROJECTILE_BREADMONSTER_JARATE`, and `TF_PROJECTILE_BREADMONSTER_MADMILK`
+	 * Select between `TF_PROJECTILE_FESTIVE_JAR`, `TF_PROJECTILE_BREADMONSTER_JARATE`, and `TF_PROJECTILE_BREADMONSTER_MADMILK`.
 	 *
-	 * Otherwise uses default for its class
+	 * Otherwise uses default for its class.
 	 */
 	context(attrs: IKeyValueMap)
 	override var overrideProjectileType: Int?
@@ -35,9 +35,9 @@ interface JarAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
-	 * If NOT `1.0`, stun the victim
+	 * If NOT `1.0`, stun the victim.
 	 */
 	context(attrs: IKeyValueMap)
 	var appliesSnareEffect: Float?
@@ -49,15 +49,11 @@ interface JarAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * Subtracts this value from the cooldown
+	 * Subtracts this value from the cooldown.
 	 */
 	context(attrs: IKeyValueMap)
 	var extinguishReducesCooldown: Float?
 		get() = attrs.getTyped("extinguish reduces cooldown")
 		set(value) = attrs.setNullable("extinguish reduces cooldown", value)
-}
-
-inline operator fun JarAttributes.invoke(scope: JarAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

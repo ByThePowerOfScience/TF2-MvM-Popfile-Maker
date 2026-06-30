@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Eyelander, The Scotsman's Skullcutter, The Horseless Headless Horseman's Headtaker, The Claidheamohmor (sic), The Persian Persuader, Nessie's Nine Iron, Festive Eyelander, The Half-Zatoichi
  */
-interface SwordAttributes : BaseMeleeAttributes {
+interface SwordAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : SwordAttributes
 	
 	/**
@@ -21,9 +21,5 @@ interface SwordAttributes : BaseMeleeAttributes {
 	var decapitateType: Int?
 		get() = attrs.getTyped("decapitate type")
 		set(value) = attrs.setNullable("decapitate type", value)
-}
-
-inline operator fun SwordAttributes.invoke(scope: SwordAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

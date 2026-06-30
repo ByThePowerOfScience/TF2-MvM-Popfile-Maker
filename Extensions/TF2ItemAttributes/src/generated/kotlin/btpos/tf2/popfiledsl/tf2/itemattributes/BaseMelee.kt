@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface BaseMeleeAttributes : WeaponBaseAttributes {
+interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : BaseMeleeAttributes
 	
 	/**
@@ -13,7 +13,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Marked for death when switching to weapon
+	 * Marked for death when switching to weapon.
 	 */
 	context(attrs: IKeyValueMap)
 	var selfMarkForDeath: Boolean?
@@ -25,9 +25,9 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * If true, make weapon deploy and holster 75% slower
+	 * If true, make weapon deploy and holster 75% slower.
 	 *
-	 * If true, set swing range to 72, else 48
+	 * If true, set swing range to 72, else 48.
 	 */
 	context(attrs: IKeyValueMap)
 	override var isASword: Boolean?
@@ -37,7 +37,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	/**
 	 * 
 	 *
-	 * Multiplier applied to the bounding box of the swing to detect if a player is inside it
+	 * Multiplier applied to the bounding box of the swing to detect if a player is inside it.
 	 *
 	 * Yes, it DOES use a bounding box.
 	 */
@@ -63,7 +63,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Applies speed boost cond to yourself and the teammate you hit
+	 * Applies speed boost cond to yourself and the teammate you hit.
 	 */
 	context(attrs: IKeyValueMap)
 	var speedBuffAlly: Boolean?
@@ -87,7 +87,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Used as arg to addcond speedboost
+	 * Used as arg to addcond speedboost.
 	 */
 	context(attrs: IKeyValueMap)
 	var speedBoostOnHitEnemy: Int?
@@ -153,15 +153,11 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * If health >= 50%, apply mult
+	 * If health >= 50%, apply mult.
 	 */
 	context(attrs: IKeyValueMap)
 	var dmgPenaltyWhileHalfAlive: Float?
 		get() = attrs.getTyped("dmg penalty while half alive")
 		set(value) = attrs.setNullable("dmg penalty while half alive", value)
-}
-
-inline operator fun BaseMeleeAttributes.invoke(scope: BaseMeleeAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

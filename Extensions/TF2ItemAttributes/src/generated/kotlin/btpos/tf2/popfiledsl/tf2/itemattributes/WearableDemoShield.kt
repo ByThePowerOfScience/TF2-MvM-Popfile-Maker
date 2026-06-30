@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Chargin' Targe, The Splendid Screen, The Tide Turner, Festive Targe 2014
  */
-interface WearableDemoShieldAttributes : WearableAttributes {
+interface WearableDemoShieldAttributes : WearableAttributes, IBlockScoped {
 	companion object : WearableDemoShieldAttributes
 	
 	/**
@@ -31,9 +31,9 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	 *
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
-	 * Charge time mult
+	 * Charge time mult.
 	 */
 	val chargeTime get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
 	
@@ -50,14 +50,10 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	 *
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
-	 * Impact damage mult
+	 * Impact damage mult.
 	 */
 	val chargeImpactDamage get() = BonusPenalty<Float, Float>("charge impact damage increased", "charge impact damage decreased")
-}
-
-inline operator fun WearableDemoShieldAttributes.invoke(scope: WearableDemoShieldAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

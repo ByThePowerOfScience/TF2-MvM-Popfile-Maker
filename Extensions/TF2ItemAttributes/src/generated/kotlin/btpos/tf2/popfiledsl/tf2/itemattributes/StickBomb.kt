@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Ullapool Caber
  */
-interface StickBombAttributes : BottleAttributes {
+interface StickBombAttributes : BottleAttributes, IBlockScoped {
 	companion object : StickBombAttributes
 	
 	/**
@@ -19,9 +19,5 @@ interface StickBombAttributes : BottleAttributes {
 	var spellHalloweenPumpkinExplosions: Boolean?
 		get() = attrs.getTyped("SPELL: Halloween pumpkin explosions", BinaryIntCodec)
 		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value, BinaryIntCodec)
-}
-
-inline operator fun StickBombAttributes.invoke(scope: StickBombAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

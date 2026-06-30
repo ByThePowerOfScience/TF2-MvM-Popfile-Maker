@@ -7,13 +7,9 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_BOTTLE, Upgradeable TF_WEAPON_BOTTLE, The Scottish Handshake
  */
-interface BottleAttributes : BaseMeleeAttributes {
+interface BottleAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : BottleAttributes
 	
 	
-}
-
-inline operator fun BottleAttributes.invoke(scope: BottleAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

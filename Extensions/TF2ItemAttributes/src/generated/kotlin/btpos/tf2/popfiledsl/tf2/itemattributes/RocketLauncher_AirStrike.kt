@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Air Strike
  */
-interface RocketLauncher_AirStrikeAttributes : RocketLauncherAttributes {
+interface RocketLauncher_AirStrikeAttributes : RocketLauncherAttributes, IBlockScoped {
 	companion object : RocketLauncher_AirStrikeAttributes
 	
 	/**
@@ -21,9 +21,5 @@ interface RocketLauncher_AirStrikeAttributes : RocketLauncherAttributes {
 	override var clipsizeIncreaseOnKill: Int?
 		get() = super.clipsizeIncreaseOnKill
 		set(value) { super.clipsizeIncreaseOnKill = value }
-}
-
-inline operator fun RocketLauncher_AirStrikeAttributes.invoke(scope: RocketLauncher_AirStrikeAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

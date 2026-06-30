@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface PlayerAttributes : EntityAttributes {
+interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	companion object : PlayerAttributes
 	
 	/**
@@ -23,7 +23,7 @@ interface PlayerAttributes : EntityAttributes {
 	 *
 	 * 
 	 *
-	 * Always true in MvM
+	 * Always true in MvM.
 	 */
 	context(attrs: IKeyValueMap)
 	var hideEnemyHealth: Boolean?
@@ -34,10 +34,6 @@ interface PlayerAttributes : EntityAttributes {
 	 * 
 	 */
 	val spyOnly get() = SpyOnlyAttributes
-}
-
-inline operator fun PlayerAttributes.invoke(scope: PlayerAttributes.() -> Unit) {
-	this.apply(scope)
 }
 
 

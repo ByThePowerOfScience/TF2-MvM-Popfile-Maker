@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_GRENADELAUNCHER, Upgradeable TF_WEAPON_GRENADELAUNCHER, The Loch-n-Load, Festive Grenade Launcher, The Iron Bomber, The Loose Cannon
  */
-interface GrenadeLauncherAttributes : BaseGunAttributes {
+interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : GrenadeLauncherAttributes
 	
 	/**
@@ -15,7 +15,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * Flat multiplier applied to initial damage
+	 * Flat multiplier applied to initial damage.
 	 */
 	context(attrs: IKeyValueMap)
 	var grenadeDetonationDamagePenalty: Float?
@@ -48,15 +48,11 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * "Mortar" (loose cannon) detonation time length
+	 * "Mortar" (loose cannon) detonation time length.
 	 */
 	context(attrs: IKeyValueMap)
 	var grenadeLauncherMortarMode: Int?
 		get() = attrs.getTyped("grenade launcher mortar mode")
 		set(value) = attrs.setNullable("grenade launcher mortar mode", value)
-}
-
-inline operator fun GrenadeLauncherAttributes.invoke(scope: GrenadeLauncherAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

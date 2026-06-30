@@ -7,19 +7,23 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Buff Banner, The Battalion's Backup, The Concheror, Festive Buff Banner
  */
-interface BuffItemAttributes : BaseMeleeAttributes {
+interface BuffItemAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : BuffItemAttributes
 	
 	/**
 	 * 
 	 *
-	 * Sets which banner is used
+	 * Sets which banner is used.
 	 *
-	 * 0 = Buff Banner
+	 * 0 = Buff Banner.
 	 *
-	 * 1 = Battalion's Backup
+	 * 1 = Battalion's Backup.
 	 *
-	 * 2 = Concheror
+	 * 2 = Concheror.
+	 *
+	 * 3 = Parachute.
+	 *
+	 * Note that the Base Jumper specifically checks the buff type of the user, and if it is not 'parachute', cancels its animation.
 	 */
 	context(attrs: IKeyValueMap)
 	var soldierBuffType: Int?
@@ -29,13 +33,17 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	/**
 	 * 
 	 *
-	 * Sets which banner is used
+	 * Sets which banner is used.
 	 *
-	 * 0 = Buff Banner
+	 * 0 = Buff Banner.
 	 *
-	 * 1 = Battalion's Backup
+	 * 1 = Battalion's Backup.
 	 *
-	 * 2 = Concheror
+	 * 2 = Concheror.
+	 *
+	 * 3 = Parachute.
+	 *
+	 * Note that the Base Jumper specifically checks the buff type of the user, and if it is not 'parachute', cancels its animation.
 	 */
 	context(attrs: IKeyValueMap)
 	var demoBuffType: Int?
@@ -69,9 +77,5 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	var increaseBuffDurationHidden: Float?
 		get() = attrs.getTyped("increase buff duration HIDDEN")
 		set(value) = attrs.setNullable("increase buff duration HIDDEN", value)
-}
-
-inline operator fun BuffItemAttributes.invoke(scope: BuffItemAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

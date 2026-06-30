@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface EntityAttributes {
+interface EntityAttributes : IBlockScoped {
 	companion object : EntityAttributes
 	
 	/**
@@ -69,7 +69,7 @@ interface EntityAttributes {
 	 *
 	 * 
 	 *
-	 * Only on crossbow impacts
+	 * Only on crossbow impacts.
 	 */
 	context(attrs: IKeyValueMap)
 	var reducedHealingFromMedics: Float?
@@ -81,9 +81,9 @@ interface EntityAttributes {
 	 *
 	 * 
 	 *
-	 * Lose this amount of hype if you airdash
+	 * Lose this amount of hype if you airdash.
 	 *
-	 * Note that this only applies to scout hype, not rage in general
+	 * Note that this only applies to scout hype, not rage in general.
 	 */
 	context(attrs: IKeyValueMap)
 	var hypeResetsOnJump: Int?
@@ -93,7 +93,7 @@ interface EntityAttributes {
 	/**
 	 * 
 	 *
-	 * Allows parachute to be deployed
+	 * Allows parachute to be deployed.
 	 */
 	context(attrs: IKeyValueMap)
 	var parachuteAttribute: Boolean?
@@ -103,20 +103,16 @@ interface EntityAttributes {
 	/**
 	 * 
 	 *
-	 * Only used if the build menu is actually shown
+	 * Only used if the build menu is actually shown.
 	 *
-	 * 0 = default
+	 * 0 = default.
 	 *
-	 * 1 = pipboy
+	 * 1 = pipboy.
 	 */
 	context(attrs: IKeyValueMap)
 	var hasPipboyBuildInterface: Int?
 		get() = attrs.getTyped("has pipboy build interface")
 		set(value) = attrs.setNullable("has pipboy build interface", value)
-}
-
-inline operator fun EntityAttributes.invoke(scope: EntityAttributes.() -> Unit) {
-	this.apply(scope)
 }
 
 

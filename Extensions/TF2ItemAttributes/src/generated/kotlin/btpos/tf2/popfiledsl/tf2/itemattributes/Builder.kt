@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: Engineer PDA, Sapper
  */
-interface BuilderAttributes : WeaponBaseAttributes {
+interface BuilderAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : BuilderAttributes
 	
 	/**
@@ -15,7 +15,7 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * On owner
+	 * On owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var markForDeathOnBuildingPickup: Boolean?
@@ -25,7 +25,7 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	/**
 	 * 
 	 *
-	 * If true.0, it's a wheatley sapper
+	 * If true.0, it's a wheatley sapper.
 	 */
 	context(attrs: IKeyValueMap)
 	var sapperVoicePak: Int?
@@ -37,17 +37,13 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot):
+	 * If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot):.
 	 *
-	 * Gives the sapper a radius instead of being single-target
+	 * Gives the sapper a radius instead of being single-target.
 	 */
 	context(attrs: IKeyValueMap)
 	var roboSapper: Int?
 		get() = attrs.getTyped("robo sapper")
 		set(value) = attrs.setNullable("robo sapper", value)
-}
-
-inline operator fun BuilderAttributes.invoke(scope: BuilderAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

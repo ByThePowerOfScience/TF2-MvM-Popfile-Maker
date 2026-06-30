@@ -7,13 +7,15 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_SHOVEL, The Equalizer, The Pain Train, Upgradeable TF_WEAPON_SHOVEL, The Market Gardener, The Disciplinary Action, The Escape Plan
  */
-interface ShovelAttributes : BaseMeleeAttributes {
+interface ShovelAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : ShovelAttributes
 	
 	/**
 	 * In-Game: "Damage increases as the user becomes injured"
 	 *
 	 * 
+	 *
+	 * Solely determines the "damage type" of the weapon, with any custom values setting it to "pickaxe" and the default being determined by the weapon itself.
 	 */
 	context(attrs: IKeyValueMap)
 	var isEqualizer: Boolean?
@@ -24,6 +26,8 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	 * In-Game: "Move speed increases as the user becomes injured"
 	 *
 	 * 
+	 *
+	 * Solely determines the "damage type" of the weapon, with any custom values setting it to "pickaxe" and the default being determined by the weapon itself.
 	 */
 	context(attrs: IKeyValueMap)
 	var isEscapePlan: Boolean?
@@ -39,9 +43,5 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	var airJumpOnAttack: Boolean?
 		get() = attrs.getTyped("air jump on attack", BinaryIntCodec)
 		set(value) = attrs.setNullable("air jump on attack", value, BinaryIntCodec)
-}
-
-inline operator fun ShovelAttributes.invoke(scope: ShovelAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

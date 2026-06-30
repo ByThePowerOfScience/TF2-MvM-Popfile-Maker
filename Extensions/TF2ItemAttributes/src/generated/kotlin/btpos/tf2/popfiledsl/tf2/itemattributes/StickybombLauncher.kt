@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_StickybombLauncher, The Scottish Resistance, Upgradeable TF_WEAPON_StickybombLauncher, Stickybomb Jumper, Festive Stickybomb Launcher 2011, Silver Botkiller Stickybomb Launcher Mk.I, Gold Botkiller Stickybomb Launcher Mk.I, Rust Botkiller Stickybomb Launcher Mk.I, Blood Botkiller Stickybomb Launcher Mk.I, Carbonado Botkiller Stickybomb Launcher Mk.I, Diamond Botkiller Stickybomb Launcher Mk.I, Silver Botkiller Stickybomb Launcher Mk.II, Gold Botkiller Stickybomb Launcher Mk.II, The Quickiebomb Launcher
  */
-interface StickybombLauncherAttributes : BaseGunAttributes {
+interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : StickybombLauncherAttributes
 	
 	/**
@@ -39,7 +39,7 @@ interface StickybombLauncherAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * damage = `2*basedamage * (this - 1.0) * currentChargeProportion`
+	 * damage = `2*basedamage * (this - 1.0) * currentChargeProportion`.
 	 */
 	context(attrs: IKeyValueMap)
 	var stickybombChargeDamageIncrease: Float?
@@ -60,9 +60,5 @@ interface StickybombLauncherAttributes : BaseGunAttributes {
 	 * 
 	 */
 	val maxStickies get() = BonusPenalty<Int, Int>("max pipebombs increased", "max pipebombs decreased")
-}
-
-inline operator fun StickybombLauncherAttributes.invoke(scope: StickybombLauncherAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

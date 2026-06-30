@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface PowerUpBottleAttributes : WearableAttributes {
+interface PowerUpBottleAttributes : WearableAttributes, IBlockScoped {
 	companion object : PowerUpBottleAttributes
 	
 	/**
@@ -25,7 +25,7 @@ interface PowerUpBottleAttributes : WearableAttributes {
 	 *
 	 * Adds extra time to the base powerup duration based on level.
 	 *
-	 * Checked on player
+	 * Checked on player.
 	 */
 	context(attrs: IKeyValueMap)
 	var canteenSpecialist: Int?
@@ -46,10 +46,6 @@ interface PowerUpBottleAttributes : WearableAttributes {
 	 * 
 	 */
 	val type get() = TypeAttributes
-}
-
-inline operator fun PowerUpBottleAttributes.invoke(scope: PowerUpBottleAttributes.() -> Unit) {
-	this.apply(scope)
 }
 
 

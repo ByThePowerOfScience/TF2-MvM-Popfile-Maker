@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface BaseProjectileAttributes {
+interface BaseProjectileAttributes : IBlockScoped {
 	companion object : BaseProjectileAttributes
 	
 	/**
@@ -19,9 +19,5 @@ interface BaseProjectileAttributes {
 	var madMilkSyringes: Boolean?
 		get() = attrs.getTyped("mad milk syringes", BinaryIntCodec)
 		set(value) = attrs.setNullable("mad milk syringes", value, BinaryIntCodec)
-}
-
-inline operator fun BaseProjectileAttributes.invoke(scope: BaseProjectileAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_SCATTERGUN, The Force-a-Nature, Upgradeable TF_WEAPON_SCATTERGUN, Festive Scattergun 2011, Silver Botkiller Scattergun Mk.I, Gold Botkiller Scattergun Mk.I, Rust Botkiller Scattergun Mk.I, Blood Botkiller Scattergun Mk.I, Carbonado Botkiller Scattergun Mk.I, Diamond Botkiller Scattergun Mk.I, Silver Botkiller Scattergun Mk.II, Gold Botkiller Scattergun Mk.II, Festive Force-a-Nature, The Back Scatter
  */
-interface ScattergunAttributes : ShotgunAttributes {
+interface ScattergunAttributes : ShotgunAttributes, IBlockScoped {
 	companion object : ScattergunAttributes
 	
 	/**
@@ -33,7 +33,7 @@ interface ScattergunAttributes : ShotgunAttributes {
 	/**
 	 * 
 	 *
-	 * Checked in `DoesReloadSingly`.  If true, weapon does not reload one shot at a time. (e.g. FaN)
+	 * Checked in `DoesReloadSingly`.  If true, weapon does not reload one shot at a time. (e.g. FaN).
 	 *
 	 * Note that for the most part, this logic is set inside the weapon itself. The scattergun thing is weirdly the only way to control this with attributes.
 	 *
@@ -43,9 +43,5 @@ interface ScattergunAttributes : ShotgunAttributes {
 	override var scattergunNoReloadSingle: Boolean?
 		get() = super.scattergunNoReloadSingle
 		set(value) { super.scattergunNoReloadSingle = value }
-}
-
-inline operator fun ScattergunAttributes.invoke(scope: ScattergunAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

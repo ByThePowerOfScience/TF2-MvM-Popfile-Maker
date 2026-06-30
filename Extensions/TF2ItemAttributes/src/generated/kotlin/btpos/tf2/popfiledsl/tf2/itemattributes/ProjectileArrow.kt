@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface ProjectileArrowAttributes : BaseRocketAttributes {
+interface ProjectileArrowAttributes : BaseRocketAttributes, IBlockScoped {
 	companion object : ProjectileArrowAttributes
 	
 	/**
@@ -13,15 +13,11 @@ interface ProjectileArrowAttributes : BaseRocketAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on player
+	 * Checked on player.
 	 */
 	context(attrs: IKeyValueMap)
 	var arrowHealsBuildings: Boolean?
 		get() = attrs.getTyped("arrow heals buildings", BinaryIntCodec)
 		set(value) = attrs.setNullable("arrow heals buildings", value, BinaryIntCodec)
-}
-
-inline operator fun ProjectileArrowAttributes.invoke(scope: ProjectileArrowAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

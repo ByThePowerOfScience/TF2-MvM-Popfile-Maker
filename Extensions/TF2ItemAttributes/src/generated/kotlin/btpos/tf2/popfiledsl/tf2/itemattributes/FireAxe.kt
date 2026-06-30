@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_FIREAXE, The Axtinguisher, The Homewrecker, Upgradeable TF_WEAPON_FIREAXE, The Powerjack, The Back Scratcher, Sharpened Volcano Fragment, The Postal Pummeler, The Maul, The Third Degree, The Lollichop, Festive Axtinguisher
  */
-interface FireAxeAttributes : BaseMeleeAttributes {
+interface FireAxeAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : FireAxeAttributes
 	
 	/**
@@ -15,17 +15,13 @@ interface FireAxeAttributes : BaseMeleeAttributes {
 	 *
 	 * 
 	 *
-	 * Ignite enemies on hit
+	 * Ignite enemies on hit.
 	 *
-	 * Yeah, sadly this is just checked on fire axes...
+	 * In vanilla, this is indeed only checked on Fire Axes.
 	 */
 	context(attrs: IKeyValueMap)
 	var setDamagetypeIgnite: Boolean?
 		get() = attrs.getTyped("Set DamageType Ignite", BinaryIntCodec)
 		set(value) = attrs.setNullable("Set DamageType Ignite", value, BinaryIntCodec)
-}
-
-inline operator fun FireAxeAttributes.invoke(scope: FireAxeAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

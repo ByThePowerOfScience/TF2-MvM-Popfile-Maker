@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface ProjectileFlareAttributes : BaseRocketAttributes {
+interface ProjectileFlareAttributes : BaseRocketAttributes, IBlockScoped {
 	companion object : ProjectileFlareAttributes
 	
 	/**
@@ -27,7 +27,7 @@ interface ProjectileFlareAttributes : BaseRocketAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	override val projectileSpeed get() = super.projectileSpeed
 	
@@ -44,12 +44,8 @@ interface ProjectileFlareAttributes : BaseRocketAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	override val blastRadius get() = super.blastRadius
-}
-
-inline operator fun ProjectileFlareAttributes.invoke(scope: ProjectileFlareAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

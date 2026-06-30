@@ -5,13 +5,13 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
+interface ProjectileGrenadeAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : ProjectileGrenadeAttributes
 	
 	/**
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	context(attrs: IKeyValueMap)
 	var useLargeSmokeExplosion: Boolean?
@@ -23,7 +23,7 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	context(attrs: IKeyValueMap)
 	var spellHalloweenPumpkinExplosions: Boolean?
@@ -43,7 +43,7 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	val blastRadius get() = BonusPenalty<Float, Float>("Blast radius increased", "Blast radius decreased")
 	
@@ -52,15 +52,11 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on owner
+	 * Checked on owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var fuseBonus: Float?
 		get() = attrs.getTyped("fuse bonus")
 		set(value) = attrs.setNullable("fuse bonus", value)
-}
-
-inline operator fun ProjectileGrenadeAttributes.invoke(scope: ProjectileGrenadeAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

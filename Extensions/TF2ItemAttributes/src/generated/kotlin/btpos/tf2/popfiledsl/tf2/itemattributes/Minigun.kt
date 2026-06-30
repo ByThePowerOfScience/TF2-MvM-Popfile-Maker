@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: All Stock Minigun skins, Natascha, The Brass Beast, Tomislav
  */
-interface MinigunAttributes : BaseGunAttributes {
+interface MinigunAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : MinigunAttributes
 	
 	/**
@@ -39,8 +39,6 @@ interface MinigunAttributes : BaseGunAttributes {
 	 * In-Game: "Bullets destroy rockets and grenades in-flight.  Increased accuracy and frequency per-level."
 	 *
 	 * 
-	 *
-	 * Overridden by "raid gamemode" to 1
 	 */
 	context(attrs: IKeyValueMap)
 	var attackProjectiles: Boolean?
@@ -62,15 +60,11 @@ interface MinigunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * Amount of ammo drained per second
+	 * Amount of ammo drained per second.
 	 */
 	context(attrs: IKeyValueMap)
 	var spinupAmmoDrain: Int?
 		get() = attrs.getTyped("uses ammo while aiming")
 		set(value) = attrs.setNullable("uses ammo while aiming", value)
-}
-
-inline operator fun MinigunAttributes.invoke(scope: MinigunAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

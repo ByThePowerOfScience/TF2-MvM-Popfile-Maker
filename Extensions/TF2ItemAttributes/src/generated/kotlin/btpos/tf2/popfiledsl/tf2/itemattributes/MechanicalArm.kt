@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Short Circuit
  */
-interface MechanicalArmAttributes : BaseGunAttributes {
+interface MechanicalArmAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : MechanicalArmAttributes
 	
 	/**
@@ -21,9 +21,5 @@ interface MechanicalArmAttributes : BaseGunAttributes {
 	override var ammoPerShot: Int?
 		get() = super.ammoPerShot
 		set(value) { super.ammoPerShot = value }
-}
-
-inline operator fun MechanicalArmAttributes.invoke(scope: MechanicalArmAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

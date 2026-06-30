@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: Frontier Justice
  */
-interface ShotgunRevengeAttributes : ShotgunAttributes {
+interface ShotgunRevengeAttributes : ShotgunAttributes, IBlockScoped {
 	companion object : ShotgunRevengeAttributes
 	
 	/**
@@ -21,9 +21,5 @@ interface ShotgunRevengeAttributes : ShotgunAttributes {
 	var canGainRevengeCrits: Boolean?
 		get() = attrs.getTyped("mod sentry killed revenge", BinaryIntCodec)
 		set(value) = attrs.setNullable("mod sentry killed revenge", value, BinaryIntCodec)
-}
-
-inline operator fun ShotgunRevengeAttributes.invoke(scope: ShotgunRevengeAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

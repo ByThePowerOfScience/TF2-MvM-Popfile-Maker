@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes {
+interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes, IBlockScoped {
 	companion object : ProjectilePipebombAttributes
 	
 	/**
@@ -13,7 +13,7 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	context(attrs: IKeyValueMap)
 	var stickybombFizzleTime: Int?
@@ -25,7 +25,7 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	context(attrs: IKeyValueMap)
 	var grenadeNoBounce: Boolean?
@@ -45,7 +45,7 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	val stickyArmTime get() = BonusPenalty<Int, Int>("sticky arm time bonus", "sticky arm time penalty")
 	
@@ -54,15 +54,11 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on launcher
+	 * Checked on launcher.
 	 */
 	context(attrs: IKeyValueMap)
 	var grenadeDamageReductionOnWorldContact: Float?
 		get() = attrs.getTyped("grenade damage reduction on world contact")
 		set(value) = attrs.setNullable("grenade damage reduction on world contact", value)
-}
-
-inline operator fun ProjectilePipebombAttributes.invoke(scope: ProjectilePipebombAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

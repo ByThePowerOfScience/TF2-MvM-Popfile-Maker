@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
+interface ProjectileEnergyRingAttributes : BaseProjectileAttributes, IBlockScoped {
 	companion object : ProjectileEnergyRingAttributes
 	
 	/**
@@ -13,15 +13,11 @@ interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on owner
+	 * Checked on owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var energyWeaponPenetration: Boolean?
 		get() = attrs.getTyped("energy weapon penetration", BinaryIntCodec)
 		set(value) = attrs.setNullable("energy weapon penetration", value, BinaryIntCodec)
-}
-
-inline operator fun ProjectileEnergyRingAttributes.invoke(scope: ProjectileEnergyRingAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

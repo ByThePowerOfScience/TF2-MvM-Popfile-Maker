@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
+interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	companion object : WeaponBaseAttributes
 	
 	/**
@@ -13,7 +13,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * If true, and player has a demoman charge meter, add charge based on ammo pack size
+	 * If true, and player has a demoman charge meter, add charge based on ammo pack size.
 	 */
 	context(attrs: IKeyValueMap)
 	var ammoPacksGiveDemoknightCharge: Boolean?
@@ -81,7 +81,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * Stacks with [clipSize]
+	 * Stacks with [clipSize].
 	 */
 	context(attrs: IKeyValueMap)
 	var clipSizeBonusUpgrade: Float?
@@ -93,7 +93,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * MVM attribute that specifically handles rocket and grenade launchers
+	 * MVM attribute that specifically handles rocket and grenade launchers.
 	 *
 	 * Note that [clipSize], [clipSizeBonusUpgrade], and [clipSizeUpgradeAtomic] all stack with one another.
 	 */
@@ -117,7 +117,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * Determines the hand used in the model
+	 * Determines the hand used in the model.
 	 */
 	context(attrs: IKeyValueMap)
 	var wrenchBuildsMinisentry: Boolean?
@@ -137,7 +137,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on player
+	 * Checked on player.
 	 */
 	val deployTime get() = BonusPenalty<Float, Float>("deploy time decreased", "deploy time increased")
 	
@@ -176,7 +176,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * If true, make weapon deploy and holster 75% slower
+	 * If true, make weapon deploy and holster 75% slower.
 	 */
 	context(attrs: IKeyValueMap)
 	var isASword: Boolean?
@@ -188,9 +188,9 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
-	 * Multiplier applied if NOT being healed by a medic
+	 * Multiplier applied if NOT being healed by a medic.
 	 */
 	context(attrs: IKeyValueMap)
 	var medicHealedDeployTimePenalty: Float?
@@ -281,7 +281,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * "No random crits" sets this to `0.0`
+	 * "No random crits" sets this to `0.0`.
 	 */
 	context(attrs: IKeyValueMap)
 	var critModDisabled: Float?
@@ -293,7 +293,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	 *
 	 * 
 	 *
-	 * "No random crits" sets this to `0.0`
+	 * "No random crits" sets this to `0.0`.
 	 */
 	context(attrs: IKeyValueMap)
 	var critModDisabledHidden: Float?
@@ -408,7 +408,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	/**
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
 	 * Halloween reload time multiplier.
 	 */
@@ -434,9 +434,5 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	var weaponAllowInspect: Boolean?
 		get() = attrs.getTyped("weapon_allow_inspect", BinaryIntCodec)
 		set(value) = attrs.setNullable("weapon_allow_inspect", value, BinaryIntCodec)
-}
-
-inline operator fun WeaponBaseAttributes.invoke(scope: WeaponBaseAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

@@ -5,7 +5,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface BaseCombatWeaponAttributes {
+interface BaseCombatWeaponAttributes : IBlockScoped {
 	companion object : BaseCombatWeaponAttributes
 	
 	/**
@@ -47,7 +47,7 @@ interface BaseCombatWeaponAttributes {
 	/**
 	 * 
 	 *
-	 * Checked in `DoesReloadSingly`.  If true, weapon does not reload one shot at a time. (e.g. FaN)
+	 * Checked in `DoesReloadSingly`.  If true, weapon does not reload one shot at a time. (e.g. FaN).
 	 *
 	 * Note that for the most part, this logic is set inside the weapon itself. The scattergun thing is weirdly the only way to control this with attributes.
 	 */
@@ -55,9 +55,5 @@ interface BaseCombatWeaponAttributes {
 	var scattergunNoReloadSingle: Boolean?
 		get() = attrs.getTyped("scattergun no reload single", BinaryIntCodec)
 		set(value) = attrs.setNullable("scattergun no reload single", value, BinaryIntCodec)
-}
-
-inline operator fun BaseCombatWeaponAttributes.invoke(scope: BaseCombatWeaponAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

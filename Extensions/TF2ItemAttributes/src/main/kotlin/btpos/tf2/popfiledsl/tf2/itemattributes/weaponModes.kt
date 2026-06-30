@@ -24,8 +24,11 @@ private var lunchbox: Int?
 
 /**
  * 0 = Stock flame particles
+ *
  * 1 = MvM Giant Pyrobot flame particles
+ *
  * 2 = Phlog flame particles
+ *
  * 3 = Rainblower flame particles (also gives pyro a bubble wand when taunting)
  */
 context(attrs: IKeyValueMap)
@@ -39,11 +42,13 @@ var SMGAttributes.canHeadshot: Boolean?
     get() = lunchbox(1)
     set(value) = lunchbox(1, value)
 
-
-context(attrs: IKeyValueMap)
-var BonesawAttributes.bonesawType: Int?
-	get() = lunchbox
-	set(value) { lunchbox = value }
+///**
+// * Unused
+// */
+//context(attrs: IKeyValueMap)
+//var BonesawAttributes.bonesawType: Int?
+//	get() = lunchbox
+//	set(value) { lunchbox = value }
 
 /**
  * 0 = standard (note: used for both Bonk and Sandvich)

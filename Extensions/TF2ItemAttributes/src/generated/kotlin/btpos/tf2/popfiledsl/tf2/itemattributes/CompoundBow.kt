@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Huntsman, Festive Huntsman, The Fortified Compound
  */
-interface CompoundBowAttributes : StickybombLauncherAttributes {
+interface CompoundBowAttributes : StickybombLauncherAttributes, IBlockScoped {
 	companion object : CompoundBowAttributes
 	
 	/**
@@ -17,15 +17,11 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	 *
 	 * This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle.
 	 *
-	 * Mult applied to reload speed
+	 * Mult applied to reload speed.
 	 */
 	context(attrs: IKeyValueMap)
 	override var fasterReloadRate: Float?
 		get() = super.fasterReloadRate
 		set(value) { super.fasterReloadRate = value }
-}
-
-inline operator fun CompoundBowAttributes.invoke(scope: CompoundBowAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

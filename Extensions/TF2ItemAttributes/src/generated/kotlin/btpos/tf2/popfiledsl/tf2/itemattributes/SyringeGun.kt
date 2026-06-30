@@ -7,13 +7,9 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: Stock Syringe Gun, The Blutsauger, The Overdose
  */
-interface SyringeGunAttributes : BaseGunAttributes {
+interface SyringeGunAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : SyringeGunAttributes
 	
 	
-}
-
-inline operator fun SyringeGunAttributes.invoke(scope: SyringeGunAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

@@ -7,13 +7,13 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_FLAMETHROWER, The Backburner, Upgradeable TF_WEAPON_FLAMETHROWER, The Degreaser, The Phlogistinator, Festive Flamethrower 2011, The Rainblower, Silver Botkiller Flame Thrower Mk.I, Gold Botkiller Flame Thrower Mk.I, Rust Botkiller Flame Thrower Mk.I, Blood Botkiller Flame Thrower Mk.I, Carbonado Botkiller Flame Thrower Mk.I, Diamond Botkiller Flame Thrower Mk.I, Silver Botkiller Flame Thrower Mk.II, Gold Botkiller Flame Thrower Mk.II, Festive Backburner 2014, The Nostromo Napalmer
  */
-interface FlamethrowerAttributes : WeaponBaseAttributes {
+interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : FlamethrowerAttributes
 	
 	/**
 	 * 
 	 *
-	 * If greater than 0, enables Phlog crits on having full rage
+	 * If greater than 0, enables Phlog crits on having full rage.
 	 */
 	context(attrs: IKeyValueMap)
 	var soldierBuffType: Int?
@@ -23,7 +23,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes {
 	/**
 	 * 
 	 *
-	 * If greater than 0, enables Phlog crits on having full rage
+	 * If greater than 0, enables Phlog crits on having full rage.
 	 */
 	context(attrs: IKeyValueMap)
 	var demoBuffType: Int?
@@ -45,7 +45,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Enables charging an airblast for longer for higher push
+	 * Enables charging an airblast for longer for higher push.
 	 */
 	context(attrs: IKeyValueMap)
 	var chargedAirblast: Boolean?
@@ -85,7 +85,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes {
 	/**
 	 * 
 	 *
-	 * How long after airblasting until you can fire a primary OR secondary attack
+	 * How long after airblasting until you can fire a primary OR secondary attack.
 	 */
 	context(attrs: IKeyValueMap)
 	var multAirblastRefireTime: Float?
@@ -95,7 +95,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes {
 	/**
 	 * 
 	 *
-	 * Scales the reflect hitbox for your airblast
+	 * Scales the reflect hitbox for your airblast.
 	 */
 	context(attrs: IKeyValueMap)
 	var deflectionSizeMultiplier: Int?
@@ -107,7 +107,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * How much health your extinguish restores
+	 * How much health your extinguish restores.
 	 */
 	context(attrs: IKeyValueMap)
 	var extinguishRestoresHealth: Int?
@@ -155,7 +155,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on owner
+	 * Checked on owner.
 	 */
 	val flameSize get() = BonusPenalty<Float, Float>("flame size bonus", "flame size penalty")
 	
@@ -172,7 +172,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Checked on owner
+	 * Checked on owner.
 	 */
 	val flameLife get() = BonusPenalty<Float, Float>("flame life bonus", "flame life penalty")
 	
@@ -196,10 +196,6 @@ interface FlamethrowerAttributes : WeaponBaseAttributes {
 	 * 
 	 */
 	val flame get() = FlameAttributes
-}
-
-inline operator fun FlamethrowerAttributes.invoke(scope: FlamethrowerAttributes.() -> Unit) {
-	this.apply(scope)
 }
 
 

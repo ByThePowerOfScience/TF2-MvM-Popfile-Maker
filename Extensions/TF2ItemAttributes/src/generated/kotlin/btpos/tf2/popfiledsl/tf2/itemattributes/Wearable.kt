@@ -5,13 +5,9 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 
 
 
-interface WearableAttributes {
+interface WearableAttributes : IBlockScoped {
 	companion object : WearableAttributes
 	
 	
-}
-
-inline operator fun WearableAttributes.invoke(scope: WearableAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

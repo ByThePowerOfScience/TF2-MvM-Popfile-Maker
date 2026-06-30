@@ -7,15 +7,13 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_INVIS, The Dead Ringer, The Cloak and Dagger, Upgradeable TF_WEAPON_INVIS, The Quackenbirdt
  */
-interface InvisAttributes : WeaponBaseAttributes {
+interface InvisAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : InvisAttributes
 	
 	/**
 	 * In-Game: "Cloak Type: Feign Death. Leave a fake corpse on taking damage and temporarily gain invisibility, speed, and damage resistance."
 	 *
 	 * 
-	 *
-	 * Used to specify "invis type"
 	 */
 	context(attrs: IKeyValueMap)
 	var setCloakIsFeignDeath: Boolean?
@@ -26,8 +24,6 @@ interface InvisAttributes : WeaponBaseAttributes {
 	 * In-Game: "Cloak Type: Motion Sensitive. Alt-fire: Turn invisible. Cannot attack while invisible. Bumping in to enemies will make you slightly visible to enemies. Cloak drain rate based on movement speed."
 	 *
 	 * 
-	 *
-	 * Used to specify "invis type"
 	 */
 	context(attrs: IKeyValueMap)
 	var setCloakIsMovementBased: Boolean?
@@ -37,9 +33,9 @@ interface InvisAttributes : WeaponBaseAttributes {
 	/**
 	 * 
 	 *
-	 * How many seconds it takes to decloak (or a multiplier)
+	 * How many seconds it takes to decloak (or a multiplier).
 	 *
-	 * Note that values less than or equal to `0.0` become `1.0`
+	 * Note that values less than or equal to `0.0` become `1.0`.
 	 */
 	context(attrs: IKeyValueMap)
 	var multDecloakRate: Int?
@@ -59,7 +55,7 @@ interface InvisAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
 	 * Multiply cloak consumption rate by this value.
 	 */
@@ -79,9 +75,5 @@ interface InvisAttributes : WeaponBaseAttributes {
 	 * 
 	 */
 	val cloakRegenRate get() = BonusPenalty<Float, Float>("mult cloak meter regen rate", "cloak regen rate decreased")
-}
-
-inline operator fun InvisAttributes.invoke(scope: InvisAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

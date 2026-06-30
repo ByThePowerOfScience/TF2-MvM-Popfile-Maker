@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: TF_WEAPON_MEDIGUN, The Kritzkrieg, Upgradeable TF_WEAPON_MEDIGUN, The Quick-Fix, Festive Medigun 2011, Silver Botkiller Medi Gun Mk.I, Gold Botkiller Medi Gun Mk.I, Rust Botkiller Medi Gun Mk.I, Blood Botkiller Medi Gun Mk.I, Carbonado Botkiller Medi Gun Mk.I, Diamond Botkiller Medi Gun Mk.I, Silver Botkiller Medi Gun Mk.II, Gold Botkiller Medi Gun Mk.II, The Vaccinator
  */
-interface MedigunAttributes : BaseGunAttributes {
+interface MedigunAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : MedigunAttributes
 	
 	/**
@@ -30,9 +30,9 @@ interface MedigunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
-	 * Percentage saved on death or dropping weapon (e.g. `25` = 25% uber)
+	 * Percentage saved on death or dropping weapon (e.g. `25` = 25% uber).
 	 */
 	context(attrs: IKeyValueMap)
 	var preserveUbercharge: Int?
@@ -52,7 +52,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	/**
 	 * 
 	 *
-	 * Ubercharge type. Each resist uber also has its own entry
+	 * Ubercharge type. Each resist uber also has its own entry.
 	 */
 	val giveCrits get() = GiveCritsAttributes
 	
@@ -69,7 +69,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * Bonuses are additive, penalties are percentage
+	 * Bonuses are additive, penalties are percentage.
 	 */
 	val overheal get() = BonusPenalty<Float, Float>("overheal bonus", "overheal penalty")
 	
@@ -93,11 +93,11 @@ interface MedigunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * On owner
+	 * On owner.
 	 *
-	 * Overheal bonus = overheal bonus + overhealexpert/4 or just overheal bonus, whichever is higher
+	 * Overheal bonus = overheal bonus + overhealexpert/4 or just overheal bonus, whichever is higher.
 	 *
-	 * decay mult is same but divided by 2
+	 * decay mult is same but divided by 2.
 	 */
 	context(attrs: IKeyValueMap)
 	var overhealExpert: Int?
@@ -109,7 +109,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * On owner
+	 * On owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var uberchargeOverhealRatePenalty: Float?
@@ -129,7 +129,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * On owner
+	 * On owner.
 	 */
 	val uberchargeRate get() = BonusPenalty<Float, Float>("ubercharge rate bonus", "ubercharge rate penalty")
 	
@@ -138,7 +138,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * On owner
+	 * On owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var uberDurationBonus: Int?
@@ -150,18 +150,14 @@ interface MedigunAttributes : BaseGunAttributes {
 	 *
 	 * 
 	 *
-	 * On owner
+	 * On owner.
 	 *
-	 * This is your shield level
+	 * This is your shield level.
 	 */
 	context(attrs: IKeyValueMap)
 	var generateRageOnHeal: Int?
 		get() = attrs.getTyped("generate rage on heal")
 		set(value) = attrs.setNullable("generate rage on heal", value)
-}
-
-inline operator fun MedigunAttributes.invoke(scope: MedigunAttributes.() -> Unit) {
-	this.apply(scope)
 }
 
 

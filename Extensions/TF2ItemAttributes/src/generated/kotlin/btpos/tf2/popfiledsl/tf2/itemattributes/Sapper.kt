@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: Stock Sapper, The Red-Tape Recorder, Promo Red-Tape Recorder, The Ap-Sap, Festive Sapper, The Snack Attack
  */
-interface SapperAttributes : BuilderAttributes {
+interface SapperAttributes : BuilderAttributes, IBlockScoped {
 	companion object : SapperAttributes
 	
 	/**
@@ -15,9 +15,9 @@ interface SapperAttributes : BuilderAttributes {
 	 *
 	 * 
 	 *
-	 * On player
+	 * On player.
 	 *
-	 * How fast the building should reverse construction
+	 * How fast the building should reverse construction.
 	 */
 	context(attrs: IKeyValueMap)
 	var sapperDegeneratesBuildings: Int?
@@ -29,25 +29,21 @@ interface SapperAttributes : BuilderAttributes {
 	 *
 	 * 
 	 *
-	 * If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot):
+	 * If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot):.
 	 *
-	 * Gives the sapper a radius instead of being single-target
+	 * Gives the sapper a radius instead of being single-target.
 	 *
-	 * When the sapper is applied to a player (including MvM bots):
+	 * When the sapper is applied to a player (including MvM bots):.
 	 *
-	 * 2 - stun time is 5.5 seconds, radius is 225 hammer units
+	 * 2 - stun time is 5.5 seconds, radius is 225 hammer units.
 	 *
-	 * 3 - stuns for 7 seconds, radius is 250 hammer units
+	 * 3 - stuns for 7 seconds, radius is 250 hammer units.
 	 *
-	 * else stuns for 4 seconds and radius is 200 HU
+	 * else stuns for 4 seconds and radius is 200 HU.
 	 */
 	context(attrs: IKeyValueMap)
 	override var roboSapper: Int?
 		get() = super.roboSapper
 		set(value) { super.roboSapper = value }
-}
-
-inline operator fun SapperAttributes.invoke(scope: SapperAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

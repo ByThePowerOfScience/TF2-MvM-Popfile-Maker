@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Wrangler, Festive Wrangler, The Giger Counter
  */
-interface BaseGunAttributes : WeaponBaseAttributes {
+interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : BaseGunAttributes
 	
 	/**
@@ -17,7 +17,7 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	 *
 	 * If unset, uses the weapon's default projectile type.
 	 *
-	 * Else use a numbered [ProjectileType]
+	 * Else use a numbered [ProjectileType].
 	 */
 	context(attrs: IKeyValueMap)
 	var overrideProjectileType: Int?
@@ -49,14 +49,14 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	 *
 	 * 
 	 *
-	 * Used when firing any projectile, including pipe bombs
+	 * Used when firing any projectile, including pipe bombs.
 	 */
 	val projectileRange get() = BonusPenalty<Float, Float>("Projectile range increased", "Projectile range decreased")
 	
 	/**
 	 * 
 	 *
-	 * Don't spin loch n load pills
+	 * Don't spin loch n load pills.
 	 */
 	context(attrs: IKeyValueMap)
 	var grenadeNoSpin: Boolean?
@@ -177,9 +177,5 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	var dmgPiercesResistsAbsorbs: Boolean?
 		get() = attrs.getTyped("dmg pierces resists absorbs", BinaryIntCodec)
 		set(value) = attrs.setNullable("dmg pierces resists absorbs", value, BinaryIntCodec)
-}
-
-inline operator fun BaseGunAttributes.invoke(scope: BaseGunAttributes.() -> Unit) {
-	this.apply(scope)
 }
 

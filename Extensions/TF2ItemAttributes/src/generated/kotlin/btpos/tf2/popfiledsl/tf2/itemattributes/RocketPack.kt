@@ -7,7 +7,7 @@ import btpos.tf2.popfiledsl.serialization.codecs.*
 /**
  * Items: The Thermal Thruster
  */
-interface RocketPackAttributes : BaseMeleeAttributes {
+interface RocketPackAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : RocketPackAttributes
 	
 	/**
@@ -15,15 +15,11 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 	 *
 	 * 
 	 *
-	 * The MvM upgrade that lets you launch while launching
+	 * The MvM upgrade that lets you launch while launching.
 	 */
 	context(attrs: IKeyValueMap)
 	var thermalThrusterAirLaunch: Boolean?
 		get() = attrs.getTyped("thermal_thruster_air_launch", BinaryIntCodec)
 		set(value) = attrs.setNullable("thermal_thruster_air_launch", value, BinaryIntCodec)
-}
-
-inline operator fun RocketPackAttributes.invoke(scope: RocketPackAttributes.() -> Unit) {
-	this.apply(scope)
 }
 
