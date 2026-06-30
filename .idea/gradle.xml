@@ -4,10 +4,25 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/VDFParser" name="VDFParser">
+                <projects>
+                  <project path="$PROJECT_DIR$/VDFParser" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Extensions" />
+            <option value="$PROJECT_DIR$/Extensions/TF2ItemAttributes" />
+            <option value="$PROJECT_DIR$/ItemAttributesGeneration" />
+            <option value="$PROJECT_DIR$/VDFParser" />
           </set>
         </option>
         <option name="myGradleHome" value="" />

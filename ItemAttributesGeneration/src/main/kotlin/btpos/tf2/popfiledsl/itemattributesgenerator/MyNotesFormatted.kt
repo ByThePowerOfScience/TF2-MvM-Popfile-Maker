@@ -1,6 +1,12 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
 import btpos.tf2.popfiledsl.itemattributesgenerator.MyNotesFormatted.AttrClassUsage.Companion.attrToSelector
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.groupings.HierarchyNamedAttributeScope
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.ISortedNamedAttribute
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.NamedAttribute
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.bool
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.groupings.NamedAttributeScope
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.selectorCodec
 import kotlin.collections.flatten
 
 object MyNotesFormatted {
@@ -62,17 +68,21 @@ object MyNotesFormatted {
 		
 		override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
 			return classToNamed[attr_class]?.map { attr ->
-				attr.withVarName(attr.varName).apply {
+				attr.clone().apply {
 					setCodec {
 						if (attr_class == "set_weapon_mode") {
-							selectorCodec(attrToSelector.values.flatMap { it.entries }.find { (k, v) -> k == it.attrName }?.value ?: error("no selector found for ${it.attrName}"))
+							selectorCodec(
+								attrToSelector.values.flatMap { it.entries }
+									.find { (k, v) -> k == it.attrName }?.value
+								?: error("no selector found for ${it.attrName}")
+							)
 						} else if (kType == "Boolean") {
 							bool
 						} else {
 							it.codec
 						}
 					}
-					addCommentsFromNotes(notes.flatMap { listOf(it, "") })
+					notes = this@AttrClassUsage.notes
 				}
 			}.orEmpty()
 		}
@@ -93,21 +103,30 @@ object MyNotesFormatted {
 		 */
 		override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
 			val mapped = attrClassesOrNestedScopes.flatMap { it.absorb(classToNamed) }
-			return listOf(NamedAttributeScope(this.name, *mapped.toTypedArray(), commentsNotFromNotes =mutableListOf("Items: ${applicableWeapons.flatten().joinToString(", ")}")))
+			return listOf(NamedAttributeScope(this.name, *mapped.toTypedArray()))
 		}
 	}
 	
 	class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAttrThing>, applicableWeapons: List<Any> = listOf()) : AttrClassScope(name, attrClassesOrNestedScopes, applicableWeapons) {
 		override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
-			val classToNamed = attrToSelector[this.name]?.keys?.let { applicableWeaponModeAttrs ->
-				classToNamed.toMutableMap().also { map ->
-				
-				map["set_weapon_mode"]?.let { weaponModeAttrs ->
-					map["set_weapon_mode"] = weaponModeAttrs.filter { it is NamedAttribute && it.attrName in applicableWeaponModeAttrs }
+			val classToNamed = classToNamed.toMutableMap()
+				.also { map ->
+					val applicableWeaponModeAttrs = attrToSelector[this.name]?.keys ?: emptySet()
+					if (applicableWeaponModeAttrs.isEmpty()) {
+						map.remove("set_weapon_mode")
+					} else {
+						map["set_weapon_mode"]?.let { weaponModeAttrs ->
+							map["set_weapon_mode"] = weaponModeAttrs.filter { it is NamedAttribute && it.attrName in applicableWeaponModeAttrs }
+						}
+					}
 				}
-			}} ?: classToNamed
 			val mapped = attrClassesOrNestedScopes.flatMap { it.absorb(classToNamed) }
-			return listOf(HierarchyNamedAttributeScope(this.name, getParent(this.name), *mapped.toTypedArray(), note= applicableWeapons.takeIf { it.isNotEmpty()}?.flatten()?.joinToString(", ")?.let { "Items: $it" } ))
+			return listOf(
+				HierarchyNamedAttributeScope(
+				this.name, getParent(this.name), *mapped.toTypedArray(), _note = applicableWeapons.takeIf { it.isNotEmpty() }
+					?.flatten()
+					?.joinToString(", ")
+					?.let { "Items: $it" }))
 		}
 	}
 	
@@ -137,7 +156,7 @@ object MyNotesFormatted {
 				"Pistol",
 				"Revolver",
 				"SyringeGun",
-				"PipebombLauncher",
+				"StickybombLauncher",
 				"RocketLauncher",
 				"GrenadeLauncher",
 				"Jar",
@@ -177,7 +196,7 @@ object MyNotesFormatted {
 			)
 		),
 		
-		Pair("PipebombLauncher", listOf("CompoundBow")),
+		Pair("StickybombLauncher", listOf("CompoundBow")),
 		
 		Pair(
 			"RocketLauncher", listOf(
@@ -248,22 +267,22 @@ object MyNotesFormatted {
 				AttrClassUsage("no_metal_from_dispensers_while_active", "Boolean", listOf()),
 				AttrClassUsage("mult_dmg_vs_buildings", "Float", listOf()),
 				AttrClassUsage("mult_clipsize", "Float", listOf()),
-				AttrClassUsage("mult_clipsize_upgrade", "Int", listOf()),
+				AttrClassUsage("mult_clipsize_upgrade", "Int", listOf("Stacks with [clipSize]")),
 				AttrClassUsage(
 					"mult_clipsize_upgrade_atomic", "Int", listOf(
 						"MVM attribute that specifically handles rocket and grenade launchers",
-						"Note that all three of these are different classes, which means they stack."
+						"Note that [clipSize], [clipSizeBonusUpgrade], and [clipSizeUpgradeAtomic] all stack with one another."
 					)
 				),
 				AttrClassUsage("clipsize_increase_on_kill", "Int", listOf()),
 				AttrClassUsage(
-					"wrench_builds_minisentry", "Float", listOf(
+					"wrench_builds_minisentry", "Boolean", listOf(
 						"Determines the hand used in the model"
 					)
 				),
 				AttrClassUsage(
 					"mult_deploy_time", "Float", listOf(
-						"On player"
+						"Checked on player"
 					)
 				),
 				AttrClassUsage("mult_single_wep_deploy_time", "Float", listOf()),
@@ -282,7 +301,7 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"force_weapon_switch", "Boolean", listOf(
-						"Should force switch to this item"
+						"Should force switch to this item on some condition."
 					)
 				),
 				AttrClassUsage(
@@ -349,9 +368,9 @@ object MyNotesFormatted {
 					)
 				),
 				AttrClassUsage(
-					"override_projectile_type", "Int", listOf(
+					"override_projectile_type", "ProjectileType", listOf(
 						"If unset, uses the weapon's default projectile type.",
-						"Else use a numbered [projectile type](#ProjectileTypes)"
+						"Else use a numbered [ProjectileType]"
 					)
 				),
 				AttrClassUsage(
@@ -411,7 +430,7 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"BaseMelee", listOf(
 				AttrClassUsage(
-					"*self_mark_for_death", "Boolean", listOf(
+					"self_mark_for_death", "Boolean", listOf(
 						"Marked for death when switching to weapon"
 					)
 				),
@@ -505,7 +524,6 @@ object MyNotesFormatted {
 				AttrClassUsage(
 					"set_charged_airblast", "Boolean", listOf(
 						"Enables charging an airblast for longer for higher push",
-						"Fun fact: apparently this was going to be a FLAME ROCKET, but got changed later to be an airblast"
 					)
 				),
 				AttrClassUsage("mult_airblast_cost", "Float", listOf()),
@@ -529,14 +547,12 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"mult_airblast_refire_time", "Float", listOf(
-						"Multiplier for how long after airblasting until you can fire a primary OR secondary attack",
-						"Secondary attack delay = 0.75 * this"
+						"How long after airblasting until you can fire a primary OR secondary attack"
 					)
 				),
 				AttrClassUsage(
 					"mult_airblast_primary_refire_time", "Float", listOf(
-						"Multiplier for how long before you can use your flamethrower again after airblasting.",
-						"Primary attack delay = refire_time * primary_refire_time"
+						"How long before you can use your flamethrower again after airblasting.",
 					)
 				),
 				AttrClassUsage(
@@ -548,7 +564,6 @@ object MyNotesFormatted {
 					"firing_forward_pull", "Float", listOf(
 						"Actually a Boolean, so a `0.0` or `1.0` value.",
 						"If true, you get a speedboost while firing your flamethrower.",
-						"(Oh god, they planned on making a literal W+M1 weapon. Jungle Inferno could've been a _lot_ worse.)"
 					)
 				),
 				AttrClassUsage(
@@ -595,7 +610,7 @@ object MyNotesFormatted {
 					          "- `flame_reflection_add_life_time`: FLOAT\n" +
 					          "- `reflected_flame_dmg_reduction`: FLOAT\n" +
 					          "- `max_flame_reflection_count`: INT\n" +
-					          "- `flame_reflect_on_collision`: INT\n" +
+					          "- `flame_reflect_on_collision`: Boolean\n" +
 					          "- `flame_speed`: FLOAT\n" +
 					          "- `flame_lifetime`: FLOAT\n" +
 					          "- `flame_random_life_time_offset`: FLOAT\n" +
@@ -672,11 +687,10 @@ object MyNotesFormatted {
 			"Shovel", listOf(
 				AttrClassUsage(
 					"set_weapon_mode", "Int", listOf(
-						"Used to specify \"shovel type\"",
-						"0 = Standard",
-						"1 = Equalizer",
-						"2 = Escape Plan",
-						"I do not know what this does."
+//						"Used to specify \"shovel type\"",
+//						"0 = Standard",
+//						"1 = Equalizer",
+//						"2 = Escape Plan",
 					)
 				),
 				AttrClassUsage(
@@ -720,7 +734,6 @@ object MyNotesFormatted {
 				AttrClassUsage(
 					"add_head_on_hit", "Boolean", listOf(
 						"If the player should take a \"head\" when dealing damage with a melee",
-						"Also, is there a \"speed modifier\" for taking heads??????"
 					)
 				),
 				AttrClassUsage("ubercharge_preserved_on_spawn_max", "Float", listOf()),
@@ -807,7 +820,7 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"mult_decloak_rate", "Float", listOf(
-						"How many seconds it takes to decloak (or a multiplier?)",
+						"How many seconds it takes to decloak (or a multiplier)",
 						"Note that values less than or equal to `0.0` become `1.0`"
 					)
 				),
@@ -822,7 +835,7 @@ object MyNotesFormatted {
 		),
 		
 		HierarchyAttrClassScope(
-			"PipebombLauncher", listOf(
+			"StickybombLauncher", listOf(
 				AttrClassUsage(
 					"stickybomb_charge_rate", "Float", listOf(
 						"Not actually the \"rate\", rather the time it takes to fully charge a stickybomb launch when holding MOUSE1."
@@ -830,7 +843,9 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"set_detonate_mode", "Int", listOf(
-						"If 0, default \"detonate all stickies on rclick\" mode. If true, uses Scottish Resistance's \"look at sticky to detonate\" mechanic."
+						"0 = default \"detonate all stickies on rclick\" mode.\n" +
+						"1 = Scottish Resistance's \"look at sticky to detonate\" mechanic.\n" +
+						"2 = Stickybombs fizzle after 2 seconds."
 					)
 				),
 				AttrClassUsage(
@@ -844,7 +859,7 @@ object MyNotesFormatted {
 					)
 				),
 				AttrClassUsage("add_max_pipebombs", "Int", listOf())
-			), listOf("TF_WEAPON_PIPEBOMBLAUNCHER, The Scottish Resistance, Upgradeable TF_WEAPON_PIPEBOMBLAUNCHER, Stickybomb Jumper, Festive Stickybomb Launcher 2011, Silver Botkiller Stickybomb Launcher Mk.I, Gold Botkiller Stickybomb Launcher Mk.I, Rust Botkiller Stickybomb Launcher Mk.I, Blood Botkiller Stickybomb Launcher Mk.I, Carbonado Botkiller Stickybomb Launcher Mk.I, Diamond Botkiller Stickybomb Launcher Mk.I, Silver Botkiller Stickybomb Launcher Mk.II, Gold Botkiller Stickybomb Launcher Mk.II, The Quickiebomb Launcher".comma())
+			), listOf("TF_WEAPON_StickybombLauncher, The Scottish Resistance, Upgradeable TF_WEAPON_StickybombLauncher, Stickybomb Jumper, Festive Stickybomb Launcher 2011, Silver Botkiller Stickybomb Launcher Mk.I, Gold Botkiller Stickybomb Launcher Mk.I, Rust Botkiller Stickybomb Launcher Mk.I, Blood Botkiller Stickybomb Launcher Mk.I, Carbonado Botkiller Stickybomb Launcher Mk.I, Diamond Botkiller Stickybomb Launcher Mk.I, Silver Botkiller Stickybomb Launcher Mk.II, Gold Botkiller Stickybomb Launcher Mk.II, The Quickiebomb Launcher".comma())
 		),
 		
 		HierarchyAttrClassScope(
@@ -859,8 +874,8 @@ object MyNotesFormatted {
 				),
 				AttrClassUsage(
 					"mod_buff_duration", "Float", listOf(
-						"Multiplier to buff duration",
-						"Weirdly it just modifies when the \"BuffBanner Flag\" (the prop) detaches from the player, which means it's actually the _flag_ that does the buffing, lmao"
+						"Multiplier to buff duration.",
+						"Actually just read by the \"BuffBanner _Flag_\" (the prop) for when it should detach from the player, and it's actually the _flag_ that does the buffing."
 					)
 				)
 			), listOf("The Buff Banner, The Battalion's Backup, The Concheror, Festive Buff Banner".comma())
@@ -896,10 +911,7 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"RocketLauncher", listOf(
 				AttrClassUsage(
-					"override_projectile_type", "Int", listOf(
-						"If unset, uses the weapon's default projectile type.",
-						"Else it can be used with anything in `ProjectileType_t`, as seen in BaseGun"
-					)
+					"override_projectile_type", "Int", listOf()
 				),
 				AttrClassUsage(
 					"mod_rocket_launch_impulse", "Boolean", listOf(
@@ -929,7 +941,7 @@ object MyNotesFormatted {
 				AttrClassUsage("mult_projectile_speed", "Float", listOf()),
 				AttrClassUsage(
 					"set_detonate_mode", "Int", listOf(
-						"If 0, uses standard \"detonate all stickies on rclick\". Else, uses Scottish Resistance's \"only detonate stickies on crosshair\" function."
+						"If 2, pills shatter on contact with surfaces. Else does nothing."
 					)
 				),
 				AttrClassUsage(
@@ -946,12 +958,11 @@ object MyNotesFormatted {
 				AttrClassUsage("mult_reload_time_hidden", "Float", listOf()),
 				AttrClassUsage(
 					"fast_reload", "Float", listOf(
-						"Honestly I don't know why `fast_reload` is different if it's just going to use the standard reload time mults anyway..."
 					)
 				),
 				AttrClassUsage(
 					"fires_milk_bolt", "Boolean", listOf(
-						"If `1`, alt-fire fires a mad-milked crossbow bolt with a meter??? (meter is unimplemented, but milk bolt is)"
+						"If `1`, alt-fire fires a mad-milked crossbow bolt. (meter is unimplemented, but milk bolt is)"
 					)
 				)
 			), listOf("The Crusader's Crossbow, Festive Crusader's Crossbow".comma())
@@ -1298,7 +1309,7 @@ object MyNotesFormatted {
 					)
 				),
 				AttrClassUsage(
-					"robo_sapper", "Boolean", listOf(
+					"robo_sapper", "Int", listOf(
 						"If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot):",
 						"Gives the sapper a radius instead of being single-target"
 					)
@@ -1362,17 +1373,16 @@ object MyNotesFormatted {
 						AttrClassUsage("- `mult_teleporter_recharge_rate`: Float", listOf()),
 						
 						),
-					AttrClassUsage("- `cannot_swim`: Boolean"),
-					AttrClassUsage("- `mod_jump_height`: Float"),
-					AttrClassUsage("- `mult_health_frompacks`: Float"),
-					AttrClassUsage("- `mult_healing_from_medics`: Float", listOf("- Only on crossbow impacts?")),
-					AttrClassUsage("- `hype_resets_on_jump`: Int", listOf("- Lose this amount of hype if you airdash", " - Note that this only applies to scout hype, not rage in general")),
-					AttrClassUsage("- `parachute_attribute`: Boolean", listOf("- Allows parachute to be deployed")),
-					AttrClassUsage("- `parachute_disabled`: Boolean", listOf("- Prevents parachute from being deployed, but still allows it to be retracted.")),
-					AttrClassUsage("- `set_custom_buildmenu`: Int", listOf("- Only used if the build menu is actually shown", "- 0 = default", "- 1 = pipboy")),
-					AttrClassUsage("- `appear_as_mvm_robot`: Boolean", listOf("- If true, appear as an MvM robot in your hud when selecting a class")),
 				),
-				
+				AttrClassUsage("- `cannot_swim`: Boolean"),
+				AttrClassUsage("- `mod_jump_height`: Float"),
+				AttrClassUsage("- `mult_health_frompacks`: Float"),
+				AttrClassUsage("- `mult_healing_from_medics`: Float", listOf("- Only on crossbow impacts")),
+				AttrClassUsage("- `hype_resets_on_jump`: Int", listOf("- Lose this amount of hype if you airdash", " - Note that this only applies to scout hype, not rage in general")),
+				AttrClassUsage("- `parachute_attribute`: Boolean", listOf("- Allows parachute to be deployed")),
+				AttrClassUsage("- `parachute_disabled`: Boolean", listOf("- Prevents parachute from being deployed, but still allows it to be retracted.")),
+				AttrClassUsage("- `set_custom_buildmenu`: Int", listOf("- Only used if the build menu is actually shown", "- 0 = default", "- 1 = pipboy")),
+				AttrClassUsage("- `appear_as_mvm_robot`: Boolean", listOf("- If true, appear as an MvM robot in your hud when selecting a class")),
 			)
 		),
 		HierarchyAttrClassScope(
@@ -1381,9 +1391,8 @@ object MyNotesFormatted {
 				AttrClassUsage("hide_enemy_health", "Boolean", listOf("Always true in MvM")),
 				AttrClassScope(
 					"SpyOnly",
-					AttrClassUsage("set_custom_buildmenu", "Int", listOf("You can set a spy build menu??")),
-					AttrClassUsage("override_engineer_object_type", "Int", listOf("Default = -1", "If 0, build a catapult??? I don't know if this is implemented or not, but it's definitely there.")),
-					
+					AttrClassUsage("set_custom_buildmenu", "Int", listOf()),
+					AttrClassUsage("override_engineer_object_type", "Int", listOf("Default = -1", "If 0, build a catapult.")),
 				),
 			)
 		),
@@ -1418,7 +1427,7 @@ object MyNotesFormatted {
 				AttrClassUsage("- `mult_projectile_speed`: Float"),
 				AttrClassUsage("- `rocket_specialist`: Int"),
 				AttrClassUsage(
-					"- `halloween_pumpkin_explosions`: Int\n" +
+					"- `halloween_pumpkin_explosions`: Boolean\n" +
 					"    - Does pumpkin bombs particle effect"
 				),
 				AttrClassUsage(
@@ -1469,7 +1478,7 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"PowerUpBottle", listOf(AttrClassUsage ("- `powerup_duration`: Float\n") ,
 			                 AttrClassUsage("- On player: `canteen_specialist`: Int\n" +
-			                                "    - Adds extra time to the base powerup duration based on level?"),
+			                                "    - Adds extra time to the base powerup duration based on level."),
 			                 AttrClassUsage("- `powerup_max_charges`: Int"),
 			                AttrClassUsage("- `set_weapon_mode`: Int\n" +
 			                               "    - If true, is \"base\" powerup canteen"),
@@ -1510,7 +1519,7 @@ object MyNotesFormatted {
 				AttrClassUsage(
 					"- `throwable_particle_trail_only`: Boolean\n" +
 					"    - If false, attaches the `set_attached_particle` to the item itself\n" +
-					"    - If true, the particle only applies to the throwable particle trail? Though I don't actually see that occurring anywhere in here"
+					"    - If true, the particle only applies to the throwable particle trail. (If it's implemented, it's not in the SDK.)"
 				),
 			)
 		)

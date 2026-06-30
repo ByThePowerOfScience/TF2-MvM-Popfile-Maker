@@ -1,14 +1,28 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
 import btpos.tf2.popfiledsl.itemattributesgenerator.ItemAttributesGeneration.BuildConfig
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.ISortedNamedAttribute
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.NamedAttribute
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.groupings.PenaltyBonus
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.groupings.NamedAttributeScope
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.groupings.Vis
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.selectorCodec
+import btpos.tf2.popfiledsl.vdfparser.VdfParser
+import btpos.tf2.popfiledsl.vdfparser.component1
+import btpos.tf2.popfiledsl.vdfparser.component2
 import java.io.File
+import kotlin.collections.first
+import kotlin.collections.fold
 import kotlin.collections.mapValues
+import kotlin.collections.single
+import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.exists
 import kotlin.io.path.useDirectoryEntries
+import kotlin.let
 
 data class ObjectInProgress(val name: String, val doc: String, val attrs: MutableList<ISortedNamedAttribute> = mutableListOf())
 
@@ -21,6 +35,40 @@ fun <T : Any, U : Any> Map<T?, U>.filterKeysNotNull(): Map<T, U> {
 }
 
 fun main() {
+	generateItemAttributes()
+}
+
+fun convertAttributesFromSchema(inGameDescriptionsByAttributeName: Map<String, String>): List<NamedAttribute> {
+	return ClassLoader.getSystemClassLoader()
+		.getResourceAsStream("attributes.txt")!!
+		.readAllBytes()
+		.toString(Charsets.UTF_8)
+		.let {
+			VdfParser.parse(it).second.tableOrNull()!!
+		}.map { (id, schema) ->
+			val schema: Map<String, String?> = schema.tableOrNull()!!.associate { it.first to it.second.stringOrNull() }.withDefault { "" }
+			val name: String by schema
+			val attribute_class: String by schema
+			val description_string: String? = inGameDescriptionsByAttributeName[name]
+			val description_format: String by schema
+			val hidden by schema
+			val effect_type by schema
+			val armory_desc by schema
+			val stored_as_integer by schema
+			
+			NamedAttribute(
+				attrName = name,
+				inGameDesc = description_string,
+				attrType = description_format.removePrefix("value_is_"),
+				className = attribute_class,
+				effectType = effect_type,
+				armory_desc = ArmoryDesc(armory_desc)
+			)
+		}
+}
+
+
+fun generateItemAttributes() {
 	/*
 	
 	- From the wiki:
@@ -40,13 +88,23 @@ fun main() {
 	
 	val attrClassesByBaseClassFromNotes = MyNotesFormatted.attrsByClass
 	
+	// get all attributes, but with the descriptions from the ones used in-game
+	val allAlreadyFoundAttributeNames = UsefulWikiTableParser.parseWiki().associate { it.first.attrName to it.second }.filterValues { it != null && !it.startsWith("Attrib_") } as Map<String, String>
 	
+	val allNamedAttributes = convertAttributesFromSchema(allAlreadyFoundAttributeNames)
 	
 	/**
 	 * Sort all named attributes by their class, group them up into scopes
 	 */
 	val namedAttributeScopesByClassName: Map<String, List<ISortedNamedAttribute>> =
-		UsefulWikiTableParser.parseWiki()
+			allNamedAttributes
+			.filter { it.className != "set_detonate_mode" } // doing these by hand in additionalWeaponModes.kt
+			.onEach {
+				when (it.attrName) {
+					"medigun charge is crit boost" -> it.setCodec { selectorCodec(1) }
+					"medigun charge is resists" -> it.setCodec { selectorCodec(3) }
+				}
+			}
 			.groupBy { it.className }
 			.mapValues<_, _, List<ISortedNamedAttribute>> { (clsName, attrsForAClass) ->
 				if (clsName == "set_weapon_mode")
@@ -60,19 +118,19 @@ fun main() {
 				if (groupedByPositiveOrNegative.size == 1) {
 					return@mapValues groupedByPositiveOrNegative.values.single()
 				}
-				return@mapValues listOf(groupedByPositiveOrNegative.mapValues { (isPos, posOrNegItem) ->
-					if (posOrNegItem.isEmpty())
+				return@mapValues listOf(groupedByPositiveOrNegative.mapValues { (isPos, posOrNegItems) ->
+					if (posOrNegItems.isEmpty())
 						error("I don't think this should happen but posneg is empty list for $isPos for $attrsForAClass")
-					else if (posOrNegItem.size == 1) {
-						return@mapValues posOrNegItem.single()
+					else if (posOrNegItems.size == 1) {
+						return@mapValues posOrNegItems.single()
 					}
 					
-					val isHidden = posOrNegItem.groupBy { "hidden" in it.attrName.lowercase() }
+					val isHidden = posOrNegItems.groupBy { "hidden" in it.attrName.lowercase() }
 					when (isHidden.size) {
 						1 -> isHidden.values.first()
 							.first()
 						2 -> Vis(isHidden[false]!!.first(), isHidden[true]!!.first())
-						else -> Custom(posOrNegItem.first().varName, posOrNegItem)
+						else -> NamedAttributeScope(posOrNegItems.first().varName.let { removeFromPBName.fold(it) { it, re -> it.replace(re, "") } }, *posOrNegItems.toTypedArray())
 					}
 				}
 					.let { sortedByIsPositive ->
@@ -91,12 +149,14 @@ fun main() {
 					})
 			}
 	
+	
+	
 
 	val scopes = attrClassesByBaseClassFromNotes.mapNotNull { baseClassScope ->
 		baseClassScope.absorb(namedAttributeScopesByClassName).singleOrNull() as NamedAttributeScope?
 	}
 	
-	val outDir = Path(BuildConfig.GENERATED_FILES_DIR).resolve(BuildConfig.GENERATED_FILE_PACKAGE.replace('.', File.separatorChar)).also {
+	val outDir = Path(BuildConfig.OUT_DIR).resolve(BuildConfig.TARGET_PACKAGE.replace('.', File.separatorChar)).also {
 		if (it.exists())
 			it.useDirectoryEntries("*.kt") { it.forEach { it.deleteExisting() } }
 		else
@@ -104,19 +164,22 @@ fun main() {
 	}
 	
 	scopes.forEach { scope ->
-		outDir.resolve(scope.scopeName + ".kt").run {
-			bufferedWriter().use { writer ->
-				writer.write("package ${BuildConfig.GENERATED_FILE_PACKAGE}\n\n" +
-				             "import btpos.tf2.popfiledsl.modeling.*\n" +
-				             "import btpos.tf2.popfiledsl.serialization.codecs.*\n")
+		outDir.resolve(scope.scopeName + ".kt")
+			.bufferedWriter()
+			.use { writer ->
+				writer.write(
+					"package ${BuildConfig.TARGET_PACKAGE}\n\n" +
+					"import btpos.tf2.popfiledsl.modeling.*\n" +
+					"import btpos.tf2.popfiledsl.serialization.codecs.*\n"
+				)
 				writer.newLine()
 				writer.newLine()
-				scope.generateTopLevelMembers().forEach { topLevel ->
-					writer.write(topLevel)
-					writer.newLine()
-					writer.newLine()
-				}
+				scope.generateTopLevelMembers()
+					.forEach { topLevel ->
+						writer.write(topLevel)
+						writer.newLine()
+						writer.newLine()
+					}
 			}
-		}
 	}
 }

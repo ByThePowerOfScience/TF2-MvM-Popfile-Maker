@@ -1,7 +1,8 @@
 package btpos.tf2.popfiledsl.itemattributesgenerator
 
-import btpos.tf2.popfiledsl.itemattributesgenerator.ItemAttributesGeneration.BuildConfig
-import java.io.FileReader
+import btpos.tf2.popfiledsl.itemattributesgenerator.representations.NamedAttribute
+import java.io.InputStreamReader
+import java.io.Reader
 
 object UsefulWikiTableParser {
 	val attrName = Regex("""\|name=([^|]+)\|""")
@@ -12,7 +13,7 @@ object UsefulWikiTableParser {
 	val effectType = Regex("""\|effect-type=([^|]+)\|""")
 	
 
-	class FileToCharIteratorAdapter(val reader: FileReader) : CharIterator() {
+	class FileToCharIteratorAdapter(val reader: Reader) : CharIterator() {
 		var haveAlreadyRetrievedNext = false
 		var current: Int = -1
 		
@@ -83,8 +84,13 @@ object UsefulWikiTableParser {
 		}
 	}
 	
-	fun parseWiki(): Sequence<NamedAttribute> {
-		val wikiFile = BracketedSectionIterator(FileToCharIteratorAdapter(FileReader(BuildConfig.WIKI_TABLE_FILE)))
+	fun parseWiki(): Sequence<Pair<NamedAttribute, String?>> {
+		val wikiFile = BracketedSectionIterator(FileToCharIteratorAdapter(
+			InputStreamReader(
+				ClassLoader.getSystemClassLoader()
+					.getResourceAsStream("wikitable.txt")!!
+			)
+		))
 		return wikiFile.asSequence()
 			.map { it.replace("\n", " ") }
 			.mapNotNull {
@@ -95,7 +101,7 @@ object UsefulWikiTableParser {
 				val valuetype = valueType.find(it)?.groupValues?.get(1) ?: return@mapNotNull null
 				val effecttype = effectType.find(it)?.groupValues?.get(1)
 				
-				NamedAttribute(attrName = name, inGameDesc = desc, attrType = valuetype, className = cls, effectType = effecttype.orEmpty())
+				NamedAttribute(attrName = name, inGameDesc = desc, attrType = valuetype, className = cls, effectType = effecttype.orEmpty()) to desc?.replace("'''%s1'''", "N")
 			}
 	}
 }
