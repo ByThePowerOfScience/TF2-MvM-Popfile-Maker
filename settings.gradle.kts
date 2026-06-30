@@ -4,4 +4,5 @@ plugins {
 rootProject.name = "PopFileDSL"
 include("ItemAttributesGeneration")
 include("Extensions:TF2ItemAttributes")
+includeBuild("vdf-modeling")
 includeBuild("VDFParser")
