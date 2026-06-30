@@ -5,7 +5,7 @@ plugins {
 	kotlin("jvm")
 }
 
-group = "btpos.tf2.popfiledsl.tf2.itemattributes"
+group = "btpos.source.vdfdsl.tf2.itemattributes"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-	implementation(rootProject)
+	implementation(project(":vdf-modeling"))
 	testImplementation(platform("org.junit:junit-bom:6.0.0"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")

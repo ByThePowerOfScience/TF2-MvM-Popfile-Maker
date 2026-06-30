@@ -7,6 +7,11 @@
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
+              <build path="$PROJECT_DIR$/vdf-modeling" name="vdf-modeling">
+                <projects>
+                  <project path="$PROJECT_DIR$/vdf-modeling" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/VDFParser" name="VDFParser">
                 <projects>
                   <project path="$PROJECT_DIR$/VDFParser" />
@@ -23,6 +28,16 @@
             <option value="$PROJECT_DIR$/Extensions/TF2ItemAttributes" />
             <option value="$PROJECT_DIR$/ItemAttributesGeneration" />
             <option value="$PROJECT_DIR$/VDFParser" />
+            <option value="$PROJECT_DIR$/vdf-modeling" />
+          </set>
+        </option>
+        <option name="myGradleHome" value="" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/vdf-modeling" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/vdf-modeling" />
           </set>
         </option>
         <option name="myGradleHome" value="" />

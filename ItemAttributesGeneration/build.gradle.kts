@@ -7,7 +7,7 @@ plugins {
 	id("com.github.gmazzo.buildconfig") version "6.0.10"
 }
 
-group = "btpos.tf2.popfiledsl.itemattributesgenerator"
+group = "btpos.source.vdfdsl.itemattributesgenerator"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -25,7 +25,7 @@ dependencies {
 
 buildConfig {
 	buildConfigField("String", "OUT_DIR", "\"${project(":Extensions:TF2ItemAttributes").projectDir.toPath().resolve("src/generated/kotlin")}\"")
-	buildConfigField("String", "TARGET_PACKAGE", "\"btpos.tf2.popfiledsl.tf2.itemattributes\"")
+	buildConfigField("String", "TARGET_PACKAGE", "\"btpos.source.vdfdsl.tf2.itemattributes\"")
 }
 
 kotlin {

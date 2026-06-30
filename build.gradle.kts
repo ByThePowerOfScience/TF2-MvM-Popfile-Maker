@@ -1,4 +1,7 @@
+import org.gradle.internal.impldep.org.apache.http.client.methods.RequestBuilder.options
 import org.gradle.kotlin.dsl.implementation
+import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.testRuntimeOnly
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -7,7 +10,7 @@ plugins {
 	id("dev.clojurephant.clojure") version "0.9.1"
 }
 
-group = "btpos.tf2.popfiledsl"
+group = "btpos.source.vdfdsl"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -31,6 +34,9 @@ dependencies {
 	// dependencies for REPL use only
 	devImplementation("org.clojure:tools.namespace:1.3.0")
 	testImplementation(kotlin("test"))
+	api(project(":vdf-modeling"))
+	api(project(":VDFParser"))
+	api(project(":Extensions:TF2ItemAttributes"))
 }
 
 kotlin {

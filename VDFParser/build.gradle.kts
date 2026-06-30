@@ -2,7 +2,7 @@ plugins {
 	kotlin("jvm") version "2.3.10"
 }
 
-group = "btpos.tf2.popfiledsl.vdfparser"
+group = "btpos.source.vdfdsl.vdfparser"
 version = "1.0-SNAPSHOT"
 
 repositories {
