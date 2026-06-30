@@ -71,10 +71,10 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 *
 	 * Fun fact: this is also affected by the Precision mannpower powerup
 	 */
-	override context(attrs: IKeyValueMap)
-	var fasterReloadRate: Float?
-		get() = attrs.getTyped("faster reload rate")
-		set(value) = attrs.setNullable("faster reload rate", value)
+	context(attrs: IKeyValueMap)
+	override var fasterReloadRate: Float?
+		get() = super.fasterReloadRate
+		set(value) { super.fasterReloadRate = value }
 	
 	/**
 	 * Bonus:

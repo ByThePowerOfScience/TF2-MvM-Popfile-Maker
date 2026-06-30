@@ -54,7 +54,9 @@ data class PenaltyBonus(
 	}
 	
 	
-	override fun propertyString(): String {
+	override fun propertyString(isOverridden: Boolean): String {
+		if (isOverridden)
+			return "override val $varName get() = super.$varName"
 		return "val $varName get() = ${propertyValue()}"
 	}
 	

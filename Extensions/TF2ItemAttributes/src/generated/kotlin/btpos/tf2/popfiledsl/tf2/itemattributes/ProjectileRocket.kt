@@ -17,10 +17,10 @@ interface ProjectileRocketAttributes : BaseRocketAttributes {
 	 *
 	 * Checks on owner or sentry's owner
 	 */
-	override context(attrs: IKeyValueMap)
-	var spellHalloweenPumpkinExplosions: Boolean?
-		get() = attrs.getTyped("SPELL: Halloween pumpkin explosions", BinaryIntCodec)
-		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value, BinaryIntCodec)
+	context(attrs: IKeyValueMap)
+	override var spellHalloweenPumpkinExplosions: Boolean?
+		get() = super.spellHalloweenPumpkinExplosions
+		set(value) { super.spellHalloweenPumpkinExplosions = value }
 }
 
 inline operator fun ProjectileRocketAttributes.invoke(scope: ProjectileRocketAttributes.() -> Unit) {

@@ -17,10 +17,10 @@ interface MechanicalArmAttributes : BaseGunAttributes {
 	 *
 	 * How much ammo is used per shot. If 0, uses default.
 	 */
-	override context(attrs: IKeyValueMap)
-	var ammoPerShot: Int?
-		get() = attrs.getTyped("mod ammo per shot")
-		set(value) = attrs.setNullable("mod ammo per shot", value)
+	context(attrs: IKeyValueMap)
+	override var ammoPerShot: Int?
+		get() = super.ammoPerShot
+		set(value) { super.ammoPerShot = value }
 }
 
 inline operator fun MechanicalArmAttributes.invoke(scope: MechanicalArmAttributes.() -> Unit) {

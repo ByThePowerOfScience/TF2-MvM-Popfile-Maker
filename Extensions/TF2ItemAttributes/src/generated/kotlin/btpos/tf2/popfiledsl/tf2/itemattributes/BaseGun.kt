@@ -72,10 +72,10 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	 *
 	 * Also on WeaponBase, but noted here because it's specifically used in gun's "fire arrow" logic.
 	 */
-	override context(attrs: IKeyValueMap)
-	var projectilePenetration: Int?
-		get() = attrs.getTyped("projectile penetration")
-		set(value) = attrs.setNullable("projectile penetration", value)
+	context(attrs: IKeyValueMap)
+	override var projectilePenetration: Int?
+		get() = super.projectilePenetration
+		set(value) { super.projectilePenetration = value }
 	
 	/**
 	 * In-Game: "Bullets penetrate +N enemies"
@@ -86,10 +86,10 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	 *
 	 * Also on WeaponBase, but noted here because it's specifically used in gun's "fire arrow" logic.
 	 */
-	override context(attrs: IKeyValueMap)
-	var projectilePenetrationHeavy: Int?
-		get() = attrs.getTyped("projectile penetration heavy")
-		set(value) = attrs.setNullable("projectile penetration heavy", value)
+	context(attrs: IKeyValueMap)
+	override var projectilePenetrationHeavy: Int?
+		get() = super.projectilePenetrationHeavy
+		set(value) { super.projectilePenetrationHeavy = value }
 	
 	/**
 	 * Bonus:

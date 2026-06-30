@@ -55,7 +55,7 @@ class Vis(
 	
 	fun inheritedTemplate(): String {
 		val attrsInBody = additionalItems.joinToString("\n\n") {
-			buildComment(it.innateDescription) + "\n" + it.propertyString()
+			buildComment(it.innateDescription) + "\n" + it.propertyString(false)
 		}
 		
 		return """class $customClassName<VIS : Any, HIDDEN : Any>(vis_attrName: String, hidden_attrName: String) : VisHidden<VIS, HIDDEN>(vis_attrName, hidden_attrName) {
@@ -64,7 +64,9 @@ ${attrsInBody.prependIndent("\t")}
 	}
 	
 	
-	override fun propertyString(): String {
+	override fun propertyString(isOverridden: Boolean): String {
+		if (isOverridden)
+			return "override val $varName get() = super.$varName"
 		return "val $varName get() = ${propertyValue()}"
 	}
 	

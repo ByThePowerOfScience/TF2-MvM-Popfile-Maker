@@ -20,7 +20,7 @@ interface ISortedNamedAttribute {
 	 *
 	 * Should include the comment. Use [buildComment] to convert a list of strings into
 	 */
-	fun propertyString(): String
+	fun propertyString(isOverridden: Boolean): String
 	
 	/**
 	 * If this value is not an [NamedAttribute], it'll be some kind of object. This is a reference to that object.

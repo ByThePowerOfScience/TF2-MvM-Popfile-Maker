@@ -25,10 +25,10 @@ interface JarAttributes : BaseGunAttributes {
 	 *
 	 * Otherwise uses default for its class
 	 */
-	override context(attrs: IKeyValueMap)
-	var overrideProjectileType: Int?
-		get() = attrs.getTyped("override projectile type")
-		set(value) = attrs.setNullable("override projectile type", value)
+	context(attrs: IKeyValueMap)
+	override var overrideProjectileType: Int?
+		get() = super.overrideProjectileType
+		set(value) { super.overrideProjectileType = value }
 	
 	/**
 	 * In-Game: "N% movement speed on targets"

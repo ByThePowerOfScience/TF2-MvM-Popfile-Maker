@@ -37,10 +37,10 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	 *
 	 * Also determines if it's a "PDQ", which obviously builds minisentries
 	 */
-	override context(attrs: IKeyValueMap)
-	var wrenchBuildsMinisentry: Boolean?
-		get() = attrs.getTyped("mod wrench builds minisentry", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod wrench builds minisentry", value, BinaryIntCodec)
+	context(attrs: IKeyValueMap)
+	override var wrenchBuildsMinisentry: Boolean?
+		get() = super.wrenchBuildsMinisentry
+		set(value) { super.wrenchBuildsMinisentry = value }
 	
 	/**
 	 * Bonus:

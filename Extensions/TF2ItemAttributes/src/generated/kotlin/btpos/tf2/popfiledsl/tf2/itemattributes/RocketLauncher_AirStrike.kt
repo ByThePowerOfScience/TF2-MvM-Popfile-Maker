@@ -17,10 +17,10 @@ interface RocketLauncher_AirStrikeAttributes : RocketLauncherAttributes {
 	 *
 	 * This attribute is on all weapons, but it's specifically checked for here as well.
 	 */
-	override context(attrs: IKeyValueMap)
-	var clipsizeIncreaseOnKill: Int?
-		get() = attrs.getTyped("clipsize increase on kill")
-		set(value) = attrs.setNullable("clipsize increase on kill", value)
+	context(attrs: IKeyValueMap)
+	override var clipsizeIncreaseOnKill: Int?
+		get() = super.clipsizeIncreaseOnKill
+		set(value) { super.clipsizeIncreaseOnKill = value }
 }
 
 inline operator fun RocketLauncher_AirStrikeAttributes.invoke(scope: RocketLauncher_AirStrikeAttributes.() -> Unit) {

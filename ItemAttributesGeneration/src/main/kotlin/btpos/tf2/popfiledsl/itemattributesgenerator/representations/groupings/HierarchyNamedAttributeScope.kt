@@ -31,7 +31,7 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 			val overridesAttr = getOverriddenAttribute(attr)
 			val comment = buildComment(overridesAttr?.let { overridden -> overridden.innateDescription + "" + overridden.notes + attr.notes } ?: (attr.innateDescription + "" + attr.notes))
 			
-			comment + "\n" + (if (overridesAttr != null) "override " else "") + attr.propertyString()
+			comment + "\n" + attr.propertyString(overridesAttr != null)
 		}
 		
 		return listOf(

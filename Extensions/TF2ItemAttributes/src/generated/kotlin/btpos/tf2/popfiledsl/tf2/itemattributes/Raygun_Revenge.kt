@@ -17,10 +17,10 @@ interface Raygun_RevengeAttributes : RayGunAttributes {
 	 *
 	 * Removes ammo requirement to fire weapon.
 	 */
-	override context(attrs: IKeyValueMap)
-	var energyWeaponNoDrain: Boolean?
-		get() = attrs.getTyped("energy weapon no drain", BinaryIntCodec)
-		set(value) = attrs.setNullable("energy weapon no drain", value, BinaryIntCodec)
+	context(attrs: IKeyValueMap)
+	override var energyWeaponNoDrain: Boolean?
+		get() = super.energyWeaponNoDrain
+		set(value) { super.energyWeaponNoDrain = value }
 }
 
 inline operator fun Raygun_RevengeAttributes.invoke(scope: Raygun_RevengeAttributes.() -> Unit) {

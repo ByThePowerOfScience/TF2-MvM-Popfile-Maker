@@ -29,10 +29,10 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	 *
 	 * If true, set swing range to 72, else 48
 	 */
-	override context(attrs: IKeyValueMap)
-	var isASword: Boolean?
-		get() = attrs.getTyped("is_a_sword", BinaryIntCodec)
-		set(value) = attrs.setNullable("is_a_sword", value, BinaryIntCodec)
+	context(attrs: IKeyValueMap)
+	override var isASword: Boolean?
+		get() = super.isASword
+		set(value) { super.isASword = value }
 	
 	/**
 	 * 

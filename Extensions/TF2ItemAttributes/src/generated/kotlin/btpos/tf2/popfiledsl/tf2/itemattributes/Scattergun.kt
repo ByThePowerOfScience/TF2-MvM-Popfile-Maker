@@ -39,10 +39,10 @@ interface ScattergunAttributes : ShotgunAttributes {
 	 *
 	 * If true, reloads entire clip at once.
 	 */
-	override context(attrs: IKeyValueMap)
-	var scattergunNoReloadSingle: Boolean?
-		get() = attrs.getTyped("scattergun no reload single", BinaryIntCodec)
-		set(value) = attrs.setNullable("scattergun no reload single", value, BinaryIntCodec)
+	context(attrs: IKeyValueMap)
+	override var scattergunNoReloadSingle: Boolean?
+		get() = super.scattergunNoReloadSingle
+		set(value) { super.scattergunNoReloadSingle = value }
 }
 
 inline operator fun ScattergunAttributes.invoke(scope: ScattergunAttributes.() -> Unit) {

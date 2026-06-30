@@ -35,7 +35,7 @@ open class NamedAttributeScope(
 	
 	override fun generateTopLevelMembers(): List<String> {
 		val attrsInBody = attrs.joinToString("\n\n") {
-			buildComment(it.innateDescription) + "\n" + it.propertyString()
+			buildComment(it.innateDescription) + "\n" + it.propertyString(false)
 		}.prependIndent("\t")
 		
 		
@@ -64,7 +64,9 @@ open class NamedAttributeScope(
 		}
 	}
 	
-	override fun propertyString(): String {
+	override fun propertyString(isOverridden: Boolean): String {
+		if (isOverridden)
+			return "override val $varName get() = super.$varName"
 		return "val $varName get() = ${propertyValue()}"
 	}
 }

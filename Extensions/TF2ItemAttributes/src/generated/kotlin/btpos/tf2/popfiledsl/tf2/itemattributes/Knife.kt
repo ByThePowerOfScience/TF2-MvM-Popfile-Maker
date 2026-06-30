@@ -67,7 +67,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	 *
 	 * Base backstab damage against minibosses is 250 * this proportion.
 	 */
-	override val damage get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("damage bonus", "damage bonus HIDDEN"), "damage penalty")
+	override val damage get() = super.damage
 	
 	/**
 	 * In-Game: "Increase backstab damage against Giant Robots by N%"

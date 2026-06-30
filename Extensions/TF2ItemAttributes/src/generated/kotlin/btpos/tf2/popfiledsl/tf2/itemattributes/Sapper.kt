@@ -41,10 +41,10 @@ interface SapperAttributes : BuilderAttributes {
 	 *
 	 * else stuns for 4 seconds and radius is 200 HU
 	 */
-	override context(attrs: IKeyValueMap)
-	var roboSapper: Int?
-		get() = attrs.getTyped("robo sapper")
-		set(value) = attrs.setNullable("robo sapper", value)
+	context(attrs: IKeyValueMap)
+	override var roboSapper: Int?
+		get() = super.roboSapper
+		set(value) { super.roboSapper = value }
 }
 
 inline operator fun SapperAttributes.invoke(scope: SapperAttributes.() -> Unit) {

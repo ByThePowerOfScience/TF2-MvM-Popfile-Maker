@@ -73,13 +73,18 @@ data class NamedAttribute(
 		this.codec = codec(this)
 	}
 	
-	override fun propertyString(): String {
+	override fun propertyString(isOverridden: Boolean): String {
 		val codec = codec?.codecIdentifier?.let { ", $it" } ?: ""
+		val (getter, setter) = if (isOverridden) {
+			"get() = super.${varName}" to "set(value) { super.${varName} = value }"
+		} else {
+			"""get() = attrs.getTyped("$attrName"$codec)""" to """set(value) = attrs.setNullable("$attrName", value$codec)"""
+		}
 		return """
 			context(attrs: IKeyValueMap)
-			var $varName: ${getKotlinType()}?
-				get() = attrs.getTyped("$attrName"$codec)
-				set(value) = attrs.setNullable("$attrName", value$codec)
+			${if (isOverridden) "override " else ""}var $varName: ${getKotlinType()}?
+				$getter
+				$setter
 		""".trimIndent()
 	}
 	

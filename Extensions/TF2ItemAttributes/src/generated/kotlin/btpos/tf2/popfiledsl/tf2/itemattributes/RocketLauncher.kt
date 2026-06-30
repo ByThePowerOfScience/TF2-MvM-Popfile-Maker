@@ -19,10 +19,10 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	 *
 	 * Else use a numbered [ProjectileType]
 	 */
-	override context(attrs: IKeyValueMap)
-	var overrideProjectileType: Int?
-		get() = attrs.getTyped("override projectile type")
-		set(value) = attrs.setNullable("override projectile type", value)
+	context(attrs: IKeyValueMap)
+	override var overrideProjectileType: Int?
+		get() = super.overrideProjectileType
+		set(value) { super.overrideProjectileType = value }
 	
 	/**
 	 * 
