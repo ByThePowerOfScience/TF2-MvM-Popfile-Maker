@@ -1,8 +1,8 @@
 package btpos.source.vdfdsl.types.specifics
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue
+import btpos.source.vdfdsl.serialization.IVDFSerializableValue_Primitive
 
-class NavArea(override val _vdfRepr: String) : IVDFSerializableValue<String> {
+class NavArea(override val _primitiveRepr: String) : IVDFSerializableValue_Primitive<String> {
 	companion object
 }
 

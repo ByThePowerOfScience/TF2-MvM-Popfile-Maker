@@ -5,8 +5,6 @@ import btpos.source.vdfdsl.serialization.VDFKeyValue
 import btpos.source.vdfdsl.serialization.VDFSubtree
 import btpos.source.vdfdsl.serialization.codecs.Codec
 import kotlin.collections.set
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 interface IKeyValueMap : MutableMap<Any, Any> {
 	fun <T> getTyped(key: Any): T?

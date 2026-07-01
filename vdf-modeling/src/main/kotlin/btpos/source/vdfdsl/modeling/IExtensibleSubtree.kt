@@ -97,7 +97,7 @@ interface IExtensibleSubtree {
 		 * Note that the only difference between a struct and a named map is that structs have their _own_ names.
 		 * As such, there is no way to name these.
 		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [btpos.source.vdfdsl.types.spawners.Spawner] and its subclasses),
-		 * use [addField] with a [PopFileMap][btpos.source.vdfdsl.serialization.VDFSubtree]
+		 * use [addField] with a [PopFileMap][VDFSubtree]
 		 * as its value to allow the parent scope to decide its name.
 		 */
 		fun <T : IVDFSerializableKeyValue> singleStruct(isRequired: Boolean = false) = object : ReadWriteProperty<IExtensibleSubtree, T?> {
