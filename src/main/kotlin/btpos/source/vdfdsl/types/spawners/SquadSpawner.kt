@@ -1,7 +1,7 @@
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.multiStruct
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 
 class SquadSpawner : Spawner() {
 	/*
@@ -11,7 +11,7 @@ class SquadSpawner : Spawner() {
 	- subtree[] (spawner)
 	 */
 	
-	override val _popFileStructIdentifier: Any
+	override val _structIdentifier: Any
 		get() = "Squad"
 }
 

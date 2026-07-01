@@ -1,6 +1,6 @@
 (ns btpos.source.vdfdsl.serializer
   (:require [clojure.string :as str])
-  (:import (btpos.source.vdfdsl.serialization VDFKeyValue VDFSubtree VDFStringLiteral)
+  (:import (btpos.source.vdfdsl.serialization VDFKeyValue VDFSubtree)
            (clojure.lang ISeq)
            (java.util Collection)))
 
@@ -37,17 +37,13 @@
 
 
 
-; default, just `toString` it
+; wrap every primitive value in quotes, string or otherwise, screw it
 (defmethod pop-file-serialize-key-or-value :default [item]
-  (str item))
+  (str \" item \"))
 
 ; I swear I saw this done once, but this might be an error.
 (defmethod pop-file-serialize-key-or-value ::collection [item]
   (str/join " " (seq item)))
-
-; string literals need to be quoted, but any other primitive (including normal strings) can be pasted as-is
-(defmethod pop-file-serialize-key-or-value VDFStringLiteral [^VDFStringLiteral item]
-  (str \" (.string item) \"))
 
 
 ; surround subtrees' elements with braces

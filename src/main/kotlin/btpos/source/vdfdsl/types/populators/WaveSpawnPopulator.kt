@@ -1,15 +1,14 @@
 package btpos.source.vdfdsl.types.populators
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.serialization.IVDFSerializableValue
-import btpos.source.vdfdsl.serialization.codecs.StringLiteralCodec
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.types.specifics.Where
 
 class WaveSpawnPopulator : Populator() {
-	override val _popFileStructIdentifier: Any
+	override val _structIdentifier: Any
 		get() = "WaveSpawn"
 	
 	class Support(override val _vdfRepr: String) : IVDFSerializableValue<String> {
@@ -30,7 +29,7 @@ class WaveSpawnPopulator : Populator() {
 inline fun Populator.Companion.WaveSpawn(configure: WaveSpawnPopulator.() -> Unit) = WaveSpawnPopulator().apply(configure)
 
 
-var WaveSpawnPopulator.template: String? by addField("Template", StringLiteralCodec)
+var WaveSpawnPopulator.template: String? by addField("Template")
 var WaveSpawnPopulator.where: Where? by addField("Where")
 var WaveSpawnPopulator.totalCount: Int? by addField("TotalCount")
 var WaveSpawnPopulator.maxActive: Int? by addField("MaxActive")

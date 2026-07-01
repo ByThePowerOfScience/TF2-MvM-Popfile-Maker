@@ -1,0 +1,10 @@
+[versions]
+	kotlin = "2.3.21"
+
+
+[libraries]
+	datafixerupper = { module="com.mojang:datafixerupper", version="1.0.20" }
+
+[plugins]
+	kotlin-jvm = { id="org.jetbrains.kotlin.jvm", version.ref="kotlin" }
+	buildconfig = { id = "com.github.gmazzo.buildconfig",  version = "6.0.10" }

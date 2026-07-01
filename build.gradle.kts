@@ -6,7 +6,7 @@ import org.gradle.kotlin.dsl.testRuntimeOnly
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	kotlin("jvm") version "2.3.10"
+	id("general-convention")
 	id("dev.clojurephant.clojure") version "0.9.1"
 }
 
@@ -25,20 +25,14 @@ repositories {
 
 dependencies {
 	implementation ("org.clojure:clojure:1.11.1")
-	// and any other dependencies you want on the compile classpath
-	// implementation 'group:artifact:version'
-	
-	// needed for test integration
 	testRuntimeOnly ("dev.clojurephant:jovial:0.4.2")
-	// and any other test-specific dependencies
-	// testImplementation 'group:artifact:version'
-	
-	// dependencies for REPL use only
 	devImplementation("org.clojure:tools.namespace:1.3.0")
+	
+	
 	testImplementation(kotlin("test"))
-	api(project(":vdf-modeling"))
-	api(project(":VDFParser"))
-	api(project(":Extensions:TF2ItemAttributes"))
+	api("btpos.source.vdfdsl.vdf:vdf-modeling:1.0-SNAPSHOT")
+	api("btpos.source.vdfdsl.vdf:vdf-parser:1.0-SNAPSHOT")
+	api("btpos.source.vdfdsl.tf2:TF2Items:1.0-SNAPSHOT")
 }
 
 kotlin {

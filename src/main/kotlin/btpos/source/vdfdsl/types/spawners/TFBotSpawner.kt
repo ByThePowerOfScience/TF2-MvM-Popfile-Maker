@@ -1,14 +1,14 @@
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.modeling.KeyValueMapImpl
+import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.types.bots.BehaviorModifier
 import btpos.source.vdfdsl.types.bots.BotSkill
 import btpos.source.vdfdsl.types.bots.TFBotAttribute
 import btpos.source.vdfdsl.types.bots.TFClass
 import btpos.source.vdfdsl.types.bots.WeaponRestriction
-import btpos.source.vdfdsl.types.items.TFItem
 
 /**
  * ```
@@ -18,7 +18,7 @@ import btpos.source.vdfdsl.types.items.TFItem
  * ```
  */
 class TFBotSpawner : Spawner() {
-	override val _popFileStructIdentifier
+	override val _structIdentifier
 		get() = "TFBot"
 }
 

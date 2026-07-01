@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.types.populators
 
-import btpos.source.vdfdsl.modeling.AbstractMvMStruct
-import btpos.source.vdfdsl.modeling.PopFileDSL
+import btpos.source.vdfdsl.modeling.AbstractVDFStruct
+import btpos.source.vdfdsl.tf2.PopFileDSL
 
 @PopFileDSL
-abstract class Populator : AbstractMvMStruct() {
+abstract class Populator : AbstractVDFStruct() {
 	companion object
 }

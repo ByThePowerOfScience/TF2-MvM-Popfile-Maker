@@ -7,14 +7,29 @@
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
+              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/TF2ItemGeneration" name="TF2ItemGeneration">
+                <projects>
+                  <project path="$PROJECT_DIR$/TF2ItemGeneration" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/TF2Items" name="TF2Items">
+                <projects>
+                  <project path="$PROJECT_DIR$/TF2Items" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/vdf-modeling" name="vdf-modeling">
                 <projects>
                   <project path="$PROJECT_DIR$/vdf-modeling" />
                 </projects>
               </build>
-              <build path="$PROJECT_DIR$/VDFParser" name="VDFParser">
+              <build path="$PROJECT_DIR$/vdf-parser" name="vdf-parser">
                 <projects>
-                  <project path="$PROJECT_DIR$/VDFParser" />
+                  <project path="$PROJECT_DIR$/vdf-parser" />
                 </projects>
               </build>
             </builds>
@@ -24,28 +39,31 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Extensions" />
-            <option value="$PROJECT_DIR$/Extensions/TF2ItemAttributes" />
-            <option value="$PROJECT_DIR$/ItemAttributesGeneration" />
-            <option value="$PROJECT_DIR$/VDFParser" />
+            <option value="$PROJECT_DIR$/TF2ItemGeneration" />
+            <option value="$PROJECT_DIR$/TF2Items" />
+            <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/vdf-modeling" />
+            <option value="$PROJECT_DIR$/vdf-parser" />
           </set>
         </option>
         <option name="myGradleHome" value="" />
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/Extensions/TF2/ItemsAndCosmetics" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/Extensions/TF2/ItemsAndCosmetics" />
-          </set>
-        </option>
-        <option name="myGradleHome" value="" />
-      </GradleProjectSettings>
-      <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$/vdf-modeling" />
         <option name="modules">
           <set>
+            <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/vdf-modeling" />
           </set>
         </option>

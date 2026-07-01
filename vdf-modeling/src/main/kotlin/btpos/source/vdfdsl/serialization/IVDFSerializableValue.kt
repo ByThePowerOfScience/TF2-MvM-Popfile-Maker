@@ -3,7 +3,7 @@ package btpos.source.vdfdsl.serialization
 
 /**
  * Anything that has a popfile representation that is different from its own object,
- * such as being serialized to a [keyword][String], a [quoted string][VDFStringLiteral], or a [map][VDFSubtree].
+ * such as being serialized to a word/phrase, a number, or a [map][VDFSubtree].
  *
  * Note that lists must be serialized using multiple keyvalues: \[key listitem1], \[key listitem2], etc
  */
@@ -75,21 +75,4 @@ data class VDFSubtree(val entries: Collection<VDFKeyValue> = listOf()) {
 	
 	
 	operator fun plus(entries: Iterable<VDFKeyValue>) = withEntries(entries)
-}
-
-/**
- * Helper for [IVDFSerializableValue] to just auto-quote the string
- */
-interface IVDFLiteralStringSerializable : IVDFSerializableValue<VDFStringLiteral> {
-	override val _vdfRepr: VDFStringLiteral
-		get() = VDFStringLiteral(popFileStringValue)
-	
-	val popFileStringValue: String
-}
-
-@JvmRecord
-data class VDFStringLiteral(val string: String) {
-	companion object {
-		fun String.literal() = VDFStringLiteral(this)
-	}
 }

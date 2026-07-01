@@ -1,11 +1,11 @@
 package btpos.source.vdfdsl.types.specifics
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtreeMap
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtreeMap
 import btpos.source.vdfdsl.serialization.IVDFSerializableKeyValue
 import org.intellij.lang.annotations.Language
 
-class OutputAction : IMvMSubtreeMap // doesn't have its own name, it's just a map with a name GIVEN to it
+class OutputAction : IExtensibleSubtreeMap // doesn't have its own name, it's just a map with a name GIVEN to it
 {
 	override val _rawEntries: MutableMap<Any, IVDFSerializableKeyValue> = mutableMapOf()
 	

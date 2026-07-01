@@ -1,10 +1,10 @@
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.modeling.AbstractMvMStruct
-import btpos.source.vdfdsl.modeling.PopFileDSL
+import btpos.source.vdfdsl.modeling.AbstractVDFStruct
+import btpos.source.vdfdsl.tf2.PopFileDSL
 
 @PopFileDSL
-abstract class Spawner : AbstractMvMStruct() {
+abstract class Spawner : AbstractVDFStruct() {
 	/**
 	 * This is Kotlin's version of a "static namespace", AKA where you put stuff to reference it as `Spawner.something`.
 	 *
