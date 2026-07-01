@@ -34,6 +34,15 @@
         <option name="myGradleHome" value="" />
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Extensions/TF2/ItemsAndCosmetics" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/Extensions/TF2/ItemsAndCosmetics" />
+          </set>
+        </option>
+        <option name="myGradleHome" value="" />
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/vdf-modeling" />
         <option name="modules">
           <set>

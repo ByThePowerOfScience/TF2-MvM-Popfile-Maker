@@ -23,6 +23,8 @@ sourceSets.main {
 	kotlin.srcDir("src/generated/kotlin")
 }
 
+sourceSets.create("file-generation")
+
 tasks.test {
 	useJUnitPlatform()
 }
