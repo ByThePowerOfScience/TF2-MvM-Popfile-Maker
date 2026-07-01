@@ -1,8 +1,8 @@
 package btpos.source.vdfdsl.types.bots
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue
+import btpos.source.vdfdsl.serialization.IVDFSerializableValue_Primitive
 
-class TFBotAttribute(override val _vdfRepr: Any) : IVDFSerializableValue<Any> {
+class TFBotAttribute(override val _primitiveRepr: String) : IVDFSerializableValue_Primitive<String> {
 	companion object {
 		val RemoveOnDeath = TFBotAttribute("RemoveOnDeath")
 		val Aggressive = TFBotAttribute("Aggressive")

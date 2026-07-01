@@ -2,7 +2,7 @@ package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue
+import btpos.source.vdfdsl.serialization.IVDFSerializableValue_Primitive
 import btpos.source.vdfdsl.types.populators.MissionPopulator.Objective
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.Where
@@ -11,7 +11,7 @@ class MissionPopulator : Populator() {
 	override val _structIdentifier: Any
 		get() = "Mission"
 	
-	data class Objective(override val _vdfRepr: Any) : IVDFSerializableValue<Any> {
+	data class Objective(override val _primitiveRepr: String) : IVDFSerializableValue_Primitive<Any> {
 		companion object {
 			val DESTROY_SENTRIES = Objective("DestroySentries")
 			val SEEK_AND_DESTROY = Objective("SeekAndDestroy")

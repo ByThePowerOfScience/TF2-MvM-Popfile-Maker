@@ -1,3 +1,5 @@
+import org.gradle.api.internal.artifacts.dsl.dependencies.DependenciesExtensionModule.module
+
 plugins {
 	id("general-convention")
 }
@@ -10,7 +12,8 @@ repositories {
 }
 
 dependencies {
-	implementation(libs.datafixerupper)
+	api("btpos.source.vdfdsl.vdf:vdf-modeling:1.0-SNAPSHOT")
+	api("btpos.source.vdfdsl.vdf:vdf-parser:1.0-SNAPSHOT")
 	
 	testImplementation(kotlin("test"))
 }
