@@ -1,12 +1,11 @@
 package btpos.source.vdfdsl.types.populators
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.multiStruct
-import btpos.source.vdfdsl.serialization.codecs.StringLiteralCodec
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.types.specifics.OutputAction
 
 class WavePopulator : Populator() {
-	override val _popFileStructIdentifier: Any
+	override val _structIdentifier: Any
 		get() = "Wave"
 }
 
@@ -15,9 +14,9 @@ inline fun Populator.Companion.Wave(configure: WavePopulator.() -> Unit) = WaveP
 
 val WavePopulator.waveSpawn: MutableList<WaveSpawnPopulator>? by multiStruct()
 
-var WavePopulator.sound: String? by addField("Sound", StringLiteralCodec)
+var WavePopulator.sound: String? by addField("Sound")
 
-var WavePopulator.description: String? by addField("Description", StringLiteralCodec)
+var WavePopulator.description: String? by addField("Description")
 
 var WavePopulator.waitWhenDone: Double? by addField("WaitWhenDone")
 

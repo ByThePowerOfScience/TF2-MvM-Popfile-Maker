@@ -2,12 +2,12 @@
 
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 
 @Deprecated("According to sigsegv: \"Old and crusty\"")
 class MobSpawner : Spawner() {
-	override val _popFileStructIdentifier: Any
+	override val _structIdentifier: Any
 		get() = "Mob"
 }
 

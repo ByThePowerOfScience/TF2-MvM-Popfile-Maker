@@ -1,8 +1,8 @@
 plugins {
-	kotlin("jvm") version "2.3.21"
+	id("general-convention")
 }
 
-group = "btpos.source.vdf"
+group = "btpos.source.vdfdsl.vdf"
 version = "1.0-SNAPSHOT"
 
 repositories {

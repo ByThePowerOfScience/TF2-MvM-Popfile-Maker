@@ -1,11 +1,11 @@
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 
 class RandomChoiceSpawner : Spawner() {
 	val spawners: MutableList<Spawner> by multiStruct()
 	
-	override val _popFileStructIdentifier: Any
+	override val _structIdentifier: Any
 		get() = "RandomChoice"
 }
 

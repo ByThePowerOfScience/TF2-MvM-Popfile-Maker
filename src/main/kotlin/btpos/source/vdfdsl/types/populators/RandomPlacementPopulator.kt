@@ -1,12 +1,12 @@
 package btpos.source.vdfdsl.types.populators
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.NavArea
 
 class RandomPlacementPopulator : Populator() {
-	override val _popFileStructIdentifier: Any
+	override val _structIdentifier: Any
 		get() = "RandomPlacement"
 }
 

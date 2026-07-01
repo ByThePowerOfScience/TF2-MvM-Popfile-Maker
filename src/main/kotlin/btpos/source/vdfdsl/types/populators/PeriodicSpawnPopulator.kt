@@ -1,22 +1,22 @@
 package btpos.source.vdfdsl.types.populators
 
-import btpos.source.vdfdsl.modeling.AbstractMvMStruct
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.modeling.AbstractVDFStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.types.populators.PeriodicSpawnPopulator.When
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.Where
 
 class PeriodicSpawnPopulator : Populator() {
-	class When : AbstractMvMStruct() {
-		override val _popFileStructIdentifier get() = "When"
+	class When : AbstractVDFStruct() {
+		override val _structIdentifier get() = "When"
 		
 		var minInterval: Double? by addField("MinInterval")
 		
 		var maxInterval: Double? by addField("MaxInterval")
 	}
 	
-	override val _popFileStructIdentifier: Any
+	override val _structIdentifier: Any
 		get() = "PeriodicSpawn"
 }
 

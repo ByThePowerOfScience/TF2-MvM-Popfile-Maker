@@ -1,15 +1,15 @@
 package btpos.source.vdfdsl.types
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.multiStruct
-import btpos.source.vdfdsl.modeling.IMvMSubtreeMap
-import btpos.source.vdfdsl.modeling.PopFileDSL
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtreeMap
 import btpos.source.vdfdsl.serialization.IVDFSerializableKeyValue
 import btpos.source.vdfdsl.serialization.codecs.Codec
+import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.populators.Populator
 
 @PopFileDSL
-class PopulationManager : IMvMSubtreeMap {
+class PopulationManager : IExtensibleSubtreeMap {
 	override val _rawEntries: MutableMap<Any, IVDFSerializableKeyValue> = mutableMapOf()
 	
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace

@@ -1,14 +1,14 @@
 package btpos.source.vdfdsl.types.populators
 
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IMvMSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.serialization.IVDFSerializableValue
 import btpos.source.vdfdsl.types.populators.MissionPopulator.Objective
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.Where
 
 class MissionPopulator : Populator() {
-	override val _popFileStructIdentifier: Any
+	override val _structIdentifier: Any
 		get() = "Mission"
 	
 	data class Objective(override val _vdfRepr: Any) : IVDFSerializableValue<Any> {
