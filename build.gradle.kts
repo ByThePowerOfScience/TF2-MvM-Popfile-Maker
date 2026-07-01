@@ -19,6 +19,8 @@ repositories {
 		name = "Clojars" // name can be ommitted, but is helpful in troubleshooting
 		url = uri("https://repo.clojars.org/")
 	}
+	maven(url="https://libraries.minecraft.net")
+	
 }
 
 dependencies {

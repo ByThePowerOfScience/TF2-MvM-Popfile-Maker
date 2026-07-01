@@ -3,7 +3,6 @@
 package btpos.source.vdfdsl.types.items.weapons
 
 object WeaponsByClass {
-	
 	object Scout {
 		object Primary {
 			
