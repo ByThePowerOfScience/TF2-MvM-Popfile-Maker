@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.types.populators
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
@@ -11,7 +12,9 @@ class WaveSpawnPopulator : Populator() {
 	override val _structIdentifier: String
 		get() = "WaveSpawn"
 	
-	class Support(override val _vdfRepr: String) : IVDFRepresentableValue<String> {
+	class Support(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
+		override val _vdfRepr get() = VDFPrimitive(name)
+		
 		companion object {
 			/**
 			 * When set, enables support bots, respecting the maximum number of bots set by [WaveSpawner.totalCount][totalCount].

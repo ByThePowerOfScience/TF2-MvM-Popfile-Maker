@@ -1,7 +1,6 @@
 
 plugins {
 	id("general-convention")
-	id("clojure-convention")
 }
 
 group = "btpos.source.vdfdsl"

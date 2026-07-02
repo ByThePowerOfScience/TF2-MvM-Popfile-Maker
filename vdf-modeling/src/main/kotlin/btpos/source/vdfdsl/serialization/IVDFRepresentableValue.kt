@@ -2,6 +2,7 @@ package btpos.source.vdfdsl.serialization
 
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.backing.VDFPrimitive.Companion.PRIMITIVE_SERIALIZERS
 import kotlin.jvm.java
 
 
@@ -22,18 +23,16 @@ interface IVDFRepresentableValue<out T : VDFObject> : IVDFRepresentable {
 	val _vdfRepr: T
 	
 	companion object {
-		val PRIMITIVE_SERIALIZERS = mapOf<Class<*>, (Any) -> VDFObject>(
-			String::class.java to { VDFPrimitive(it as String) },
-			Int::class.java to { VDFPrimitive(it as Int) },
-			Float::class.java to { VDFPrimitive(it as Float) },
-			Double::class.java to { VDFPrimitive((it as Double).toFloat()) },
-			Boolean::class.java to { VDFPrimitive(it as Boolean) },
-		)
 		
 		fun isValueRepresentable(cls: Class<*>): Boolean {
 			return cls.isAssignableFrom(IVDFRepresentableValue::class.java)
 			       || cls.isAssignableFrom(VDFObject::class.java)
 			       || cls in PRIMITIVE_SERIALIZERS
+		}
+		
+		fun requireValueRepresentable(cls: Class<*>) {
+			if (!isValueRepresentable(cls))
+				throw IllegalArgumentException("Type $cls is not serializable to a VDF. Value must either implement IVDFRepresentableValue or be a String, number, or boolean.")
 		}
 		
 		/**

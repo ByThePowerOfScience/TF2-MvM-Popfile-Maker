@@ -1,8 +1,11 @@
 package btpos.source.vdfdsl.types.specifics
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
-class NavArea(override val _vdfRepr: String) : IVDFRepresentableValue<String> {
+class NavArea(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
+	override val _vdfRepr get() = VDFPrimitive(name)
+	
 	companion object
 }
 

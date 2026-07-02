@@ -15,6 +15,20 @@ data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject) : VDFObject(
 		return input.withEntry(this)
 	}
 	
+	override fun writeToVDF(writer: Appendable, indent: Int) {
+		key.writeToVDF(writer, indent)
+		when (value) {
+			is VDFSubtree -> {
+				writer.writeLine(indent)
+				value.writeToVDF(writer, indent)
+			}
+			else -> {
+				writer.append(' ')
+				value.writeToVDF(writer, indent)
+			}
+		}
+	}
+	
 	companion object {
 		/**
 		 * Factory for easy "Only make the entry if the value is set"

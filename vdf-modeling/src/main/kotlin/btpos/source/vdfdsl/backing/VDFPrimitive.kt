@@ -3,14 +3,24 @@ package btpos.source.vdfdsl.backing
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
 data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentableValue<VDFPrimitive> {
-	
 	constructor(i: Int) : this(i.toString())
 	
 	constructor(i: Float) : this(i.toString())
 	
-	
+	override fun writeToVDF(writer: Appendable, indent: Int) {
+		writer.append('"').append(stringValue).append('"')
+	}
 	
 	companion object {
+		val PRIMITIVE_SERIALIZERS = mapOf<Class<*>, (Any) -> VDFObject>(
+			String::class.java to { VDFPrimitive(it as String) },
+			Int::class.java to { VDFPrimitive(it as Int) },
+			Float::class.java to { VDFPrimitive(it as Float) },
+			Double::class.java to { VDFPrimitive((it as Double).toFloat()) },
+			Boolean::class.java to { VDFPrimitive(it as Boolean) },
+		)
+		
+		
 		val TRUE = VDFPrimitive("1")
 		val FALSE = VDFPrimitive("0")
 		
@@ -18,12 +28,28 @@ data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentabl
 	        return if (bool) TRUE else FALSE
 	    }
 		
-		
-		fun fromNumber(n: Number) = when (n) {
+		operator fun invoke(n: Number) = when (n) {
 			is Int -> VDFPrimitive(n)
 			is Float -> VDFPrimitive(n)
 			is Double -> VDFPrimitive(n.toFloat())
 			else -> VDFPrimitive(n.toString()) // longs can't REALLY be serialized as integers, but they can be serialized as strings
+		}
+		
+		operator fun invoke(o: Any) = when (o) {
+			is String -> VDFPrimitive(o)
+			is Number -> VDFPrimitive(o)
+			is Boolean -> VDFPrimitive(bool=o)
+			else -> throw IllegalArgumentException("Object $o is not a primitive. Valid types: String, Number, Boolean")
+		}
+		
+		fun isPrimitive(cls: Class<*>): Boolean {
+			return cls.isAssignableFrom(VDFPrimitive::class.java) || cls in PRIMITIVE_SERIALIZERS
+		}
+		
+		fun requirePrimitive(cls: Class<*>) {
+			if (!isPrimitive(cls)) {
+				throw IllegalArgumentException("Type ${cls.simpleName} is not serializable to a primitive value.  Valid types: String, Number, Boolean.")
+			}
 		}
 	}
 	
@@ -31,25 +57,4 @@ data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentabl
 		get() = this
 	
 	
-	val booleanValue: Boolean?
-		get() = stringValue.singleOrNull()?.takeIf { it == '1' || it == '0' }?.let { it == '1' }
-
-	val numberValue: Number?
-		get() {
-			var numDots = 0
-
-			stringValue.forEach {
-				if (it == '.') {
-					++numDots
-				} else if (!it.isDigit()) {
-					return null;
-				}
-			}
-
-			return when (numDots) {
-				0 -> stringValue.toInt()
-				1 -> stringValue.toFloat()
-				else -> null
-			}
-		}
 }

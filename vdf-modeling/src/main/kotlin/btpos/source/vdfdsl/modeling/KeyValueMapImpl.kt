@@ -31,7 +31,7 @@ class KeyValueMapImpl(private val _attributes: MutableMap<Any, Any> = mutableMap
 {
 	override val _vdfRepr
 		get() = VDFSubtree(_attributes.map { (k, v) ->
-			VDFKeyValue(serializeDynamic(k), serializeDynamic(v))
+			VDFKeyValue(VDFPrimitive(k), serializeDynamic(v))
 		})
 	
 	@Suppress("UNCHECKED_CAST")
