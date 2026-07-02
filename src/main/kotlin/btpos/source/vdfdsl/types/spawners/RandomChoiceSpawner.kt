@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 class RandomChoiceSpawner : Spawner() {
 	val spawners: MutableList<Spawner> by multiStruct()
 	
-	override val _structIdentifier: Any
+	override val _structIdentifier: String
 		get() = "RandomChoice"
 }
 

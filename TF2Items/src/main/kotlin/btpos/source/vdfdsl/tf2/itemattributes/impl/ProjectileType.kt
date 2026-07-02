@@ -1,9 +1,10 @@
 package btpos.source.vdfdsl.tf2.itemattributes.impl
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue_Primitive
+import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
-class ProjectileType(val number: Int) : IVDFSerializableValue_Primitive<Int> {
-	override val _primitiveRepr: Int get() = number
+class ProjectileType(val number: Int) : IVDFRepresentableValue<VDFPrimitive> {
+	override val _vdfRepr: VDFPrimitive get() = VDFPrimitive(number)
 	
 	companion object {
 		val TF_PROJECTILE_NONE = ProjectileType(0)

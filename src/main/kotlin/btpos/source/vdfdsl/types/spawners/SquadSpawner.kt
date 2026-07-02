@@ -11,7 +11,7 @@ class SquadSpawner : Spawner() {
 	- subtree[] (spawner)
 	 */
 	
-	override val _structIdentifier: Any
+	override val _structIdentifier: String
 		get() = "Squad"
 }
 

@@ -1,10 +1,12 @@
 package btpos.source.vdfdsl.modeling
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableKeyValue
-import btpos.source.vdfdsl.serialization.VDFKeyValue
-import btpos.source.vdfdsl.serialization.VDFSubtree
+import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.serialization.IVDFRepresentable
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
-abstract class SubtreeEntry(val fieldName: String, val isRequired: Boolean) : IVDFSerializableKeyValue {
+abstract class SubtreeEntry(val fieldName: String, val isRequired: Boolean) : IVDFRepresentableKeyValue {
 	protected fun throwIfRequired() {
 		if (isRequired)
 			error("Missing required field: $fieldName")
@@ -13,7 +15,7 @@ abstract class SubtreeEntry(val fieldName: String, val isRequired: Boolean) : IV
 
 // because we serialize all lists as Key Value1 Key Value2,
 // properties that allow multiple values are fine to use a list as the entry
-class NamedValue<K : Any, V : Any>(isRequired: Boolean, var key: K, var value: V? = null,)
+class NamedValue<K : Any, V : Any>(isRequired: Boolean, var key: K, var value: V? = null)
 	: SubtreeEntry(key.toString(), isRequired)
 {
 	override fun _serialize(input: VDFSubtree): VDFSubtree {
@@ -22,11 +24,11 @@ class NamedValue<K : Any, V : Any>(isRequired: Boolean, var key: K, var value: V
 			return input;
 		}
 		
-		return input + VDFKeyValue(key, value)
+		return input + VDFKeyValue(IVDFRepresentableValue.serializeDynamic(key), IVDFRepresentableValue.serializeDynamic(value))
 	}
 }
 
-class SelfNamedValue<T : IVDFSerializableKeyValue>(isRequired: Boolean)
+class SelfNamedValue<T : IVDFRepresentableKeyValue>(isRequired: Boolean)
 	: SubtreeEntry("subtree", isRequired)
 {
 	var item: T? = null
@@ -42,7 +44,7 @@ class SelfNamedValue<T : IVDFSerializableKeyValue>(isRequired: Boolean)
 /**
  * A list of items that each defines their own key to specify their type, so the parent map can't assign a key to them
  */
-class SelfNamedValueList<T : IVDFSerializableKeyValue>(isRequired: Boolean, val innerList: MutableList<T> = mutableListOf())
+class SelfNamedValueList<T : IVDFRepresentableKeyValue>(isRequired: Boolean, val innerList: MutableList<T> = mutableListOf())
 	: SubtreeEntry("subtrees", isRequired), MutableList<T> by innerList
 {
 	override fun _serialize(input: VDFSubtree): VDFSubtree {

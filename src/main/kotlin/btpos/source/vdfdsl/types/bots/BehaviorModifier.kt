@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.types.bots
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue
-import btpos.source.vdfdsl.serialization.VDFPrimitive
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
 
-enum class BehaviorModifier : IVDFSerializableValue<VDFPrimitive> {
+enum class BehaviorModifier : IVDFRepresentableValue<VDFPrimitive> {
 	@Deprecated("Once valid, no longer valid")
 	Idle,
 	/** Synonym for [TFBotAttribute.Aggressive]*/

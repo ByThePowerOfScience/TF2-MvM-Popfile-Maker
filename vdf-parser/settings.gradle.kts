@@ -8,3 +8,11 @@ plugins {
 }
 
 rootProject.name = "vdf-parser"
+
+dependencyResolutionManagement {
+	versionCatalogs {
+		create("libs") {
+			from(files("../gradle/libs.versions.toml"))
+		}
+	}
+}

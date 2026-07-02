@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.types.specifics.OutputAction
 
 class TankSpawner : Spawner() {
 	
-	override val _structIdentifier
+	override val _structIdentifier: String
 		get() = "Tank"
 }
 

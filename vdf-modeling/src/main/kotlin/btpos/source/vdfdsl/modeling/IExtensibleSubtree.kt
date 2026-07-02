@@ -1,8 +1,8 @@
 package btpos.source.vdfdsl.modeling
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableKeyValue
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue
-import btpos.source.vdfdsl.serialization.VDFSubtree
+import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.serialization.codecs.Codec
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -14,13 +14,13 @@ import kotlin.reflect.KProperty
  * This is fully extensible with new keys on the fly using the [factories][Companion].
  * See subclasses of [AbstractVDFStruct] for implementation.
  */
-interface IExtensibleSubtree {
+interface IExtensibleSubtree : IVDFRepresentableValue<VDFSubtree> {
 	/**
 	 * A bunch of raw items, keyed by whatever arbitrary value is used to retrieve them for user use.
 	 *
 	 * All keys will be ignored when serializing the entries to a popfile. Values are expected to provide their own keys.
 	 */
-	val _rawEntries: MutableMap<Any, IVDFSerializableKeyValue>
+	val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue>
 	
 	/**
 	 * Keep a stacktrace log of where the object was created,
@@ -69,26 +69,27 @@ interface IExtensibleSubtree {
 		 *
 		 * @param key The key this item will be serialized under.
 		 */
-		fun <T : Any> addField(key: Any, isRequired: Boolean = false, initialValue: (() -> T)? = null): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
-				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<Any, T> {
+		fun <V : Any> addField(key: Any, isRequired: Boolean = false, initialValue: (() -> V)? = null): ReadWriteProperty<IExtensibleSubtree, V?> {
+			require(IVDFRepresentableValue.isValueRepresentable(key.javaClass)) {
+				"Key '$key' of type '${key.javaClass}' is not a serializable value."
+			}
+			
+			return object : ReadWriteProperty<IExtensibleSubtree, V?> {
+				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<Any, V> {
 					return thisRef._rawEntries.computeIfAbsent(prop) {
-						NamedValue<Any, T>(isRequired, key)
-					} as NamedValue<Any, T>
+						NamedValue(isRequired, key, initialValue?.invoke())
+					} as NamedValue<Any, V>
 				}
 				
-				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
+				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): V? {
 					return getFromMap(thisRef, property).value
 				}
 				
-				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
+				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: V?) {
 					getFromMap(thisRef, property).value = value
 				}
 			}
 		}
-		
-		
-		
 		
 		
 		/**
@@ -100,7 +101,7 @@ interface IExtensibleSubtree {
 		 * use [addField] with a [PopFileMap][VDFSubtree]
 		 * as its value to allow the parent scope to decide its name.
 		 */
-		fun <T : IVDFSerializableKeyValue> singleStruct(isRequired: Boolean = false) = object : ReadWriteProperty<IExtensibleSubtree, T?> {
+		fun <T : IVDFRepresentableKeyValue> singleStruct(isRequired: Boolean = false) = object : ReadWriteProperty<IExtensibleSubtree, T?> {
 			private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries.computeIfAbsent(prop) {
 				SelfNamedValue<T>(isRequired)
 			} as SelfNamedValue<T>
@@ -130,7 +131,7 @@ interface IExtensibleSubtree {
 		 * }
 		 * ```
 		 */
-		fun <T : IVDFSerializableKeyValue> multiStruct(isRequired: Boolean = false): ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> {
+		fun <T : IVDFRepresentableKeyValue> multiStruct(isRequired: Boolean = false): ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> {
 			return ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> { thisRef, property ->
 				thisRef._rawEntries.computeIfAbsent(property) {
 					SelfNamedValueList<T>(isRequired)
@@ -138,12 +139,7 @@ interface IExtensibleSubtree {
 			}
 		}
  	}
-}
-
-/**
- * A nameless subtree
- */
-interface IExtensibleSubtreeMap : IExtensibleSubtree, IVDFSerializableValue<VDFSubtree> {
+	
 	override val _vdfRepr: VDFSubtree
 		get() {
 			try {
@@ -154,9 +150,8 @@ interface IExtensibleSubtreeMap : IExtensibleSubtree, IVDFSerializableValue<VDFS
 		}
 }
 
-class MvMSubtreeImpl : IExtensibleSubtreeMap {
-	override val _rawEntries: MutableMap<Any, IVDFSerializableKeyValue> = mutableMapOf()
-	
+class ExtensibleSubtreeImpl : IExtensibleSubtree {
+	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf()
 	
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
 }

@@ -2,16 +2,16 @@ package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue_Primitive
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.types.specifics.Where
 
 class WaveSpawnPopulator : Populator() {
-	override val _structIdentifier: Any
+	override val _structIdentifier: String
 		get() = "WaveSpawn"
 	
-	class Support(override val _primitiveRepr: String) : IVDFSerializableValue_Primitive<String> {
+	class Support(override val _vdfRepr: String) : IVDFRepresentableValue<String> {
 		companion object {
 			/**
 			 * When set, enables support bots, respecting the maximum number of bots set by [WaveSpawner.totalCount][totalCount].

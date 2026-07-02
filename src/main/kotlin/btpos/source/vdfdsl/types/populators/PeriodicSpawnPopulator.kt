@@ -9,14 +9,14 @@ import btpos.source.vdfdsl.types.specifics.Where
 
 class PeriodicSpawnPopulator : Populator() {
 	class When : AbstractVDFStruct() {
-		override val _structIdentifier get() = "When"
+		override val _structIdentifier: String get() = "When"
 		
 		var minInterval: Double? by addField("MinInterval")
 		
 		var maxInterval: Double? by addField("MaxInterval")
 	}
 	
-	override val _structIdentifier: Any
+	override val _structIdentifier: String
 		get() = "PeriodicSpawn"
 }
 

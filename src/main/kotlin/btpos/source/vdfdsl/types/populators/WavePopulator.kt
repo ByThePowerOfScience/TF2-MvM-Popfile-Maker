@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.types.specifics.OutputAction
 
 class WavePopulator : Populator() {
-	override val _structIdentifier: Any
+	override val _structIdentifier: String
 		get() = "Wave"
 }
 
