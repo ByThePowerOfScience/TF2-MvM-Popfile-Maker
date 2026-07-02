@@ -1,8 +1,10 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
+import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
 import btpos.source.vdfdsl.vdfparser.VdfParser
 import btpos.source.vdfdsl.vdfparser.component1
 import btpos.source.vdfdsl.vdfparser.component2
+import java.io.File
 import java.util.LinkedList
 import java.util.Queue
 import kotlin.io.path.Path
@@ -12,7 +14,6 @@ import kotlin.io.path.createDirectory
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 
- ~/2/tf/scripts/items/items_game.txt"
 
 
 fun VdfParser.Table.toMap(): Map<String, VdfParser.StringOrTable> {
@@ -185,16 +186,17 @@ data class CosmeticDesc(
 	}
 }
 
-private const val baseitemspackage = "btpos.source.vdfdsl.types.items"
+private const val basecosmeticspackage = BuildConfig.COSMETICS_TARGET_PACKAGE
 
-private const val basecosmeticspackage = "$baseitemspackage.cosmetics"
+const val itemsimport = BuildConfig.ITEM_FACTORY_LOCATION
 
-
-const val itemsimport = baseitemspackage + ".*"
-
+fun getItemSchema(): String {
+	val itemSchema = ClassLoader.getPlatformClassLoader().getResourceAsStream("items_game.txt") ?: error("Expected item schema to be in resources folder named items_game.txt. Retrieve it at <TF2 folder>/tf/scripts/items/items_game.txt")
+	return itemSchema.bufferedReader().use { it.readText() }
+}
 
 fun main() {
-	val parsedItemSchema = VdfParser.parse(Path(item_schema).readText()).second.tableOrNull()!!
+	val parsedItemSchema = VdfParser.parse(getItemSchema()).second.tableOrNull()!!
 	
 	val prefabs = parsedItemSchema.first { it.first == "prefabs" }.second.tableOrNull()!!
 		.let { it.toMap() }
@@ -206,11 +208,7 @@ fun main() {
 	}.groupBy { "medal" in it.equipRegions }.let { it[false]!! to it[true]!! }
 	
 	
-	
- ~/{
-		if (!it.exists())
-			it.createDirectory()
-	}
+	val outDir = Path(BuildConfig.OUT_DIR).resolve(BuildConfig.ATTRIBUTES_TARGET_PACKAGE.replace('.', File.separatorChar)).createDirectories()
 	
 	fun Appendable.writeObjectHeader(pkg: String, objName: String, vararg imports: String) {
 		append("package ").append(pkg)
@@ -333,132 +331,4 @@ fun main() {
 	// do one big file with all cosmetics for searching by name
 	// then files sorted by slot, linking to that one big file
 	// then sorted by class and slot, also linking to that one big file
-	
-	
-	
-	
-	
-	
-	/*outDir.resolve("AllCosmetics.kt").bufferedWriter().use { mainWriter ->
-		
-		val actualFileReferences = mutableMapOf<String, Path>()
-		val writers = mutableMapOf<String, BufferedWriter>()
-		
-		val classesFiles = mutableMapOf<String, Pair<MutableSet<String>, BufferedWriter>>()
-		
-		fun createClassSlotsLinkFile(className: String): Pair<MutableSet<String>, BufferedWriter> {
-			return classesFiles.computeIfAbsent(className) { name ->
-				val capname = name.capitalize()
-				mutableSetOf<String>() to outDir.resolve("byclass").resolve(capname + ".kt").bufferedWriter().apply {
-					write("package $basecosmeticspackage.byclass\n\n")
-					
-					write("object Cosmetics${capname} {")
-				}
-			}
-		}
-		
-		fun getOrCreateFile(dottedFilePath: String): Writer {
-			return writers.computeIfAbsent(dottedFilePath) { name ->
-				val (subpath, filename) = name.lastIndexOf('.').let { index ->
-					if (index == -1)
-						null to name
-					else
-						name.substring(0, index) to name.substring(index + 1)
-				}
-				
-				val outfolder = if (subpath == null) outDir else outDir.resolve(subpath.replace('.', File.separatorChar))
-				
-				outfolder.createDirectories().resolve(filename + ".kt").also {
-					actualFileReferences[name] = it
-				}.bufferedWriter().also {
-					it.write("package $basecosmeticspackage")
-					if (subpath != null) {
-						it.write(".")
-						it.write(subpath)
-					}
-					it.write("\n\nimport $baseitemspackage.*\n\n\n")
-					
-					it.write("object ")
-					it.write(filename)
-					it.write(" {")
-				}
-			}
-		}
-		
-		mainWriter.apply {
-			write("package $basecosmeticspackage\n\nimport $baseitemspackage.*\nimport kotlin.jvm.JvmField\n\n\n")
-			
-			write("object AllCosmetics {")
-		}
-		
-		fun writeAllClass(desc: CosmeticDesc) {
-		
-		}
-		
-		fun writeMain(desc: CosmeticDesc) {
-			mainWriter.write("\n\t@JvmField val ${desc.varname} = TFItemFactory.WEARABLE(\"${desc.item_name}\")")
-		}
-		
-		fun writeBySlot(desc: CosmeticDesc) {
-			desc.equipRegions.ifEmpty { desc.itemSlots }.forEach {
-				val slotFile = getOrCreateFile("byslot." + it.capitalize())
-				
-				slotFile.write("\n\tval ${desc.varname} get() = AllCosmetics.${desc.varname}")
-			}
-		}
-		
-		fun writeByClassBySlot(desc: CosmeticDesc) {
-			desc.usedByClasses.forEach { cls ->
-				desc.equipRegions.ifEmpty { desc.itemSlots }.forEach { slot ->
-					val filename = "byclass" + "." + cls.lowercase() + "." + slot.capitalize()
-					val classFile = getOrCreateFile(filename)
-					classFile.write("\n\tval ${desc.varname} get() = AllCosmetics.${desc.varname}")
-					
-					val (slotLinksMade, file) = createClassSlotsLinkFile(cls)
-					if (slot !in slotLinksMade) {
-						file.write("\n\tval ${slot.capitalize()} get() = $basecosmeticspackage.$filename")
-						slotLinksMade += slot
-					}
-				}
-			}
-		}
-		
-		fun writeMedal(desc: CosmeticDesc) {
-			getOrCreateFile("Medals").write("\n\t@JvmField val ${desc.varname} = TFItemFactory.WEARABLE(\"${desc.item_name}\")")
-		}
-		
-		try {
-			items.mapNotNull { itemTable ->
-				CosmeticDesc.fromItemTable(itemTable, prefabs)
-			}.forEach {
-				if ("medal" !in it.equipRegions) {
-					writeMain(it)
-					writeBySlot(it)
-					writeByClassBySlot(it)
-				} else {
-					writeMedal(it)
-				}
-			}
-			
-		} finally {
-			mainWriter.write("\n}")
-			writers.values.forEach {
-				it.write("\n}")
-				it.close()
-			}
-			classesFiles.values.forEach {
-				it.second.write("\n}")
-				it.second.close()
-			}
-		}
-	}
-	
-	outDir.resolve("ByClass.kt").bufferedWriter().use {
-		it.write("package $basecosmeticspackage\n\nimport $basecosmeticspackage.byclass.*\n\n\nobject ByClass {")
-		val allclasses = TFClass.entries.map { it.name }
-		for (cls in allclasses) {
-			it.write("\n\tval $cls get() = $basecosmeticspackage.byclass.$cls")
-		}
-		it.write("\n}")
-	}*/
 }

@@ -42,7 +42,16 @@ object PaintColors {
 	@JvmField val `Ye Olde Rustic Colour` = Color(124, 108, 87)
 	@JvmField val `Zepheniah's Greed` = Color(66, 79, 59)
 	
-	private fun rgbToString(r: Int, g: Int, b: Int): String {
-		return ((r shl 16) or (g shl 8) or b).toString(10)
+	fun rgbToInt(r: Int, g: Int, b: Int): Int {
+		return ((r shl 16) or (g shl 8) or b)
+	}
+	
+	fun intToColor(i: Int): Color {
+		val r = (i shr 16) and EIGHT_BITMASK
+		val g = (i shr 8) and EIGHT_BITMASK
+		val b = i and EIGHT_BITMASK
+		return Color(r, g, b)
 	}
 }
+
+private const val EIGHT_BITMASK = 511
