@@ -1,8 +1,11 @@
 package btpos.source.vdfdsl.types.bots
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
-class TFBotAttribute(override val _vdfRepr: String) : IVDFRepresentableValue<String> {
+class TFBotAttribute(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
+	override val _vdfRepr get() = VDFPrimitive(name)
+	
 	companion object {
 		val RemoveOnDeath = TFBotAttribute("RemoveOnDeath")
 		val Aggressive = TFBotAttribute("Aggressive")

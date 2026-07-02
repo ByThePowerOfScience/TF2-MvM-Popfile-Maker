@@ -19,13 +19,12 @@ data class VDFSubtree(val entries: Collection<VDFKeyValue> = listOf()) : VDFObje
 	override val _vdfRepr: VDFSubtree
 		get() = this
 	
-	companion object {
-		fun makeListKeyValue(item: VDFPrimitive) = VDFKeyValue(item, VDFPrimitive.TRUE)
+	override fun writeToVDF(writer: Appendable, indent: Int) {
+		writer.append('{')
+		entries.forEach {
+			writer.writeLine(indent + 1)
+			it.writeToVDF(writer, indent + 1)
+		}
+		writer.writeLine(indent).append('}')
 	}
 }
-
-fun VDFSubtree.withListItem(item: VDFObject) = withEntry(VDFKeyValue(item, VDFPrimitive.TRUE))
-
-fun VDFSubtree.withListItems(vararg items: VDFObject) = withEntries(items.map { VDFKeyValue(it, VDFPrimitive.TRUE) })
-
-fun VDFSubtree.withListItems(items: Collection<VDFObject>) = withEntries(items.map { VDFKeyValue(it, VDFPrimitive.TRUE) })

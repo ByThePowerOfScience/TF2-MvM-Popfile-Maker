@@ -69,38 +69,6 @@
         </option>
         <option name="myGradleHome" value="" />
       </GradleProjectSettings>
-      <GradleProjectSettings>
-        <compositeConfiguration>
-          <compositeBuild compositeDefinitionSource="SCRIPT">
-            <builds>
-              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
-                <projects>
-                  <project path="$PROJECT_DIR$/build-logic" />
-                </projects>
-              </build>
-              <build path="$PROJECT_DIR$/vdf-modeling" name="vdf-modeling">
-                <projects>
-                  <project path="$PROJECT_DIR$/vdf-modeling" />
-                </projects>
-              </build>
-              <build path="$PROJECT_DIR$/vdf-parser" name="vdf-parser">
-                <projects>
-                  <project path="$PROJECT_DIR$/vdf-parser" />
-                </projects>
-              </build>
-            </builds>
-          </compositeBuild>
-        </compositeConfiguration>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/vdf-translation" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/build-logic" />
-            <option value="$PROJECT_DIR$/vdf-modeling" />
-            <option value="$PROJECT_DIR$/vdf-parser" />
-            <option value="$PROJECT_DIR$/vdf-translation" />
-          </set>
-        </option>
-      </GradleProjectSettings>
     </option>
   </component>
 </project>

@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.types.specifics
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IExtensibleSubtreeMap
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import org.intellij.lang.annotations.Language
 
