@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.types.bots
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue
-import btpos.source.vdfdsl.serialization.VDFPrimitive
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
 
-class BotSkill(val name: String) : IVDFSerializableValue<VDFPrimitive> {
+class BotSkill(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
 	
 	override val _vdfRepr get() = VDFPrimitive(name)
 	

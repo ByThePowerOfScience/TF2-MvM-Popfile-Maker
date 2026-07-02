@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 
 @Deprecated("According to sigsegv: \"Old and crusty\"")
 class MobSpawner : Spawner() {
-	override val _structIdentifier: Any
+	override val _structIdentifier: String
 		get() = "Mob"
 }
 

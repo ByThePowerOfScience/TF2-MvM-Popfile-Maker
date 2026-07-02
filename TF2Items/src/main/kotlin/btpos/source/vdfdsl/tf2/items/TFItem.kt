@@ -3,22 +3,23 @@ package btpos.source.vdfdsl.tf2.items
 import btpos.source.vdfdsl.modeling.IKeyValueMap
 import btpos.source.vdfdsl.modeling.KeyValueMapImpl
 import btpos.source.vdfdsl.tf2.PopFileDSL
-import btpos.source.vdfdsl.serialization.IVDFSerializableKeyValue
-import btpos.source.vdfdsl.serialization.VDFKeyValue
-import btpos.source.vdfdsl.serialization.VDFSubtree
+import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsAll
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsMelee
 
 @PopFileDSL
 class TFItem<ATTR>(val name: String, val attributes: KeyValueMapImpl? = null, @PublishedApi internal val scopedAttributeFunctions: ATTR)
-	: IVDFSerializableKeyValue
+	: IVDFRepresentableKeyValue
 {
 	override fun _serialize(input: VDFSubtree): VDFSubtree {
 		return input + listOfNotNull(
-			VDFKeyValue("Item", name),
+			VDFKeyValue(VDFPrimitive("Item"), VDFPrimitive (name)),
 			VDFKeyValue.orNull(
-				"ItemAttributes",
-				attributes?._vdfRepr?.withEntry(VDFKeyValue("ItemName", this.name))
+				VDFPrimitive("ItemAttributes"),
+				attributes?._vdfRepr?.withEntry(VDFKeyValue(VDFPrimitive("ItemName"), VDFPrimitive(this.name)))
 			)
 		)
 	}

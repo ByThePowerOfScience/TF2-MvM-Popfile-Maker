@@ -1,7 +1,8 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue_Primitive
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 
 object WarPaintsAttributes : IBlockScoped {
@@ -41,9 +42,9 @@ object WarPaintsAttributes : IBlockScoped {
 		}
 	
 	
-	class Wear(val id: Double) : IVDFSerializableValue_Primitive<Double> {
-		override val _primitiveRepr: Double
-			get() = id
+	class Wear(val id: Double) : IVDFRepresentableValue<VDFPrimitive> {
+		override val _vdfRepr: VDFPrimitive
+			get() = VDFPrimitive(id.toFloat())
 		
 		companion object {
 			val FACTORY_NEW = Wear(0.2)

@@ -6,6 +6,10 @@ plugins {
 
 repositories {
 	mavenCentral()
+	maven {
+		name = "Clojars"
+		url = uri("https://repo.clojars.org/")
+	}
 }
 
 dependencies {
@@ -15,4 +19,9 @@ dependencies {
 
 	val buildconfig = libs.plugins.buildconfig.get()
 	implementation("${buildconfig.pluginId}:${buildconfig.pluginId}.gradle.plugin:${buildconfig.version}")
+	
+	
+	val clojure = libs.plugins.clojure.get()
+	implementation("${clojure.pluginId}:${clojure.pluginId}.gradle.plugin:${clojure.version}")
+	
 }

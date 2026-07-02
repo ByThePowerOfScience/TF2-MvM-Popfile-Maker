@@ -18,7 +18,7 @@ import btpos.source.vdfdsl.types.bots.WeaponRestriction
  * ```
  */
 class TFBotSpawner : Spawner() {
-	override val _structIdentifier
+	override val _structIdentifier: String
 		get() = "TFBot"
 }
 

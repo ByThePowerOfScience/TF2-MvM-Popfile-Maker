@@ -3,8 +3,9 @@
 
 
 [libraries]
-	datafixerupper = { module="com.mojang:datafixerupper", version="1.0.20" }
+	datafixerupper = { module="blank:datafixerupper", version="10.0.0-SNAPSHOT" }
 
 [plugins]
 	kotlin-jvm = { id="org.jetbrains.kotlin.jvm", version.ref="kotlin" }
 	buildconfig = { id = "com.github.gmazzo.buildconfig",  version = "6.0.10" }
+	clojure = { id = "dev.clojurephant.clojure", version = "0.9.1" }

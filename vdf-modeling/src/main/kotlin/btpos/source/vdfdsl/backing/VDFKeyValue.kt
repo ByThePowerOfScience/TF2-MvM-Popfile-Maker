@@ -1,4 +1,6 @@
-package btpos.source.vdfdsl.serialization
+package btpos.source.vdfdsl.backing
+
+import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 
 /**
  * A basic key-value pair: a name, and something assigned to that name.
@@ -8,12 +10,16 @@ package btpos.source.vdfdsl.serialization
  * Note: structs are represented as entries with a [VDFSubtree] as a value,
  * as they only differ from the standard "name: value" format in that they name _themselves_.
  */
-data class VDFKeyValue(val key: Any, val value: Any) {
+data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject) : VDFObject(), IVDFRepresentableKeyValue {
+	override fun _serialize(input: VDFSubtree): VDFSubtree {
+		return input.withEntry(this)
+	}
+	
 	companion object {
 		/**
 		 * Factory for easy "Only make the entry if the value is set"
 		 */
-		fun orNull(key: Any, value: Any?): VDFKeyValue? {
+		fun orNull(key: VDFPrimitive, value: VDFObject?): VDFKeyValue? {
 	        if (value == null)
 				return null
 			

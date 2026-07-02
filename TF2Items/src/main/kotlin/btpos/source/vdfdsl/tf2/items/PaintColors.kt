@@ -1,6 +1,5 @@
 package btpos.source.vdfdsl.tf2.items
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue
 import java.awt.Color
 
 

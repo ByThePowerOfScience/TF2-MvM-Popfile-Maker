@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.NavArea
 
 class RandomPlacementPopulator : Populator() {
-	override val _structIdentifier: Any
+	override val _structIdentifier: String
 		get() = "RandomPlacement"
 }
 

@@ -1,39 +1,49 @@
 package btpos.source.vdfdsl.modeling
 
-import btpos.source.vdfdsl.serialization.IVDFSerializableValue
-import btpos.source.vdfdsl.serialization.VDFKeyValue
-import btpos.source.vdfdsl.serialization.VDFSubtree
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue.Companion.serializeDynamic
 import btpos.source.vdfdsl.serialization.codecs.Codec
 import kotlin.collections.set
 
-interface IKeyValueMap : MutableMap<Any, Any> {
+/**
+ * Only allows a single instance of each key in the map.
+ */
+interface IKeyValueMap {
 	fun <T> getTyped(key: Any): T?
 	
 	fun setNullable(key: Any, value: Any?)
+	
+	operator fun set(key: Any, value: Any?) = setNullable(key, value)
+	
+	operator fun <T> get(key: Any) = getTyped<T>(key)
 	
 	fun <FRONTEND : Any> getTyped(key: Any, codec: Codec<FRONTEND, Any>): FRONTEND?
 	
 	fun <FRONTEND : Any> setNullable(key: Any, value: FRONTEND?, codec: Codec<FRONTEND, Any>)
 }
 
-/**
- * Only allows a single instance of each key in the map.
- */
+
 class KeyValueMapImpl(private val _attributes: MutableMap<Any, Any> = mutableMapOf())
-	: IVDFSerializableValue<VDFSubtree>, IKeyValueMap, MutableMap<Any, Any> by _attributes
+	: IVDFRepresentableValue<VDFSubtree>, IKeyValueMap
 {
 	override val _vdfRepr
-		get() = VDFSubtree(_attributes.map { (k, v) -> VDFKeyValue(k, v) })
+		get() = VDFSubtree(_attributes.map { (k, v) ->
+			VDFKeyValue(serializeDynamic(k), serializeDynamic(v))
+		})
 	
+	@Suppress("UNCHECKED_CAST")
 	override fun <T> getTyped(key: Any): T? {
 		return _attributes[key] as T?
 	}
 	
 	override fun setNullable(key: Any, value: Any?) {
 		if (value == null)
-			remove(key)
+			_attributes.remove(key)
 		else
-			this[key] = value
+			_attributes[key] = value
 	}
 	
 	override fun <FRONTEND : Any> getTyped(key: Any, codec: Codec<FRONTEND, Any>): FRONTEND? {
