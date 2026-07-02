@@ -8,7 +8,11 @@ data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentabl
 	constructor(i: Float) : this(i.toString())
 	
 	override fun writeToVDF(writer: Appendable, indent: Int) {
-		writer.append('"').append(stringValue).append('"')
+		if (stringValue.none { it.isWhitespace() }) {
+			writer.append(stringValue)
+		} else {
+			writer.append('"').append(stringValue).append('"')
+		}
 	}
 	
 	companion object {
