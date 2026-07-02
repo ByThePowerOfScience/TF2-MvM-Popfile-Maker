@@ -57,7 +57,7 @@ var WaveSpawnPopulator.spawner: Spawner? by singleStruct(isRequired = true)
 /**
  * { enables support; "Limited" => TotalCount enforced, else => TotalCount ignored }
  */
-var WaveSpawnPopulator.support: String? by addField("Support")
+var WaveSpawnPopulator.support: WaveSpawnPopulator.Support? by addField("Support")
 
 
 
