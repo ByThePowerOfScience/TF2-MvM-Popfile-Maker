@@ -15,35 +15,39 @@ class PopulationManager : IExtensibleSubtree {
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
 }
 
+inline fun WaveSchedule(configure: PopulationManager.() -> Unit): PopulationManager {
+	return PopulationManager().apply(configure)
+}
+
 val PopulationManager.populators: MutableList<Populator> by multiStruct(isRequired = true)
 
 /**
  * Default: 0
  */
-val PopulationManager.startingCurrency by addField<Int>("StartingCurrency")
+var PopulationManager.startingCurrency: Int? by addField("StartingCurrency")
 
 /**
  * Default: 10
  */
-val PopulationManager.respawnWaveTime by addField<Int>("RespawnWaveTime")
+var PopulationManager.respawnWaveTime: Int? by addField("RespawnWaveTime")
 
 /**
  * e.g. `"Halloween"`
  */
-val PopulationManager.eventPopFile by addField<String>("EventPopFile")
-val PopulationManager.fixedRespawnWaveTime by addField<Boolean>("FixedRespawnWaveTime")
+var PopulationManager.eventPopFile: String? by addField("EventPopFile")
+var PopulationManager.fixedRespawnWaveTime: Boolean? by addField("FixedRespawnWaveTime")
 
 /**
  * Default: 3000
  */
-val PopulationManager.addSentryBusterWhenDamageDealtExceeds by addField<Int>("AddSentryBusterWhenDamageDealtExceeds")
+var PopulationManager.addSentryBusterWhenDamageDealtExceeds: Int? by addField("AddSentryBusterWhenDamageDealtExceeds")
 
 /**
  * Default: 15
  */
-val PopulationManager.addSentryBusterWhenKillCountExceeds by addField<Int>("AddSentryBusterWhenKillCountExceeds")
+var PopulationManager.addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
 
-val PopulationManager.canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", object : Codec<Boolean, String> {
+var PopulationManager.canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", object : Codec<Boolean, String> {
 	override fun read(data: String): Boolean {
 		return when (data) {
 			"no", "false" -> false
@@ -56,7 +60,7 @@ val PopulationManager.canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBo
 	}
 })
 
-val PopulationManager.advanced by addField<Boolean>("Advanced")
-val PopulationManager.isEndless by addField<Boolean>("IsEndless")
+var PopulationManager.advanced: Boolean? by addField("Advanced")
+var PopulationManager.isEndless: Boolean? by addField("IsEndless")
 
 

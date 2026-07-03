@@ -1,26 +1,41 @@
 package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
+import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.types.PopulationManager
+import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.populators.PeriodicSpawnPopulator.When
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.Where
 
-class PeriodicSpawnPopulator : Populator() {
-	class When : AbstractVDFStruct() {
+class PeriodicSpawnPopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Populator(_subtree) {
+	class When(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
 		override val _structIdentifier: String get() = "When"
+		
 		
 		var minInterval: Double? by addField("MinInterval")
 		
 		var maxInterval: Double? by addField("MaxInterval")
+		
+		override fun copy() = When(copyInternal())
 	}
 	
 	override val _structIdentifier: String
 		get() = "PeriodicSpawn"
+	
+	override fun copy() = PeriodicSpawnPopulator(this.copyInternal())
 }
 
 inline fun Populator.Companion.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure)
+/**
+ * Creates and adds a new PeriodicSpawn populator to the PopulationManager
+ */
+fun PopulationManager.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure).also {
+	this.populators += it
+}
+
 
 var PeriodicSpawnPopulator.where: Where? by addField("Where")
 

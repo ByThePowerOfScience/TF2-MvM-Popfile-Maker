@@ -4,6 +4,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.serialization.codecs.Codec
+import kotlin.jvm.java
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -14,7 +15,7 @@ import kotlin.reflect.KProperty
  * This is fully extensible with new keys on the fly using the [factories][Companion].
  * See subclasses of [AbstractVDFStruct] for implementation.
  */
-interface IExtensibleSubtree : IVDFRepresentableValue<VDFSubtree> {
+interface IExtensibleSubtree {
 	/**
 	 * A bunch of raw items, keyed by whatever arbitrary value is used to retrieve them for user use.
 	 *
@@ -79,30 +80,33 @@ interface IExtensibleSubtree : IVDFRepresentableValue<VDFSubtree> {
 		 * @param key The key this item will be serialized under.
 		 * @param isRequired If true, serialization throws an error if this value is not set.
 		 */
-		inline fun <reified V : Any> addField(key: String, isRequired: Boolean = false, noinline initialValue: ((key: String) -> V)? = null): ReadWriteProperty<IExtensibleSubtree, V?> {
-			return addField_noCodec(key, isRequired, V::class.java, initialValue)
+		inline fun <T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false, noinline initialValue: ((key: String) -> SUB)? = null): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_noCodec(key, isRequired, SUB::class.java, initialValue)
 		}
 		
 		@PublishedApi
-		internal fun <V : Any> addField_noCodec(key: String, isRequired: Boolean, valueClass: Class<V>, initialValue: ((String) -> V)?): ReadWriteProperty<IExtensibleSubtree, V?> {
-			require(!(valueClass.isAssignableFrom(Collection::class.java) && !valueClass.isAssignableFrom(IVDFRepresentableKeyValue::class.java))) {
-				"Raw lists may not be used as values.\nSince lists do not exist in VDFs, there are many different ways of representing them. Use a type that properly serializes, such as VDFList_Flat or VDFList_Map."
+		internal fun <T : Any, V : T> addField_noCodec(key: String, isRequired: Boolean, valueClass: Class<V>, initialValue: ((String) -> V)?): ReadWriteProperty<IExtensibleSubtree, T?> {
+			require(!(valueClass != String::class.java && Collection::class.java.isAssignableFrom(valueClass) && !IVDFRepresentableKeyValue::class.java.isAssignableFrom(valueClass) && !IVDFRepresentableValue::class.java.isAssignableFrom(valueClass))) {
+				"Invalid type: ${valueClass.simpleName}\nRaw lists may not be used as values.\nSince lists do not exist in VDFs, there are many different ways of representing them. Use a type that properly serializes, such as VDFList_Flat or VDFList_Map."
 			}
 			
-			IVDFRepresentableValue.requireValueRepresentable(valueClass)
+			require(IVDFRepresentableKeyValue::class.java.isAssignableFrom(valueClass) || IVDFRepresentableValue.isValueRepresentable(valueClass)) {
+				"Type ${valueClass.simpleName} is not serializable to a VDF. Value must either implement IVDFRepresentableValue or be a String, number, or boolean."
+			}
 			
-			return object : ReadWriteProperty<IExtensibleSubtree, V?> {
-				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<V> {
+			
+			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
+				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
 					return thisRef._rawEntries.computeIfAbsent(prop) {
-						NamedValue<V>(isRequired, key, initialValue?.invoke(key))
-					} as NamedValue<V>
+						NamedValue<T>(isRequired, key, initialValue?.invoke(key))
+					} as NamedValue<T>
 				}
 				
-				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): V? {
+				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
 					return getFromMap(thisRef, property).value
 				}
 				
-				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: V?) {
+				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
 					getFromMap(thisRef, property).value = value
 				}
 			}
@@ -159,7 +163,18 @@ interface IExtensibleSubtree : IVDFRepresentableValue<VDFSubtree> {
 			}
 		}
  	}
-	
+}
+
+
+/**
+ * Just a subtree. See [AbstractVDFStruct] for a subtree with its own name.
+ */
+open class ExtensibleSubtreeImpl(
+	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf(),
+	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
+)
+	: IExtensibleSubtree, IVDFRepresentableValue<VDFSubtree>
+{
 	override val _vdfRepr: VDFSubtree
 		get() {
 			try {
@@ -168,10 +183,8 @@ interface IExtensibleSubtree : IVDFRepresentableValue<VDFSubtree> {
 				throw RequiredFieldNotFoundException(_instantiationSite, e)
 			}
 		}
-}
-
-class ExtensibleSubtreeImpl : IExtensibleSubtree {
-	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf()
 	
-	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
+	protected fun copyEntries() = _rawEntries.toMutableMap()
+	
+	fun copy() = ExtensibleSubtreeImpl(copyEntries())
 }

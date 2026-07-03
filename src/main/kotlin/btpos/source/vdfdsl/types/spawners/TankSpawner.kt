@@ -1,12 +1,15 @@
 package btpos.source.vdfdsl.types.spawners
 
+import btpos.source.vdfdsl.modeling.AbstractVDFStruct
+import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.types.specifics.OutputAction
 
-class TankSpawner : Spawner() {
-	
+class TankSpawner(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
 	override val _structIdentifier: String
 		get() = "Tank"
+	
+	override fun copy() = TankSpawner(copyInternal())
 }
 
 fun Spawner.Companion.Tank(configure: TankSpawner.() -> Unit = {}) = TankSpawner().apply(configure)

@@ -1,9 +1,10 @@
 package btpos.source.vdfdsl.types.spawners
 
+import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 
-class SquadSpawner : Spawner() {
+class SquadSpawner(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
 	/*
 	Squad
 	- float     FormationSize       (default: -1.0)
@@ -13,15 +14,17 @@ class SquadSpawner : Spawner() {
 	
 	override val _structIdentifier: String
 		get() = "Squad"
+	
+	override fun copy() = SquadSpawner(copyInternal())
 }
 
 fun Spawner.Companion.Squad(configure: SquadSpawner.() -> Unit) = SquadSpawner().apply(configure)
 
-var SquadSpawner.formationSize by addField<Double>("FormationSize")
+var SquadSpawner.formationSize: Double? by addField("FormationSize")
 
 /**
  * Note: Squad.ShouldPreserveSquad is parsed correctly, but will cause a spurious error to show up in console; ignore the error
  */
-var SquadSpawner.shouldPreserveSquad by addField<Boolean>("ShouldPreserveSquad")
+var SquadSpawner.shouldPreserveSquad: Boolean? by addField("ShouldPreserveSquad")
 
 val SquadSpawner.spawners: MutableList<Spawner> by multiStruct()

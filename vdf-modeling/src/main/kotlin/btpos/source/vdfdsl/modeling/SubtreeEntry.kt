@@ -25,6 +25,10 @@ class NamedValue<V : Any>(isRequired: Boolean, var key: String, var value: V? = 
 			return input;
 		}
 		
+		if (value is IVDFRepresentableKeyValue) {
+			return value._serialize(input)
+		}
+		
 		return input + VDFKeyValue(VDFPrimitive(key), IVDFRepresentableValue.serializeDynamic(value))
 	}
 }

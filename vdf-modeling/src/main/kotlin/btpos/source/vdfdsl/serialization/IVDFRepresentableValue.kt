@@ -25,14 +25,14 @@ interface IVDFRepresentableValue<out T : VDFObject> : IVDFRepresentable {
 	companion object {
 		
 		fun isValueRepresentable(cls: Class<*>): Boolean {
-			return cls.isAssignableFrom(IVDFRepresentableValue::class.java)
-			       || cls.isAssignableFrom(VDFObject::class.java)
+			return IVDFRepresentableValue::class.java.isAssignableFrom(cls)
+			       || VDFObject::class.java.isAssignableFrom(cls)
 			       || cls in PRIMITIVE_SERIALIZERS
 		}
 		
 		fun requireValueRepresentable(cls: Class<*>) {
 			if (!isValueRepresentable(cls))
-				throw IllegalArgumentException("Type $cls is not serializable to a VDF. Value must either implement IVDFRepresentableValue or be a String, number, or boolean.")
+				throw IllegalArgumentException("Type ${cls.simpleName} is not serializable to a VDF. Value must either implement IVDFRepresentableValue or be a String, number, or boolean.")
 		}
 		
 		/**

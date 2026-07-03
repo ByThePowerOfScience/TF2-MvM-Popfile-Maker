@@ -16,12 +16,14 @@ data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentabl
 	}
 	
 	companion object {
+		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") // Int::class.java => int.class instead of Integer.class
 		val PRIMITIVE_SERIALIZERS = mapOf<Class<*>, (Any) -> VDFObject>(
-			String::class.java to { VDFPrimitive(it as String) },
-			Int::class.java to { VDFPrimitive(it as Int) },
-			Float::class.java to { VDFPrimitive(it as Float) },
-			Double::class.java to { VDFPrimitive((it as Double).toFloat()) },
-			Boolean::class.java to { VDFPrimitive(it as Boolean) },
+			java.lang.String::class.java to { VDFPrimitive(it as String) },
+			java.lang.Integer::class.java to { VDFPrimitive(it as Int) },
+			java.lang.Float::class.java to { VDFPrimitive(it as Float) },
+			java.lang.Double::class.java to { VDFPrimitive((it as Double).toFloat()) },
+			java.lang.Boolean::class.java to { VDFPrimitive(it as Boolean) },
+			java.lang.Number::class.java to { VDFPrimitive(it as Number) }
 		)
 		
 		
@@ -47,7 +49,7 @@ data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentabl
 		}
 		
 		fun isPrimitive(cls: Class<*>): Boolean {
-			return cls.isAssignableFrom(VDFPrimitive::class.java) || cls in PRIMITIVE_SERIALIZERS
+			return VDFPrimitive::class.java.isAssignableFrom(cls) || cls in PRIMITIVE_SERIALIZERS
 		}
 		
 		fun requirePrimitive(cls: Class<*>) {

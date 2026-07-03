@@ -15,7 +15,8 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
  * Item bar
  * ```
  */
-class VDFList_Flat<T : Any> @PublishedApi internal constructor (private val key: String, private val backingList: MutableList<T> = mutableListOf())
+class VDFList_Flat<T : Any>
+@PublishedApi internal constructor (private val key: String, private val backingList: MutableList<T> = mutableListOf())
 	: MutableList<T> by backingList, IVDFRepresentableKeyValue
 {
 	override fun _serialize(input: VDFSubtree): VDFSubtree {

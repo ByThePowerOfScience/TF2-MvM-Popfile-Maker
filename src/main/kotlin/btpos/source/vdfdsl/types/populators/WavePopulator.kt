@@ -1,16 +1,26 @@
 package btpos.source.vdfdsl.types.populators
 
+import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.types.PopulationManager
+import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.specifics.OutputAction
 
-class WavePopulator : Populator() {
+class WavePopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Populator(_subtree) {
 	override val _structIdentifier: String
 		get() = "Wave"
+	
+	override fun copy() = WavePopulator(this.copyInternal())
 }
 
 inline fun Populator.Companion.Wave(configure: WavePopulator.() -> Unit) = WavePopulator().apply(configure)
-
+/**
+ * Creates and adds a new Wave populator to the PopulationManager
+ */
+fun PopulationManager.Wave(configure: WavePopulator.() -> Unit) = WavePopulator().apply(configure).also {
+	this.populators += it
+}
 
 val WavePopulator.waveSpawn: MutableList<WaveSpawnPopulator>? by multiStruct()
 

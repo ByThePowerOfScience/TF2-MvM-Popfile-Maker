@@ -1,6 +1,9 @@
 package btpos.source.vdfdsl.types.bots
 
-enum class TFClass {
+import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+
+enum class TFClass : IVDFRepresentableValue<VDFPrimitive> {
 	Scout,
 	Soldier,
 	Pyro,
@@ -11,22 +14,8 @@ enum class TFClass {
 	Sniper,
 	Spy;
 	
-	companion object {
-		fun fromString(name: String): TFClass? {
-			return when (name.lowercase()) {
-				"scout" -> Scout
-				"soldier" -> Soldier
-				"pyro" -> Pyro
-				"demoman" -> Demoman
-				"heavy", "heavyweapons" -> HeavyWeapons
-				"engineer" -> Engineer
-				"medic" -> Medic
-				"sniper" -> Sniper
-				"spy" -> Spy
-				else -> null
-			}
-		}
-	}
+	override val _vdfRepr: VDFPrimitive
+		get() = VDFPrimitive(name)
 	
 	override fun toString(): String = name
 }

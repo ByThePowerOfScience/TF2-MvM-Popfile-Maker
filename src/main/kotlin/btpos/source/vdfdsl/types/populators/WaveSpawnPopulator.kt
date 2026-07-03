@@ -1,14 +1,18 @@
 package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.modeling.AbstractVDFStruct
+import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.types.PopulationManager
+import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.types.specifics.Where
 
-class WaveSpawnPopulator : Populator() {
+class WaveSpawnPopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Populator(_subtree) {
 	override val _structIdentifier: String
 		get() = "WaveSpawn"
 	
@@ -27,10 +31,17 @@ class WaveSpawnPopulator : Populator() {
 			val IGNORED = Support("Ignored")
 		}
 	}
+	
+	override fun copy() = WaveSpawnPopulator(this.copyInternal())
 }
 
 inline fun Populator.Companion.WaveSpawn(configure: WaveSpawnPopulator.() -> Unit) = WaveSpawnPopulator().apply(configure)
-
+/**
+ * Creates and adds a new WaveSpawn populator to the PopulationManager
+ */
+fun PopulationManager.WaveSpawn(configure: WaveSpawnPopulator.() -> Unit) = WaveSpawnPopulator().apply(configure).also {
+	this.populators += it
+}
 
 var WaveSpawnPopulator.template: String? by addField("Template")
 var WaveSpawnPopulator.where: Where? by addField("Where")

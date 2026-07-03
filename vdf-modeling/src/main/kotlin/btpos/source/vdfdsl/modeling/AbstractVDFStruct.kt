@@ -12,7 +12,7 @@ import btpos.source.vdfdsl.backing.VDFSubtree
  *
  * Structs essentially only differ from normal "key: someMap" entries in that they have their own unchanging key that defines their type.
  */
-abstract class AbstractVDFStruct(protected val _subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl())
+abstract class AbstractVDFStruct(private val _subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl())
 	: IVDFRepresentableKeyValue, IExtensibleSubtree by _subtree
 {
 	override fun _serialize(input: VDFSubtree): VDFSubtree = input.withEntry(VDFKeyValue(VDFPrimitive(_structIdentifier), _subtree._vdfRepr))
@@ -21,4 +21,8 @@ abstract class AbstractVDFStruct(protected val _subtree: ExtensibleSubtreeImpl =
 	 * The key this item is always given in a subtree, used to identify it as a specific kind of structure.
 	 */
 	abstract val _structIdentifier: String
+	
+	protected fun copyInternal() = _subtree.copy()
+	
+	abstract fun copy(): AbstractVDFStruct
 }
