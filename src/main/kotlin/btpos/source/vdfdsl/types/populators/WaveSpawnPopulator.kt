@@ -6,6 +6,7 @@ import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.serialization.codecs.Codec
 import btpos.source.vdfdsl.types.PopulationManager
 import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.spawners.Spawner
@@ -60,8 +61,11 @@ var WaveSpawnPopulator.doneWarningSound: String? by addField("DoneWarningSound")
 var WaveSpawnPopulator.doneOutput: OutputAction? by addField("DoneOutput")
 var WaveSpawnPopulator.totalCurrency: Int? by addField("TotalCurrency")
 var WaveSpawnPopulator.name: String? by addField("Name")
-var WaveSpawnPopulator.waitForAllSpawned: String? by addField("WaitForAllSpawned")
+
+var WaveSpawnPopulator.waitForAllSpawned: WaveSpawnPopulator? by addField("WaitForAllSpawned")
+
 var WaveSpawnPopulator.waitForAllDead: String? by addField("WaitForAllDead")
+
 var WaveSpawnPopulator.randomSpawn: Boolean? by addField("RandomSpawn")
 var WaveSpawnPopulator.spawner: Spawner? by singleStruct(isRequired = true)
 

@@ -33,9 +33,50 @@ var WavePopulator.waitWhenDone: Double? by addField("WaitWhenDone")
 @Deprecated("Apparently doesn't do anything?")
 var WavePopulator.checkpoint: Boolean? by addField("Checkpoint")
 
+/**
+ * The action that should be triggered at the start of a wave.
+ * 
+ * @see OutputAction
+ */
 var WavePopulator.startWaveOutput: OutputAction? by addField("StartWaveOutput")
 
+/**
+ * Define the action that should be triggered at the start of a wave.
+ * 
+ * @see OutputAction
+ */
+inline fun WavePopulator.startWaveOutput(configure: OutputAction.() -> Unit) {
+	this.startWaveOutput = OutputAction().apply(configure)
+}
+
+/**
+ * The action that should be triggered when a wave is completed.
+ *
+ * @see OutputAction
+ */
 var WavePopulator.doneOutput: OutputAction? by addField("DoneOutput")
 
+/**
+ * Define the action that should be triggered when a wave is completed.
+ *
+ * @see OutputAction
+ */
+inline fun WavePopulator.doneOutput(configure: OutputAction.() -> Unit) {
+	this.doneOutput = OutputAction().apply(configure)
+}
+
+/**
+ * The action that should be triggered when a wave is TODO
+ *
+ * @see OutputAction
+ */
 var WavePopulator.initWaveOutput: OutputAction? by addField("InitWaveOutput")
 
+/**
+ * Define the action that should be triggered when a wave is TODO
+ *
+ * @see OutputAction
+ */
+inline fun WavePopulator.initWaveOutput(configure: OutputAction.() -> Unit) {
+	this.initWaveOutput = OutputAction().apply(configure)
+}

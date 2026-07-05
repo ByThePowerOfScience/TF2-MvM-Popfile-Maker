@@ -47,18 +47,7 @@ var PopulationManager.addSentryBusterWhenDamageDealtExceeds: Int? by addField("A
  */
 var PopulationManager.addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
 
-var PopulationManager.canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", object : Codec<Boolean, String> {
-	override fun read(data: String): Boolean {
-		return when (data) {
-			"no", "false" -> false
-			else -> true
-		}
-	}
-	
-	override fun write(input: Boolean): String {
-		return if (input) "true" else "false"
-	}
-})
+var PopulationManager.canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (it) "true" else "false" })
 
 var PopulationManager.advanced: Boolean? by addField("Advanced")
 var PopulationManager.isEndless: Boolean? by addField("IsEndless")

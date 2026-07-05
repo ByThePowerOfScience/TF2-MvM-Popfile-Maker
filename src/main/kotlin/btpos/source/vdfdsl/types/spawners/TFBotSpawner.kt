@@ -45,9 +45,9 @@ var TFBotSpawner.name: String? by addField("Name")
  */
 var TFBotSpawner.teleportWhere: VDFList_Flat<String>? by addField("TeleportWhere") { VDFList_Flat(it) }
 
-var TFBotSpawner.autoJumpMin: Float? by addField("AutoJumpMin")
+var TFBotSpawner.autoJumpMin: Number? by addField("AutoJumpMin")
 
-var TFBotSpawner.autoJumpMax: Float? by addField("AutoJumpMax")
+var TFBotSpawner.autoJumpMax: Number? by addField("AutoJumpMax")
 
 var TFBotSpawner.skill: BotSkill? by addField("Skill")
 
@@ -55,7 +55,7 @@ var TFBotSpawner.weaponRestriction: WeaponRestriction? by addField("WeaponRestri
 
 var TFBotSpawner.behaviorModifiers: VDFList_Flat<BehaviorModifier>? by addField("BehaviorModifiers") { VDFList_Flat(it) }
 
-var TFBotSpawner.maxVisionRange: Float? by addField("MaxVisionRange")
+var TFBotSpawner.maxVisionRange: Number? by addField("MaxVisionRange")
 
 val TFBotSpawner.items: MutableList<TFItem<*>> by multiStruct()
 
@@ -66,6 +66,9 @@ var TFBotSpawner.characterAttributes: KeyValueMapImpl? by addField("CharacterAtt
 var TFBotSpawner.eventChangeAttributes: KeyValueMapImpl? by addField("EventChangeAttributes")
 
 
+/**
+ * Create a TFBot and implicitly set it as the mission's [spawner][MissionPopulator.spawner].
+ */
 inline fun MissionPopulator.TFBot(name: String? = null, configure: TFBotSpawner.() -> Unit) = Spawner.TFBot(name, configure).also {
 	this.spawner = it
 }

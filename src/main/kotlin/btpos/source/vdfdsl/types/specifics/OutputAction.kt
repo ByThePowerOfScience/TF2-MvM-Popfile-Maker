@@ -15,3 +15,8 @@ var OutputAction.action: String? by addField("Action", isRequired = true)
 
 @get:Language("Squirrel") @set:Language("Squirrel")
 var OutputAction.param: String? by addField("Param")
+
+fun OutputAction.trigger(target: String) {
+	this.target = target
+	this.action = "Trigger"
+}

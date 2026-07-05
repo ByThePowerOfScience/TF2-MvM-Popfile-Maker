@@ -4,14 +4,12 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
 /**
- * The name of an info_teamspawn entity, or a [preset][Companion].
+ * Presets for where
  */
-class Where(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
-	override val _vdfRepr get() = VDFPrimitive(name)
+object Where {
 	
-	companion object {
-		@JvmField val AHEAD = Where("Ahead")
-		@JvmField val BEHIND = Where("Behind")
-		@JvmField val ANYWHERE = Where("Anywhere")
-	}
+	const val AHEAD = "Ahead"
+	const val BEHIND = "Behind"
+	const val ANYWHERE = "Anywhere"
+
 }
