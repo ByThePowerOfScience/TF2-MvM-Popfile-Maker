@@ -101,7 +101,7 @@ class mvm_coaltown_expert1 {
 		// Sniper mission - 4 active (late appearance)
 		// Spy mission - 4 active
 		
-//		addMission(spyMission(30))
+		addMission(spyMission(30))
 		
 		val wave01a by WaveSpawn {
 			spawnMiddle()
