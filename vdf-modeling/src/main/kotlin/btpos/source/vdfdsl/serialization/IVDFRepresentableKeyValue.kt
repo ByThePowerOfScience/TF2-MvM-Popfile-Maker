@@ -2,8 +2,9 @@ package btpos.source.vdfdsl.serialization
 
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFSubtree
+import kotlin.jvm.java
 
-interface IVDFRepresentableKeyValue : IVDFRepresentable {
+fun interface IVDFRepresentableKeyValue : IVDFRepresentable {
 	/**
 	 * Add this value to the currently-serialized map.
 	 *
@@ -11,6 +12,12 @@ interface IVDFRepresentableKeyValue : IVDFRepresentable {
 	 * @return The new map to be serialized.
 	 */
 	fun _serialize(input: VDFSubtree): VDFSubtree
+	
+	companion object {
+		fun isKeyValueRepresentable(cls: Class<*>): Boolean {
+			return cls == VDFKeyValue::class.java || IVDFRepresentableKeyValue::class.java.isAssignableFrom(cls)
+		}
+	}
 }
 
 

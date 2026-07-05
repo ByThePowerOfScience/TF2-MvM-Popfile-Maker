@@ -16,11 +16,13 @@ abstract class SubtreeEntry(val fieldName: String, val isRequired: Boolean) : IV
 
 // because we serialize all lists as Key Value1 Key Value2,
 // properties that allow multiple values are fine to use a list as the entry
-class NamedValue<V : Any>(isRequired: Boolean, var key: String, var value: V? = null)
+class NamedValue<V : Any>(isRequired: Boolean, var key: String, var value: V?, val serializer: ((V) -> Any)?)
 	: SubtreeEntry(key, isRequired)
 {
 	override fun _serialize(input: VDFSubtree): VDFSubtree {
-		val value = value ?: run {
+		val value = value?.let {
+			serializer?.invoke(it) ?: it
+		} ?: run {
 			throwIfRequired()
 			return input;
 		}

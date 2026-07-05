@@ -1,9 +1,10 @@
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.collections.VDFList_Flat
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
 import btpos.source.vdfdsl.modeling.KeyValueMapImpl
 import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.types.bots.BehaviorModifier
@@ -43,7 +44,7 @@ var TFBotSpawner.name: String? by addField("Name")
 /**
  * (name of info_teamspawn entity)
  */
-var TFBotSpawner.teleportWhere: VDFList_Flat<String>? by addField("TeleportWhere") { VDFList_Flat(it) }
+var TFBotSpawner.teleportWhere: MutableList<String>? by addField("TeleportWhere", serializer = flatListWithKey("TeleportWhere")) { mutableListOf() }
 
 var TFBotSpawner.autoJumpMin: Number? by addField("AutoJumpMin")
 
@@ -53,13 +54,13 @@ var TFBotSpawner.skill: BotSkill? by addField("Skill")
 
 var TFBotSpawner.weaponRestriction: WeaponRestriction? by addField("WeaponRestriction")
 
-var TFBotSpawner.behaviorModifiers: VDFList_Flat<BehaviorModifier>? by addField("BehaviorModifiers") { VDFList_Flat(it) }
+var TFBotSpawner.behaviorModifiers: MutableList<BehaviorModifier>? by addField("BehaviorModifiers", serializer = flatListWithKey("BehaviorModifiers")) { mutableListOf() }
 
 var TFBotSpawner.maxVisionRange: Number? by addField("MaxVisionRange")
 
 val TFBotSpawner.items: MutableList<TFItem<*>> by multiStruct()
 
-var TFBotSpawner.attributes: VDFList_Flat<TFBotAttribute>? by addField("Attributes") { VDFList_Flat(it) }
+var TFBotSpawner.attributes: MutableList<TFBotAttribute>? by addField("Attributes", serializer = flatListWithKey("Attributes")) { mutableListOf() }
 
 var TFBotSpawner.characterAttributes: KeyValueMapImpl? by addField("CharacterAttributes")
 

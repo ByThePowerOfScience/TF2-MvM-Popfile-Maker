@@ -1,9 +1,13 @@
 package btpos.source.vdfdsl.modeling
 
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.backing.VDFSubtree
-import btpos.source.vdfdsl.serialization.codecs.Codec
+import kotlin.collections.map
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.jvm.java
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -29,6 +33,55 @@ interface IExtensibleSubtree {
 	 */
 	val _instantiationSite: Array<StackTraceElement>
 	
+	/**
+	 * Serializes to multiple versions of the same key in the same subtree, like this:
+	 *
+	 * ```
+	 * // given [foo, bar]:
+	 * Item foo
+	 * Item bar
+	 * ```
+	 */
+	object Serializers {
+		inline fun <reified T : Any> flatListWithKey(key: String): ((Iterable<T>) -> IVDFRepresentableKeyValue) {
+			IVDFRepresentableValue.requireValueRepresentable(T::class.java)
+			return _flatListWithKey(key)
+		}
+		
+		@PublishedApi internal fun <T : Any> _flatListWithKey(key: String) = { iterable: Iterable<T> ->
+			IVDFRepresentableKeyValue { input: VDFSubtree ->
+				val prim = VDFPrimitive(key)
+				input.withEntries(iterable.map { VDFKeyValue(prim, IVDFRepresentableValue.serializeDynamic(it)) })
+			}
+		}
+		
+		/**
+		 * A list represented as a subtree, with the keys being the items in the list and its values being ignored. (usually `"1"`)
+		 *
+		 * ```
+		 * // given [item1, item2, item3]:
+		 * "my_items"
+		 * {
+		 *   "item1" "1"
+		 *   "item2" "1"
+		 *   "item3" "1"
+		 * }
+		 */
+		inline fun <reified T : Any> listAsMap(dummyValue: String? = null): (String) -> ((Iterable<T>) -> IVDFRepresentableValue<VDFSubtree>) {
+			IVDFRepresentableValue.requireValueRepresentable(T::class.java)
+			return { _ -> _listAsMap(dummyValue?.let { VDFPrimitive(it) } ?: VDFPrimitive.TRUE) }
+		}
+		
+		@PublishedApi internal fun <T : Any> _listAsMap(dummyValue: VDFPrimitive): (Iterable<T>) -> IVDFRepresentableValue<VDFSubtree> {
+			return { iterable ->
+				object : IVDFRepresentableValue<VDFSubtree> {
+					override val _vdfRepr: VDFSubtree
+						get() = VDFSubtree(iterable.map { VDFKeyValue(VDFPrimitive(it), dummyValue) })
+				}
+			}
+		}
+	}
+	
 	@Suppress("UNCHECKED_CAST")
 	companion object {
 		/**
@@ -48,28 +101,31 @@ interface IExtensibleSubtree {
 		 *
 		 * Property:
 		 * ```kotlin
-		 * var MissionPopulator.objective by singleKeyedValue("Objective", StringLiteralCodec)
+		 * var MissionPopulator.objective by addField("Objective", StringLiteralCodec)
 		 * ```
 		 */
-		inline fun <EXPOSED : Any, reified SERIALIZED : Any> addField(serializationKey: String, codec: Codec<EXPOSED, SERIALIZED>, isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, EXPOSED?> {
-			return addField_codec(serializationKey, codec, isRequired, SERIALIZED::class.java)
+		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S), isRequired: Boolean = false, noinline initialValue: (() -> T)? = null): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_serializer(serializationKey, serializer, initialValue, isRequired, S::class.java)
 		}
 		
-		
-		@PublishedApi
-		internal fun <EXPOSED : Any, SERIALIZED : Any> addField_codec(serializationKey: String, codec: Codec<EXPOSED, SERIALIZED>, isRequired: Boolean, serializedClass: Class<SERIALIZED>): ReadWriteProperty<IExtensibleSubtree, EXPOSED?> {
-			IVDFRepresentableValue.requireValueRepresentable(serializedClass)
+		@PublishedApi internal fun <T : Any, S : Any> addField_serializer(serializationKey: String, serializer: (T) -> S, initialValue: (() -> T)?, isRequired: Boolean, serClass: Class<S>): ReadWriteProperty<IExtensibleSubtree, T?> {
+			require(IVDFRepresentableValue.isValueRepresentable(serClass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(serClass)) {
+				"Post-serialized type ${serClass.simpleName} is neither a valid value or keyvalue."
+			}
 			
-			return object : ReadWriteProperty<IExtensibleSubtree, EXPOSED?> {
-				val innerDelegate = addField_noCodec(serializationKey, isRequired, serializedClass, null)
-				
-				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): EXPOSED? {
-					return innerDelegate.getValue(thisRef, property)
-						?.let { codec.read(it) }
+			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
+				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
+					return thisRef._rawEntries.computeIfAbsent(prop) {
+						NamedValue(isRequired, serializationKey, initialValue?.invoke(), serializer)
+					} as NamedValue<T>
 				}
 				
-				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: EXPOSED?) {
-					innerDelegate.setValue(thisRef, property, value?.let { codec.write(it) })
+				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
+					return getFromMap(thisRef, property).value
+				}
+				
+				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
+					getFromMap(thisRef, property).value = value
 				}
 			}
 		}
@@ -77,28 +133,26 @@ interface IExtensibleSubtree {
 		/**
 		 * Extend a subtree with a field that can only exist a single time per subtree.
 		 *
+		 * This method may only be used with natively-serializable values, i.e. numbers, booleans, strings, [VDFObjects][btpos.source.vdfdsl.backing.VDFObject], or objects that implement either [IVDFRepresentableValue] or [IVDFRepresentableKeyValue].
+		 *
 		 * @param key The key this item will be serialized under.
 		 * @param isRequired If true, serialization throws an error if this value is not set.
+		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
 		 */
-		inline fun <T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false, noinline initialValue: ((key: String) -> SUB)? = null): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return addField_noCodec(key, isRequired, SUB::class.java, initialValue)
+		inline fun <reified T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false, noinline initialValue: ((key: String) -> SUB)? = null): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_noSerializer(key, isRequired, SUB::class.java, initialValue)
 		}
 		
-		@PublishedApi
-		internal fun <T : Any, V : T> addField_noCodec(key: String, isRequired: Boolean, valueClass: Class<V>, initialValue: ((String) -> V)?): ReadWriteProperty<IExtensibleSubtree, T?> {
-			require(!(valueClass != String::class.java && Collection::class.java.isAssignableFrom(valueClass) && !IVDFRepresentableKeyValue::class.java.isAssignableFrom(valueClass) && !IVDFRepresentableValue::class.java.isAssignableFrom(valueClass))) {
-				"Invalid type: ${valueClass.simpleName}\nRaw lists may not be used as values.\nSince lists do not exist in VDFs, there are many different ways of representing them. Use a type that properly serializes, such as VDFList_Flat or VDFList_Map."
+		@PublishedApi internal fun <T : Any, V : T> addField_noSerializer(key: String, isRequired: Boolean, subclass: Class<V>, initialValue: ((String) -> V)?): ReadWriteProperty<IExtensibleSubtree, T?> {
+			require(IVDFRepresentableValue.isValueRepresentable(subclass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(subclass)) {
+				"${subclass.simpleName} is not natively serializable to a VDF.\n" +
+				"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableKeyValue or IVDFRepresentableValue.\n"
 			}
-			
-			require(IVDFRepresentableKeyValue::class.java.isAssignableFrom(valueClass) || IVDFRepresentableValue.isValueRepresentable(valueClass)) {
-				"Type ${valueClass.simpleName} is not serializable to a VDF. Value must either implement IVDFRepresentableValue or be a String, number, or boolean."
-			}
-			
 			
 			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
 				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
 					return thisRef._rawEntries.computeIfAbsent(prop) {
-						NamedValue<T>(isRequired, key, initialValue?.invoke(key))
+						NamedValue<T>(isRequired, key, initialValue?.invoke(key), null)
 					} as NamedValue<T>
 				}
 				
