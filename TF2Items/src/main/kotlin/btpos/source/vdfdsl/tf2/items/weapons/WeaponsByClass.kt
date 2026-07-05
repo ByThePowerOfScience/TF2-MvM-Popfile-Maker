@@ -2,9 +2,6 @@
 
 package btpos.source.vdfdsl.tf2.items.weapons
 
-import btpos.source.vdfdsl.tf2.items.TFItem
-import btpos.source.vdfdsl.tf2.items.TFItemFactory
-
 
 object WeaponsByClass {
 	object Scout {
@@ -122,9 +119,9 @@ object WeaponsByClass {
 			
 			val RIGHTEOUS_BISON get() = WeaponsAll.RIGHTEOUS_BISON
 			
-			val THE_GUNBOATS get() = WeaponsAll.THE_GUNBOATS
+			val THE_GUNBOATS get() = WeaponsAll.GUNBOATS
 			
-			val THE_MANTREADS get() = WeaponsAll.THE_MANTREADS
+			val THE_MANTREADS get() = WeaponsAll.MANTREADS
 		}
 		
 		/**
@@ -334,6 +331,7 @@ object WeaponsByClass {
 			val FISHCAKE get() = WeaponsAll.FISHCAKE
 			val ROBOSANDVICH get() = WeaponsAll.ROBOSANDVICH
 			val SANDVICH_FESTIVE get() = WeaponsAll.SANDVICH_FESTIVE
+			val SECOND_BANANA get() = WeaponsAll.SECOND_BANANA
 		}
 		
 		
@@ -519,6 +517,8 @@ object WeaponsByClass {
 			val STOCK_SMG get() = WeaponsAll.STOCK_SMG
 			val STOCK_SMG_FESTIVE get() = WeaponsAll.STOCK_SMG_FESTIVE
 			val CLEANERS_CARBINE get() = WeaponsAll.CLEANERS_CARBINE
+			
+			val RAZORBACK get() = WeaponsAll.RAZORBACK
 		}
 		
 		/**

@@ -4,131 +4,6 @@ import btpos.source.vdfdsl.tf2.items.TFItemFactory
 
 
 object WeaponsAll {
-	/**
-	 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-	 */
-	object TrueStock {
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SMG = TFItemFactory.SMG("TF_WEAPON_SMG")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SHOTGUN_PRIMARY = TFItemFactory.SHOTGUN("TF_WEAPON_SHOTGUN_PRIMARY")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SHOTGUN_SOLDIER = TFItemFactory.SHOTGUN("TF_WEAPON_SHOTGUN_SOLDIER")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SHOTGUN_HWG = TFItemFactory.SHOTGUN("TF_WEAPON_SHOTGUN_HWG")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SHOTGUN_PYRO = TFItemFactory.SHOTGUN("TF_WEAPON_SHOTGUN_PYRO")
-		
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val MEDIGUN = TFItemFactory.MEDIGUN("TF_WEAPON_MEDIGUN")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SYRINGEGUN_MEDIC = TFItemFactory.SYRINGE_GUN("TF_WEAPON_SYRINGEGUN_MEDIC")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val BUILD_PDA = TFItemFactory.WEAPON_BASE("TF_WEAPON_PDA_ENGINEER_BUILD")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val PISTOL = TFItemFactory.PISTOL("TF_WEAPON_PISTOL")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val PISTOL_SCOUT = TFItemFactory.PISTOL("TF_WEAPON_PISTOL_SCOUT")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val INVIS = TFItemFactory.INVIS("TF_WEAPON_INVIS")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val REVOLVER = TFItemFactory.REVOLVER("TF_WEAPON_REVOLVER")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val FIREAXE = TFItemFactory.FIRE_AXE("TF_WEAPON_FIREAXE")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val FLAMETHROWER = TFItemFactory.FLAMETHROWER("TF_WEAPON_FLAMETHROWER")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val STICKYBOMB_LAUNCHER = TFItemFactory.STICKYBOMB_LAUNCHER("TF_WEAPON_PIPEBOMBLAUNCHER")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val GRENADELAUNCHER = TFItemFactory.GRENADE_LAUNCHER("TF_WEAPON_GRENADELAUNCHER")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val ROCKETLAUNCHER = TFItemFactory.ROCKETLAUNCHER("TF_WEAPON_ROCKETLAUNCHER")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val MINIGUN = TFItemFactory.MINIGUN("TF_WEAPON_MINIGUN")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SNIPERRIFLE = TFItemFactory.SNIPERRIFLE("TF_WEAPON_SNIPERRIFLE")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SCATTERGUN = TFItemFactory.SCATTERGUN("TF_WEAPON_SCATTERGUN")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val BOTTLE = TFItemFactory.BOTTLE("TF_WEAPON_BOTTLE")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val BONESAW = TFItemFactory.BONESAW("TF_WEAPON_BONESAW")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val WRENCH = TFItemFactory.WRENCH("TF_WEAPON_WRENCH")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SHOVEL = TFItemFactory.SHOVEL("TF_WEAPON_SHOVEL")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val FISTS = TFItemFactory.FISTS("TF_WEAPON_FISTS")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val KUKRI = TFItemFactory.BASE_MELEE("TF_WEAPON_CLUB")
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val BAT = TFItemFactory.BAT("TF_WEAPON_BAT")
-		
-		/**
-		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val KNIFE = TFItemFactory.KNIFE("TF_WEAPON_KNIFE")
-		
-		/**
-		 * Stock sapper. The grey "stock weapon" that exists when you don't have any other item in that slot.
-		 */
-		val SAPPER = TFItemFactory.BUILDER("TF_WEAPON_BUILDER_SPY")
-		
-	}
 	
 	
 	/**
@@ -195,9 +70,9 @@ object WeaponsAll {
 	val WINGER = TFItemFactory.SCOUT_PISTOL("The Winger")
 	val PRETTY_BOYS_POCKET_PISTOL = TFItemFactory.SCOUT_PISTOL("Pretty Boy's Pocket Pistol")
 	
-	val THE_GUNBOATS = TFItemFactory.WEARABLE("The Gunboats")
+	val GUNBOATS = TFItemFactory.WEARABLE("The Gunboats")
 	
-	val THE_MANTREADS = TFItemFactory.WEARABLE("The Mantreads")
+	val MANTREADS = TFItemFactory.WEARABLE("The Mantreads")
 	
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
@@ -210,16 +85,7 @@ object WeaponsAll {
 	val STOCK_SNIPER_RIFLE_FESTIVE = TFItemFactory.SNIPERRIFLE("Festive Sniper Rifle 2011")
 	val HITMANS_HEATMAKER = TFItemFactory.SNIPERRIFLE("The Hitman's Heatmaker")
 	val AWPER_HAND = TFItemFactory.SNIPERRIFLE("The AWPer Hand")
-	object SniperRifleBotkillers {
-		val SILVER_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Silver Botkiller Sniper Rifle Mk.I")
-		val GOLD_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Gold Botkiller Sniper Rifle Mk.I")
-		val RUST_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Rust Botkiller Sniper Rifle Mk.I")
-		val BLOOD_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Blood Botkiller Sniper Rifle Mk.I")
-		val CARBONADO_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Carbonado Botkiller Sniper Rifle Mk.I")
-		val DIAMOND_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Diamond Botkiller Sniper Rifle Mk.I")
-		val SILVER_BOTKILLER_SNIPER_RIFLE_MKII = TFItemFactory.SNIPERRIFLE("Silver Botkiller Sniper Rifle Mk.II")
-		val GOLD_BOTKILLER_SNIPER_RIFLE_MKII = TFItemFactory.SNIPERRIFLE("Gold Botkiller Sniper Rifle Mk.II")
-	}
+	
 	val SHOOTING_STAR = TFItemFactory.SNIPERRIFLE("Shooting Star")
 	
 	val BAZAAR_BARGAIN = TFItemFactory.SNIPERRIFLE("The Bazaar Bargain")
@@ -341,12 +207,17 @@ object WeaponsAll {
 	val RIGHTEOUS_BISON = TFItemFactory.RAYGUN("The Righteous Bison")
 	val POMSON_6000 = TFItemFactory.RAYGUN("The Pomson 6000")
 	
+	val RAZORBACK = TFItemFactory.WEARABLE("The Razorback")
+	
 	
 	
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.SHOTGUN_PRIMARY
+	 * @see TrueStock.SHOTGUN_PYRO
+	 * @see TrueStock.SHOTGUN_SOLDIER
+	 * @see TrueStock.SHOTGUN_HWG
 	 */
 	val STOCK_SHOTGUN = TFItemFactory.SHOTGUN("Upgradeable TF_WEAPON_SHOTGUN_PRIMARY")
 	val RESERVE_SHOOTER = TFItemFactory.SHOTGUN("The Reserve Shooter")
@@ -363,7 +234,7 @@ object WeaponsAll {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.SCATTERGUN
 	 */
 	val STOCK_SCATTERGUN = TFItemFactory.SCATTERGUN("Upgradeable TF_WEAPON_SCATTERGUN")
 	val STOCK_SCATTERGUN_FESTIVE = TFItemFactory.SCATTERGUN("Festive Scattergun 2011")
@@ -494,4 +365,143 @@ object WeaponsAll {
 		val SILVER_BOTKILLER_ROCKET_LAUNCHER_MKII = TFItemFactory.ROCKETLAUNCHER("Silver Botkiller Rocket Launcher Mk.II")
 		val GOLD_BOTKILLER_ROCKET_LAUNCHER_MKII = TFItemFactory.ROCKETLAUNCHER("Gold Botkiller Rocket Launcher Mk.II")
 	}
+	
+	object SniperRifleBotkillers {
+		val SILVER_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Silver Botkiller Sniper Rifle Mk.I")
+		val GOLD_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Gold Botkiller Sniper Rifle Mk.I")
+		val RUST_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Rust Botkiller Sniper Rifle Mk.I")
+		val BLOOD_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Blood Botkiller Sniper Rifle Mk.I")
+		val CARBONADO_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Carbonado Botkiller Sniper Rifle Mk.I")
+		val DIAMOND_BOTKILLER_SNIPER_RIFLE_MKI = TFItemFactory.SNIPERRIFLE("Diamond Botkiller Sniper Rifle Mk.I")
+		val SILVER_BOTKILLER_SNIPER_RIFLE_MKII = TFItemFactory.SNIPERRIFLE("Silver Botkiller Sniper Rifle Mk.II")
+		val GOLD_BOTKILLER_SNIPER_RIFLE_MKII = TFItemFactory.SNIPERRIFLE("Gold Botkiller Sniper Rifle Mk.II")
+	}
+	
+	
+	/**
+	 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+	 */
+	object TrueStock {
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SMG = TFItemFactory.SMG("TF_WEAPON_SMG")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SHOTGUN_PRIMARY = TFItemFactory.SHOTGUN("TF_WEAPON_SHOTGUN_PRIMARY")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SHOTGUN_SOLDIER = TFItemFactory.SHOTGUN("TF_WEAPON_SHOTGUN_SOLDIER")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SHOTGUN_HWG = TFItemFactory.SHOTGUN("TF_WEAPON_SHOTGUN_HWG")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SHOTGUN_PYRO = TFItemFactory.SHOTGUN("TF_WEAPON_SHOTGUN_PYRO")
+		
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val MEDIGUN = TFItemFactory.MEDIGUN("TF_WEAPON_MEDIGUN")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SYRINGEGUN_MEDIC = TFItemFactory.SYRINGE_GUN("TF_WEAPON_SYRINGEGUN_MEDIC")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val BUILD_PDA = TFItemFactory.WEAPON_BASE("TF_WEAPON_PDA_ENGINEER_BUILD")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val PISTOL = TFItemFactory.PISTOL("TF_WEAPON_PISTOL")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val PISTOL_SCOUT = TFItemFactory.PISTOL("TF_WEAPON_PISTOL_SCOUT")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val INVIS = TFItemFactory.INVIS("TF_WEAPON_INVIS")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val REVOLVER = TFItemFactory.REVOLVER("TF_WEAPON_REVOLVER")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val FIREAXE = TFItemFactory.FIRE_AXE("TF_WEAPON_FIREAXE")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val FLAMETHROWER = TFItemFactory.FLAMETHROWER("TF_WEAPON_FLAMETHROWER")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val STICKYBOMB_LAUNCHER = TFItemFactory.STICKYBOMB_LAUNCHER("TF_WEAPON_PIPEBOMBLAUNCHER")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val GRENADELAUNCHER = TFItemFactory.GRENADE_LAUNCHER("TF_WEAPON_GRENADELAUNCHER")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val ROCKETLAUNCHER = TFItemFactory.ROCKETLAUNCHER("TF_WEAPON_ROCKETLAUNCHER")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val MINIGUN = TFItemFactory.MINIGUN("TF_WEAPON_MINIGUN")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SNIPERRIFLE = TFItemFactory.SNIPERRIFLE("TF_WEAPON_SNIPERRIFLE")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SCATTERGUN = TFItemFactory.SCATTERGUN("TF_WEAPON_SCATTERGUN")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val BOTTLE = TFItemFactory.BOTTLE("TF_WEAPON_BOTTLE")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val BONESAW = TFItemFactory.BONESAW("TF_WEAPON_BONESAW")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val WRENCH = TFItemFactory.WRENCH("TF_WEAPON_WRENCH")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SHOVEL = TFItemFactory.SHOVEL("TF_WEAPON_SHOVEL")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val FISTS = TFItemFactory.FISTS("TF_WEAPON_FISTS")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val KUKRI = TFItemFactory.BASE_MELEE("TF_WEAPON_CLUB")
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val BAT = TFItemFactory.BAT("TF_WEAPON_BAT")
+		
+		/**
+		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val KNIFE = TFItemFactory.KNIFE("TF_WEAPON_KNIFE")
+		
+		/**
+		 * Stock sapper. The grey "stock weapon" that exists when you don't have any other item in that slot.
+		 */
+		val SAPPER = TFItemFactory.BUILDER("TF_WEAPON_BUILDER_SPY")
+		
+	}
+	
 }
