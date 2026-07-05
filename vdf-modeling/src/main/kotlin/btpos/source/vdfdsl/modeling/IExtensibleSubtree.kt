@@ -80,6 +80,12 @@ interface IExtensibleSubtree {
 				}
 			}
 		}
+		
+		fun <T : Any, U : Any> notNull(getter: (T) -> U?): (T) -> U {
+			return { it: T ->
+				getter(it) ?: error("Expected $getter to return not null.")
+			}
+		}
 	}
 	
 	@Suppress("UNCHECKED_CAST")

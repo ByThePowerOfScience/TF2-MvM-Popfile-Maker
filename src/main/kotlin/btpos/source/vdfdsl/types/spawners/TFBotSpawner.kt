@@ -1,7 +1,6 @@
 package btpos.source.vdfdsl.types.spawners
 
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
@@ -12,8 +11,8 @@ import btpos.source.vdfdsl.types.bots.BotSkill
 import btpos.source.vdfdsl.types.bots.TFBotAttribute
 import btpos.source.vdfdsl.types.bots.TFClass
 import btpos.source.vdfdsl.types.bots.WeaponRestriction
-import btpos.source.vdfdsl.types.populators.MissionPopulator
-import btpos.source.vdfdsl.types.populators.spawner
+import btpos.source.vdfdsl.types.populators.Populator
+import kotlin.apply
 
 /**
  * ```
@@ -27,11 +26,23 @@ class TFBotSpawner(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : 
 		get() = "TFBot"
 	
 	override fun copy() = TFBotSpawner(copyInternal())
+	
+	companion object {
+		inline operator fun invoke(name: String? = null, template: String? = null, configure: TFBotSpawner.() -> Unit = {}): TFBotSpawner {
+			val newSpawner = TFBotSpawner()
+			if (name != null)
+				newSpawner.name = name
+			if (template != null)
+				newSpawner.template = template
+			newSpawner.apply(configure)
+			return newSpawner
+		}
+	}
 }
 
 var TFBotSpawner.template: String? by addField("Template")
 
-var TFBotSpawner.tfclass: TFClass? by addField("Class")
+var TFBotSpawner.`class`: TFClass? by addField("Class")
 
 var TFBotSpawner.classIcon: String? by addField("ClassIcon")
 
@@ -60,7 +71,7 @@ var TFBotSpawner.maxVisionRange: Number? by addField("MaxVisionRange")
 
 val TFBotSpawner.items: MutableList<TFItem<*>> by multiStruct()
 
-var TFBotSpawner.attributes: MutableList<TFBotAttribute>? by addField("Attributes", serializer = flatListWithKey("Attributes")) { mutableListOf() }
+var TFBotSpawner.attributes: List<TFBotAttribute>? by addField("Attributes", serializer = flatListWithKey("Attributes")) { listOf() }
 
 var TFBotSpawner.characterAttributes: KeyValueMapImpl? by addField("CharacterAttributes")
 
@@ -68,17 +79,19 @@ var TFBotSpawner.eventChangeAttributes: KeyValueMapImpl? by addField("EventChang
 
 
 /**
- * Create a TFBot and implicitly set it as the mission's [spawner][MissionPopulator.spawner].
+ * Create a TFBot and implicitly set it as the populator's [spawner].
  */
-inline fun MissionPopulator.TFBot(name: String? = null, configure: TFBotSpawner.() -> Unit) = Spawner.TFBot(name, configure).also {
-	this.spawner = it
-}
-
-inline fun Spawner.Companion.TFBot(name: String? = null, configure: TFBotSpawner.() -> Unit): TFBotSpawner {
-	val newSpawner = TFBotSpawner()
-	if (name != null) {
-		newSpawner.name = name
+inline fun Populator.TFBot(name: String? = null, template: String? = null, configure: TFBotSpawner.() -> Unit = {}) = TFBotSpawner()
+	.apply {
+		if (name != null)
+			this.name = name
+		if (template != null)
+			this.template = template
 	}
-	newSpawner.apply(configure)
-	return newSpawner
-}
+	.apply(configure)
+	.also {
+		this.spawner = it
+	}
+
+inline fun Spawner.Companion.TFBot(name: String? = null, template: String? = null, configure: TFBotSpawner.() -> Unit = {}) = TFBotSpawner(name, template, configure)
+

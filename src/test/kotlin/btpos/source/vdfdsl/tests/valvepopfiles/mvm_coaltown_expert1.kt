@@ -1,47 +1,34 @@
 package btpos.source.vdfdsl.tests.valvepopfiles
 
-import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsAll
-import btpos.source.vdfdsl.types.WaveSchedule
+import btpos.source.vdfdsl.types.populators.*
+import btpos.source.vdfdsl.types.*
 import btpos.source.vdfdsl.types.bots.BotSkill
+import btpos.source.vdfdsl.types.bots.BotSkill.Companion.Easy
+import btpos.source.vdfdsl.types.bots.TFBotAttribute
 import btpos.source.vdfdsl.types.bots.TFClass
-import btpos.source.vdfdsl.types.canBotsAttackWhileInSpawnRoom
-import btpos.source.vdfdsl.types.populators
-import btpos.source.vdfdsl.types.populators.Mission
-import btpos.source.vdfdsl.types.populators.Objective
-import btpos.source.vdfdsl.types.populators.Populator
-import btpos.source.vdfdsl.types.populators.Wave
-import btpos.source.vdfdsl.types.populators.WavePopulator
-import btpos.source.vdfdsl.types.populators.beginAtWave
-import btpos.source.vdfdsl.types.populators.checkpoint
-import btpos.source.vdfdsl.types.populators.cooldownTime
-import btpos.source.vdfdsl.types.populators.desiredCount
-import btpos.source.vdfdsl.types.populators.doneOutput
-import btpos.source.vdfdsl.types.populators.initialCooldown
-import btpos.source.vdfdsl.types.populators.objective
-import btpos.source.vdfdsl.types.populators.runForThisManyWaves
-import btpos.source.vdfdsl.types.populators.spawner
-import btpos.source.vdfdsl.types.populators.startWaveOutput
-import btpos.source.vdfdsl.types.populators.where
-import btpos.source.vdfdsl.types.respawnWaveTime
 import btpos.source.vdfdsl.types.spawners.Spawner
-import btpos.source.vdfdsl.types.spawners.TFBot
-import btpos.source.vdfdsl.types.spawners.items
-import btpos.source.vdfdsl.types.spawners.maxVisionRange
-import btpos.source.vdfdsl.types.spawners.name
-import btpos.source.vdfdsl.types.spawners.skill
-import btpos.source.vdfdsl.types.spawners.template
-import btpos.source.vdfdsl.types.spawners.tfclass
-import btpos.source.vdfdsl.types.specifics.OutputAction
-import btpos.source.vdfdsl.types.specifics.action
-import btpos.source.vdfdsl.types.specifics.target
-import btpos.source.vdfdsl.types.specifics.trigger
-import btpos.source.vdfdsl.types.startingCurrency
+import btpos.source.vdfdsl.types.spawners.*
+import btpos.source.vdfdsl.types.specifics.*
 import kotlin.test.Test
 
 private const val basicSpawn = "spawnbot"
 
 class mvm_coaltown_expert1 {
+	fun spyMission(startCooldown: Int) = Populator.Mission {
+		objective = Objective.Spy
+		initialCooldown = startCooldown
+		where = "spawnbot_mission_spy"
+		cooldownTime = 30
+		desiredCount = 4
+		
+		TFBot {
+			`class` = TFClass.Spy
+			skill = BotSkill.Expert
+			name = "Spy"
+		}
+	}
+	
 	@Test
 	fun `test name`() {
 		val x = WaveSchedule {
@@ -63,39 +50,9 @@ class mvm_coaltown_expert1 {
 					template = "T_TFBot_SentryBuster"
 				}
 			}
-			fun spyMission(beginWave: Int, startCooldown: Int) = Mission {
-				objective = Objective.Spy
-				initialCooldown = startCooldown
-				where = "spawnbot_mission_spy"
-				beginAtWave = beginWave
-				runForThisManyWaves = 1
-				cooldownTime = 30
-				desiredCount = 4
-				
-				TFBot {
-					tfclass = TFClass.Spy
-					skill = BotSkill.Expert
-					name = "Spy"
-				}
-			}
-			spyMission(1, 10)
-			spyMission(2, 20)
-			spyMission(4, 80)
 			
-			Mission(1) {
-				objective = Objective.Sniper
-				
-				initialCooldown = 75
-				where = "spawnbot_mission_sniper"
-				cooldownTime = 20
-				desiredCount = 4
-				
-				TFBot("Sniper") {
-					tfclass = TFClass.Sniper
-					skill = BotSkill.HARD
-					maxVisionRange = 3000
-				}
-			}
+			
+			
 			
 			Mission(5) {
 				objective = Objective.Sniper
@@ -114,10 +71,13 @@ class mvm_coaltown_expert1 {
 				}
 			}
 			
-			
+			// TODO serialize with base #base robot_giant.pop, #base robot_standard.pop
 		}
 	}
 	
+	/**
+	 * Presets for all waves
+	 */
 	fun makeWave() = Populator.Wave {
 		startWaveOutput {
 			trigger("wave_start_relay")
@@ -125,13 +85,117 @@ class mvm_coaltown_expert1 {
 		doneOutput {
 			trigger("wave_finished_relay")
 		}
+		waitWhenDone = 65
 		checkpoint = true
+	}
+	
+	fun WaveSpawnPopulator.spawnMiddle() {
+		this.where = "spawnbot"
 	}
 	
 	/**
 	 * Currency 800
 	 */
-	fun wave1() = Populator.Wave {
+	context(_: WaveSchedule)
+	fun wave1() = makeWave().apply {
+		// Sniper mission - 4 active (late appearance)
+		// Spy mission - 4 active
+		
+//		addMission(spyMission(30))
+		
+		val wave01a by WaveSpawn {
+			spawnMiddle()
+			
+			totalCount = 30
+			maxActive = 10
+			spawnCount = 10
+			waitBeforeStarting = 0
+			waitBetweenSpawns = 0
+			
+			totalCurrency = 200
+			
+			TFBot(template="T_TFBot_Scout_Bonk")
+		}
+		
+		val wave01b by WaveSpawn {
+			spawnMiddle()
+			
+			totalCount = 16
+			maxActive = 12
+			spawnCount = 2
+			waitBeforeStarting = 0
+			waitBetweenSpawns = 7
+			totalCurrency = 100
+			
+			Squad {
+				spawners += listOf(
+					TFBotSpawner(template="T_TFBot_Heavyweapons_Fist"),
+					TFBotSpawner(template="T_TFBot_Medic_QuickUber"),
+				)
+			}
+		}
+		
+		val wave01c by WaveSpawn {
+			spawnMiddle()
+			waitForAllDead = wave01a
+			
+			totalCount = 30
+			maxActive = 10
+			spawnCount = 5
+			waitBeforeStarting = 0
+			waitBetweenSpawns = 0
+			totalCurrency = 200
+			
+			TFBot {
+				`class` = TFClass.Scout
+				skill = BotSkill.Easy
+			}
+		}
+		
+		val wave01d by WaveSpawn {
+			spawnMiddle()
+			
+			totalCount = 15
+			maxActive = 12
+			spawnCount = 3
+			waitForAllDead = wave01b
+			waitBeforeStarting = 0
+			waitBetweenSpawns = 5
+			totalCurrency = 150
+			
+			Squad {
+				spawners += listOf(
+					Spawner.TFBot(template="T_TFBot_Heavyweapons_Fist"),
+					Spawner.TFBot(template="T_TFBot_Medic_QuickUber"),
+					Spawner.TFBot {
+						`class` = TFClass.Pyro
+						skill = Easy
+						attributes = listOf(TFBotAttribute.AlwaysFireWeapon)
+					}
+				)
+			}
+		}
+		
+		val wave01e by WaveSpawn {
+			spawnMiddle()
+			
+			waitForAllDead = wave01b
+			totalCount = 12
+			maxActive = 12
+			spawnCount = 12
+			waitBeforeStarting = 0
+			waitBetweenSpawns = 0
+			totalCurrency = 150
+			
+			
+			TFBot {
+				`class` = TFClass.Soldier
+				skill = BotSkill.HARD
+			}
+		}
+	}
+	
+	fun WaveSchedule.wave2() = makeWave().apply {
 	
 	}
 }

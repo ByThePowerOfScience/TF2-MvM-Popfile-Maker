@@ -15,9 +15,9 @@ class PeriodicSpawnPopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtree
 		override val _structIdentifier: String get() = "When"
 		
 		
-		var minInterval: Double? by addField("MinInterval")
+		var minInterval: Number? by addField("MinInterval")
 		
-		var maxInterval: Double? by addField("MaxInterval")
+		var maxInterval: Number? by addField("MaxInterval")
 		
 		override fun copy() = When(copyInternal())
 	}
@@ -26,6 +26,15 @@ class PeriodicSpawnPopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtree
 		get() = "PeriodicSpawn"
 	
 	override fun copy() = PeriodicSpawnPopulator(this.copyInternal())
+	
+	/**
+	 * Will usually be a [RandomChoice][btpos.source.vdfdsl.types.spawners.RandomChoiceSpawner].
+	 *
+	 * [Squad][btpos.source.vdfdsl.types.spawners.SquadSpawner] and [Mob (deprecated)][btpos.source.vdfdsl.types.spawners.MobSpawner] work as well, but there is no practical use for this.
+	 */
+	override var spawner: Spawner?
+		get() = super.spawner
+		set(value) { super.spawner = value }
 }
 
 inline fun Populator.Companion.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure)
@@ -44,4 +53,3 @@ var PeriodicSpawnPopulator.where: Where? by addField("Where")
  */
 var PeriodicSpawnPopulator.`when`: Any? by addField("When")
 
-var PeriodicSpawnPopulator.spawner: Spawner? by singleStruct()

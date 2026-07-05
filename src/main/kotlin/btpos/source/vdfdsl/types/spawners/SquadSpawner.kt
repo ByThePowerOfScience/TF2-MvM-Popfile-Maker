@@ -3,6 +3,7 @@ package btpos.source.vdfdsl.types.spawners
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.types.populators.Populator
 
 class SquadSpawner(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
 	/*
@@ -19,6 +20,10 @@ class SquadSpawner(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : 
 }
 
 fun Spawner.Companion.Squad(configure: SquadSpawner.() -> Unit) = SquadSpawner().apply(configure)
+
+fun Populator.Squad(configure: SquadSpawner.() -> Unit) = Spawner.Squad(configure).also {
+	this.spawner = it
+}
 
 var SquadSpawner.formationSize: Double? by addField("FormationSize")
 

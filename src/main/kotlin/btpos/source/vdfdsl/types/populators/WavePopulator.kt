@@ -6,6 +6,9 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.types.PopulationManager
 import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.specifics.OutputAction
+import btpos.source.vdfdsl.utils.ReadOnlyConstant
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 class WavePopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Populator(_subtree) {
 	override val _structIdentifier: String
@@ -22,13 +25,38 @@ fun PopulationManager.Wave(configure: WavePopulator.() -> Unit) = WavePopulator(
 	this.populators += it
 }
 
-val WavePopulator.waveSpawn: MutableList<WaveSpawnPopulator>? by multiStruct()
+val WavePopulator.waveSpawn: MutableList<WaveSpawnPopulator> by multiStruct()
+
+/**
+ * Create a new subwave with the given name and implicitly add it to this wave.
+ */
+inline fun WavePopulator.WaveSpawn(name: String? = null, configure: WaveSpawnPopulator.() -> Unit) = WaveSpawnPopulator()
+	.also { it.name = name }
+	.apply(configure)
+	.also { this.waveSpawn += it }
+
+/**
+ * Create a wave spawn with the name of this property.
+ *
+ * Example:
+ * ```kotlin
+ * fun myWave() = Wave {
+ *      val subwave_1 by WaveSpawn { // Implicitly sets name to "subwave_1"
+ *          // ...
+ *      }
+ * }
+ * ```
+ */
+operator fun WaveSpawnPopulator.provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, WaveSpawnPopulator> {
+	this.name = prop.name
+	return ReadOnlyConstant(this)
+}
 
 var WavePopulator.sound: String? by addField("Sound")
 
 var WavePopulator.description: String? by addField("Description")
 
-var WavePopulator.waitWhenDone: Double? by addField("WaitWhenDone")
+var WavePopulator.waitWhenDone: Number? by addField("WaitWhenDone")
 
 @Deprecated("Apparently doesn't do anything?")
 var WavePopulator.checkpoint: Boolean? by addField("Checkpoint")

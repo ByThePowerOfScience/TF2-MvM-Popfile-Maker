@@ -14,6 +14,14 @@ class MissionPopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()
 		get() = "Mission"
 	
 	override fun copy() = MissionPopulator(this.copyInternal())
+	
+	
+	/**
+	 * What should be spawned to fulfill this mission.
+	 */
+	override var spawner: Spawner?
+		get() = super.spawner
+		set(value) { super.spawner = value }
 }
 
 data class Objective(val item: String) : IVDFRepresentableValue<VDFPrimitive> {
@@ -87,14 +95,10 @@ var MissionPopulator.beginAtWave: Int? by addField("BeginAtWave")
 var MissionPopulator.runForThisManyWaves: Int? by addField("RunForThisManyWaves")
 
 /**
- * How many of the specified [spawner] should be spawned when this mission procs.
+ * How many of the [specified spawner][Populator.spawner] should be spawned when this mission procs.
  */
 var MissionPopulator.desiredCount: Number? by addField("DesiredCount")
 
-/**
- * What should be spawned to fulfill this mission.
- */
-var MissionPopulator.spawner: Spawner? by singleStruct()
 
 
 

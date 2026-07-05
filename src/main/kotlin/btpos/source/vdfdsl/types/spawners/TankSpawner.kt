@@ -3,6 +3,7 @@ package btpos.source.vdfdsl.types.spawners
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.types.populators.Populator
 import btpos.source.vdfdsl.types.specifics.OutputAction
 
 class TankSpawner(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
@@ -12,7 +13,11 @@ class TankSpawner(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : S
 	override fun copy() = TankSpawner(copyInternal())
 }
 
-fun Spawner.Companion.Tank(configure: TankSpawner.() -> Unit = {}) = TankSpawner().apply(configure)
+inline fun Spawner.Companion.Tank(configure: TankSpawner.() -> Unit = {}) = TankSpawner().apply(configure)
+
+inline fun Populator.Tank(configure: TankSpawner.() -> Unit) = Spawner.Tank(configure).also {
+	this.spawner = it
+}
 
 var TankSpawner.health: Int? by addField("Health")
 

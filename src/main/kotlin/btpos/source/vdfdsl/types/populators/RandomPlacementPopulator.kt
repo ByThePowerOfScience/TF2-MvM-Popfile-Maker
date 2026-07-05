@@ -30,10 +30,4 @@ var RandomPlacementPopulator.minimumSeparation: Int? by addField("MinimumSeparat
 
 var RandomPlacementPopulator.navAreaFilter: NavArea? by addField("NavAreaFilter")
 
-/**
- * Will usually be a [RandomChoice][btpos.source.vdfdsl.types.spawners.RandomChoiceSpawner].
- *
- * [Squad][btpos.source.vdfdsl.types.spawners.SquadSpawner] and [Mob (deprecated)][btpos.source.vdfdsl.types.spawners.MobSpawner] work as well, but there is no practical use for this.
- */
-var RandomPlacementPopulator.spawner: Spawner? by singleStruct()
 	

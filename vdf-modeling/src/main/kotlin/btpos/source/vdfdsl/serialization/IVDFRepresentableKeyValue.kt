@@ -15,7 +15,7 @@ fun interface IVDFRepresentableKeyValue : IVDFRepresentable {
 	
 	companion object {
 		fun isKeyValueRepresentable(cls: Class<*>): Boolean {
-			return cls == VDFKeyValue::class.java || IVDFRepresentableKeyValue::class.java.isAssignableFrom(cls)
+			return IVDFRepresentableKeyValue::class.java.isAssignableFrom(cls)
 		}
 	}
 }
