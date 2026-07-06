@@ -117,14 +117,19 @@ class VDFStructWithPrototype(
 /**
  * Configure multiple subwaves to go off at once.  Any settings applied in [configureAll] will be applied to all inner items, and all inner items will be given the name set in [name] for the purpose of linking.
  */
-inline fun MultiSubwave(name: String, vararg waveSpawns: WaveSpawnPopulator, configureAll: WaveSpawnPopulator.() -> Unit): WaveSpawnPopulator {
+inline fun MultiSubwave(name: String, vararg waveSpawns: WaveSpawnPopulator, configureAll: WaveSpawnPopulator.() -> Unit = {}): WaveSpawnPopulator {
 	return MultiSubwavePopulator(waveSpawns.map { it.copy() }).apply(configureAll).apply { this.name = name }
 }
 
 /**
- * Configure multiple subwaves to go off at once.  Any settings applied in [configureAll] will be applied to all inner items, and all inner items will be given the name of the property this is a delegate for for the purpose of linking.
+ * Configure multiple subwaves to go off at once.
+ *
+ * Any settings applied in [configureAll] will be applied to all inner items, and all inner items will be given the name of the property this is a delegate for for the purpose of linking.
+ *
+ * @param waveSpawns The WaveSpawns that should be given this name and settings.
+ * @param configureAll Block scope to configure (copies of) all given [waveSpawns].
  */
-inline fun MultiSubwave(vararg waveSpawns: WaveSpawnPopulator, configureAll: WaveSpawnPopulator.() -> Unit): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, WaveSpawnPopulator>> {
+inline fun MultiSubwave(vararg waveSpawns: WaveSpawnPopulator, configureAll: WaveSpawnPopulator.() -> Unit = {}): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, WaveSpawnPopulator>> {
 	val inst = MultiSubwavePopulator(waveSpawns.map { it.copy() }).apply(configureAll)
 	
 	return PropertyDelegateProvider { _, prop ->
