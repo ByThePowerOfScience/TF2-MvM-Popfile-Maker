@@ -6,6 +6,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.backing.VDFSubtree
 import kotlin.collections.map
+import kotlin.contracts.contract
 import kotlin.jvm.java
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -88,7 +89,6 @@ interface IExtensibleSubtree {
 		}
 	}
 	
-	@Suppress("UNCHECKED_CAST")
 	companion object {
 		/**
 		 * Extend a struct with a field that can only be in that subtree once.
@@ -110,8 +110,32 @@ interface IExtensibleSubtree {
 		 * var MissionPopulator.objective by addField("Objective", StringLiteralCodec)
 		 * ```
 		 */
-		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S), isRequired: Boolean = false, noinline initialValue: (() -> T)? = null): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return addField_serializer(serializationKey, serializer, initialValue, isRequired, S::class.java)
+		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S), isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_serializer(serializationKey, serializer, null, isRequired, S::class.java)
+		}
+		/**
+		 * Extend a struct with a field that can only be in that subtree once.
+		 *
+		 * This version of the method allows you to specify a codec, which allows the user to input one thing and then it serializes another.
+		 *
+		 * ## Example:
+		 *
+		 * Popfile:
+		 * ```txt
+		 * Mission
+		 * {
+		 *      Objective "DestroySentries"
+		 * }
+		 * ```
+		 *
+		 * Property:
+		 * ```kotlin
+		 * var MissionPopulator.objective by addField("Objective", StringLiteralCodec)
+		 * ```
+		 */
+		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S), isRequired: Boolean = false, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
+			@Suppress("UNCHECKED_CAST")
+			return addField_serializer(serializationKey, serializer, initialValue, isRequired, S::class.java) as ReadWriteProperty<IExtensibleSubtree, T>
 		}
 		
 		@PublishedApi internal fun <T : Any, S : Any> addField_serializer(serializationKey: String, serializer: (T) -> S, initialValue: (() -> T)?, isRequired: Boolean, serClass: Class<S>): ReadWriteProperty<IExtensibleSubtree, T?> {
@@ -121,6 +145,7 @@ interface IExtensibleSubtree {
 			
 			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
 				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
+					@Suppress("UNCHECKED_CAST")
 					return thisRef._rawEntries.computeIfAbsent(prop) {
 						NamedValue(isRequired, serializationKey, initialValue?.invoke(), serializer)
 					} as NamedValue<T>
@@ -145,8 +170,22 @@ interface IExtensibleSubtree {
 		 * @param isRequired If true, serialization throws an error if this value is not set.
 		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
 		 */
-		inline fun <reified T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false, noinline initialValue: ((key: String) -> SUB)? = null): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return addField_noSerializer(key, isRequired, SUB::class.java, initialValue)
+		inline fun <reified T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_noSerializer(key, isRequired, SUB::class.java, null)
+		}
+		
+		/**
+		 * Extend a subtree with a field that can only exist a single time per subtree.
+		 *
+		 * This method may only be used with natively-serializable values, i.e. numbers, booleans, strings, [VDFObjects][btpos.source.vdfdsl.backing.VDFObject], or objects that implement either [IVDFRepresentableValue] or [IVDFRepresentableKeyValue].
+		 *
+		 * @param key The key this item will be serialized under.
+		 * @param isRequired If true, serialization throws an error if this value is not set.
+		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
+		 */
+		inline fun <reified T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false, noinline initialValue: (key: String) -> SUB): ReadWriteProperty<IExtensibleSubtree, T> {
+			@Suppress("UNCHECKED_CAST")
+			return addField_noSerializer(key, isRequired, SUB::class.java, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>
 		}
 		
 		@PublishedApi internal fun <T : Any, V : T> addField_noSerializer(key: String, isRequired: Boolean, subclass: Class<V>, initialValue: ((String) -> V)?): ReadWriteProperty<IExtensibleSubtree, T?> {
@@ -184,6 +223,7 @@ interface IExtensibleSubtree {
 		 * @param isRequired If true, throws an error if this value is not set when serializing.
 		 */
 		fun <T : IVDFRepresentableKeyValue> singleStruct(isRequired: Boolean = false) = object : ReadWriteProperty<IExtensibleSubtree, T?> {
+			@Suppress("UNCHECKED_CAST")
 			private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries.computeIfAbsent(prop) {
 				SelfNamedValue<T>(isRequired)
 			} as SelfNamedValue<T>
@@ -216,6 +256,7 @@ interface IExtensibleSubtree {
 		 * @param isRequired If true, throws an error if this value is not set when serializing.
 		 */
 		fun <T : IVDFRepresentableKeyValue> multiStruct(isRequired: Boolean = false): ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> {
+			@Suppress("UNCHECKED_CAST")
 			return ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> { thisRef, property ->
 				thisRef._rawEntries.computeIfAbsent(property) {
 					SelfNamedValueList<T>(isRequired)
@@ -236,8 +277,7 @@ interface IExtensibleSubtree_VDFRepresentable : IExtensibleSubtree, IVDFRepresen
 open class ExtensibleSubtreeImpl(
 	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf(),
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
-) : IExtensibleSubtree_VDFRepresentable
-{
+) : IExtensibleSubtree_VDFRepresentable {
 	override val _vdfRepr: VDFSubtree
 		get() {
 			try {
