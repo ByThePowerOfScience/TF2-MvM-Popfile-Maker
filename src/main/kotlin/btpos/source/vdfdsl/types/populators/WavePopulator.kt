@@ -4,14 +4,12 @@ import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
-import btpos.source.vdfdsl.types.PopulationManager
-import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.utils.ReadOnlyConstant
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Populator(_subtree) {
+class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
 	override val _structIdentifier: String
 		get() = "Wave"
 	
@@ -87,7 +85,7 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	
 }
 
-inline fun Populator.Companion.Wave(configure: WavePopulator.() -> Unit) = WavePopulator().apply(configure)
+inline fun Populators.Wave(configure: WavePopulator.() -> Unit) = WavePopulator().apply(configure)
 /**
  * Creates and adds a new Wave populator to the PopulationManager
  */

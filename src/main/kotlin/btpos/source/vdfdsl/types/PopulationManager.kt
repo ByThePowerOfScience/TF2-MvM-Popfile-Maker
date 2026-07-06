@@ -2,12 +2,11 @@ package btpos.source.vdfdsl.types
 
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
-import btpos.source.vdfdsl.types.populators.Populator
+import btpos.source.vdfdsl.types.populators.AbstractPopulator
 
 @PopFileDSL
 class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
@@ -16,7 +15,7 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	
 	override fun copy() = PopulationManager(copyInternal())
 	
-	operator fun Populator.unaryPlus() {
+	operator fun AbstractPopulator.unaryPlus() {
 		this@PopulationManager.populators += this
 	}
 }
@@ -53,7 +52,7 @@ inline fun WaveSchedule(configure: PopulationManager.() -> Unit): PopulationMana
 
 
 
-val PopulationManager.populators: MutableList<Populator> by multiStruct(isRequired = true)
+val PopulationManager.populators: MutableList<AbstractPopulator> by multiStruct(isRequired = true)
 
 /**
  * Default: 0

@@ -6,8 +6,10 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 
 @PopFileDSL
-abstract class Spawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
+abstract class AbstractSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
 	companion object;
 	
-	abstract override fun copy(): Spawner
+	abstract override fun copy(): AbstractSpawner
 }
+
+object Spawners

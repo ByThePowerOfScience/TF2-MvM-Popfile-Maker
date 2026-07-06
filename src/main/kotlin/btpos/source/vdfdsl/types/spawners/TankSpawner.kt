@@ -1,13 +1,11 @@
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
-import btpos.source.vdfdsl.types.populators.Populator
 import btpos.source.vdfdsl.types.specifics.OutputAction
 
-class TankSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
+class TankSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractSpawner(_subtree) {
 	override val _structIdentifier: String
 		get() = "Tank"
 	
@@ -29,7 +27,7 @@ class TankSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubt
 	var onBombDroppedOutput: OutputAction? by addField("OnBombDroppedOutput")
 }
 
-inline fun Spawner.Companion.Tank(configure: TankSpawner.() -> Unit = {}) = TankSpawner().apply(configure)
+inline fun Spawners.Tank(configure: TankSpawner.() -> Unit = {}) = TankSpawner().apply(configure)
 
-inline fun Tank(configure: TankSpawner.() -> Unit) = Spawner.Tank(configure)
+inline fun Tank(configure: TankSpawner.() -> Unit) = Spawners.Tank(configure)
 

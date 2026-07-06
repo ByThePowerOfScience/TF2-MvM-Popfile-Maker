@@ -21,7 +21,7 @@ import kotlin.apply
  * val SYDNEY_SNIPER_BOT = SNIPER_BOT.copy(item = listOf(TFItems.Sniper.SYDNEY_SLEEPER))
  * ```
  */
-class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
+class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractSpawner(_subtree) {
 	override val _structIdentifier: String
 		get() = "TFBot"
 	
@@ -94,5 +94,5 @@ inline fun TFBot(name: String? = null, template: String? = null, configure: TFBo
 	}
 	.apply(configure)
 
-inline fun Spawner.Companion.TFBot(name: String? = null, template: String? = null, configure: TFBotSpawner.() -> Unit = {}) = TFBotSpawner(name, template, configure)
+inline fun Spawners.TFBot(name: String? = null, template: String? = null, configure: TFBotSpawner.() -> Unit = {}) = TFBotSpawner(name, template, configure)
 

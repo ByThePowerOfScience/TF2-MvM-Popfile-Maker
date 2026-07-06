@@ -5,23 +5,25 @@ import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
-import btpos.source.vdfdsl.types.spawners.Spawner
+import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 
 @PopFileDSL
-abstract class Populator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
+abstract class AbstractPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
 	companion object;
 	
 	
 	/**
 	 * The spawner used for this populator.
 	 *
-	 * @see Spawner
+	 * @see AbstractSpawner
 	 */
-	var spawner: Spawner? by singleStruct()
+	var spawner: AbstractSpawner? by singleStruct()
 	
-	abstract override fun copy(): Populator
+	abstract override fun copy(): AbstractPopulator
 	
-	operator fun Spawner.unaryPlus() {
-		this@Populator.spawner = this@unaryPlus.copy()
+	operator fun AbstractSpawner.unaryPlus() {
+		this@AbstractPopulator.spawner = this@unaryPlus.copy()
 	}
 }
+
+object Populators;

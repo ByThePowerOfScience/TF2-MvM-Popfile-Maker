@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 
-class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
+class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractSpawner(_subtree) {
 	/*
 	Squad
 	- float     FormationSize       (default: -1.0)
@@ -18,7 +18,7 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	
 	override fun copy() = SquadSpawner(copyInternal())
 	
-	operator fun Spawner.unaryPlus() {
+	operator fun AbstractSpawner.unaryPlus() {
 		this@SquadSpawner.spawners += this@unaryPlus.copy()
 	}
 	
@@ -30,26 +30,26 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	 */
 	var shouldPreserveSquad: Boolean? by addField("ShouldPreserveSquad")
 	
-	val spawners: MutableList<Spawner> by multiStruct()
+	val spawners: MutableList<AbstractSpawner> by multiStruct()
 	
 	/**
 	 * Add the same spawner multiple times.
 	 */
-	fun addMultiple(spawner: Spawner, amount: Int) {
+	fun addMultiple(spawner: AbstractSpawner, amount: Int) {
 		val copy = spawner.copy()
 		for (i in 0 until amount) {
 			this.spawners += copy
 		}
 	}
 	
-	operator fun Spawner.times(amount: Int) = this to amount
+	operator fun AbstractSpawner.times(amount: Int) = this to amount
 	
-	operator fun Pair<Spawner, Int>.unaryPlus() {
+	operator fun Pair<AbstractSpawner, Int>.unaryPlus() {
 		addMultiple(first, second)
 	}
 }
 
-fun Spawner.Companion.Squad(configure: SquadSpawner.() -> Unit) = SquadSpawner().apply(configure)
+fun Spawners.Squad(configure: SquadSpawner.() -> Unit) = SquadSpawner().apply(configure)
 
-fun Squad(configure: SquadSpawner.() -> Unit) = Spawner.Squad(configure)
+fun Squad(configure: SquadSpawner.() -> Unit) = Spawners.Squad(configure)
 

@@ -3,15 +3,13 @@ package btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.types.PopulationManager
 import btpos.source.vdfdsl.types.populators
-import btpos.source.vdfdsl.types.populators.PeriodicSpawnPopulator.When
-import btpos.source.vdfdsl.types.spawners.Spawner
+import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 import btpos.source.vdfdsl.types.specifics.Where
 
-class PeriodicSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Populator(_subtree) {
+class PeriodicSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
 	open class When(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
 		override val _structIdentifier: String get() = "When"
 		
@@ -32,7 +30,7 @@ class PeriodicSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Ext
 	 *
 	 * [Squad][btpos.source.vdfdsl.types.spawners.SquadSpawner] and [Mob (deprecated)][btpos.source.vdfdsl.types.spawners.MobSpawner] work as well, but there is no practical use for this.
 	 */
-	override var spawner: Spawner?
+	override var spawner: AbstractSpawner?
 		get() = super.spawner
 		set(value) { super.spawner = value }
 	
@@ -46,7 +44,7 @@ class PeriodicSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Ext
 	var `when`: Any? by addField("When")
 }
 
-inline fun Populator.Companion.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure)
+inline fun Populators.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure)
 /**
  * Creates and adds a new PeriodicSpawn populator to the PopulationManager
  */

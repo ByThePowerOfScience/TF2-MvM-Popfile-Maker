@@ -3,14 +3,19 @@ package btpos.source.vdfdsl.tests.valvepopfiles
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsAll
 import btpos.source.vdfdsl.types.populators.*
 import btpos.source.vdfdsl.types.*
+import btpos.source.vdfdsl.types.bots.BehaviorModifiers
 import btpos.source.vdfdsl.types.bots.BotSkill
 import btpos.source.vdfdsl.types.bots.BotSkill.Companion.Easy
-import btpos.source.vdfdsl.types.bots.TFBotAttribute
+import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
+import btpos.source.vdfdsl.types.bots.WeaponRestrictions
+import btpos.source.vdfdsl.types.populators.WaveSpawnPopulator.Support
 import btpos.source.vdfdsl.types.spawners.*
 import btpos.source.vdfdsl.types.specifics.*
 
 private const val basicSpawn = "spawnbot"
+
+private const val tag_preferFlankRight = "nav_prefer_flank_right"
 
 class mvm_coaltown_expert1 {
 	val STEEL_GAUNTLET = TFBot(template="T_TFBot_Giant_Heavyweapons")
@@ -20,7 +25,7 @@ class mvm_coaltown_expert1 {
 		skill = Easy
 	}
 	
-	fun spyMission(startWave: Int, startCooldown: Int) = Populator.Mission {
+	fun spyMission(startWave: Int, startCooldown: Int) = Mission {
 		objective = Objective.Spy
 		initialCooldown = startCooldown
 		where = "spawnbot_mission_spy"
@@ -171,7 +176,7 @@ class mvm_coaltown_expert1 {
 					+TFBot {
 						`class` = TFClass.Pyro
 						skill = Easy
-						attributes = listOf(TFBotAttribute.AlwaysFireWeapon)
+						attributes = listOf(TFBotAttributes.AlwaysFireWeapon)
 					}
 				}
 			}
@@ -190,7 +195,7 @@ class mvm_coaltown_expert1 {
 				
 				+TFBot {
 					`class` = TFClass.Soldier
-					skill = BotSkill.HARD
+					skill = BotSkill.Hard
 				}
 			}
 			
@@ -278,7 +283,7 @@ class mvm_coaltown_expert1 {
 				`class` = TFClass.Soldier
 				skill = BotSkill.Expert
 				items += WeaponsAll.DIRECT_HIT
-				tags += "nav_prefer_flank_right"
+				tags += tag_preferFlankRight
 			}
 		}
 		
@@ -289,12 +294,12 @@ class mvm_coaltown_expert1 {
 		+wave02e
 	}
 	
-	inline fun tankSubWave(health: Int, speed: Number, configure: WaveSpawnPopulator.() -> Unit) = WaveSpawn {
+	inline fun tankSubWave(health: Int, speed: Number, additionalConfiguration: WaveSpawnPopulator.() -> Unit = {}) = WaveSpawn {
 		firstSpawnOutput = OutputAction {
 			trigger("boss_spawn_relay")
 		}
 		
-		configure()
+		additionalConfiguration()
 		
 		+Tank {
 			this.health = health
@@ -312,12 +317,48 @@ class mvm_coaltown_expert1 {
 	}
 	
 	fun wave3() = myDefaultWaveSettings().apply {
-		val wave03a by tankSubWave(35_000, 75) {
-			totalCount = 1
-			waitBeforeStarting = 0
-			totalCurrency = 300
-		}
+		val wave03a by MultiSubwave(
+			tankSubWave(35_000, 75) {
+				totalCount = 1
+				waitBeforeStarting = 0
+				totalCurrency = 300
+			},
+			WaveSpawn {
+				atMiddleSpawn()
+				totalCount = 20
+				maxActive = 2
+				spawnCount = 2
+				waitBeforeStarting = 0
+				waitBetweenSpawns = 0
+				totalCurrency = 100
+				
+				support = Support.INFINITE
+				
+				+EASY_SCOUT.copy().apply {
+					weaponRestriction = WeaponRestrictions.MeleeOnly
+					attributes += TFBotAttributes.AlwaysCrit
+				}
+			}
+		)
 		
+		
+		val wave03b by WaveSpawn {
+			atMiddleSpawn()
+			
+			totalCount = 20
+			maxActive = 10
+			spawnCount = 10
+			waitBeforeStarting = 15
+			waitBetweenSpawns = 0
+			totalCurrency = 200
+			
+			+TFBot {
+				`class` = TFClass.Soldier
+				skill = BotSkill.Hard
+				tags += tag_preferFlankRight
+				behaviorModifiers += BehaviorModifiers.Push
+			}
+		}
 	}
 	
 	

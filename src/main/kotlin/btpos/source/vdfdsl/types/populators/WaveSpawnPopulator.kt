@@ -1,21 +1,14 @@
 package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.notNull
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
-import btpos.source.vdfdsl.serialization.codecs.Codec
-import btpos.source.vdfdsl.types.PopulationManager
-import btpos.source.vdfdsl.types.populators
-import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.OutputAction
-import btpos.source.vdfdsl.types.specifics.Where
 
-class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Populator(_subtree) {
+class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
 	override val _structIdentifier: String
 		get() = "WaveSpawn"
 	

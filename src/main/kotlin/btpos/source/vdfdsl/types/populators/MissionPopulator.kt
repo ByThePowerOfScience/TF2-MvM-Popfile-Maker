@@ -3,14 +3,11 @@ package btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
-import btpos.source.vdfdsl.types.PopulationManager
-import btpos.source.vdfdsl.types.populators
-import btpos.source.vdfdsl.types.spawners.Spawner
+import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 
-class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Populator(_subtree) {
+class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
 	override val _structIdentifier: String
 		get() = "Mission"
 	
@@ -19,7 +16,7 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	/**
 	 * What should be spawned to fulfill this mission.
 	 */
-	override var spawner: Spawner?
+	override var spawner: AbstractSpawner?
 		get() = super.spawner
 		set(value) { super.spawner = value }
 	
@@ -55,7 +52,7 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	var runForThisManyWaves: Int? by addField("RunForThisManyWaves")
 	
 	/**
-	 * How many of the [specified spawner][Populator.spawner] should be spawned when this mission procs.
+	 * How many of the [specified spawner][AbstractPopulator.spawner] should be spawned when this mission procs.
 	 */
 	var desiredCount: Number? by addField("DesiredCount")
 }
@@ -78,7 +75,7 @@ data class Objective(val item: String) : IVDFRepresentableValue<VDFPrimitive> {
  *
  * Example: sentry busters, snipers, spies.
  */
-fun Populator.Companion.Mission(configure: MissionPopulator.() -> Unit) = MissionPopulator().apply(configure)
+fun Populators.Mission(configure: MissionPopulator.() -> Unit) = MissionPopulator().apply(configure)
 
 /**
  * Define a set of bots that spawn on a cooldown instead of based on the normal wave schedule.
