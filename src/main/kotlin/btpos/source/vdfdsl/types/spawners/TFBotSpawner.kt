@@ -7,12 +7,11 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithK
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.modeling.KeyValueMapImpl
 import btpos.source.vdfdsl.tf2.items.TFItem
-import btpos.source.vdfdsl.types.bots.BehaviorModifier
+import btpos.source.vdfdsl.types.bots.BehaviorModifiers
 import btpos.source.vdfdsl.types.bots.BotSkill
-import btpos.source.vdfdsl.types.bots.TFBotAttribute
+import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
-import btpos.source.vdfdsl.types.bots.WeaponRestriction
-import btpos.source.vdfdsl.types.populators.Populator
+import btpos.source.vdfdsl.types.bots.WeaponRestrictions
 import kotlin.apply
 
 /**
@@ -52,15 +51,15 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	
 	var skill: BotSkill? by addField("Skill")
 	
-	var weaponRestriction: WeaponRestriction? by addField("WeaponRestriction")
+	var weaponRestriction: WeaponRestrictions? by addField("WeaponRestrictions")
 	
-	var behaviorModifiers: List<BehaviorModifier> by addField("BehaviorModifiers", serializer = flatListWithKey("BehaviorModifiers")) { listOf() }
+	var behaviorModifiers: List<BehaviorModifiers> by addField("BehaviorModifiers", serializer = flatListWithKey("BehaviorModifiers")) { listOf() }
 	
 	var maxVisionRange: Number? by addField("MaxVisionRange")
 	
 	val items: MutableList<TFItem<*>> by multiStruct()
 	
-	var attributes: List<TFBotAttribute> by addField("Attributes", serializer = flatListWithKey("Attributes")) { listOf() }
+	var attributes: List<TFBotAttributes> by addField("Attributes", serializer = flatListWithKey("Attributes")) { listOf() }
 	
 	var characterAttributes: KeyValueMapImpl? by addField("CharacterAttributes")
 	
