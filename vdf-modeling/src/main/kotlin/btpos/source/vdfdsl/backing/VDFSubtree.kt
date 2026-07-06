@@ -16,6 +16,8 @@ data class VDFSubtree(val entries: Collection<VDFKeyValue> = listOf()) : VDFObje
 	
 	operator fun plus(entries: Iterable<VDFKeyValue>) = withEntries(entries)
 	
+	operator fun plus(other: VDFSubtree) = withEntries(other.entries)
+	
 	override val _vdfRepr: VDFSubtree
 		get() = this
 	
