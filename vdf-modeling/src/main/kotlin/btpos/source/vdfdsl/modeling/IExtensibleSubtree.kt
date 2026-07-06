@@ -6,8 +6,6 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.backing.VDFSubtree
 import kotlin.collections.map
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import kotlin.jvm.java
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
@@ -32,6 +30,8 @@ interface IExtensibleSubtree {
 	 * so we can throw it if a required field isn't set and it gives the line where it was set.
 	 */
 	val _instantiationSite: Array<StackTraceElement>
+	
+	fun copy(): IExtensibleSubtree
 	
 	/**
 	 * Serializes to multiple versions of the same key in the same subtree, like this:
@@ -225,6 +225,10 @@ interface IExtensibleSubtree {
  	}
 }
 
+interface IExtensibleSubtree_VDFRepresentable : IExtensibleSubtree, IVDFRepresentableValue<VDFSubtree> {
+	override fun copy(): IExtensibleSubtree_VDFRepresentable
+}
+
 
 /**
  * Just a subtree. See [AbstractVDFStruct] for a subtree with its own name.
@@ -232,8 +236,7 @@ interface IExtensibleSubtree {
 open class ExtensibleSubtreeImpl(
 	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf(),
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
-)
-	: IExtensibleSubtree, IVDFRepresentableValue<VDFSubtree>
+) : IExtensibleSubtree_VDFRepresentable
 {
 	override val _vdfRepr: VDFSubtree
 		get() {
@@ -246,5 +249,5 @@ open class ExtensibleSubtreeImpl(
 	
 	protected fun copyEntries() = _rawEntries.toMutableMap()
 	
-	fun copy() = ExtensibleSubtreeImpl(copyEntries())
+	override fun copy() = ExtensibleSubtreeImpl(copyEntries())
 }

@@ -4,20 +4,20 @@ import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.types.PopulationManager
 import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.populators.PeriodicSpawnPopulator.When
 import btpos.source.vdfdsl.types.spawners.Spawner
 import btpos.source.vdfdsl.types.specifics.Where
 
-class PeriodicSpawnPopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Populator(_subtree) {
-	class When(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
+class PeriodicSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Populator(_subtree) {
+	open class When(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
 		override val _structIdentifier: String get() = "When"
 		
+		open var minInterval: Number? by addField("MinInterval")
 		
-		var minInterval: Number? by addField("MinInterval")
-		
-		var maxInterval: Number? by addField("MaxInterval")
+		open var maxInterval: Number? by addField("MaxInterval")
 		
 		override fun copy() = When(copyInternal())
 	}
@@ -35,6 +35,15 @@ class PeriodicSpawnPopulator(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtree
 	override var spawner: Spawner?
 		get() = super.spawner
 		set(value) { super.spawner = value }
+	
+	
+	
+	var where: Where? by addField("Where")
+	
+	/**
+	 * Can be either a [Float] or a [When] instance
+	 */
+	var `when`: Any? by addField("When")
 }
 
 inline fun Populator.Companion.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure)
@@ -45,11 +54,4 @@ fun PopulationManager.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit
 	this.populators += it
 }
 
-
-var PeriodicSpawnPopulator.where: Where? by addField("Where")
-
-/**
- * Can be either a [Float] or a [When] instance
- */
-var PeriodicSpawnPopulator.`when`: Any? by addField("When")
 

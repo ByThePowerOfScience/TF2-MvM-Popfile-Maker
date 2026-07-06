@@ -300,8 +300,8 @@ WaveSchedule
 			SpawnCount 9
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 200		
-		
+			TotalCurrency 200
+
 			Squad
 			{
 				TFBot

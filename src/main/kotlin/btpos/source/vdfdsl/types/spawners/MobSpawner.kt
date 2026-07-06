@@ -5,20 +5,23 @@ package btpos.source.vdfdsl.types.spawners
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.types.PopulationManager
 import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.populators.MissionPopulator
 
 @Deprecated("According to sigsegv: \"Old and crusty\"")
-class MobSpawner(_subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
+class MobSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : Spawner(_subtree) {
 	override val _structIdentifier: String
 		get() = "Mob"
+	
+	var count: Int? by addField("Count")
+	var spawner: Spawner? by singleStruct()
+	
 	
 	override fun copy() = MobSpawner(copyInternal())
 }
 
-var MobSpawner.count: Int? by addField("Count")
-var MobSpawner.spawner: Spawner? by singleStruct()
 
 
 @Deprecated("Old and crusty")

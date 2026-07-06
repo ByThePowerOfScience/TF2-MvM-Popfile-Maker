@@ -16,6 +16,10 @@ class PopulationManager : IExtensibleSubtree {
 	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf()
 	
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
+	
+	operator fun Populator.unaryPlus() {
+		this@PopulationManager.populators += this
+	}
 }
 
 typealias WaveSchedule = PopulationManager
@@ -24,26 +28,32 @@ inline fun WaveSchedule(configure: PopulationManager.() -> Unit): PopulationMana
 	return PopulationManager().apply(configure)
 }
 
-/**
- * Add a mission to the root at this wave.
- *
- * Can only be called in the context of a [Wave][WavePopulator].
- */
-context(schedule: WaveSchedule)
-fun WavePopulator.addMission(missionPopulator: MissionPopulator) {
-	val currentWaveNumber = schedule.populators.count { it is WavePopulator } + 1
-	val placeInMissions = schedule.populators.indexOfLast { it is MissionPopulator && it.beginAtWave.let { it != null && it < currentWaveNumber } }.let {
-		if (it == -1)
-			0
-		else
-			it
-	}
-	schedule.populators.add(placeInMissions + 1, missionPopulator.apply {
-		// get this wave number
-		beginAtWave = currentWaveNumber
-		runForThisManyWaves = 1
-	})
-}
+//
+///**
+// * Add a mission to the root at this wave.
+// *
+// * Can only be called in the context of a [Wave][WavePopulator].
+// *
+// * Note: this is currently bugged in Kotlin.
+// */
+//context(schedule: WaveSchedule)
+//fun WavePopulator.addMission(missionPopulator: MissionPopulator) {
+//	val currentWaveNumber = schedule.populators.count { it is WavePopulator } + 1
+//	val placeInMissions = schedule.populators.indexOfLast { it is MissionPopulator && it.beginAtWave.let { it != null && it < currentWaveNumber } }.let {
+//		if (it == -1)
+//			0
+//		else
+//			it
+//	}
+//	schedule.populators.add(placeInMissions + 1, missionPopulator.apply {
+//		// get this wave number
+//		beginAtWave = currentWaveNumber
+//		runForThisManyWaves = 1
+//	})
+//}
+
+
+
 val PopulationManager.populators: MutableList<Populator> by multiStruct(isRequired = true)
 
 /**
