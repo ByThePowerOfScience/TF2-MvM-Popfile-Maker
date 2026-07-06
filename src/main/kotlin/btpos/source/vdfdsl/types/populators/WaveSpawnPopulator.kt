@@ -32,6 +32,11 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 			 * When set, enables support bots, **ignoring** the maximum number of bots set by [WaveSpawner.totalCount][totalCount].
 			 */
 			val IGNORED = Support("Ignored")
+			
+			/**
+			 * When set, this WaveSpawn defines support bots that will continue spawning throughout the wave.
+			 */
+			val INFINITE = Support("1")
 		}
 	}
 	
