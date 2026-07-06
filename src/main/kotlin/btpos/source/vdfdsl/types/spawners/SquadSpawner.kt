@@ -23,7 +23,7 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	}
 	
 	
-	var formationSize: Double? by addField("FormationSize")
+	var formationSize: Number? by addField("FormationSize")
 	
 	/**
 	 * Note: Squad.ShouldPreserveSquad is parsed correctly, but will cause a spurious error to show up in console; ignore the error
