@@ -1,21 +1,20 @@
 package btpos.source.vdfdsl.types
 
+import btpos.source.vdfdsl.modeling.AbstractVDFStruct
+import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
-import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
-import btpos.source.vdfdsl.types.populators.MissionPopulator
 import btpos.source.vdfdsl.types.populators.Populator
-import btpos.source.vdfdsl.types.populators.WavePopulator
-import btpos.source.vdfdsl.types.populators.beginAtWave
-import btpos.source.vdfdsl.types.populators.runForThisManyWaves
 
 @PopFileDSL
-class PopulationManager : IExtensibleSubtree {
-	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf()
+class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
+	override val _structIdentifier: String
+		get() = "WaveSchedule"
 	
-	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
+	override fun copy() = PopulationManager(copyInternal())
 	
 	operator fun Populator.unaryPlus() {
 		this@PopulationManager.populators += this
