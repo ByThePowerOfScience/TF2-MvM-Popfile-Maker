@@ -7,39 +7,39 @@ class TFBotAttribute(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
 	override val _vdfRepr get() = VDFPrimitive(name)
 	
 	companion object {
-		val RemoveOnDeath = TFBotAttribute("RemoveOnDeath")
-		val Aggressive = TFBotAttribute("Aggressive")
-		val SuppressFire = TFBotAttribute("SuppressFire")
-		val DisableDodge = TFBotAttribute("DisableDodge")
-		val BecomeSpectatorOnDeath = TFBotAttribute("BecomeSpectatorOnDeath")
-		val RetainBuildings = TFBotAttribute("RetainBuildings")
-		val SpawnWithFullCharge = TFBotAttribute("SpawnWithFullCharge")
-		val AlwaysCrit = TFBotAttribute("AlwaysCrit")
-		val IgnoreEnemies = TFBotAttribute("IgnoreEnemies")
-		val HoldFireUntilFullReload = TFBotAttribute("HoldFireUntilFullReload")
-		val AlwaysFireWeapon = TFBotAttribute("AlwaysFireWeapon")
-		val TeleportToHint = TFBotAttribute("TeleportToHint")
-		val MiniBoss = TFBotAttribute("MiniBoss")
-		val UseBossHealthBar = TFBotAttribute("UseBossHealthBar")
-		val IgnoreFlag = TFBotAttribute("IgnoreFlag")
+		@JvmField val RemoveOnDeath = TFBotAttribute("RemoveOnDeath")
+		@JvmField val Aggressive = TFBotAttribute("Aggressive")
+		@JvmField val SuppressFire = TFBotAttribute("SuppressFire")
+		@JvmField val DisableDodge = TFBotAttribute("DisableDodge")
+		@JvmField val BecomeSpectatorOnDeath = TFBotAttribute("BecomeSpectatorOnDeath")
+		@JvmField val RetainBuildings = TFBotAttribute("RetainBuildings")
+		@JvmField val SpawnWithFullCharge = TFBotAttribute("SpawnWithFullCharge")
+		@JvmField val AlwaysCrit = TFBotAttribute("AlwaysCrit")
+		@JvmField val IgnoreEnemies = TFBotAttribute("IgnoreEnemies")
+		@JvmField val HoldFireUntilFullReload = TFBotAttribute("HoldFireUntilFullReload")
+		@JvmField val AlwaysFireWeapon = TFBotAttribute("AlwaysFireWeapon")
+		@JvmField val TeleportToHint = TFBotAttribute("TeleportToHint")
+		@JvmField val MiniBoss = TFBotAttribute("MiniBoss")
+		@JvmField val UseBossHealthBar = TFBotAttribute("UseBossHealthBar")
+		@JvmField val IgnoreFlag = TFBotAttribute("IgnoreFlag")
 		
-		val AutoJump = TFBotAttribute("AutoJump")
-		val AirChargeOnly = TFBotAttribute("AirChargeOnly")
+		@JvmField val AutoJump = TFBotAttribute("AutoJump")
+		@JvmField val AirChargeOnly = TFBotAttribute("AirChargeOnly")
 		
 		
-		val Parachute = TFBotAttribute("Parachute")
-		val ProjectileShield = TFBotAttribute("ProjectileShield")
+		@JvmField val Parachute = TFBotAttribute("Parachute")
+		@JvmField val ProjectileShield = TFBotAttribute("ProjectileShield")
 		
 		object Vaccinator {
-			val Bullet = TFBotAttribute("VaccinatorBullets")
-			val Blast = TFBotAttribute("VaccinatorBlast")
-			val Fire = TFBotAttribute("VaccinatorFire")
+			@JvmField val Bullet = TFBotAttribute("VaccinatorBullets")
+			@JvmField val Blast = TFBotAttribute("VaccinatorBlast")
+			@JvmField val Fire = TFBotAttribute("VaccinatorFire")
 		}
 		
 		object Immunities {
-			val BulletImmune = TFBotAttribute("BulletImmune")
-			val BlastImmune = TFBotAttribute("BlastImmune")
-			val FireImmune = TFBotAttribute("FireImmune")
+			@JvmField val BulletImmune = TFBotAttribute("BulletImmune")
+			@JvmField val BlastImmune = TFBotAttribute("BlastImmune")
+			@JvmField val FireImmune = TFBotAttribute("FireImmune")
 		}
 	}
 }
