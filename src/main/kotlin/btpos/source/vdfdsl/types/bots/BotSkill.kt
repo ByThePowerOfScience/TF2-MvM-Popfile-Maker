@@ -10,7 +10,7 @@ class BotSkill(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
 	companion object {
 		val Easy = BotSkill("Easy")
 		val Normal = BotSkill("Normal")
-		val HARD = BotSkill("Hard")
+		val Hard = BotSkill("Hard")
 		val Expert = BotSkill("Expert")
 	}
 	
