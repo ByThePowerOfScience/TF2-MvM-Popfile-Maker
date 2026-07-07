@@ -88,7 +88,7 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	var support: Support? by addField("Support")
 }
 
-inline fun WaveSpawn(configure: WaveSpawnPopulator.() -> Unit) = WaveSpawnPopulator().apply(configure)
+inline fun WaveSpawn(name: String? = null, configure: WaveSpawnPopulator.() -> Unit) = WaveSpawnPopulator().apply { name?.let { this.name = it } }.apply(configure)
 
 
 
