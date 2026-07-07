@@ -26,7 +26,7 @@ interface IKeyValueMap {
 }
 
 
-class KeyValueMapImpl(private val _attributes: MutableMap<Any, Any> = mutableMapOf())
+open class KeyValueMapImpl(private val _attributes: MutableMap<Any, Any> = mutableMapOf())
 	: IVDFRepresentableValue<VDFSubtree>, IKeyValueMap
 {
 	override val _vdfRepr
