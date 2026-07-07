@@ -5,6 +5,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
+import btpos.source.vdfdsl.modeling.IKeyValueMap
 import btpos.source.vdfdsl.modeling.KeyValueMapImpl
 import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.types.bots.BehaviorModifiers
@@ -63,7 +64,15 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	
 	var characterAttributes: KeyValueMapImpl? by addField("CharacterAttributes")
 	
+	final inline fun characterAttributes(configure: IKeyValueMap.() -> Unit) {
+		characterAttributes = KeyValueMapImpl().apply(configure)
+	}
+	
 	var eventChangeAttributes: KeyValueMapImpl? by addField("EventChangeAttributes")
+	
+	final inline fun eventChangeAttributes(configure: IKeyValueMap.() -> Unit) {
+		characterAttributes = KeyValueMapImpl().apply(configure)
+	}
 	
 	var tags: List<String> by addField("Tag", serializer = flatListWithKey("Tag")) { listOf() }
 	
