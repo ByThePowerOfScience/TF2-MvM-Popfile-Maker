@@ -1,13 +1,13 @@
+@file:Suppress("unused")
+
 package btpos.source.vdfdsl.modeling
 
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
-import btpos.source.vdfdsl.backing.VDFSubtree
-import kotlin.collections.map
-import kotlin.contracts.contract
-import kotlin.jvm.java
 import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -32,6 +32,11 @@ interface IExtensibleSubtree {
 	 */
 	val _instantiationSite: Array<StackTraceElement>
 	
+	/**
+	 * Create a deep copy of this subtree.
+	 *
+	 * Implementers of this interface should always override this method to return their own type.  I wish there were a way to do this with generics.
+	 */
 	fun copy(): IExtensibleSubtree
 	
 	/**
@@ -168,7 +173,6 @@ interface IExtensibleSubtree {
 		 *
 		 * @param key The key this item will be serialized under.
 		 * @param isRequired If true, serialization throws an error if this value is not set.
-		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
 		 */
 		inline fun <reified T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, T?> {
 			return addField_noSerializer(key, isRequired, SUB::class.java, null)
@@ -196,6 +200,7 @@ interface IExtensibleSubtree {
 			
 			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
 				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
+					@Suppress("UNCHECKED_CAST")
 					return thisRef._rawEntries.computeIfAbsent(prop) {
 						NamedValue<T>(isRequired, key, initialValue?.invoke(key), null)
 					} as NamedValue<T>
@@ -290,4 +295,13 @@ open class ExtensibleSubtreeImpl(
 	protected fun copyEntries() = _rawEntries.toMutableMap()
 	
 	override fun copy() = ExtensibleSubtreeImpl(copyEntries())
+}
+
+/**
+ * Create a copy of this struct and configure it. Alias for `copy().apply { ... }`
+ *
+ * @return the copy with the configuration scope applied.
+ */
+inline operator fun <reified T : IExtensibleSubtree> T.invoke(configure: T.() -> Unit): T {
+	return (this.copy() as? T)?.apply(configure) ?: error("Class ${T::class.java.simpleName} does not implement `IExtensibleSubtree#copy()` correctly. Implementers should always override this method to return their own type.")
 }

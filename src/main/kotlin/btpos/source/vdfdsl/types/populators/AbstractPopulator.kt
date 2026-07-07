@@ -7,6 +7,9 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 
+/**
+ * Something that can hold a [spawner].  See the subclasses for more details. (in IntelliJ, click the `o↓` symbol on the left near the line numbers.)
+ */
 @PopFileDSL
 abstract class AbstractPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
 	companion object;

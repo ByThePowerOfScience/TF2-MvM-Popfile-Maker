@@ -45,6 +45,12 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	
 	var spawnCount: Int? by addField("SpawnCount")
 	
+	/**
+	 * How many seconds after its spawning condition is fulfilled (if unspecified, that's the start of the wave) that these bots should start spawning.
+	 *
+	 * @see waitForAllSpawned
+	 * @see waitForAllDead
+	 */
 	var waitBeforeStarting: Number? by addField("WaitBeforeStarting")
 	
 	var waitBetweenSpawns: Number? by addField("WaitBetweenSpawns")
