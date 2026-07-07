@@ -35,7 +35,7 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	/**
 	 * Add the same spawner multiple times.
 	 */
-	fun addMultiple(spawner: AbstractSpawner, amount: Int) {
+	fun addMultiple(amount: Int, spawner: AbstractSpawner) {
 		val copy = spawner.copy()
 		for (i in 0 until amount) {
 			this.spawners += copy
@@ -45,7 +45,7 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	operator fun AbstractSpawner.times(amount: Int) = this to amount
 	
 	operator fun Pair<AbstractSpawner, Int>.unaryPlus() {
-		addMultiple(first, second)
+		addMultiple(second, first)
 	}
 }
 
