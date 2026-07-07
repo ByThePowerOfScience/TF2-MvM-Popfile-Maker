@@ -2,6 +2,7 @@ package btpos.source.vdfdsl.types.bots
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 
 class TFBotAttributes(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
 	override val _vdfRepr get() = VDFPrimitive(name)
@@ -43,3 +44,5 @@ class TFBotAttributes(val name: String) : IVDFRepresentableValue<VDFPrimitive> {
 		}
 	}
 }
+
+val TFBotSpawner.Attributes get() = TFBotAttributes.Companion
