@@ -13,5 +13,5 @@ sealed class VDFObject {
 		return this
 	}
 	
-	abstract fun writeToVDF(writer: Appendable, indent: Int)
+	abstract fun writeToVDF(writer: Appendable, indent: Int = 0)
 }
