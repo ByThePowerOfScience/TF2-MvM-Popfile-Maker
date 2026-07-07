@@ -7,7 +7,6 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.utils.ReadOnlyConstant
-import kotlin.collections.flatMap
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 
@@ -74,16 +73,23 @@ class MultiSubtreeMap(val items: List<MutableMap<Any, IVDFRepresentableKeyValue>
  * Does not actually exist in the VDF.
  */
 class MultiSubwavePopulator(
-	val items: List<WaveSpawnPopulator>,
 	_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()
 ) : WaveSpawnPopulator(_subtree) {
+	val items: MutableList<WaveSpawnPopulator> = mutableListOf()
+	
 	override fun _serialize(input: VDFSubtree): VDFSubtree {
 		return items.map {
 			VDFStructWithPrototype(it, this) // allow stuff set in this to overwrite stuff set in each item
 		}.fold(input) { acc, waveSpawn -> waveSpawn._serialize(acc) }
 	}
 	
-	override fun copy() = MultiSubwavePopulator(items.map { it.copy() }, copyInternal())
+	operator fun WaveSpawnPopulator.unaryPlus() {
+		this@MultiSubwavePopulator.items += this
+	}
+	
+	override fun copy() = MultiSubwavePopulator(copyInternal()).also {
+		items.mapTo(it.items, WaveSpawnPopulator::copy)
+	}
 }
 
 class MapWithPrototype<K, V>(val prototype: Map<K, V>, val backingMap: MutableMap<K, V> = mutableMapOf()) : MutableMap<K, V> by backingMap {
@@ -117,8 +123,11 @@ class VDFStructWithPrototype(
 /**
  * Configure multiple subwaves to go off at once.  Any settings applied in [configureAll] will be applied to all inner items, and all inner items will be given the name set in [name] for the purpose of linking.
  */
-inline fun MultiSubwave(name: String, vararg waveSpawns: WaveSpawnPopulator, configureAll: WaveSpawnPopulator.() -> Unit = {}): WaveSpawnPopulator {
-	return MultiSubwavePopulator(waveSpawns.map { it.copy() }).apply(configureAll).apply { this.name = name }
+inline fun WaveSpawn_Multi(name: String, vararg waveSpawns: WaveSpawnPopulator, configureAll: MultiSubwavePopulator.() -> Unit = {}): WaveSpawnPopulator {
+	return MultiSubwavePopulator().apply {
+		waveSpawns.mapTo(items) { it.copy() }
+		this.name = name
+	}.apply(configureAll)
 }
 
 /**
@@ -129,11 +138,12 @@ inline fun MultiSubwave(name: String, vararg waveSpawns: WaveSpawnPopulator, con
  * @param waveSpawns The WaveSpawns that should be given this name and settings.
  * @param configureAll Block scope to configure (copies of) all given [waveSpawns].
  */
-inline fun MultiSubwave(vararg waveSpawns: WaveSpawnPopulator, configureAll: WaveSpawnPopulator.() -> Unit = {}): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, WaveSpawnPopulator>> {
-	val inst = MultiSubwavePopulator(waveSpawns.map { it.copy() }).apply(configureAll)
+inline fun WaveSpawn_Multi(vararg waveSpawns: WaveSpawnPopulator, configureAll: MultiSubwavePopulator.() -> Unit = {}): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, WaveSpawnPopulator>> {
+	val inst = MultiSubwavePopulator().apply {
+		waveSpawns.mapTo(items) { it.copy() }
+	}.apply(configureAll)
 	
 	return PropertyDelegateProvider { _, prop ->
 		ReadOnlyConstant(inst.apply { name = prop.name })
 	}
 }
-
