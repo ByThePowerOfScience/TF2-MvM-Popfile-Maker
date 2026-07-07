@@ -51,7 +51,7 @@ interface IExtensibleSubtree {
 	object Serializers {
 		inline fun <reified T : Any> flatListWithKey(key: String): ((Iterable<T>) -> IVDFRepresentableKeyValue) {
 			IVDFRepresentableValue.requireValueRepresentable(T::class.java)
-			return _flatListWithKey(key)
+			return _flatListWithKey(key.intern())
 		}
 		
 		@PublishedApi internal fun <T : Any> _flatListWithKey(key: String) = { iterable: Iterable<T> ->
@@ -148,6 +148,8 @@ interface IExtensibleSubtree {
 				"Post-serialized type ${serClass.simpleName} is neither a valid value or keyvalue."
 			}
 			
+			val serializationKey = serializationKey.intern()
+			
 			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
 				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
 					@Suppress("UNCHECKED_CAST")
@@ -161,7 +163,12 @@ interface IExtensibleSubtree {
 				}
 				
 				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
-					getFromMap(thisRef, property).value = value
+					getFromMap(thisRef, property).value = value.let {
+						if (it is String)
+							it.intern() as T
+						else
+							it
+					}
 				}
 			}
 		}
@@ -198,6 +205,8 @@ interface IExtensibleSubtree {
 				"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableKeyValue or IVDFRepresentableValue.\n"
 			}
 			
+			val key = key.intern()
+			
 			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
 				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
 					@Suppress("UNCHECKED_CAST")
@@ -211,7 +220,12 @@ interface IExtensibleSubtree {
 				}
 				
 				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
-					getFromMap(thisRef, property).value = value
+					getFromMap(thisRef, property).value = value.let {
+						if (it is String)
+							it.intern() as T
+						else
+							it
+					}
 				}
 			}
 		}
