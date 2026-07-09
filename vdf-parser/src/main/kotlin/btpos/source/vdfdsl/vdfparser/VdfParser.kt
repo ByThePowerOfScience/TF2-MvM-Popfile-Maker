@@ -33,7 +33,7 @@ object VdfParser {
 		val isString
 			get() = item is String
 		
-		val isMap get() = item is Map<*, *>
+		val isTable get() = item is List<*>
 		
 		fun stringOrNull() = item as? String
 		

@@ -30,7 +30,6 @@ import btpos.source.vdfdsl.utils.plus
 import org.junit.jupiter.api.Test
 import kotlin.time.Duration.Companion.seconds
 
-private const val string = "spawnbot"
 
 private const val basicSpawn = "spawnbot"
 
@@ -711,125 +710,125 @@ class mvm_coaltown_expert1 {
 		+hardSoldiers
 	}
 	
-	fun wave7() = WaveBuilder {
-		myDefaultWaveSettings()
+fun wave7() = WaveBuilder {
+	myDefaultWaveSettings()
+	
+	defaultSpawnLocation = basicSpawn
+	
+	val tanksEvery30Seconds = tankSubWave(20_000, 75) {
+		name = "wave07a"
 		
-		defaultSpawnLocation = basicSpawn
+		totalCount = 5
+		spawnEvery(30.seconds)
+		totalCurrency = 500
+	}
+	val hardScoutsWithMedics = WaveSpawn(name="wave07c") {
+		totalCount = 54
+		maxActive = 6
+		spawnCount = 4
+		waitBetweenSpawns = 5
 		
-		val tanksEvery30Seconds = tankSubWave(20_000, 75) {
-			name = "wave07a"
-			
-			totalCount = 5
-			spawnEvery(30.seconds)
-			totalCurrency = 500
-		}
-		val hardScoutsWithMedics = WaveSpawn(name="wave07c") {
-			totalCount = 54
-			maxActive = 6
-			spawnCount = 4
-			waitBetweenSpawns = 5
-			
-			totalCurrency = 300
-			
-			+Squad {
-				+EASY_SCOUT {
-					skill = BotSkill.Hard
-				}
-				+QUICKFIX_MEDIC
-			}
-		}
+		totalCurrency = 300
 		
-		val heavyHuntsmanSwarm = WaveSpawn_Multi("wave07cd") {
-			val heavy = TFBot {
-				`class` = TFClass.HeavyWeapons
+		+Squad {
+			+EASY_SCOUT {
 				skill = BotSkill.Hard
 			}
-			val huntsmanSniper = TFBot(template = "T_TFBot_Sniper_Huntsman") {
-				items += WeaponsAll.HUNTSMAN {
-					damage.bonus.visible = 0.075f
-					fasterReloadRate = 0.4f
-				}
-			}
-			
-			+WaveSpawn {
-				+Squad {
-					formationSize = 225
-					
-					addMultiple(3, heavy {
-						tags += tag_specialmainleft
-					})
-					
-					addMultiple(3, huntsmanSniper)
-				}
-			}
-			+WaveSpawn {
-				+Squad {
-					formationSize = 175
-					addMultiple(3, heavy {
-						tags += tag_specialmainright
-					})
-					addMultiple(3, huntsmanSniper)
-				}
-			}
-			totalCount = 36
-			maxActive = 12
-			spawnCount = 6
-			waitBetweenSpawns = 15
-			
-			totalCurrency = 200
+			+QUICKFIX_MEDIC
 		}
-		
-		val directHitBannerSoldiers = WaveSpawn("wave07e") {
-			totalCount = 12
-			maxActive = 12
-			spawnCount = 6
-			waitBetweenSpawns = 15
-			totalCurrency = 50
-			
-			+TFBot {
-				`class` = TFClass.Soldier
-				skill = BotSkill.Expert
-				weaponRestriction = WeaponRestrictions.PrimaryOnly
-				items += WeaponsAll.DIRECT_HIT
-				items += WeaponsAll.BUFF_BANNER
-				attributes += Attributes.SpawnWithFullCharge
-				characterAttributes {
-					BuffItemAttributes.increaseBuffDuration = 9.0f
-				}
-			}
-		}
-		
-		fun giantHeavy(letter: String, tag: String) = WaveSpawn(name="wave07$letter") {
-			totalCount = 1
-			allAtOnce()
-			totalCurrency = 50
-			
-			+GIANT_HEAVY {
-				tags += tag
-				behaviorModifiers += BehaviorModifiers.Push
-			}
-		}
-		
-		val finalTankBoss = tankSubWave(45_000, 75, tankConfiguration = {
-			skin = 1
-		}) {
-			name = "wave07j"
-		}
-		
-		+tanksEvery30Seconds
-		+hardScoutsWithMedics
-		wait(60.seconds)
-		+heavyHuntsmanSwarm
-		waitForAllSpawned(heavyHuntsmanSwarm)
-		+directHitBannerSoldiers
-		waitForAllSpawned(directHitBannerSoldiers)
-		+giantHeavy("f", tag_specialmainleft)
-		wait(5.seconds)
-		+giantHeavy("g", tag_specialmainright)
-		wait(5.seconds)
-		+giantHeavy("h", tag_preferFlankRight)
-		wait(5.seconds)
-		+giantHeavy("i", tag_preferFlankLeft)
-		+finalTankBoss
 	}
+	
+	val heavyHuntsmanSwarm = WaveSpawn_Multi("wave07cd") {
+		val heavy = TFBot {
+			`class` = TFClass.HeavyWeapons
+			skill = BotSkill.Hard
+		}
+		val huntsmanSniper = TFBot(template = "T_TFBot_Sniper_Huntsman") {
+			items += WeaponsAll.HUNTSMAN {
+				damage.bonus.visible = 0.075f
+				fasterReloadRate = 0.4f
+			}
+		}
+		
+		+WaveSpawn {
+			+Squad {
+				formationSize = 225
+				
+				addMultiple(3, heavy {
+					tags += tag_specialmainleft
+				})
+				
+				addMultiple(3, huntsmanSniper)
+			}
+		}
+		+WaveSpawn {
+			+Squad {
+				formationSize = 175
+				addMultiple(3, heavy {
+					tags += tag_specialmainright
+				})
+				addMultiple(3, huntsmanSniper)
+			}
+		}
+		totalCount = 36
+		maxActive = 12
+		spawnCount = 6
+		waitBetweenSpawns = 15
+		
+		totalCurrency = 200
+	}
+	
+	val directHitBannerSoldiers = WaveSpawn("wave07e") {
+		totalCount = 12
+		maxActive = 12
+		spawnCount = 6
+		waitBetweenSpawns = 15
+		totalCurrency = 50
+		
+		+TFBot {
+			`class` = TFClass.Soldier
+			skill = BotSkill.Expert
+			weaponRestriction = WeaponRestrictions.PrimaryOnly
+			items += WeaponsAll.DIRECT_HIT
+			items += WeaponsAll.BUFF_BANNER
+			attributes += Attributes.SpawnWithFullCharge
+			characterAttributes {
+				BuffItemAttributes.increaseBuffDuration = 9.0f
+			}
+		}
+	}
+	
+	fun giantHeavy(letter: String, tag: String) = WaveSpawn(name="wave07$letter") {
+		totalCount = 1
+		allAtOnce()
+		totalCurrency = 50
+		
+		+GIANT_HEAVY {
+			tags += tag
+			behaviorModifiers += BehaviorModifiers.Push
+		}
+	}
+	
+	val finalTankBoss = tankSubWave(45_000, 75, tankConfiguration = {
+		skin = 1
+	}) {
+		name = "wave07j"
+	}
+	
+	+tanksEvery30Seconds
+	+hardScoutsWithMedics
+	wait(60.seconds)
+	+heavyHuntsmanSwarm
+	waitForAllSpawned(heavyHuntsmanSwarm)
+	+directHitBannerSoldiers
+	waitForAllSpawned(directHitBannerSoldiers)
+	+giantHeavy("f", tag_specialmainleft)
+	wait(5.seconds)
+	+giantHeavy("g", tag_specialmainright)
+	wait(5.seconds)
+	+giantHeavy("h", tag_preferFlankRight)
+	wait(5.seconds)
+	+giantHeavy("i", tag_preferFlankLeft)
+	+finalTankBoss
+}
 }

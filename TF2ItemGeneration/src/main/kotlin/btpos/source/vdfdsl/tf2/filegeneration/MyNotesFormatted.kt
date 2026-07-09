@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
+import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.bool
@@ -8,9 +9,14 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAtt
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
 import kotlin.collections.flatten
 
+// TODO: change attribute interfaces to be specifically THEIR attributes, and then add an "inherited" variant that's used for the item scopes, that way people will only see the attributes for a specific type when they do for example BuffItemAttributes.XXX
+
+
 object MyNotesFormatted {
 	sealed interface IAttrThing {
 		operator fun contains(clsName: String): Boolean
+		
+		operator fun get(clsName: String): AttrClassUsage?
 		
 		fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute>
 	}
@@ -20,6 +26,12 @@ object MyNotesFormatted {
 	class AttrClassUsage(val attr_class: String, val kType: String, notes: List<String> = listOf()) : IAttrThing {
 		val notes = notes.map { if (!it.endsWith('.')) it + '.' else it }
 		
+		
+		override fun get(clsName: String): AttrClassUsage? {
+			if (this.attr_class == clsName)
+				return this
+			return null
+		}
 		companion object {
 			val attrRegex = Regex("""^\s*-\s*(?:On (\w+):)?\s*`(\w+)`: (\w+)(\s*\W.+)?$""")
 			val noteRegex = Regex("""^\s*-\s*(\w.+)$""")
@@ -73,6 +85,11 @@ object MyNotesFormatted {
 				"Knife" to mapOf("set icicle knife mode" to 3),
 				"FlareGun" to mapOf("mod flaregun fires pellets with knockback" to 3)
 			)
+			
+			val customCodecs = mapOf(
+				"or_crit_vs_not_playercond" to FakeCodec("EnumSet<TFCritCondition>", "EnumSetOrCodec"),
+				"or_crit_vs_playercond" to FakeCodec("EnumSet<TFCritCondition>", "EnumSetOrCodec"),
+			)
 		}
 		
 		override fun contains(clsName: String): Boolean {
@@ -94,7 +111,7 @@ object MyNotesFormatted {
 							} else if (kType == "Boolean") {
 								bool
 							} else {
-								it.codec
+								customCodecs[it.className] ?: it.codec
 							}
 						}
 						notes = this@AttrClassUsage.notes
@@ -112,6 +129,10 @@ object MyNotesFormatted {
 		
 		override operator fun contains(clsName: String): Boolean {
 			return attrClassesOrNestedScopes.any { clsName in it }
+		}
+		
+		override fun get(clsName: String): AttrClassUsage? {
+			return attrClassesOrNestedScopes.firstNotNullOfOrNull { it[clsName] }
 		}
 		
 		/**
@@ -152,6 +173,11 @@ object MyNotesFormatted {
 	}
 	
 	val hierarchy = mapOf(
+		"Entity" to listOf("Player"),
+		"Player" to listOf("BaseEntity"),
+		
+		"BaseEntity" to listOf("BaseCombatWeapon", "Wearable", "EconEntity"),
+		
 		Pair("BaseCombatWeapon", listOf("WeaponBase")),
 		
 		Pair(
@@ -269,6 +295,31 @@ object MyNotesFormatted {
 			),
 			
 			HierarchyAttrClassScope(
+				"BaseEntity", """- `counts_as_assister`: Boolean
+	- If true, this item will get kill assist credit in the killfeed
+- `mult_dmg_falloff`: Float
+- `item_meter_resupply_denied`: Boolean
+	- If true, resupply cabinets and spawning do not fully recharge the meter for this item.  Instead, its "default charge meter value" is used.
+- `item_meter_charge_type`: AttributeMeterType
+	- If [TIME][AttributeMeterType.TIME] or [AttributeMeterType.COMBO], checks the `mult_item_meter_charge_rate` attribute class for passive recharge rate mult.
+	- If [DAMAGE][AttributeMeterType.DAMAGE] or [COMBO][AttributeMeterType.COMBO], checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
+- `item_meter_damage_for_full_charge`: Float
+	- Amount of meter required to fully charge the item.
+	- If negative, 0, or not set, does not attempt to fill the meter at all when dealing damage.
+- `mult_item_meter_charge_rate`: Float
+	- Scale factor for meter gained per second and/or meter gained on dealing damage.
+- `mult_crit_when_health_is_below_percent`: Float
+	- Gives crit boost when your health is below this proportion
+- `spunup_push_force_immunity`: Boolean
+	- Only procs if Heavy and has a spun up minigun
+- `mod_disguise_consumes_cloak`: Boolean
+	- If true, disguising requires and consumes an entire cloak meter
+- `set_blockbackstab_once`: Boolean
+	- If on a Wearable: the item is "broken", it is given `nodraw`, and the player's secondary weapon's meter is reset.
+	- If on a weapon, reduces all backstab damage taken by the player for all backstabs without any cooldown.  Performs identically to the Mannpower "Resistance" powerup in this respect.""".notesToAttrClassUsages()
+			),
+			
+			HierarchyAttrClassScope(
 				"WeaponBase", listOf(
 					AttrClassUsage(
 						"custom_charge_meter", "Boolean", listOf(
@@ -372,11 +423,257 @@ object MyNotesFormatted {
 						)
 					),
 					AttrClassUsage("mult_reload_time_while_healed", "Float", listOf()),
-					AttrClassUsage(
-						"weapon_allow_inspect", "Boolean", listOf()
-					)
-				)
-			),
+					AttrClassUsage("weapon_allow_inspect", "Boolean", listOf()),
+					AttrClassScope(
+						"OnHit",
+						"""- `add_onhit_addammo`: Boolean
+- `extra_damage_on_hit`: Int
+	- For every head you have, deal +1% damage.
+- `reveal_cloaked_victim_on_hit`: Boolean
+- `reveal_disguised_victim_on_hit`: Boolean
+- `add_onhit_addhealth`: Int
+- `charge_meter_on_hit`: Float
+	- Restores demoman shield charge on hit.
+	- Yes, this is on every weapon.
+- `speed_boost_on_hit`: Int
+	- Just does `addcond(SPEED_BOOST, speed_boost_on_hit)`
+- `add_onhit_ubercharge`: Float
+	- Only procs if on a Medic.
+- `rage_on_hit`: Int
+	- Only procs if on a Soldier or Pyro.
+- `boost_on_damage`: Boolean
+	- Gain Scout's "hype" meter on hit.  Yeah, this exists for everything, but specifically modifies Scout's "hype" meter, which is only used for the Soda Popper and Baby Face's Blaster.
+- `aoe_heal_chance`: Float
+	- Chance to heal allies on hitting an enemy.
+- `crits_on_damage`: Float
+	- Chance to gain critboost
+- `stun_on_damage`: Float
+	- Chance to stun victim
+- `aoe_blast_on_damage`: Float
+	- Stun and bleed victim and others in range
+	- Oh ok this is explosive headshot logic
+- `generate_rage_on_dmg`: Boolean
+	- Knockback rage on enemy if you're a heavy and your rage is draining
+- `mult_onhit_enemyspeed`: Float
+	- Gain speedboost on hit.
+- `mult_onhit_enemyspeed_major`: Float
+	- Gain speedboost for N seconds.
+- `mark_for_death`: Boolean
+- `stun_waist_high_airborne`: Boolean
+	- Stun airborne targets.
+- `subtract_victim_medigun_charge_onhit`: Int
+	- Percentage as an int, e.g. `25` = 25% = 0.25
+	- Drain scaled over distance
+- `subtract_victim_cloak_on_hit`: Int
+	- Subtracts an actual value
+	- Drain still scaled over distance""".notesToAttrClassUsages()
+					),
+					*(("""- `become_fireproof_on_hit_by_fire`: Float
+	- Addcond parameter
+- `provide_on_active`: Boolean
+	- Only provide all attributes when weapon is worn
+- `centerfire_projectile`: Boolean
+	- Again, "projectile" includes bullets.
+- `projectile_spread_angle`: Float
+	- Ok this time it _doesn't_ include bullets. I think.
+- `active_item_health_regen`: Float
+	- Cast to an int when healing, idk why this is a float.
+- `kill_eater_kill_type`: Int
+- `set_silent_killer`: Boolean
+- `last_shot_crits`: Boolean
+	- When reloading, if you only have 1 round left in your clip, get crit-boosted
+- `no_crit_boost`: Boolean
+	- Can't be crit-boosted
+- `sapper_kills_collect_crits`: Boolean
+	- The weapon supports revenge crits if this, `extinguish_revenge`, or `sentry_killed_revenge` are set.
+	- Note that the logic for _gaining_ said crits depends on the weapon. Having one of these set just says it _can_ have them.
+- `extinguish_revenge`: Boolean
+	- The weapon supports revenge crits if this, `sapper_kills_collect_crits`, or `sentry_killed_revenge` are set.
+	- Note that the logic for _gaining_ said crits depends on the weapon. Having one of these set just says it _can_ have them.
+- `sentry_killed_revenge`: Boolean
+	- The weapon supports revenge crits if this, `extinguish_revenge`, or `sapper_kills_collect_crits` are set.
+	- Note that the logic for _gaining_ said crits depends on the weapon. Having one of these set just says it _can_ have them.
+- `honorbound`: Boolean
+	- Takes 50 health when holstering before it gets a kill.
+- `weapon_stattrak_module_scale`: Float
+- `min_viewmodel_offset`: String
+- `ubercharge_ammo`: Float
+	- Uses this much ubercharge per shot instead of ammo if a syringe gun, else just prevents weapon from firing when empty.
+- `ubercharge_transfer`: Float
+	- If `ubercharge_ammo` is set, hitting any other medic with the weapon will transfer this much ubercharge to them.
+- `effectbar_recharge_rate`: Float
+	- Things like throwable recharge timers, jetpack charging, etc. How much it recharges per... some amount of time.
+- `weapon_blocks_healing`: Boolean
+	- Prevents mediguns from latching onto you.
+- `mult_uberchargerate_for_healer`: Float
+	- Multiplier applied to your healer's ubercharge rate
+	- NOTE: Only applied if user is outside of the respawn room
+- `mod_jump_height_from_weapon`: Float
+	- One of the "only when weapon is active" kind of attributes.  These always only work if the weapon that provides them is active, while still allowing other attributes to be globally-applied.
+- `add_health_on_radius_damage`: Int
+	- Maximum amount of health that can be gained from an AoE damage source.  Health received is multiplied by `damage dealt / base damage of the weapon`, to a max of 100% of the defined value.
+- `mod_pierce_resists_absorbs`: Int
+- `or_crit_vs_playercond`: EnumSet<TFCritCondition>
+	- The weapon's "crit players with X condition" stat.  Each bit of this number specifies a condition that'll cause a forced crit, from [CritConditions][#CritConditions]
+- `crit_vs_wet_players`: Boolean
+- `or_crit_vs_not_playercond`: EnumSet<TFCritCondition>
+	- Crit against players that DON'T have these conditions.
+	- Uses same values as above list
+- `axtinguisher_properties`: Boolean
+	- On hitting a burning player, crit them from behind or minicrit them otherwise.
+- `crit_while_airborne`: Boolean
+	- Critical hit enemies if the player was launched into the air by an explosion
+	- Only works when not in Mannpower mode
+- `attack_minicrits_and_consumes_burning`: Boolean
+	- Only activates if the weapon deals `DMG_MELEE`
+- `air_dash_count`: Int
+	- If greater than 0, attacks minicrit while airborne.
+	- Only procs on Scout
+- `or_minicrit_vs_playercond_burning`: Boolean
+	- Only procs if the damage dealt is NOT `DMG_BURN`
+- `mini_crit_airborne`: Boolean
+	- Mini-crits targets launched airborne by an explosion
+	- Only procs when not in Mannpower mode
+- `closerange_backattack_minicrits`: Boolean
+	- If true, minicrits targets facing away from the attacker that are within 22.6 HU of the attacker (sqrt 512)
+- `minicrits_become_crits`: Boolean
+- `mult_dmg_vs_players`: Float
+- `mult_dmg_vs_same_class`: Float
+- `set_nocrit_vs_nonburning`: Boolean
+	- Note: prevents criticals even when crit-boosted
+- `mult_dmg_vs_nonburning`: Float
+- `crit_dmg_falloff`: Boolean
+	- If true, crits have damage falloff (Ambassador)
+- `crits_become_minicrits`: Boolean
+- `energy_buff_dmg_taken_multiplier`: Float
+	- Increases damage taken while minicrit-boosted by Crit-a-Cola, Buffalo Steak, etc.
+- `add_cloak_on_hit`: Int
+	- Adds this amount of cloak on hit
+	- Only procs on Spy
+- `set_dmgtype_ignite`: Boolean
+	- Ignites player on hit
+- `mult_dmgtaken_from_fire_active`: Float
+	- Gain fire resistance only when this weapon is active
+- `mult_dmg_vs_burning`: Float
+- `mult_dmgtaken_active`: Float
+- `dmg_from_melee`: Float
+- `dmg_from_ranged`: Float
+	- Applies to blast, bullet, buckshot, ignite, and sonic damage types
+- `no_self_blast_dmg`: Boolean
+- `blast_dmg_to_self`: Float
+	- Multiplier applied to blast damage taken from an explosion caused by said entity
+- `is_giger_counter`: Boolean
+	- Used for killfeed
+- `is_australium_item`: Boolean
+	- Sets killfeed background gold
+- `set_turn_to_gold`: Boolean
+	- Sets killfeed background gold
+- `mult_health_fromhealers_penalty_active`: Float
+	- Attribute class is a flat multiplier applied to health from healers while weapon is active.
+- `overheal_fill_rate`: Float
+	- Checked on the player that is healing an entity
+- `mult_healing_from_medics`: Float
+	- Applies to all non-dispenser forms of healing that apply the TF_COND_HEAL_BUFF status.
+- `mult_wpn_burndmg`: Float
+	- Afterburn damage
+- `halloween_green_flames`: Boolean
+	- Makes afterburn green
+- `mad_milk_syringes`: Boolean
+	- Duration of 4 seconds, and increases by 0.5 seconds each hit.
+- `enables_aoe_heal`: Boolean
+	- Makes default weapon taunt perform the Amputator radial healing effect.
+- `mult_wpn_burntime`: Float
+	- Afterburn duration
+- `sniper_fires_tracer`: Boolean
+	- Note: Sniper rage forcibly draws a tracer regardless of this setting.
+	- Used when firing bullets.
+- `sniper_fires_tracer_HIDDEN`: Boolean
+	- Same as `sniper_fires_tracer`.
+- `mult_dmg_bullet_vs_sentry_target`: Float
+- `sniper_penetrate_players_when_charged`: Boolean
+- `projectile_penetration`: Int
+	- Note: in MvM, Sniper's non-rifles are limited by the projectile penetration limit.
+- `penetration_damage_penalty`: Float
+- `firing_forward_pull`: Float
+	- While firing the weapon, pulls the user forward with this velocity.
+- `mult_player_movespeed_resource_level`: Float
+	- Multiplier applied to movement speed scaled by ubercharge percentage.
+	- Only works if the player using this item is a Medic with a Medigun
+- `mult_player_movespeed_active`: Float
+	- Multiplier applied to player movement speed only while this is the active weapon.
+- `holster_anim_time`: Float
+	- If greater than 0 (like with the Thermal Thruster), takes that amount of time to holster BEFORE actually swapping weapons.
+- `building_teleporting_pickup`: Int
+	- Metal cost to pick up a building at range.
+	- Restricted to the default rescue ranger range, but can be used by any weapon.
+- `bodyshot_damage_modify`: Float
+	- Multiplier applied to bodyshot damage.
+- `mult_healing_received`: Float
+- `stun_enemies_wielding_same_weapon`: Boolean
+- `no_self_blast_dmg`: Boolean
+	- Checked on weapon to know whether to play the whistling sound or not.
+- `damage_all_connected`: Boolean
+	- Damage all players connected to the target by medigun beams.
+- `apply_z_velocity_on_damage`: Float
+	- Apply this amount of z velocity to players hit with this weapon.
+- `apply_look_velocity_on_damage`: Float
+	- Apply this amount of velocity in the direction you're facing to players hit with this weapon.
+- `explode_on_ignite`: Boolean
+	- Applies when *any weapon* with this attribute is in the second loadout slot of the player who covered someone in gas.  This attribute does not specifically check for the Gas Passer.  For example, f a Soldier has a rocket launcher that applies `TF_COND_GAS` and their shotgun in their secondary has this attribute, they'll still explode on ignite.
+	- Only the afterburn specifically checks for the Gas Passer.
+- `mult_dmgself_push_force`: Float
+	- Applies to all self-damage taken from any source.
+- `damage_causes_airblast`: Boolean
+	- Knocks back attacker when wielder receives damage.
+- `damage_blast_push`: Float
+	- Push force applied to target when hitting an enemy.
+	- Scales by range, to a minimum of 50% of the given value.
+- `damage_force_reduction`: Float
+	- Attribute class is a flat multiplier applied to push force received from damage.
+- `bleeding_duration`: Float
+	- Apply bleed on hit.
+	- Value is a time in seconds.
+- `no_death_from_headshots`: Boolean
+	- When a headshot would kill you, reduce health to 1.
+- `lifeleech_on_damage`: Float
+	- Checked on attacker's active weapon, not the weapon that inflicted the damage.
+	- Health gained = this * damage dealt, capped at your maximum overheal amount.
+- `explosive_sniper_shot`: Boolean
+	- Only applies if in a gamemode with upgrades, but applies to all headshots.
+	- Also applies to any hitscan weapon with a `jarate_time` attribute that hit the head.
+- `crit_kill_will_gib`: Boolean
+- `crit_on_hard_hit`: Boolean
+	- If false, this weapon can only gib if it deals blast damage or half-falloff damage.
+- `add_onkill_critboost_time`: Int
+	- Seconds of crit-boost gained on kill.
+	- Note: actual time is `this + 1`.
+- `add_onkill_minicritboost_time`: Int
+	- Seconds of minicrit-boost gained on kill.
+	- Note: actual time is `this + 1`.
+- `halloween_death_ghosts`: Boolean
+	- Exorcism spell effect
+- `restore_health_on_kill`: Int
+	- Percentage of health to be restored upon killing an enemy. (e.g. `25` is 25%)
+	- Post-heal player health value is capped at 1.5x the player's normal max health.
+	- Negative values are ignored.
+- `heal_on_kill`: Int
+	- Restores this flat amount of health on killing an enemy. Post-heal player health value is capped at the player's maximum overheal.
+	- Negative values are NOT ignored.
+- `speed_boost_on_kill`: Int
+	- `addcond TF_COND_SPEEDBOOST <this>`
+- `mod_maxhealth_drain_rate`: Float
+	- Maximum health decrease per tick while weapon is active. (Gloves of Running Urgently)
+- `special_taunt`: Boolean
+	- If true, prevents holiday taunts from being used.""".notesToAttrClassUsages() + AttrClassScope("Ragdolls", """- `freeze_backstab_victim`: Boolean
+	- Upon killing an enemy with a backstab, replace their ragdoll with an ice statue.
+- `set_turn_to_gold`: Boolean
+	- Saxxy/golden pan effect
+- `ragdolls_become_ash`: Boolean
+	- Flamethrower kills
+- `ragdolls_plasma_effect`: Boolean
+	- Phlogistinator kills
+- `crit_on_hard_hit`: Boolean""".notesToAttrClassUsages())).toTypedArray())
+			)),
 			
 			HierarchyAttrClassScope(
 				"BaseGun", listOf(
@@ -729,7 +1026,6 @@ object MyNotesFormatted {
 					AttrClassUsage(
 						"set_dmgtype_ignite", "Boolean", listOf(
 							"Ignite enemies on hit.",
-							"In vanilla, this is indeed only checked on Fire Axes."
 						)
 					)
 				), listOf("TF_WEAPON_FIREAXE, The Axtinguisher, The Homewrecker, Upgradeable TF_WEAPON_FIREAXE, The Powerjack, The Back Scratcher, Sharpened Volcano Fragment, The Postal Pummeler, The Maul, The Third Degree, The Lollichop, Festive Axtinguisher".comma())
@@ -842,6 +1138,12 @@ object MyNotesFormatted {
 							"Multiply cloak consumption rate by this value."
 						)
 					),
+					AttrClassUsage("- `mod_cloak_no_regen_from_items`: Boolean\n" +
+					               "\t- Disallows ammo boxes from affecting the cloak meter."),
+					AttrClassUsage("- `NoCloakWhenCloaked`: Boolean\n" +
+					               "\t- If true, cannot receive cloak while cloaked."),
+					AttrClassUsage("- `ReducedCloakFromAmmo`: Float\n" +
+					               "\t- Multiplier applied to cloak gained from ammo boxes."),
 					AttrClassUsage("mult_cloak_meter_regen_rate", "Float", listOf())
 				), listOf("TF_WEAPON_INVIS, The Dead Ringer, The Cloak and Dagger, Upgradeable TF_WEAPON_INVIS, The Quackenbirdt".comma())
 			),
@@ -1092,7 +1394,12 @@ object MyNotesFormatted {
 				), listOf("The Eyelander, The Scotsman's Skullcutter, The Horseless Headless Horseman's Headtaker, The Claidheamohmor (sic), The Persian Persuader, Nessie's Nine Iron, Festive Eyelander", "The Half-Zatoichi")
 			),
 			
-			HierarchyAttrClassScope("Wearable", listOf<IAttrThing>()),
+			HierarchyAttrClassScope("Wearable", listOf<IAttrThing>(
+				AttrClassUsage("- `duck_badge_level`: Int\n" +
+				               "\t- Determines if ***BONUS DUCKSSSS*** should increment the badge level."),
+				AttrClassUsage("- `player_skin_override`: Int\n" +
+				               "\t- Overrides the skin used when disguising as this player")
+			)),
 			
 			HierarchyAttrClassScope(
 				"WearableDemoShield", listOf(
@@ -1108,7 +1415,8 @@ object MyNotesFormatted {
 							"On player",
 							"Impact damage mult"
 						)
-					)
+					),
+					AttrClassUsage("- `afterburn_immunity`: Boolean")
 				), listOf("The Chargin' Targe, The Splendid Screen, The Tide Turner, Festive Targe 2014")
 			),
 			HierarchyAttrClassScope(
@@ -1239,7 +1547,12 @@ object MyNotesFormatted {
 							"Makes weapon only penetrate non-burning teammates, as opposed to penetrating all teammates",
 							"Note: Not actually used in Sydney Sleeper Jarate calculation, as far as I could tell."
 						)
-					)
+					),
+					AttrClassUsage("- `applies_snare_effect`: Float\n" +
+					               "\t- Multiplier applied to target move-speed on hit\n" +
+					               "\t- Duration is equal to the rifle's `jarate_duration` attribute"),
+					AttrClassUsage("- `aiming_no_flinch`: Boolean\n" +
+					               "\t- Prevents flinching from damage when scoped and fully charged.")
 				), listOf("TF_WEAPON_SNIPERRIFLE, Upgradeable TF_WEAPON_SNIPERRIFLE, The Sydney Sleeper, The Machina, Festive Sniper Rifle 2011, The Hitman's Heatmaker, Silver Botkiller Sniper Rifle Mk.I, Gold Botkiller Sniper Rifle Mk.I, The AWPer Hand, Rust Botkiller Sniper Rifle Mk.I, Blood Botkiller Sniper Rifle Mk.I, Carbonado Botkiller Sniper Rifle Mk.I, Diamond Botkiller Sniper Rifle Mk.I, Silver Botkiller Sniper Rifle Mk.II, Gold Botkiller Sniper Rifle Mk.II, Shooting Star", "The Bazaar Bargain", "The Classic")
 			),
 			
@@ -1455,6 +1768,8 @@ object MyNotesFormatted {
 						"    - Also uses plunger model"
 					),
 					AttrClassUsage("- `mult_explosion_radius`: Float"),
+					AttrClassUsage("- `rocket_specialist`: Int\n" +
+					               "\t- If greater than 0, rocket does not have damage falloff")
 				)
 			),
 			HierarchyAttrClassScope(
@@ -1470,7 +1785,6 @@ object MyNotesFormatted {
 				                    "- On launcher: `mult_explosion_radius`: Float\n" +
 				                    "- On launcher:  `mod_projectile_heat_seek_power`: Float").split("\n")
 					.map { AttrClassUsage(it) }),
-			
 			HierarchyAttrClassScope(
 				"ProjectileGrenade", ("- On launcher: `use_large_smoke_explosion`: Boolean\n" +
 				                      "- On launcher: `halloween_pumpkin_explosions`: Boolean\n" +
@@ -1478,7 +1792,7 @@ object MyNotesFormatted {
 				                      "- On owner: `fuse_mult`: Float").split("\n")
 					.map { AttrClassUsage(it) }),
 			
-			HierarchyAttrClassScope("ProjectileEnergyRing", listOf(AttrClassUsage("- On owner: `energy_weapon_penetration`: Boolean"))),
+			HierarchyAttrClassScope("ProjectileEnergyRing", listOf(AttrClassUsage("- On player: `energy_weapon_penetration`: Boolean"))),
 			HierarchyAttrClassScope("ProjectileArrow", listOf(AttrClassUsage("- On player: `arrow_heals_buildings`: Boolean"))),
 			
 			HierarchyAttrClassScope(
@@ -1505,7 +1819,7 @@ object MyNotesFormatted {
 						"Type", *(("- `critboost`: Boolean\n" +
 						           "- `ubercharge`: Boolean\n" +
 						           "- `recall`: Boolean\n" +
-						           "- `refill_ammmo`: Boolean\n" +
+						           "- `refill_ammo`: Boolean\n" +
 						           "- `building_instant_upgrade`: Boolean").split("\n")
 							.map { AttrClassUsage(it) }
 							.toTypedArray())
@@ -1541,6 +1855,286 @@ object MyNotesFormatted {
 						"    - If true, the particle only applies to the throwable particle trail. (If it's implemented, it's not in the SDK.)"
 					),
 				)
+			),
+			
+			HierarchyAttrClassScope(
+				"Entity",
+				"""- `cannot_be_backstabbed`: Boolean
+- `cannot_swim`: Boolean
+	- Forbids you from floating upwards with the jump button in the water
+- `mod_jump_height`: Float
+- `mult_health_frompacks`: Float
+- `mult_healing_from_medics`: Float
+	- Specifically checked on Crossbow Bolt impacts.
+- `hype_resets_on_jump`: Int
+	- Lose this amount of hype if you airdash
+	- Note that this only applies to scout hype, not rage in general
+- `parachute_attribute`: Boolean
+	- Allows parachute to be deployed
+- `parachute_disabled`: Boolean
+	- Prevents parachute from being deployed, but still allows it to be retracted.
+- `set_custom_buildmenu`: Int
+	- Only used if the build menu is actually shown
+	- 0 = default
+	- 1 = pipboy
+- `appear_as_mvm_robot`: Boolean
+	- If true, appear as an MvM robot in your hud when selecting a class""".notesToAttrClassUsages() +
+				AttrClassScope("Buildings",
+					
+						"""- `mod_build_rate`: Float
+	- Multiplies building build time by this amount
+- `upgrade_rate_mod`: Int
+	- Add x metal to any building hit using player's metal reserve
+	- Recall that all players have 100 hidden metal
+- `mult_engy_building_health`: Int
+	- Only applied if the building is NOT a disposable sentry""".notesToAttrClassUsages() +
+						AttrClassScope("SentryGun", """- `mvm_sentry_ammo`: Float
+	- Multiplier to max ammo
+- `mult_sentry_range`: Float
+- `mult_sentry_firerate`: Float
+- `build_small_sentries`: Boolean
+	- If true, creates a sentry that's 80% size whose upgrade metal is only 150 instead of 200""".notesToAttrClassUsages() +
+						AttrClassScope("Dispenser", """- `mult_dispenser_rate`: Float
+	- Dispenser resupply rate
+- `mult_dispenser_radius`: Float""".notesToAttrClassUsages()) +
+						AttrClassScope("Teleporter", """- `mod_teleporter_speed_boost`: Boolean
+	- If true, teleporter adds speed boost condition with arg 4.0 to teleported player
+- `mod_teleporter_cost`: Float
+	- Flat mult to metal cost to build
+- `bidirectional_teleport`: Boolean
+- `mult_teleporter_recharge_rate`: Float""".notesToAttrClassUsages()))
+				)
+			),
+			
+			HierarchyAttrClassScope(
+				"Player",
+				"""- `cannot_swim`: Boolean
+	- If the jump button should work while in waist-high water
+	- Also makes you sink like a stone in water instead of being able to move freely
+- `swimming_mastery`: Boolean
+	- If false or not present, move speed is 80% while swimming
+- `mod_jump_height`: Float
+- `hype_resets_on_jump`: Int
+	- The amount to be subtracted from the hype meter when the Scout double-jumps.
+- `parachute_attribute`: Boolean
+	- Allows the parachute to be deployed
+- `parachute_disabled`: Boolean
+- `mod_air_control`: Float
+	- Sidenote: the jetpack always multiplies your air acceleration by 50%
+- `mod_air_control_blast_jump`: Float
+	- Specifically while blast-jumping, as opposed to global
+- `canteen_specialist`: Int
+	- Discounts canteens by 10 * level
+- `alien_isolation_xeno_bonus_pos`: Boolean
+- `alien_isolation_merc_bonus_pos`: Boolean
+- `jarate_backstabber`: Boolean
+	- If true, jarates anyone who backstabs this player.
+	- Note: does not block backstabs on its own.
+- `medigun_bullet_resist_deployed`: Float
+	- Multiplier to damage taken if player has  TF_COND_MEDIGUN_UBER_BULLET_RESIST
+-  `medigun_bullet_resist_passive`: Float
+	- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BULLET_RESIST
+- `medigun_blast_resist_deployed`: Float
+	- Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_BLAST_RESIST
+-  `medigun_blast_resist_passive`: Float
+	- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BLAST_RESIST
+- `medigun_fire_resist_deployed`: Float
+	- Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_FIRE_RESIST
+-  `medigun_fire_resist_passive`: Float
+	- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_FIRE_RESIST
+- `disguise_no_burn`: Boolean
+	- Prevent afterburn while disguised
+- `uber_on_damage_taken`: Float
+	- Chance to gain invulnerability when hit
+- `mult_dmgtaken_from_crit`: Float
+- `mult_dmgtaken_from_fire`: Float
+- `mult_dmgtaken_from_explosions`: Float
+- `mult_dmgtaken_from_bullets`: Float
+- `mult_dmgtaken_from_melee`: Float
+- `spunup_damage_resistance`: Float
+	- Only procs on Heavies that are currently spun up on less than 50% HP
+- `mult_dmgtaken`: Float
+	- Multiplier to damage taken from all sources.
+- `dmg_from_sentry_reduced`: Float
+- `generate_rage_on_dmg`: Boolean
+	- Only procs on Heavies, multiplies damage by 50% while rage is draining
+- `rocket_jump_dmg_reduction`: Float
+	- Multiplier applied to damage taken IF: it's blast damage or a flare explosion, the damage was caused by the user (self-damage), the user did not damage other players, and it is not a taunt-kill grenade (Escape Plan, Equalizer)
+- `hype_on_damage`: Boolean
+	- Adds the amount of damage dealt to the Scout hype meter, to a maximum of 200 damage which adds 50% meter.
+- `rage_on_assists`: Float
+	- Only procs on Sniper. Gain this amount of rage meter on assists.
+- `killstreak_tier`: Int
+- `cancel_falling_damage`: Boolean
+- `scoreboard_minigame`: Boolean
+	- If true, add `kills + captures + defenses + buildingsdestroyed - (3 * deaths)` to player score, on top of the default scoring algorithm
+- `add_player_capturevalue`: Int
+- `spawn_with_physics_toy`: Int
+	- If 1, create a soccer ball on the ground when the player spawns.
+- `item_meter_charge_type`: Int
+	- If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAME_BALL
+- `mult_health_fromhealers`: Float
+- `cloak_blink_time_penalty`: Float
+	- This attribute class is a multiplier to the amount of time, not a flat amount of time.
+- `mod_mark_attacker_for_death`: Float
+	- Number of seconds the player who hit this entity should be marked for death.
+	- If attacker is affected by `TF_COND_ENERGY_BUFF` (Crit-a-Cola, Cleaner's Carbine, Buffalo Steak, etc.), the attacker receives `TF_COND_MARKEDFORDEATH_SILENT`
+- `charge_turn_control`: Float
+	- Default is 0.45f, and this class is a multiplier applied to it
+- `lose_demo_charge_on_damage_when_charging`: Boolean
+	- Used to detect the Tide Turner when deciding whether to give you minicrits or crits
+- `mult_cloak_rate`: Float
+- `mult_decloak_rate`: Float
+- `set_quiet_unstealth`: Boolean
+	- If true, plays `Player.Spy_UnCloakReduced` when decloaking
+- `boots_falling_stomp`: Boolean
+	- Deal 3x falling damage to player you land on
+- `add_uber_time`: Float
+	- Duration in seconds
+- `mult_player_aiming_movespeed`: Float
+	- Only applies to players that have TF_COND_AIMING
+	- If Heavy, default aiming movespeed is 110
+	- Else if player is using a compound bow, 160
+	- Else 80
+- `mult_player_movespeed`: Float
+- `mult_player_movespeed_shieldrequired`: Float
+- `add_head_on_hit`: Boolean
+	- This part is only semi-implemented...
+	- Gives extra player movespeed the more heads you have
+	- Will not work if the player is not a Medic wielding the VitaSaw.
+- `cannot_pick_up_intelligence`: Boolean
+- `engy_disposable_sentries`: Int
+	- Number of disposable sentries you're allowed to build.
+	- Checked when checking if the player can build something.
+	- Only works if the "uses upgrades" gamerule is set.
+- `mod_teleporter_cost`: Float
+	- Multiplier applied to teleporter build cost
+- `building_cost_reduction`: Int
+	- Overrides the building cost for all buildings
+- `override_footstep_sound_set`: FootstepOverride
+- `add_jingle_to_footsteps`: Int
+	- If 1, use xmas.jingle, if 2 or higher use xmas.jingle_higher
+- `halloween_footstep_type`: Int
+	- Decimal version of the 4-byte hex code determining color of footsteps (e.g. `0xFFFFFFFF`, but in decimal)
+- `no_attack`: Boolean
+	- Prevents player from attacking.
+- `no_jump`: Boolean
+	- Prevents player from jumping.
+- `no_duck`: Boolean
+	- Prevents player from crouching.
+- `cannot_pick_up_buildings`: Boolean
+	- Prevents player from picking up buildings.
+- `disable_weapon_switch`: Boolean
+- `set_scout_doublejump_disabled`: Boolean
+- `wet_immunity`: Boolean
+- `set_cannot_disguise`: Boolean
+- `mult_maxammo_primary`: Int
+- `mult_maxammo_secondary`: Int
+- `mult_maxammo_metal`: Int
+- `mult_maxammo_grenades1`: Int
+	- Only used for bat balls
+- `set_buff_type`: BuffType
+	- Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
+- `mod_buff_duration`: Float
+	- Multiplier applied to buff duration.
+- `mod_soldier_buff_range`: Float
+	- Multiplier applied to the default 450 hammer unit range on banners.
+- `weapon_blocks_healing`: Boolean
+- `add_health_regen`: Float
+	- Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
+- `addperc_ammo_regen`: Float
+	- Percentage of ammo regenerated every 5 seconds.
+- `add_metal_regen`: Int
+	- Amount of metal regenerated every 5 seconds.
+- `airblast_vulnerability_multiplier`: Float
+- `airblast_vertical_vulnerability_multiplier`: Float
+- `enable_misc2_noisemaker`: Boolean
+	- Uses noise maker when pressing action slot key
+- `calling_card_on_kill`: Int
+	- Defines the calling card that should be dropped when this player kills another player.
+- `sentry_build_rate_multiplier`: Float
+- `teleporter_build_rate_multiplier`: Float
+	- Also used for dispensers.
+- `headshot_damage_modify`: Float
+	- Multiplier applied to headshot damage
+- `decapitate_type`: Int
+	- More like a boolean.  Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
+	- Checked on all hitscan attacks.
+- `generate_rage_on_dmg`: Boolean
+	- Only works on Engineer and Heavy.
+	- On Engineer, adds all damage dealt to the rage meter.
+	- On Heavy, adds `0.22` * the damage.
+- `falling_impact_radius_pushback`: Boolean
+	- Requires player to have the `TF_COND_ROCKETPACK` condition.
+	- Pushes back nearby players around the landing site.
+- `falling_impact_radius_stun`: Boolean
+	- If `falling_impact_radius_pushback` is set, this will also stun any enemies in the impact radius.
+- `teleport_instead_of_die`: Float
+	- Chance to teleport back to spawn upon receiving fatal damage instead of dying.
+- `rage_giving_scale`: Float
+	- Multiplier applied to rage gained by dealing damage, taking damage, or dealing burn damage.
+- `fish_damage_override`: Boolean
+	- If the weapon is a Holy Mackerel reskin (AKA either the fish or the Unarmed Combat) and this is set, use the Unarmed Combat "arm hit" killfeed notice instead of the "fish hit" notice.
+- `bombinomicon_effect_on_death`: Boolean
+- `force_distribute_currency_on_death`: Boolean
+	- Only active in MvM.  Automatically collects the money this player would drop on death, as though they were killed by a sniper.
+- `drop_health_pack_on_kill`: Boolean
+	- Drop a small health pack when killing an enemy.
+- `kill_forces_attacker_to_laugh`: Boolean
+	- On killing an enemy, schadenfreude
+- `grenades1_resupply_denied`: Boolean
+	- "Items that rely on timers to refill ammo use these attributes.  Prevents 'touch supply closet and spam the thing' scenario."
+- `grenades2_resupply_denied`: Boolean
+	- "Items that rely on timers to refill ammo use these attributes.  Prevents 'touch supply closet and spam the thing' scenario."
+- `grenades3_resupply_denied`: Boolean
+	- "Items that rely on timers to refill ammo use these attributes.  Prevents 'touch supply closet and spam the thing' scenario."
+- `mult_metal_pickup`: Float
+	- Multiplier applied to metal gained from ammo boxes
+- `add_maxhealth_nonbuffed`: Int
+	- Additive base-health increase.
+- `add_maxhealth`: int
+	- Additive maximum health increase only used when overhealing.
+- `unlimited_quantity`: Boolean
+	- If true, noisemakers are unlimited usage.
+- `zombiezombiezombiezombie`: Boolean
+	- If true, the zombiezombiezombiezombie skin is equipped.
+- `mult_gesture_time`: Float
+	- Multiplier applied to taunt speed.
+- `cosmetic_taunt_sound`: String
+	- Sound to be played when performing a taunt.
+- `special_dsp`: Int
+	- DSP used when emitting sounds created by this player.
+- `head_scale`: Float
+- `torso_scale`: Float
+- `hand_scale`: Float
+- `can_breathe_under_water`: Boolean""".notesToAttrClassUsages() + AttrClassScope(
+					"DemomanOnly",
+					"""- `mod_charge_time`: Float
+	- Attribute class is a flat multiplier applied to total charge time when charging
+- `charge_recharge_rate`: Float
+	- Multiplier to charge gained over time.
+- `lose_demo_charge_on_damage_when_charging`: Boolean
+- `kill_refills_meter`: Float
+	- Amount of Targe-Charge gained on kill.  Scaled by various values.
+- `decapitate_type`: Boolean
+	- If true, reduces max health gained from Knockout rune to 20.""".notesToAttrClassUsages()
+				) + AttrClassScope("ScoutOnly", """- `set_scout_doublejump_disabled`: Boolean
+- `hype_decays_over_time`: Float
+	- How much the Scout's hype meter decays every tick
+- `lose_hype_on_take_damage`: Int
+	- Amount of hype lost per point of damage taken.""".notesToAttrClassUsages()) + AttrClassScope("SniperOnly", """- `mult_aiming_knockback_resistance`: Float
+- `rage_on_kill`: Float
+	- Amount of sniper rage gained on kill.""".notesToAttrClassUsages()) + AttrClassScope("MedicOnly", """- `healing_mastery`: Int
+	- Each level gives +25% of the Medic's passive regen
+- `generate_rage_on_heal`: Boolean
+""".notesToAttrClassUsages() + AttrClassScope("SpyOnly", """- `add_cloak_on_kill`: Int
+	- Amount of cloak gained on kill.
+- `custom_taunt_particle_attr`: Boolean
+	- Use Saharan Spy particle effect when performing a stock knife taunt.""".notesToAttrClassUsages())),
 			)
 		)
+}
+
+private fun String.notesToAttrClassUsages(): List<MyNotesFormatted.IAttrThing> {
+	return this.split("\n-").mapIndexed { i, it -> MyNotesFormatted.AttrClassUsage((if (i > 0) "-" else "") + it) }
 }

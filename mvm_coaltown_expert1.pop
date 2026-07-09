@@ -972,7 +972,7 @@ WaveSchedule
 				Target wave_start_relay
 				Action Trigger
 			}
-		DoneOutput					
+		DoneOutput
 			{
 				Target wave_finished_relay
 				Action trigger
@@ -981,20 +981,20 @@ WaveSchedule
 		Checkpoint Yes
 
 		// Sniper mission - 4 active (Sydney Sleeper)
-		
-		WaveSpawn //WAVE 07a: [TANK]  
+
+		WaveSpawn //WAVE 07a: [TANK]
 		{
 			Name "wave07a"
 			TotalCount 5
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 30
 			TotalCurrency 500
-			
-			FirstSpawnOutput                                                                                                                                                            
-			
+
+			FirstSpawnOutput
+
 			{
-				 Target boss_spawn_relay                                            
-				 Action Trigger                         
+				 Target boss_spawn_relay
+				 Action Trigger
 			}
 
 			Tank
@@ -1004,20 +1004,20 @@ WaveSchedule
 				Name "tankboss"
 				StartingPathTrackNode "boss_path_a1"
 
-				OnKilledOutput                                  
+				OnKilledOutput
 				{
 					Target boss_dead_relay
-					Action Trigger                         
+					Action Trigger
 				}
-				
-				OnBombDroppedOutput                             
+
+				OnBombDroppedOutput
 				{
-					Target boss_deploy_relay 
-					Action Trigger                         
+					Target boss_deploy_relay
+					Action Trigger
 				}
-			}			
+			}
 		}
-		WaveSpawn //WAVE 07b: 54 total, 6 active,  Scout + Medic squad 
+		WaveSpawn //WAVE 07b: 54 total, 6 active,  Scout + Medic squad
 		{
 			Name "wave07c"
 			Where spawnbot
@@ -1026,7 +1026,7 @@ WaveSchedule
 			SpawnCount 4
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 5
-			TotalCurrency 300	
+			TotalCurrency 300
 
 			Squad
 			{
@@ -1050,12 +1050,12 @@ WaveSchedule
 			SpawnCount 6
 			WaitBeforeStarting 60
 			WaitBetweenSpawns 15
-			TotalCurrency 200	
+			TotalCurrency 200
 
 			Squad
 			{
 				FormationSize 225
-				
+
 				TFBot
 				{
 					Class Heavyweapons
@@ -1077,31 +1077,31 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Sniper_Huntsman
-					ItemAttributes 
+					ItemAttributes
 					{
 						ItemName "The Huntsman"
 						"damage bonus" 0.075
-						"faster reload rate" 0.4	
+						"faster reload rate" 0.4
 					}
 				}
 				TFBot
 				{
 					Template T_TFBot_Sniper_Huntsman
-					ItemAttributes 
+					ItemAttributes
 					{
 						ItemName "The Huntsman"
 						"damage bonus" 0.075
-						"faster reload rate" 0.4	
+						"faster reload rate" 0.4
 					}
 				}
 				TFBot
 				{
 					Template T_TFBot_Sniper_Huntsman
-					ItemAttributes 
+					ItemAttributes
 					{
 						ItemName "The Huntsman"
 						"damage bonus" 0.075
-						"faster reload rate" 0.4	
+						"faster reload rate" 0.4
 					}
 				}
 			}
@@ -1115,12 +1115,12 @@ WaveSchedule
 			SpawnCount 6
 			WaitBeforeStarting 60
 			WaitBetweenSpawns 15
-			TotalCurrency 200	
+			TotalCurrency 200
 
 			Squad
 			{
 				FormationSize 175
-				
+
 				TFBot
 				{
 					Class Heavyweapons
@@ -1142,36 +1142,36 @@ WaveSchedule
 				TFBot
 				{
 					Template T_TFBot_Sniper_Huntsman
-					ItemAttributes 
+					ItemAttributes
 					{
 						ItemName "The Huntsman"
 						"damage bonus" 0.075
-						"faster reload rate" 0.4	
+						"faster reload rate" 0.4
 					}
 				}
 				TFBot
 				{
 					Template T_TFBot_Sniper_Huntsman
-					ItemAttributes 
+					ItemAttributes
 					{
 						ItemName "The Huntsman"
 						"damage bonus" 0.075
-						"faster reload rate" 0.4	
+						"faster reload rate" 0.4
 					}
 				}
 				TFBot
 				{
 					Template T_TFBot_Sniper_Huntsman
-					ItemAttributes 
+					ItemAttributes
 					{
 						ItemName "The Huntsman"
 						"damage bonus" 0.075
-						"faster reload rate" 0.4	
+						"faster reload rate" 0.4
 					}
 				}
 			}
 		}
-		WaveSpawn //WAVE 07e: 12 total, 12 active,  Soldier (eternal buff banner squad) 
+		WaveSpawn //WAVE 07e: 12 total, 12 active,  Soldier (eternal buff banner squad)
 		{
 			Name "wave07e"
 			Where spawnbot
@@ -1181,7 +1181,7 @@ WaveSchedule
 			WaitForAllSpawned "wave07cd"
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 15
-			TotalCurrency 50	
+			TotalCurrency 50
 
 			TFBot
 			{
@@ -1191,7 +1191,7 @@ WaveSchedule
 				Item "The Direct Hit"
 				Item "The Buff Banner"
 				Attributes SpawnWithFullCharge
-				CharacterAttributes 
+				CharacterAttributes
 				{
 					"increase buff duration"	9.0
 				}
@@ -1207,8 +1207,8 @@ WaveSchedule
 			WaitForAllSpawned "wave07e"
 			WaitBeforeStarting 0
 			WaitBetweenSpawns 0
-			TotalCurrency 50		
-		
+			TotalCurrency 50
+
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavyweapons
@@ -1226,15 +1226,15 @@ WaveSchedule
 			WaitForAllSpawned "wave07e"
 			WaitBeforeStarting 5
 			WaitBetweenSpawns 0
-			TotalCurrency 50		
-		
+			TotalCurrency 50
+
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavyweapons
 				Tag special_main_right
 				BehaviorModifiers push
 			}
-		}		
+		}
 		WaveSpawn //WAVE 07h: [GIANT] 1 total, 1 active,  Heavyweapons (Flank high right)
 		{
 			Name "wave07h"
@@ -1245,15 +1245,15 @@ WaveSchedule
 			WaitForAllSpawned "wave07e"
 			WaitBeforeStarting 10
 			WaitBetweenSpawns 0
-			TotalCurrency 50		
-		
+			TotalCurrency 50
+
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavyweapons
 				Tag nav_prefer_flank_right
 				BehaviorModifiers push
 			}
-		}		
+		}
 		WaveSpawn //WAVE 07i: [GIANT] 1 total, 1 active,  Heavyweapons (Flank high left)
 		{
 			Name "wave07i"
@@ -1264,8 +1264,8 @@ WaveSchedule
 			WaitForAllSpawned "wave07e"
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
-			TotalCurrency 50		
-		
+			TotalCurrency 50
+
 			TFBot
 			{
 				Template T_TFBot_Giant_Heavyweapons
@@ -1273,7 +1273,7 @@ WaveSchedule
 				BehaviorModifiers push
 			}
 		}
-		WaveSpawn //WAVE 07j: [FINAL TANK]  
+		WaveSpawn //WAVE 07j: [FINAL TANK]
 		{
 			Name "wave07j"
 			TotalCount 1
@@ -1281,12 +1281,12 @@ WaveSchedule
 			WaitBeforeStarting 15
 			WaitBetweenSpawns 0
 			TotalCurrency 0
-			
-			FirstSpawnOutput                                                                                                                                                            
-			
+
+			FirstSpawnOutput
+
 			{
-				 Target boss_spawn_relay                                            
-				 Action Trigger                         
+				 Target boss_spawn_relay
+				 Action Trigger
 			}
 
 			Tank
@@ -1297,18 +1297,18 @@ WaveSchedule
 				Skin 1
 				StartingPathTrackNode "boss_path_a1"
 
-				OnKilledOutput                                  
+				OnKilledOutput
 				{
 					Target boss_dead_relay
-					Action Trigger                         
+					Action Trigger
 				}
-				
-				OnBombDroppedOutput                             
+
+				OnBombDroppedOutput
 				{
-					Target boss_deploy_relay 
-					Action Trigger                         
+					Target boss_deploy_relay
+					Action Trigger
 				}
-			}	
+			}
 		}
-	}		
+	}
 }

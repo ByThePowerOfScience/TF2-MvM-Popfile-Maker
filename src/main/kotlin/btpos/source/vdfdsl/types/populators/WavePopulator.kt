@@ -82,7 +82,6 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	fun initWaveOutput(configure: OutputAction.() -> Unit) {
 		this.initWaveOutput = OutputAction().apply(configure)
 	}
-	
 }
 
 inline fun Populators.Wave(configure: WavePopulator.() -> Unit) = WavePopulator().apply(configure)

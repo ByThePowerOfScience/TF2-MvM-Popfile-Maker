@@ -2,18 +2,17 @@ package btpos.source.vdfdsl.tf2.filegeneration
 
 import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
 import btpos.source.vdfdsl.vdfparser.VdfParser
+import btpos.source.vdfdsl.vdfparser.VdfParser.getString
+import btpos.source.vdfdsl.vdfparser.VdfParser.getTable
 import btpos.source.vdfdsl.vdfparser.component1
 import btpos.source.vdfdsl.vdfparser.component2
 import java.io.File
+import java.nio.file.Path
 import java.util.LinkedList
 import java.util.Queue
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
-import kotlin.io.path.createDirectory
-import kotlin.io.path.exists
-import kotlin.io.path.readText
-
 
 
 fun VdfParser.Table.toMap(): Map<String, VdfParser.StringOrTable> {
@@ -191,13 +190,103 @@ private const val basecosmeticspackage = BuildConfig.COSMETICS_TARGET_PACKAGE
 const val itemsimport = BuildConfig.ITEM_FACTORY_LOCATION
 
 fun getItemSchema(): String {
-	val itemSchema = ClassLoader.getPlatformClassLoader().getResourceAsStream("items_game.txt") ?: error("Expected item schema to be in resources folder named items_game.txt. Retrieve it at <TF2 folder>/tf/scripts/items/items_game.txt")
+	val itemSchema = ClassLoader.getSystemClassLoader().getResourceAsStream("items_game.txt") ?: error("Expected item schema to be at src/main/resources/items_game.txt. Retrieve it at <TF2 folder>/tf/scripts/items/items_game.txt")
 	return itemSchema.bufferedReader().use { it.readText() }
 }
 
 fun main() {
 	val parsedItemSchema = VdfParser.parse(getItemSchema()).second.tableOrNull()!!
 	
+	generateAttributesNotes(parsedItemSchema, Path(BuildConfig.OUT_DIR).resolve("outfile.md"))
+}
+
+
+fun generateAttributesNotes(parsedItemSchema: VdfParser.Table, outputFile: Path) {
+//	val prefabs = parsedItemSchema.getTable("prefabs")!!.single().toMap()
+	
+	val hierarchy = MyNotesFormatted.hierarchy
+	val attrsByClass = MyNotesFormatted.attrsByClass
+	
+	fun getParentOfTFClass(tfclass: String): MyNotesFormatted.HierarchyAttrClassScope? {
+		val parentName = hierarchy.entries.firstOrNull { (_, v) -> tfclass in v }?.key ?: return null;
+		
+		return attrsByClass.first { it.name == parentName } as MyNotesFormatted.HierarchyAttrClassScope
+	}
+	
+	fun getParentSequence(tfclass: String): Sequence<MyNotesFormatted.HierarchyAttrClassScope> {
+		return generateSequence(getParentOfTFClass(tfclass)) { getParentOfTFClass(it.name) }
+	}
+	
+	data class AttrSchema(val name: String, val attr_class: String)
+	
+	
+	fun getHighestParent(attribute_class: String): String {
+		var highestOwner = attrsByClass.firstOrNull { attribute_class in it }
+		                   ?: return "!!!NOT FOUND!!!";
+		
+		getParentSequence(highestOwner.name).forEach { parent ->
+			if (attribute_class in parent)
+				highestOwner = parent
+		}
+		
+		return highestOwner.name
+	}
+	
+	val descriptionsByAttributeName = UsefulWikiTableParser.parseWiki().associate { (attr, desc) ->
+		attr.attrName to desc
+	}
+	
+	fun distanceToRoot(tfclass: String): Int {
+		if (tfclass == "!!!NOT FOUND!!!") {
+			return Int.MAX_VALUE
+		}
+		return getParentSequence(tfclass).count() + 1
+	}
+	
+	outputFile.bufferedWriter().use { out ->
+		val attrs = parsedItemSchema.getTable("attributes")!!
+			.single()
+			.asSequence()
+			.mapNotNull { (_, table) ->
+				val table = table.tableOrNull()!!
+				val name = table.getString("name")
+					           ?.singleOrNull()
+				           ?: return@mapNotNull null
+				val attrClass = table.getString("attribute_class")
+					                ?.singleOrNull()
+				                ?: return@mapNotNull null
+				AttrSchema(name, attrClass)
+			}
+			.groupBy({ it.attr_class }, { it.name })
+			
+		attrs.entries
+			.groupBy { (attr_class, _) ->
+				getHighestParent(attr_class)
+			}
+			.entries
+			.sortedBy { (highestParent, _) -> distanceToRoot(highestParent) }
+			.forEach { (parent, classToAttrNames) ->
+				out.append("\n## ").append(parent).appendLine()
+				getParentSequence(parent).joinToString { it.name }.takeIf { it.isNotEmpty() }?.let {
+					out.append("- Inherits from: ").append(it).appendLine()
+				}
+				
+				classToAttrNames.forEach { (attr_class, attrNames) ->
+					out.append("- `").append(attr_class).append("`").appendLine()
+					attrNames.forEach { namedAttr ->
+						out.append("\t- ").append(namedAttr)
+						descriptionsByAttributeName[namedAttr]?.let {
+							out.append(" - \"").append(it).append('"')
+						}
+						out.appendLine()
+					}
+				}
+			}
+	}
+	
+}
+
+fun generateCosmetics(parsedItemSchema: VdfParser.Table) {
 	val prefabs = parsedItemSchema.first { it.first == "prefabs" }.second.tableOrNull()!!
 		.let { it.toMap() }
 	

@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
+import java.io.FileNotFoundException
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.Reader
@@ -86,7 +87,9 @@ object UsefulWikiTableParser {
 		}
 	}
 	
-	fun parseWiki(wikiTable: InputStream): Sequence<Pair<NamedAttribute, String?>> {
+	fun parseWiki(): Sequence<Pair<NamedAttribute, String?>> {
+		val wikiTable = ClassLoader.getSystemClassLoader().getResourceAsStream("wikitable.txt") ?: throw FileNotFoundException("src/main/resources/wikitable.txt (containing TF2 Wiki's \"Item Attributes\" template)")
+		
 		val wikiFile = BracketedSectionIterator(FileToCharIteratorAdapter(
 			InputStreamReader(
 				wikiTable
@@ -102,7 +105,7 @@ object UsefulWikiTableParser {
 				val valuetype = valueType.find(it)?.groupValues?.get(1) ?: return@mapNotNull null
 				val effecttype = effectType.find(it)?.groupValues?.get(1)
 				
-				NamedAttribute(attrName = name, inGameDesc = desc, attrType = valuetype, className = cls, effectType = effecttype.orEmpty()) to desc?.replace("'''%s1'''", "N")
+				NamedAttribute(attrName = name, inGameDesc = desc, attrType = valuetype, className = cls, effectType = effecttype.orEmpty()) to desc?.takeIf { !it.startsWith("Attrib_") }?.replace("'''%s1'''", "N")
 			}
 	}
 }

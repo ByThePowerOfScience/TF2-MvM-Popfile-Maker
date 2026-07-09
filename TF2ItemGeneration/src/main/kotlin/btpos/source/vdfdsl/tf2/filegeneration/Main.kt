@@ -92,7 +92,7 @@ fun generateItemAttributes() {
 	val attrClassesByBaseClassFromNotes = MyNotesFormatted.attrsByClass
 	
 	// get all attributes, but with the descriptions from the ones used in-game
-	val allAlreadyFoundAttributeNames = UsefulWikiTableParser.parseWiki(ClassLoader.getSystemClassLoader().getResourceAsStream("wikitable.txt")!!).associate { it.first.attrName to it.second }.filterValues { it != null && !it.startsWith("Attrib_") } as Map<String, String>
+	val allAlreadyFoundAttributeNames = UsefulWikiTableParser.parseWiki().associate { it.first.attrName to it.second }.filterValues { it != null && !it.startsWith("Attrib_") } as Map<String, String>
 	
 	val allNamedAttributes = convertAttributesFromSchema(allAlreadyFoundAttributeNames)
 	
