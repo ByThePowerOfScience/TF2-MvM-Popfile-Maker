@@ -16,4 +16,10 @@ repositories {
 
 dependencies {
 	api(libs.datafixerupper)
+	// Source: https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
+	api("org.antlr:antlr4-runtime:4.13.2")
+}
+
+sourceSets.main {
+	java.srcDir("src/generated/java")
 }

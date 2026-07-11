@@ -25,5 +25,4 @@ dependencies {
 // make every single thing extensible so people can add as many utilities as they want
 allOpen {
 	annotation("btpos.source.vdfdsl.tf2.PopFileDSL")
-	// annotations("com.another.Annotation", "com.third.Annotation")
 }

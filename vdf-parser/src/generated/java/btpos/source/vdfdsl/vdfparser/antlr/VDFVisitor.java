@@ -1,0 +1,73 @@
+// Generated from /home/impro_000/IdeaProjects/TF2/PopFileDSL/vdf-parser/VDF.g4 by ANTLR 4.13.2
+package btpos.source.vdfdsl.vdfparser.antlr;
+import org.antlr.v4.runtime.tree.ParseTreeVisitor;
+
+/**
+ * This interface defines a complete generic visitor for a parse tree produced
+ * by {@link VDFParser}.
+ *
+ * @param <T> The return type of the visit operation. Use {@link Void} for
+ * operations with no return type.
+ */
+public interface VDFVisitor<T> extends ParseTreeVisitor<T> {
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#base}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBase(VDFParser.BaseContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#line_no_newline}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLine_no_newline(VDFParser.Line_no_newlineContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#keyvalue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKeyvalue(VDFParser.KeyvalueContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#keyable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKeyable(VDFParser.KeyableContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#keyvalue_strings}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKeyvalue_strings(VDFParser.Keyvalue_stringsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#keyvalue_table}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitKeyvalue_table(VDFParser.Keyvalue_tableContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#table}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTable(VDFParser.TableContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#line}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLine(VDFParser.LineContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#comment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitComment(VDFParser.CommentContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#comment_end}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitComment_end(VDFParser.Comment_endContext ctx);
+}
