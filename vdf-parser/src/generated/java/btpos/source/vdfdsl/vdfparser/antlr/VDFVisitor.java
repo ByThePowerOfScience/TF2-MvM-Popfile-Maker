@@ -11,17 +11,29 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface VDFVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link VDFParser#base}.
+	 * Visit a parse tree produced by {@link VDFParser#root}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBase(VDFParser.BaseContext ctx);
+	T visitRoot(VDFParser.RootContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link VDFParser#line_no_newline}.
+	 * Visit a parse tree produced by {@link VDFParser#header_allowed_lines}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLine_no_newline(VDFParser.Line_no_newlineContext ctx);
+	T visitHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#nl_line}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNl_line(VDFParser.Nl_lineContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link VDFParser#line}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLine(VDFParser.LineContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link VDFParser#keyvalue}.
 	 * @param ctx the parse tree
@@ -52,22 +64,4 @@ public interface VDFVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitTable(VDFParser.TableContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link VDFParser#line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitLine(VDFParser.LineContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link VDFParser#comment}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitComment(VDFParser.CommentContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link VDFParser#comment_end}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitComment_end(VDFParser.Comment_endContext ctx);
 }

@@ -15,3 +15,11 @@ sealed class VDFObject {
 	
 	abstract fun writeToVDF(writer: Appendable, indent: Int = 0)
 }
+
+val VDFObject.asSubtree get() = this as? VDFSubtree
+
+val VDFObject.asPrimitive get() = this as? VDFPrimitive
+
+val VDFObject.asKeyValue get() = this as? VDFKeyValue
+
+val VDFObject.asString get() = asPrimitive?.stringValue

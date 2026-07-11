@@ -2,151 +2,259 @@
 
 package btpos.source.vdfdsl.vdfparser
 
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.conditional
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.discard
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.literal
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.map
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.named
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.optional
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.or
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.parse
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.parseOrThrow
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.plus
-
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.provideDelegate
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.star
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.string
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.then
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.thunk
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.whitespace
-import btpos.source.vdfdsl.vdfparser.Parser.Companion.wordChar
-import btpos.source.vdfdsl.vdfparser.VdfParser.StringOrTable.Companion.toStringOrTable
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.backing.VDFRootFile
+import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.vdfparser.ParseVDF.VDFVisitor_Comments.commentText
+import btpos.source.vdfdsl.vdfparser.antlr.VDFBaseVisitor
+import btpos.source.vdfdsl.vdfparser.antlr.VDFLexer
+import btpos.source.vdfdsl.vdfparser.antlr.VDFParser
+import btpos.source.vdfdsl.vdfparser.leftOrNull
+import btpos.source.vdfdsl.vdfparser.rightOrNull
 import com.mojang.datafixers.util.Either
-import com.mojang.datafixers.util.Either.left
-import com.mojang.datafixers.util.Either.right
-import com.mojang.datafixers.util.Pair
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
+import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.Token
+import org.antlr.v4.runtime.tree.ParseTree
+import java.io.InputStream
+import kotlin.collections.map
+import kotlin.sequences.toList
 
-
-object VdfParser {
+class StringOrTable private constructor(val item: Any) {
+	constructor(s: String) : this(item=s)
+	constructor(t: RawTable) : this(item=t)
 	
-	class StringOrTable(val item: Any) {
-		val isString
-			get() = item is String
+	val isString
+		get() = item is String
+	
+	val isTable get() = !isString
+	
+	fun stringOrNull() = item as? String
+	
+	@Suppress("UNCHECKED_CAST")
+	fun tableOrNull() = item as? RawTable
+	
+	override fun toString(): String {
+		return item.toString()
+	}
+}
+
+interface ITable {
+	operator fun get(key: String): StringOrTable?
+	
+	fun getString(key: String) = get(key)?.stringOrNull()
+	
+	fun getTable(key: String) = get(key)?.tableOrNull()
+}
+
+class RawTable(val rawLines: List<RawLine>) : List<RawLine> by rawLines, ITable {
+	fun getDiscardingComments(): Sequence<RawKeyValue> {
+		return rawLines.asSequence().filterIsInstance<KeyValueWithEndOfLineComment>().map { it.kv }
+	}
+	
+	override operator fun get(key: String): StringOrTable? {
+		return getDiscardingComments().firstOrNull { it.key == key }?.value
+	}
+}
+
+sealed class RawLine
+
+data class PragmaLineWithComment(val pragma: String, val arg: String?, val comment: String?) : RawLine()
+
+data class LineWithOnlyComment(val comment: String) : RawLine()
+
+object EmptyLine : RawLine() {
+	override fun toString() = "EmptyLine"
+}
+
+sealed class RawKeyValue {
+	abstract val key: String
+	
+	abstract val value: StringOrTable
+}
+
+data class RawKeyValueLiteral(
+	override val key: String,
+	val literalValue: String
+) : RawKeyValue() {
+	override val value get() = StringOrTable(literalValue)
+}
+
+data class RawKeyValue_TableWithSurroundingComments(
+	/**
+	 * Comment on the same line as the key:
+	 * ```
+	 * KEY // comment
+	 * {
+	 * ...
+	 * }
+	 */
+	val keyEOLComment: String?,
+	val afterKeyBeforeBraceComments: List<String>,
+	/**
+	 * The comment after a table's opening brace:
+	 *
+	 * ```
+	 * KEY
+	 * { // comment
+	 * ...
+	 * }
+	 * ```
+	 */
+	val openBracketEOLComment: String?,
+	override val key: String,
+	val table: RawTable
+) : RawKeyValue() {
+	override val value = StringOrTable(table)
+}
+
+data class KeyValueWithEndOfLineComment(val kv: RawKeyValue, val eolComment: String?) : RawLine()
+
+
+object ParseVDF {
+	object KeyableVisitor : VDFBaseVisitor<String>() {
+		override fun visitKeyable(ctx: VDFParser.KeyableContext): String {
+			return ctx.LITERAL()?.text ?: ctx.STRING()?.text?.trim('"') ?: ctx.NUMBER()!!.text
+		}
+	}
+	
+	inline fun <T> splitPragma(text: String, factory: (String, String) -> T): T {
+		return text.run {
+			val firstSpace = indexOf(' ')
+			if (firstSpace == -1)
+				factory(this, "")
+			else
+				factory(substring(0, firstSpace), substring(firstSpace + 1))
+		}
+	}
+	
+	object VDFVisitor_Comments : VDFBaseVisitor<List<RawLine>>() {
+		val ParseTree.commentText: String
+			get() = this.text?.removePrefix("//").orEmpty()
 		
-		val isTable get() = item is List<*>
+		val Token.commentText: String
+			get() = this.text?.removePrefix("//").orEmpty()
 		
-		fun stringOrNull() = item as? String
 		
-		@Suppress("UNCHECKED_CAST")
-		fun tableOrNull() = item as? Table
 		
-		companion object {
-			@JvmName("toStringOrMap_String_Map_notnull")
-			fun Either<String, Table>.toStringOrTable(): StringOrTable {
-				return StringOrTable(this.leftOrNull ?: this.rightOrNull!!)
+		object HeaderLineVisitor : VDFBaseVisitor<RawLine>() {
+			override fun visitHeader_allowed_lines(ctx: VDFParser.Header_allowed_linesContext): RawLine {
+				val comment = ctx.COMMENT()?.commentText
+				
+				val pragma = ctx.PRAGMA()?.text
+				             ?: return LineWithOnlyComment(comment!!)
+				
+				return splitPragma(pragma) { prgm, args ->
+					PragmaLineWithComment(prgm, args, comment)
+				}
 			}
 			
-			@JvmName("toStringOrMap_Map_String_notnull")
-			fun Either<Table, String>.toStringOrTable(): StringOrTable {
-				return StringOrTable(this.leftOrNull ?: this.rightOrNull!!)
+			
+		}
+		
+		override fun visitRoot(ctx: VDFParser.RootContext): List<RawLine> {
+			val outLines = mutableListOf<RawLine>()
+			
+			ctx.bases.mapTo(outLines) {
+				it.accept(HeaderLineVisitor)
+			}
+			outLines.add(ctx.firstLine.accept(LineVisitor_Raw))
+			ctx.rest?.mapTo(outLines) { it.accept(LineVisitor_Raw) }
+			return outLines
+		}
+		
+		object LineVisitor_Raw : VDFBaseVisitor<RawLine>() {
+			override fun visitLine(ctx: VDFParser.LineContext): RawLine {
+				return ctx.keyvalue()?.let { KeyValueWithEndOfLineComment(it.accept(KeyValueVisitor_Raw), ctx.COMMENT()?.text) }
+				       ?: ctx.COMMENT()?.let { LineWithOnlyComment(it.commentText) }
+				       ?: EmptyLine
 			}
 		}
 		
-		override fun toString(): String {
-			return item.toString()
+		object KeyValueVisitor_Raw : VDFBaseVisitor<RawKeyValue>() {
+			override fun visitKeyvalue_strings(ctx: VDFParser.Keyvalue_stringsContext): RawKeyValue {
+				return RawKeyValueLiteral(ctx.key.accept(KeyableVisitor), ctx.value.accept(KeyableVisitor))
+			}
+			
+			override fun visitKeyvalue_table(ctx: VDFParser.Keyvalue_tableContext): RawKeyValue {
+				val keyEOLComment = ctx.keyEOLComment?.firstOrNull()?.commentText
+				val commentsAfterKeyBeforeBrace = ctx.keyEOLComment?.drop(1).orEmpty().map { it.commentText }
+				val tbl = ctx.table()!!
+				val key = ctx.key.accept(KeyableVisitor)
+				val openBraceEOLComment = tbl.tableLBracketComment?.commentText
+				return RawKeyValue_TableWithSurroundingComments(keyEOLComment, commentsAfterKeyBeforeBrace, openBraceEOLComment, key, tbl.accept(TableVisitor_Raw))
+			}
+		}
+		
+		object TableVisitor_Raw : VDFBaseVisitor<RawTable>() {
+			override fun visitTable(ctx: VDFParser.TableContext): RawTable {
+				return RawTable(ctx.lines.map {
+					it.accept(LineVisitor_Raw)
+				})
+			}
 		}
 	}
 	
-	typealias Table = List<KeyValue>
-	
-	typealias KeyValue = Pair<String, StringOrTable>
-	
-	typealias Line = Either<KeyValueWithLineComment, LineWithOnlyComment>
-	
-	data class KeyValueWithLineComment(val keyvalue: KeyValue, val comment: String?)
-	
-	data class LineWithOnlyComment(val comment: String?)
-	
-	val quote = literal('"').discard()
-	val anySpaces = whitespace.star().discard()
-	
-	val newline = literal('\n').discard()
-	
-	
-	val openbrace = literal('{').discard()
-	val closebrace = literal('}').discard()
-	val doubleSlash = string("//").discard()
-	
-	val notQuote = conditional("[^\"]", dontEscapeName = true) { it != '"' }
-	
-	val anySpacesNotNewline = conditional("notnewline") { it != '\n' && it.isWhitespace() }.star().discard()
-	
-	val L: Parser<String> by (quote.then(notQuote.star().map { it.replace("\n", " ") } then quote)) or ((wordChar or literal('.')).plus())
-	
-	val C: Parser<String> by doubleSlash then conditional("[^\n]") { it != '\n' }.star()
-	
-	typealias TableWithBracketComment = Pair<String?, Table>
-	
-	val V_T: Parser<Table> by
-		(anySpaces
-//				then (C then newline then anySpaces).optional().named("(?:C\\n\\s*)?", useRawName = true)
-				then ::T::get.thunk())
-	
-	/** @return Either a literal value or a table (with a possible comment after the opening '{')  */
-	val V1 by ((L or V_T))
-	
-	/** Key to either a literal value or a table with a comment after the opening '{' */
-	val KV by (L then anySpaces then V1).map { it.let { (k, v) -> KeyValue(k, v.toStringOrTable()) } }
-	
-	
-	val LINE: Parser<KeyValue> by KV /*(KV.optional() then anySpacesNotNewline)
-		.then(C.optional()) { kv, c ->
-			if (kv == null)
-				return@then right<KeyValueWithLineComment, LineWithOnlyComment>(LineWithOnlyComment(c))
+	object VDFVisitor_Data : VDFBaseVisitor<VDFRootFile>() {
+		override fun visitRoot(ctx: VDFParser.RootContext): VDFRootFile {
+			val bases = ctx.bases.mapNotNull {
+				it.accept(PragmaVisitor)
+			}
+			val items = listOfNotNull(ctx.firstLine.accept(LineVisitor)) +
+			       ctx.rest.mapNotNull { it.accept(LineVisitor) }
 			
-			val (key, value) = kv
-			value.map ({ literalValue ->
-				Pair(StringOrTable(literalValue), c)
-			}, { (possiblecommentafterbracket, table) ->
-				Pair(StringOrTable(table), possiblecommentafterbracket + c)
-			}).let { left(KeyValueWithLineComment(KeyValue(key, it.first), it.second)) }
-		}*/
-	
-	val T: Parser<Table> by lazy {
-		(anySpaces then openbrace then anySpaces
-				   then (KV then anySpaces).star()
-				   then anySpaces then closebrace)
-			.named("T")
-			.map { it.filterNotNull() }
+			return VDFRootFile(bases, items)
+		}
+		
+		object PragmaVisitor : VDFBaseVisitor<Pair<String, String>>() {
+			override fun visitHeader_allowed_lines(ctx: VDFParser.Header_allowed_linesContext): Pair<String, String>? {
+				return ctx.PRAGMA()?.text?.let {
+					splitPragma(it, ::Pair)
+				}
+			}
+		}
+		
+		object LineVisitor : VDFBaseVisitor<VDFKeyValue?>() {
+			override fun visitLine(ctx: VDFParser.LineContext): VDFKeyValue? {
+				return ctx.keyvalue()?.accept(KeyValueVisitor)
+			}
+		}
+		
+		object TableVisitor : VDFBaseVisitor<VDFSubtree>() {
+			override fun visitTable(ctx: VDFParser.TableContext): VDFSubtree {
+				return VDFSubtree(ctx.lines.mapNotNull { it.accept(LineVisitor) })
+			}
+		}
+		
+		object KeyValueVisitor : VDFBaseVisitor<VDFKeyValue>() {
+			override fun visitKeyvalue_strings(ctx: VDFParser.Keyvalue_stringsContext): VDFKeyValue {
+				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), VDFPrimitive(ctx.value.accept(KeyableVisitor)))
+			}
+			
+			override fun visitKeyvalue_table(ctx: VDFParser.Keyvalue_tableContext): VDFKeyValue {
+				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), ctx.table().accept(TableVisitor))
+			}
+		}
 	}
 	
-	
-	val BASE by (anySpaces then KV) //.then((newline then anySpaces then LINE).star()) { i1, i2 -> listOf(i1) + i2 }
-	
-	
-	operator fun Table.get(index: String): Sequence<StringOrTable> {
-		return asSequence().filter { it.first == index }.map { it.second }
+	private fun parseRaw(input: InputStream): ParserRuleContext {
+		val lexer = VDFLexer(CharStreams.fromStream(input));
+		val tokens = CommonTokenStream(lexer);
+		
+		val parser = VDFParser(tokens);
+		return parser.root()
 	}
 	
-	fun Table.getString(index: String): List<String>? = get(index).mapNotNull { it.stringOrNull() }.toList().ifEmpty { null }
-	fun Table.getTable(index: String): List<Table>? = get(index).mapNotNull { it.tableOrNull() }.toList().ifEmpty { null }
-/*
-BASE -> (\\s* (KV | C) '\n')*
-KV -> L V1
-V1 -> \\s* (V_L | V_T) \s* C? '\n'
-V_L -> L
-V_T -> \s* (C '\n' \s*)? T       // line comments must always end with a newline. 
-C -> '//' ([^\n]*)
-
-L -> " L1 | \\w+                     // also convert \n to single space
-L1 -> \\w+ L2
-L2 -> "
-
-T -> \s* { \\s* T1
-T1 -> (T2 \\s*)* }
-T2 -> KV | C | empty
- */
-	fun parse(vdfFile: String): KeyValue {
-		return BASE.parseOrThrow(vdfFile)
+	/**
+	 * Get a full reproduction of the VDF with all non-semantic information, like comments and empty lines.
+	 */
+	fun directRepresentation(input: InputStream): List<RawLine> {
+		return parseRaw(input).accept(VDFVisitor_Comments)
+	}
+	
+	fun parse(input: InputStream): VDFRootFile {
+		return parseRaw(input).accept(VDFVisitor_Data)
 	}
 }

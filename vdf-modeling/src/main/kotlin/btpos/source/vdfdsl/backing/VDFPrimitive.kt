@@ -2,10 +2,12 @@ package btpos.source.vdfdsl.backing
 
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
-data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentableValue<VDFPrimitive> {
+@ExposedCopyVisibility
+data class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), IVDFRepresentableValue<VDFPrimitive> {
 	constructor(i: Int) : this(i.toString())
 	
 	constructor(i: Float) : this(i.toString())
+	
 	
 	override fun writeToVDF(writer: Appendable, indent: Int) {
 		if (stringValue.none { it.isWhitespace() }) {
@@ -16,9 +18,9 @@ data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentabl
 	}
 	
 	companion object {
-		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") // Int::class.java => int.class instead of Integer.class
+		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "RemoveRedundantQualifierName") // Int::class.java => int.class instead of Integer.class
 		val PRIMITIVE_SERIALIZERS = mapOf<Class<*>, (Any) -> VDFObject>(
-			java.lang.String::class.java to { VDFPrimitive(it as String) },
+			java.lang.String::class.java to { VDFPrimitive(s=it as String) },
 			java.lang.Integer::class.java to { VDFPrimitive(it as Int) },
 			java.lang.Float::class.java to { VDFPrimitive(it as Float) },
 			java.lang.Double::class.java to { VDFPrimitive((it as Double).toFloat()) },
@@ -27,22 +29,26 @@ data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentabl
 		)
 		
 		
-		val TRUE = VDFPrimitive("1")
-		val FALSE = VDFPrimitive("0")
+		val TRUE = VDFPrimitive(s="1")
+		val FALSE = VDFPrimitive(s="0")
 		
 	    operator fun invoke(bool: Boolean): VDFPrimitive {
 	        return if (bool) TRUE else FALSE
 	    }
 		
+		operator fun invoke(s: String): VDFPrimitive {
+			return VDFPrimitive(stringValue = s.intern())
+		}
+		
 		operator fun invoke(n: Number) = when (n) {
 			is Int -> VDFPrimitive(n)
 			is Float -> VDFPrimitive(n)
 			is Double -> VDFPrimitive(n.toFloat())
-			else -> VDFPrimitive(n.toString()) // longs can't REALLY be serialized as integers, but they can be serialized as strings
+			else -> VDFPrimitive(stringValue=n.toString()) // longs can't REALLY be serialized as integers, but they can be serialized as strings
 		}
 		
 		operator fun invoke(o: Any) = when (o) {
-			is String -> VDFPrimitive(o)
+			is String -> VDFPrimitive(s=o)
 			is Number -> VDFPrimitive(o)
 			is Boolean -> VDFPrimitive(bool=o)
 			else -> throw IllegalArgumentException("Object $o is not a primitive. Valid types: String, Number, Boolean")
@@ -64,3 +70,7 @@ data class VDFPrimitive(val stringValue: String) : VDFObject(), IVDFRepresentabl
 	
 	
 }
+
+val VDFPrimitive.intValue get() = this.stringValue.toInt()
+
+val VDFPrimitive.floatValue get() = this.stringValue.toFloat()

@@ -1,125 +1,136 @@
-// Generated from /home/impro_000/IdeaProjects/TF2/PopFileDSL/vdf-parser/VDF.g4 by ANTLR 4.13.2
-package btpos.source.vdfdsl.vdfparser.antlr;
+// Generated from /home/impro_000/IdeaProjects/TF2/PopFileDSL/vdf-parser/VDFGrammar.g4 by ANTLR 4.13.2
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 /**
- * This class provides an empty implementation of {@link VDFListener},
+ * This class provides an empty implementation of {@link VDFGrammarListener},
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
 @SuppressWarnings("CheckReturnValue")
-public class VDFBaseListener implements VDFListener {
+public class VDFGrammarBaseListener implements VDFGrammarListener {
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterRoot(VDFParser.RootContext ctx) { }
+	@Override public void enterBase(VDFGrammarParser.BaseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitRoot(VDFParser.RootContext ctx) { }
+	@Override public void exitBase(VDFGrammarParser.BaseContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx) { }
+	@Override public void enterLine_no_newline(VDFGrammarParser.Line_no_newlineContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx) { }
+	@Override public void exitLine_no_newline(VDFGrammarParser.Line_no_newlineContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNl_line(VDFParser.Nl_lineContext ctx) { }
+	@Override public void enterKeyvalue(VDFGrammarParser.KeyvalueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitNl_line(VDFParser.Nl_lineContext ctx) { }
+	@Override public void exitKeyvalue(VDFGrammarParser.KeyvalueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLine(VDFParser.LineContext ctx) { }
+	@Override public void enterKeyable(VDFGrammarParser.KeyableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLine(VDFParser.LineContext ctx) { }
+	@Override public void exitKeyable(VDFGrammarParser.KeyableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKeyvalue(VDFParser.KeyvalueContext ctx) { }
+	@Override public void enterKeyvalue_strings(VDFGrammarParser.Keyvalue_stringsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKeyvalue(VDFParser.KeyvalueContext ctx) { }
+	@Override public void exitKeyvalue_strings(VDFGrammarParser.Keyvalue_stringsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKeyable(VDFParser.KeyableContext ctx) { }
+	@Override public void enterKeyvalue_table(VDFGrammarParser.Keyvalue_tableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKeyable(VDFParser.KeyableContext ctx) { }
+	@Override public void exitKeyvalue_table(VDFGrammarParser.Keyvalue_tableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKeyvalue_strings(VDFParser.Keyvalue_stringsContext ctx) { }
+	@Override public void enterTable(VDFGrammarParser.TableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKeyvalue_strings(VDFParser.Keyvalue_stringsContext ctx) { }
+	@Override public void exitTable(VDFGrammarParser.TableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterKeyvalue_table(VDFParser.Keyvalue_tableContext ctx) { }
+	@Override public void enterLine(VDFGrammarParser.LineContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitKeyvalue_table(VDFParser.Keyvalue_tableContext ctx) { }
+	@Override public void exitLine(VDFGrammarParser.LineContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterTable(VDFParser.TableContext ctx) { }
+	@Override public void enterComment(VDFGrammarParser.CommentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitTable(VDFParser.TableContext ctx) { }
+	@Override public void exitComment(VDFGrammarParser.CommentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterComment_end(VDFGrammarParser.Comment_endContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitComment_end(VDFGrammarParser.Comment_endContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

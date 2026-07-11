@@ -16,3 +16,9 @@ dependencyResolutionManagement {
 		}
 	}
 }
+
+includeBuild("../vdf-modeling") {
+	dependencySubstitution {
+		substitute(module("btpos.source.vdfdsl.vdf:vdf-modeling")).using(project(":"))
+	}
+}

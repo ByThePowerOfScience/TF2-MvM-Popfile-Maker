@@ -8,25 +8,45 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface VDFListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link VDFParser#base}.
+	 * Enter a parse tree produced by {@link VDFParser#root}.
 	 * @param ctx the parse tree
 	 */
-	void enterBase(VDFParser.BaseContext ctx);
+	void enterRoot(VDFParser.RootContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link VDFParser#base}.
+	 * Exit a parse tree produced by {@link VDFParser#root}.
 	 * @param ctx the parse tree
 	 */
-	void exitBase(VDFParser.BaseContext ctx);
+	void exitRoot(VDFParser.RootContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link VDFParser#line_no_newline}.
+	 * Enter a parse tree produced by {@link VDFParser#header_allowed_lines}.
 	 * @param ctx the parse tree
 	 */
-	void enterLine_no_newline(VDFParser.Line_no_newlineContext ctx);
+	void enterHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link VDFParser#line_no_newline}.
+	 * Exit a parse tree produced by {@link VDFParser#header_allowed_lines}.
 	 * @param ctx the parse tree
 	 */
-	void exitLine_no_newline(VDFParser.Line_no_newlineContext ctx);
+	void exitHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VDFParser#nl_line}.
+	 * @param ctx the parse tree
+	 */
+	void enterNl_line(VDFParser.Nl_lineContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VDFParser#nl_line}.
+	 * @param ctx the parse tree
+	 */
+	void exitNl_line(VDFParser.Nl_lineContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link VDFParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void enterLine(VDFParser.LineContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link VDFParser#line}.
+	 * @param ctx the parse tree
+	 */
+	void exitLine(VDFParser.LineContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link VDFParser#keyvalue}.
 	 * @param ctx the parse tree
@@ -77,34 +97,4 @@ public interface VDFListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTable(VDFParser.TableContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link VDFParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void enterLine(VDFParser.LineContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link VDFParser#line}.
-	 * @param ctx the parse tree
-	 */
-	void exitLine(VDFParser.LineContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link VDFParser#comment}.
-	 * @param ctx the parse tree
-	 */
-	void enterComment(VDFParser.CommentContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link VDFParser#comment}.
-	 * @param ctx the parse tree
-	 */
-	void exitComment(VDFParser.CommentContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link VDFParser#comment_end}.
-	 * @param ctx the parse tree
-	 */
-	void enterComment_end(VDFParser.Comment_endContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link VDFParser#comment_end}.
-	 * @param ctx the parse tree
-	 */
-	void exitComment_end(VDFParser.Comment_endContext ctx);
 }

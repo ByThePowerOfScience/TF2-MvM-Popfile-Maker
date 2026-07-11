@@ -5,7 +5,9 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 /**
  * A list of keyvalues, wrapped in braces when serialized.
  */
-data class VDFSubtree(val entries: Collection<VDFKeyValue> = listOf()) : VDFObject(), IVDFRepresentableValue<VDFSubtree> {
+data class VDFSubtree(val entries: List<VDFKeyValue> = listOf()) : VDFObject(), IVDFRepresentableValue<VDFSubtree>, List<VDFKeyValue> by entries {
+	constructor(entries: Collection<VDFKeyValue>) : this(entries.toList())
+	
 	fun withEntry(entry: VDFKeyValue) = VDFSubtree(entries + entry)
 	
 	fun withEntries(vararg entries: VDFKeyValue) = VDFSubtree(this.entries + entries)
@@ -29,4 +31,24 @@ data class VDFSubtree(val entries: Collection<VDFKeyValue> = listOf()) : VDFObje
 		}
 		writer.writeLine(indent).append('}')
 	}
+}
+
+operator fun VDFSubtree.get(index: String) = getSingle(index)
+
+fun VDFSubtree.getSingle(index: String): VDFObject? {
+	return this.entries.filter { it.key.stringValue == index }.ifEmpty {
+		return null;
+	}.single().value
+}
+
+fun VDFSubtree.getAll(index: String): List<VDFObject> {
+	return this.entries.asSequence().filter { it.key.stringValue == index }.map { it.value }.toList()
+}
+
+fun VDFSubtree.getSubtree(index: String): VDFSubtree? {
+	return this.getSingle(index) as? VDFSubtree
+}
+
+fun VDFSubtree.getString(index: String): String? {
+	return (this.getSingle(index) as? VDFPrimitive)?.stringValue
 }

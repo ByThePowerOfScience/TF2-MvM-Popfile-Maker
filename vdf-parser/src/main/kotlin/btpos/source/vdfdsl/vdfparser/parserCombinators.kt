@@ -3,9 +3,7 @@ package btpos.source.vdfdsl.vdfparser
 import btpos.source.vdfdsl.vdfparser.Parser.ParseFail
 import btpos.source.vdfdsl.vdfparser.Parser.ParseSuccess
 import com.mojang.datafixers.util.Either
-import com.mojang.datafixers.util.Either.right
 import com.mojang.datafixers.util.Pair
-import kotlin.jvm.optionals.getOrNull
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -49,11 +47,20 @@ fun interface Parser<T> {
 			return ParseSuccess(mapper(item), remainder)
 		}
 	}
-	abstract class ParseFail {
-		abstract val message: String
+	interface ParseFail {
+		val message: String
+		
+		val partialResult: Any?
+		
+		fun throwException(): Nothing {
+			throw IllegalStateException(buildString {
+				append(message).append("\n").append(partialResult.toString())
+			})
+		}
+		
 	}
 	
-	data class ParseFailBase(val iter: CopyableStringIterator? = null, val parser: Parser<*>) : ParseFail() {
+	data class ParseFailBase(val iter: CopyableStringIterator? = null, val parser: Parser<*>) : ParseFail {
 		val isEOF get() = iter == null
 		
 		val indexOfFailure get() = iter?.currentIndex ?: Int.MAX_VALUE
@@ -65,6 +72,8 @@ fun interface Parser<T> {
 				return "Expected $parser, found unexpected char '" + iter.next().char.toString().replace("\\", "\\\\") + "' at ${iter.currentIndex}."
 			}
 		}
+		
+		override val partialResult: Any? get() = null
 	}
 	
 	
@@ -93,7 +102,7 @@ fun interface Parser<T> {
 			return Either.right(ParseFailBase(null, this))
 		}
 		
-		fun <T> Parser<T>.fail(iter: CopyableStringIterator): ParseResult<T> {
+		fun <T> Parser<T>.fail(iter: CopyableStringIterator, partialResult: Any?): ParseResult<T> {
 			prevFurthest?.let { prev ->
 				val currentStackDepth = stackWalker.walk { it.count() }
 
@@ -124,13 +133,14 @@ fun interface Parser<T> {
 				val (nextChar, nextIter) = iter.next()
 				if (nextChar == literal)
 					return success(literal, nextIter);
-				return fail(iter);
+				
+				return fail(iter, null);
 			}
 			
 			override fun toString(): String {
 				return when (literal) {
 					'-', '$', '|', '[', ']', '{', '}', '(', ')', '^' -> "\\$literal"
-					else -> literal.toString().replace("\n", "\\n")
+					else -> literal.toString().replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
 				}
 			}
 		}
@@ -144,7 +154,7 @@ fun interface Parser<T> {
 					
 					val (nextChar, nextIter) = currentIter.next()
 					if (nextChar != c)
-						return fail(currentIter);
+						return fail(currentIter, iter.string.substring(iter.currentIndex, nextIter.currentIndex));
 					
 					currentIter = nextIter
 				}
@@ -187,9 +197,11 @@ fun interface Parser<T> {
 			}
 		}
 		
-		class OrFailure(val parserString: String, val fail1: ParseFail, val fail2: ParseFail) : ParseFail() {
+		data class OrFailure(val parserString: String, val fail1: ParseFail, val fail2: ParseFail) : ParseFail {
 			override val message: String
 				get() = "$parserString:\n" + fail1.message.prependIndent() + "\n" + fail2.message.prependIndent()
+			
+			override val partialResult: Any get() = Pair(fail1.partialResult, fail2.partialResult)
 		}
 		
 		private data class OrParser<T>(val x: Parser<T>, val y: Parser<T>) : Parser<T> {
@@ -243,20 +255,23 @@ fun interface Parser<T> {
 		}
 		
 		private data class ThenParser<T, U, V>(val first: Parser<T>, val second: Parser<U>, val collector: (T, U) -> V) : Parser<V> {
-			private class IndexedParseFail(val index: Int, val fail: ParseFail) : ParseFail() {
+			private data class ThenFail(val index: Int, val fail: ParseFail, val ourPartial: Any?) : ParseFail by fail {
 				override val message: String
 					get() = index.toString() + ". " + fail.message.splitToSequence('\n').joinToString("\n\t")
+				
+				override val partialResult: Any
+					get() = Pair(fail.partialResult, ourPartial)
 			}
 			
 			
 			override fun invoke(iter: CopyableStringIterator): ParseResult<V> {
 				return first(iter).mapRight { fail ->
-					WrappedParseFail(this, IndexedParseFail(1, fail)) as ParseFail
+					WrappedParseFail(this, ThenFail(1, fail, null)) as ParseFail
 				}.flatMap { (item, next) ->
 					second(next).mapLeft { (nextitem, after) ->
 						ParseSuccess(collector(item, nextitem), after)
 					}.mapRight {
-						WrappedParseFail(this, IndexedParseFail(2, it)) as ParseFail
+						WrappedParseFail(this, ThenFail(2, it, item)) as ParseFail
 					}
 				}
 			}
@@ -305,7 +320,7 @@ fun interface Parser<T> {
 		}
 		
 		
-		private data class StarParser<T, COLL : Any, OUT>(val parser: Parser<T>, val makeList: () -> COLL, val append: COLL.(T) -> Unit, val after: COLL.() -> OUT) : Parser<OUT> {
+		private data class StarParser<T, COLL, OUT>(val parser: Parser<T>, val makeList: () -> COLL, val append: COLL.(T) -> Unit, val after: COLL.() -> OUT) : Parser<OUT> {
 			override fun invoke(iter: CopyableStringIterator): ParseResult<OUT> {
 				if (!iter.hasNext())
 					return eof(iter);
@@ -313,7 +328,7 @@ fun interface Parser<T> {
 				var currIter = iter
 				val currItems = makeList()
 				while (currIter.hasNext()) {
-					val (nextItem, nextIter) = parser(currIter).left().getOrNull() ?: break
+					val (nextItem, nextIter) = parser(currIter).leftOrNull ?: break
 					
 					currItems.append(nextItem)
 					currIter = nextIter
@@ -330,6 +345,11 @@ fun interface Parser<T> {
 		@JvmName("starList")
 		fun <T> Parser<T>.star(): Parser<List<T>> {
 			return StarParser<T, MutableList<T>, List<T>>(this, { mutableListOf() }, { add(it) }, { this.toList() })
+		}
+		
+		@JvmName("starNothing")
+		fun Parser<Nothing?>.star(): Parser<Nothing?> {
+			return StarParser(this, { null }, { }, { null })
 		}
 		
 		@JvmName("starString")
@@ -350,8 +370,13 @@ fun interface Parser<T> {
 					.named("$this+", useRawName = true)
 		}
 		
-		class WrappedParseFail(parser: Parser<*>, val fail: ParseFail) : ParseFail() {
-			val parserString = parser.toString()
+		@JvmName("nothingPlus")
+		fun Parser<Nothing?>.plus(): Parser<Nothing?> {
+			return (this then this.star()).named("$this+", useRawName = true)
+		}
+		
+		data class WrappedParseFail(val parserString: String, val fail: ParseFail) : ParseFail by fail {
+			constructor(parser: Parser<*>, fail: ParseFail) : this(parser.toString(), fail)
 			
 			override val message: String
 				get() = parserString + "\n" + fail.message.prependIndent()
@@ -399,7 +424,7 @@ fun interface Parser<T> {
 				val (nextChar, nextIter) = iter.next()
 				if (predicate.test(nextChar))
 					return success(nextChar, nextIter);
-				return fail(nextIter);
+				return fail(nextIter, null);
 			}
 			
 			override fun toString(): String {
@@ -437,7 +462,7 @@ fun interface Parser<T> {
 		fun <T> Parser<T>.parseOrThrow(string: String): T {
 			val result = this.invoke(CopyableStringIterator(string, 0))
 			return result.ifRight {
-				error(it.message)
+				it.throwException()
 			}.leftOrNull?.item!!
 		}
 		
