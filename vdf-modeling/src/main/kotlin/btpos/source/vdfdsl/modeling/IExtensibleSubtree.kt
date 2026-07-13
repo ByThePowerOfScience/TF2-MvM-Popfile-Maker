@@ -181,8 +181,8 @@ interface IExtensibleSubtree {
 		 * @param key The key this item will be serialized under.
 		 * @param isRequired If true, serialization throws an error if this value is not set.
 		 */
-		inline fun <reified T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return addField_noSerializer(key, isRequired, SUB::class.java, null)
+		inline fun <reified T : Any> addField(key: String, isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_noSerializer(key, isRequired, T::class.java, null)
 		}
 		
 		/**
