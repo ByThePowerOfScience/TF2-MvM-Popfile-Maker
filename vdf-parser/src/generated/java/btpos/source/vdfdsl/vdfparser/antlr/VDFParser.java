@@ -17,30 +17,29 @@ public class VDFParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		COMMENT=1, WS=2, STRING=3, NUMBER=4, LITERAL=5, COMMENT_START=6, NL=7, 
-		OPENBRACE=8, CLOSEBRACE=9, PRAGMA=10;
+		COMMENT=1, WS=2, STRING=3, LITERAL=4, QUOTE=5, COMMENT_START=6, NL=7, 
+		OPENBRACE=8, CLOSEBRACE=9;
 	public static final int
-		RULE_root = 0, RULE_header_allowed_lines = 1, RULE_line = 2, RULE_keyvalue = 3, 
-		RULE_keyable = 4, RULE_keyvalue_strings = 5, RULE_keyvalue_table = 6, 
-		RULE_table = 7;
+		RULE_root = 0, RULE_line = 1, RULE_keyvalue = 2, RULE_keyable = 3, RULE_keyvalue_strings = 4, 
+		RULE_keyvalue_table = 5, RULE_table = 6;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"root", "header_allowed_lines", "line", "keyvalue", "keyable", "keyvalue_strings", 
-			"keyvalue_table", "table"
+			"root", "line", "keyvalue", "keyable", "keyvalue_strings", "keyvalue_table", 
+			"table"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, null, null, null, null, null, "'//'", null, "'{'", "'}'"
+			null, null, null, null, null, "'\"'", "'//'", null, "'{'", "'}'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "COMMENT", "WS", "STRING", "NUMBER", "LITERAL", "COMMENT_START", 
-			"NL", "OPENBRACE", "CLOSEBRACE", "PRAGMA"
+			null, "COMMENT", "WS", "STRING", "LITERAL", "QUOTE", "COMMENT_START", 
+			"NL", "OPENBRACE", "CLOSEBRACE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -96,11 +95,8 @@ public class VDFParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class RootContext extends ParserRuleContext {
-		public Header_allowed_linesContext header_allowed_lines;
-		public List<Header_allowed_linesContext> bases = new ArrayList<Header_allowed_linesContext>();
-		public LineContext firstLine;
 		public LineContext line;
-		public List<LineContext> rest = new ArrayList<LineContext>();
+		public List<LineContext> lines = new ArrayList<LineContext>();
 		public List<LineContext> line() {
 			return getRuleContexts(LineContext.class);
 		}
@@ -110,12 +106,6 @@ public class VDFParser extends Parser {
 		public List<TerminalNode> NL() { return getTokens(VDFParser.NL); }
 		public TerminalNode NL(int i) {
 			return getToken(VDFParser.NL, i);
-		}
-		public List<Header_allowed_linesContext> header_allowed_lines() {
-			return getRuleContexts(Header_allowed_linesContext.class);
-		}
-		public Header_allowed_linesContext header_allowed_lines(int i) {
-			return getRuleContext(Header_allowed_linesContext.class,i);
 		}
 		public RootContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -141,111 +131,28 @@ public class VDFParser extends Parser {
 		enterRule(_localctx, 0, RULE_root);
 		int _la;
 		try {
-			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
+			setState(14);
+			((RootContext)_localctx).line = line();
+			((RootContext)_localctx).lines.add(((RootContext)_localctx).line);
 			setState(19);
-			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,0,_ctx);
-			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
-				if ( _alt==1 ) {
-					{
-					{
-					setState(16);
-					((RootContext)_localctx).header_allowed_lines = header_allowed_lines();
-					((RootContext)_localctx).bases.add(((RootContext)_localctx).header_allowed_lines);
-					}
-					} 
-				}
-				setState(21);
-				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,0,_ctx);
-			}
-			setState(22);
-			((RootContext)_localctx).firstLine = line();
-			setState(27);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==NL) {
 				{
 				{
-				setState(23);
+				setState(15);
 				match(NL);
-				setState(24);
+				setState(16);
 				((RootContext)_localctx).line = line();
-				((RootContext)_localctx).rest.add(((RootContext)_localctx).line);
+				((RootContext)_localctx).lines.add(((RootContext)_localctx).line);
 				}
 				}
-				setState(29);
+				setState(21);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
-	@SuppressWarnings("CheckReturnValue")
-	public static class Header_allowed_linesContext extends ParserRuleContext {
-		public TerminalNode NL() { return getToken(VDFParser.NL, 0); }
-		public TerminalNode PRAGMA() { return getToken(VDFParser.PRAGMA, 0); }
-		public TerminalNode COMMENT() { return getToken(VDFParser.COMMENT, 0); }
-		public Header_allowed_linesContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_header_allowed_lines; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof VDFListener ) ((VDFListener)listener).enterHeader_allowed_lines(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof VDFListener ) ((VDFListener)listener).exitHeader_allowed_lines(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof VDFVisitor ) return ((VDFVisitor<? extends T>)visitor).visitHeader_allowed_lines(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-
-	public final Header_allowed_linesContext header_allowed_lines() throws RecognitionException {
-		Header_allowed_linesContext _localctx = new Header_allowed_linesContext(_ctx, getState());
-		enterRule(_localctx, 2, RULE_header_allowed_lines);
-		int _la;
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(31);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==PRAGMA) {
-				{
-				setState(30);
-				match(PRAGMA);
-				}
-			}
-
-			setState(34);
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			if (_la==COMMENT) {
-				{
-				setState(33);
-				match(COMMENT);
-				}
-			}
-
-			setState(36);
-			match(NL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -286,43 +193,31 @@ public class VDFParser extends Parser {
 
 	public final LineContext line() throws RecognitionException {
 		LineContext _localctx = new LineContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_line);
+		enterRule(_localctx, 2, RULE_line);
 		int _la;
 		try {
-			setState(45);
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(23);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
-			case 1:
-				enterOuterAlt(_localctx, 1);
+			_la = _input.LA(1);
+			if (_la==STRING || _la==LITERAL) {
 				{
-				setState(38);
+				setState(22);
 				keyvalue();
 				}
-				break;
-			case 2:
-				enterOuterAlt(_localctx, 2);
+			}
+
+			setState(26);
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			if (_la==COMMENT) {
 				{
-				setState(39);
-				keyvalue();
-				setState(40);
+				setState(25);
 				match(COMMENT);
 				}
-				break;
-			case 3:
-				enterOuterAlt(_localctx, 3);
-				{
-				setState(43);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-				if (_la==COMMENT) {
-					{
-					setState(42);
-					match(COMMENT);
-					}
-				}
+			}
 
-				}
-				break;
 			}
 		}
 		catch (RecognitionException re) {
@@ -365,22 +260,22 @@ public class VDFParser extends Parser {
 
 	public final KeyvalueContext keyvalue() throws RecognitionException {
 		KeyvalueContext _localctx = new KeyvalueContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_keyvalue);
+		enterRule(_localctx, 4, RULE_keyvalue);
 		try {
-			setState(49);
+			setState(30);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(47);
+				setState(28);
 				keyvalue_strings();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(48);
+				setState(29);
 				keyvalue_table();
 				}
 				break;
@@ -399,7 +294,6 @@ public class VDFParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class KeyableContext extends ParserRuleContext {
-		public TerminalNode NUMBER() { return getToken(VDFParser.NUMBER, 0); }
 		public TerminalNode LITERAL() { return getToken(VDFParser.LITERAL, 0); }
 		public TerminalNode STRING() { return getToken(VDFParser.STRING, 0); }
 		public KeyableContext(ParserRuleContext parent, int invokingState) {
@@ -423,14 +317,14 @@ public class VDFParser extends Parser {
 
 	public final KeyableContext keyable() throws RecognitionException {
 		KeyableContext _localctx = new KeyableContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_keyable);
+		enterRule(_localctx, 6, RULE_keyable);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(51);
+			setState(32);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 56L) != 0)) ) {
+			if ( !(_la==STRING || _la==LITERAL) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -482,13 +376,13 @@ public class VDFParser extends Parser {
 
 	public final Keyvalue_stringsContext keyvalue_strings() throws RecognitionException {
 		Keyvalue_stringsContext _localctx = new Keyvalue_stringsContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_keyvalue_strings);
+		enterRule(_localctx, 8, RULE_keyvalue_strings);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53);
+			setState(34);
 			((Keyvalue_stringsContext)_localctx).key = keyable();
-			setState(54);
+			setState(35);
 			((Keyvalue_stringsContext)_localctx).value = keyable();
 			}
 		}
@@ -544,39 +438,39 @@ public class VDFParser extends Parser {
 
 	public final Keyvalue_tableContext keyvalue_table() throws RecognitionException {
 		Keyvalue_tableContext _localctx = new Keyvalue_tableContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_keyvalue_table);
+		enterRule(_localctx, 10, RULE_keyvalue_table);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(56);
+			setState(37);
 			((Keyvalue_tableContext)_localctx).key = keyable();
-			setState(61); 
+			setState(42); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(58);
+				setState(39);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==COMMENT) {
 					{
-					setState(57);
+					setState(38);
 					((Keyvalue_tableContext)_localctx).COMMENT = match(COMMENT);
 					((Keyvalue_tableContext)_localctx).keyEOLComment.add(((Keyvalue_tableContext)_localctx).COMMENT);
 					}
 				}
 
-				setState(60);
+				setState(41);
 				match(NL);
 				}
 				}
-				setState(63); 
+				setState(44); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==COMMENT || _la==NL );
-			setState(65);
+			setState(46);
 			((Keyvalue_tableContext)_localctx).value = table();
 			}
 		}
@@ -630,41 +524,41 @@ public class VDFParser extends Parser {
 
 	public final TableContext table() throws RecognitionException {
 		TableContext _localctx = new TableContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_table);
+		enterRule(_localctx, 12, RULE_table);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67);
+			setState(48);
 			match(OPENBRACE);
-			setState(69);
+			setState(50);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==COMMENT) {
 				{
-				setState(68);
+				setState(49);
 				((TableContext)_localctx).tableLBracketComment = match(COMMENT);
 				}
 			}
 
-			setState(73); 
+			setState(54); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(71);
+				setState(52);
 				match(NL);
-				setState(72);
+				setState(53);
 				((TableContext)_localctx).line = line();
 				((TableContext)_localctx).lines.add(((TableContext)_localctx).line);
 				}
 				}
-				setState(75); 
+				setState(56); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==NL );
-			setState(77);
+			setState(58);
 			match(CLOSEBRACE);
 			}
 		}
@@ -680,54 +574,44 @@ public class VDFParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\nP\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\t=\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
-		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0001"+
-		"\u0000\u0005\u0000\u0012\b\u0000\n\u0000\f\u0000\u0015\t\u0000\u0001\u0000"+
-		"\u0001\u0000\u0001\u0000\u0005\u0000\u001a\b\u0000\n\u0000\f\u0000\u001d"+
-		"\t\u0000\u0001\u0001\u0003\u0001 \b\u0001\u0001\u0001\u0003\u0001#\b\u0001"+
-		"\u0001\u0001\u0001\u0001\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002"+
-		"\u0001\u0002\u0003\u0002,\b\u0002\u0003\u0002.\b\u0002\u0001\u0003\u0001"+
-		"\u0003\u0003\u00032\b\u0003\u0001\u0004\u0001\u0004\u0001\u0005\u0001"+
-		"\u0005\u0001\u0005\u0001\u0006\u0001\u0006\u0003\u0006;\b\u0006\u0001"+
-		"\u0006\u0004\u0006>\b\u0006\u000b\u0006\f\u0006?\u0001\u0006\u0001\u0006"+
-		"\u0001\u0007\u0001\u0007\u0003\u0007F\b\u0007\u0001\u0007\u0001\u0007"+
-		"\u0004\u0007J\b\u0007\u000b\u0007\f\u0007K\u0001\u0007\u0001\u0007\u0001"+
-		"\u0007\u0000\u0000\b\u0000\u0002\u0004\u0006\b\n\f\u000e\u0000\u0001\u0001"+
-		"\u0000\u0003\u0005S\u0000\u0013\u0001\u0000\u0000\u0000\u0002\u001f\u0001"+
-		"\u0000\u0000\u0000\u0004-\u0001\u0000\u0000\u0000\u00061\u0001\u0000\u0000"+
-		"\u0000\b3\u0001\u0000\u0000\u0000\n5\u0001\u0000\u0000\u0000\f8\u0001"+
-		"\u0000\u0000\u0000\u000eC\u0001\u0000\u0000\u0000\u0010\u0012\u0003\u0002"+
-		"\u0001\u0000\u0011\u0010\u0001\u0000\u0000\u0000\u0012\u0015\u0001\u0000"+
-		"\u0000\u0000\u0013\u0011\u0001\u0000\u0000\u0000\u0013\u0014\u0001\u0000"+
-		"\u0000\u0000\u0014\u0016\u0001\u0000\u0000\u0000\u0015\u0013\u0001\u0000"+
-		"\u0000\u0000\u0016\u001b\u0003\u0004\u0002\u0000\u0017\u0018\u0005\u0007"+
-		"\u0000\u0000\u0018\u001a\u0003\u0004\u0002\u0000\u0019\u0017\u0001\u0000"+
-		"\u0000\u0000\u001a\u001d\u0001\u0000\u0000\u0000\u001b\u0019\u0001\u0000"+
-		"\u0000\u0000\u001b\u001c\u0001\u0000\u0000\u0000\u001c\u0001\u0001\u0000"+
-		"\u0000\u0000\u001d\u001b\u0001\u0000\u0000\u0000\u001e \u0005\n\u0000"+
-		"\u0000\u001f\u001e\u0001\u0000\u0000\u0000\u001f \u0001\u0000\u0000\u0000"+
-		" \"\u0001\u0000\u0000\u0000!#\u0005\u0001\u0000\u0000\"!\u0001\u0000\u0000"+
-		"\u0000\"#\u0001\u0000\u0000\u0000#$\u0001\u0000\u0000\u0000$%\u0005\u0007"+
-		"\u0000\u0000%\u0003\u0001\u0000\u0000\u0000&.\u0003\u0006\u0003\u0000"+
-		"\'(\u0003\u0006\u0003\u0000()\u0005\u0001\u0000\u0000).\u0001\u0000\u0000"+
-		"\u0000*,\u0005\u0001\u0000\u0000+*\u0001\u0000\u0000\u0000+,\u0001\u0000"+
-		"\u0000\u0000,.\u0001\u0000\u0000\u0000-&\u0001\u0000\u0000\u0000-\'\u0001"+
-		"\u0000\u0000\u0000-+\u0001\u0000\u0000\u0000.\u0005\u0001\u0000\u0000"+
-		"\u0000/2\u0003\n\u0005\u000002\u0003\f\u0006\u00001/\u0001\u0000\u0000"+
-		"\u000010\u0001\u0000\u0000\u00002\u0007\u0001\u0000\u0000\u000034\u0007"+
-		"\u0000\u0000\u00004\t\u0001\u0000\u0000\u000056\u0003\b\u0004\u000067"+
-		"\u0003\b\u0004\u00007\u000b\u0001\u0000\u0000\u00008=\u0003\b\u0004\u0000"+
-		"9;\u0005\u0001\u0000\u0000:9\u0001\u0000\u0000\u0000:;\u0001\u0000\u0000"+
-		"\u0000;<\u0001\u0000\u0000\u0000<>\u0005\u0007\u0000\u0000=:\u0001\u0000"+
-		"\u0000\u0000>?\u0001\u0000\u0000\u0000?=\u0001\u0000\u0000\u0000?@\u0001"+
-		"\u0000\u0000\u0000@A\u0001\u0000\u0000\u0000AB\u0003\u000e\u0007\u0000"+
-		"B\r\u0001\u0000\u0000\u0000CE\u0005\b\u0000\u0000DF\u0005\u0001\u0000"+
-		"\u0000ED\u0001\u0000\u0000\u0000EF\u0001\u0000\u0000\u0000FI\u0001\u0000"+
-		"\u0000\u0000GH\u0005\u0007\u0000\u0000HJ\u0003\u0004\u0002\u0000IG\u0001"+
-		"\u0000\u0000\u0000JK\u0001\u0000\u0000\u0000KI\u0001\u0000\u0000\u0000"+
-		"KL\u0001\u0000\u0000\u0000LM\u0001\u0000\u0000\u0000MN\u0005\t\u0000\u0000"+
-		"N\u000f\u0001\u0000\u0000\u0000\u000b\u0013\u001b\u001f\"+-1:?EK";
+		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0001\u0000\u0001\u0000\u0001"+
+		"\u0000\u0005\u0000\u0012\b\u0000\n\u0000\f\u0000\u0015\t\u0000\u0001\u0001"+
+		"\u0003\u0001\u0018\b\u0001\u0001\u0001\u0003\u0001\u001b\b\u0001\u0001"+
+		"\u0002\u0001\u0002\u0003\u0002\u001f\b\u0002\u0001\u0003\u0001\u0003\u0001"+
+		"\u0004\u0001\u0004\u0001\u0004\u0001\u0005\u0001\u0005\u0003\u0005(\b"+
+		"\u0005\u0001\u0005\u0004\u0005+\b\u0005\u000b\u0005\f\u0005,\u0001\u0005"+
+		"\u0001\u0005\u0001\u0006\u0001\u0006\u0003\u00063\b\u0006\u0001\u0006"+
+		"\u0001\u0006\u0004\u00067\b\u0006\u000b\u0006\f\u00068\u0001\u0006\u0001"+
+		"\u0006\u0001\u0006\u0000\u0000\u0007\u0000\u0002\u0004\u0006\b\n\f\u0000"+
+		"\u0001\u0001\u0000\u0003\u0004=\u0000\u000e\u0001\u0000\u0000\u0000\u0002"+
+		"\u0017\u0001\u0000\u0000\u0000\u0004\u001e\u0001\u0000\u0000\u0000\u0006"+
+		" \u0001\u0000\u0000\u0000\b\"\u0001\u0000\u0000\u0000\n%\u0001\u0000\u0000"+
+		"\u0000\f0\u0001\u0000\u0000\u0000\u000e\u0013\u0003\u0002\u0001\u0000"+
+		"\u000f\u0010\u0005\u0007\u0000\u0000\u0010\u0012\u0003\u0002\u0001\u0000"+
+		"\u0011\u000f\u0001\u0000\u0000\u0000\u0012\u0015\u0001\u0000\u0000\u0000"+
+		"\u0013\u0011\u0001\u0000\u0000\u0000\u0013\u0014\u0001\u0000\u0000\u0000"+
+		"\u0014\u0001\u0001\u0000\u0000\u0000\u0015\u0013\u0001\u0000\u0000\u0000"+
+		"\u0016\u0018\u0003\u0004\u0002\u0000\u0017\u0016\u0001\u0000\u0000\u0000"+
+		"\u0017\u0018\u0001\u0000\u0000\u0000\u0018\u001a\u0001\u0000\u0000\u0000"+
+		"\u0019\u001b\u0005\u0001\u0000\u0000\u001a\u0019\u0001\u0000\u0000\u0000"+
+		"\u001a\u001b\u0001\u0000\u0000\u0000\u001b\u0003\u0001\u0000\u0000\u0000"+
+		"\u001c\u001f\u0003\b\u0004\u0000\u001d\u001f\u0003\n\u0005\u0000\u001e"+
+		"\u001c\u0001\u0000\u0000\u0000\u001e\u001d\u0001\u0000\u0000\u0000\u001f"+
+		"\u0005\u0001\u0000\u0000\u0000 !\u0007\u0000\u0000\u0000!\u0007\u0001"+
+		"\u0000\u0000\u0000\"#\u0003\u0006\u0003\u0000#$\u0003\u0006\u0003\u0000"+
+		"$\t\u0001\u0000\u0000\u0000%*\u0003\u0006\u0003\u0000&(\u0005\u0001\u0000"+
+		"\u0000\'&\u0001\u0000\u0000\u0000\'(\u0001\u0000\u0000\u0000()\u0001\u0000"+
+		"\u0000\u0000)+\u0005\u0007\u0000\u0000*\'\u0001\u0000\u0000\u0000+,\u0001"+
+		"\u0000\u0000\u0000,*\u0001\u0000\u0000\u0000,-\u0001\u0000\u0000\u0000"+
+		"-.\u0001\u0000\u0000\u0000./\u0003\f\u0006\u0000/\u000b\u0001\u0000\u0000"+
+		"\u000002\u0005\b\u0000\u000013\u0005\u0001\u0000\u000021\u0001\u0000\u0000"+
+		"\u000023\u0001\u0000\u0000\u000036\u0001\u0000\u0000\u000045\u0005\u0007"+
+		"\u0000\u000057\u0003\u0002\u0001\u000064\u0001\u0000\u0000\u000078\u0001"+
+		"\u0000\u0000\u000086\u0001\u0000\u0000\u000089\u0001\u0000\u0000\u0000"+
+		"9:\u0001\u0000\u0000\u0000:;\u0005\t\u0000\u0000;\r\u0001\u0000\u0000"+
+		"\u0000\b\u0013\u0017\u001a\u001e\',28";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

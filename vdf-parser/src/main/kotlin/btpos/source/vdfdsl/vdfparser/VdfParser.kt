@@ -4,7 +4,6 @@ package btpos.source.vdfdsl.vdfparser
 
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.backing.VDFRootFile
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.vdfparser.antlr.VDFBaseVisitor
 import btpos.source.vdfdsl.vdfparser.antlr.VDFLexer
@@ -161,7 +160,7 @@ data class KeyValueWithEndOfLineComment(val kv: RawKeyValue, val eolComment: Str
 object ParseVDF {
 	object KeyableVisitor : VDFBaseVisitor<String>() {
 		override fun visitKeyable(ctx: VDFParser.KeyableContext): String {
-			return ctx.LITERAL()?.text ?: ctx.STRING()?.text?.trim('"') ?: ctx.NUMBER()!!.text
+			return ctx.LITERAL()?.text ?: ctx.STRING().text.trim('"')
 		}
 	}
 	
@@ -184,30 +183,11 @@ object ParseVDF {
 		
 		
 		
-		object HeaderLineVisitor : VDFBaseVisitor<RawLine>() {
-			override fun visitHeader_allowed_lines(ctx: VDFParser.Header_allowed_linesContext): RawLine {
-				val comment = ctx.COMMENT()?.commentText
-				
-				val pragma = ctx.PRAGMA()?.text
-				             ?: return LineWithOnlyComment(comment!!)
-				
-				return splitPragma(pragma) { prgm, args ->
-					PragmaLineWithComment(prgm, args, comment)
-				}
-			}
-			
-			
-		}
 		
 		override fun visitRoot(ctx: VDFParser.RootContext): List<RawLine> {
-			val outLines = mutableListOf<RawLine>()
 			
-			ctx.bases.mapTo(outLines) {
-				it.accept(HeaderLineVisitor)
-			}
-			ctx.firstLine?.accept(LineVisitor_Raw)?.let { outLines.add(it) }
-			ctx.rest?.mapTo(outLines) { it.accept(LineVisitor_Raw) }
-			return outLines
+			
+			return ctx.lines.map  { it.accept(LineVisitor_Raw) }
 		}
 		
 		object LineVisitor_Raw : VDFBaseVisitor<RawLine>() {
@@ -242,25 +222,14 @@ object ParseVDF {
 		}
 	}
 	
-	object VDFVisitor_Data : VDFBaseVisitor<VDFRootFile>() {
-		override fun visitRoot(ctx: VDFParser.RootContext): VDFRootFile {
-			val bases = ctx.bases.mapNotNull {
-				it.accept(PragmaVisitor)
-			}
+	object VDFVisitor_Data : VDFBaseVisitor<VDFSubtree>() {
+		override fun visitRoot(ctx: VDFParser.RootContext): VDFSubtree {
 			val lineVis = LineVisitor(null)
-			val items = listOfNotNull(ctx.firstLine.accept(lineVis)) +
-			       ctx.rest.mapNotNull { it.accept(lineVis) }
+			val items = ctx.lines.mapNotNull { it.accept(lineVis) }
 			
-			return VDFRootFile(bases.toMutableList(), items.toMutableList())
+			return VDFSubtree(null, items.toMutableList())
 		}
 		
-		object PragmaVisitor : VDFBaseVisitor<Pair<String, String>>() {
-			override fun visitHeader_allowed_lines(ctx: VDFParser.Header_allowed_linesContext): Pair<String, String>? {
-				return ctx.PRAGMA()?.text?.let {
-					splitPragma(it, ::Pair)
-				}
-			}
-		}
 		
 		class LineVisitor(val parent: VDFSubtree?) : VDFBaseVisitor<VDFKeyValue?>() {
 			override fun visitLine(ctx: VDFParser.LineContext): VDFKeyValue? {
@@ -302,7 +271,7 @@ object ParseVDF {
 		return parseRaw(input).accept(VDFVisitor_Comments)
 	}
 	
-	fun parse(input: InputStream): VDFRootFile {
+	fun parse(input: InputStream): VDFSubtree {
 		return parseRaw(input).accept(VDFVisitor_Data)
 	}
 }

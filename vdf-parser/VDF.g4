@@ -1,27 +1,20 @@
 
 grammar VDF;
 
-root : (bases+=header_allowed_lines)* firstLine=line (NL rest+=line)*;
+root : lines+=line (NL lines+=line)*;
 
-header_allowed_lines : PRAGMA? COMMENT? NL;
-
-line : keyvalue | keyvalue COMMENT | COMMENT?;
+line : keyvalue? COMMENT?;
 
 keyvalue : keyvalue_strings
    | keyvalue_table
    ;
 
-keyable : NUMBER | LITERAL | STRING;
+keyable : LITERAL | STRING;
 keyvalue_strings : key=keyable value=keyable;
 keyvalue_table :
                 key=keyable ((keyEOLComment+=COMMENT)? NL)+
                  value=table
                 ;
-
-
-
-
-
 
 table : OPENBRACE tableLBracketComment=COMMENT?
         (NL lines+=line)+
@@ -31,11 +24,12 @@ table : OPENBRACE tableLBracketComment=COMMENT?
 
 COMMENT : COMMENT_START ~('\r' | '\n')* ;
 
-WS: [\t ]+ -> skip;
+WS: [\p{Zs}\t]+ -> skip;
 
-STRING: '"' (STRING_ELEMENT)* '"' ;
-NUMBER: '-'? (([0-9]+ ('.' [0-9]+)?) | ('.' [0-9]+)) ;
-LITERAL: [\p{L}] WORDCHAR+ ;
+STRING: QUOTE (STRING_ELEMENT)* QUOTE ;
+LITERAL: ~["{}\p{Zs}\t\n\r]+ ;
+
+QUOTE : '"';
 
 COMMENT_START : '//';
 
@@ -43,9 +37,9 @@ fragment STRING_ELEMENT : '\\"' | ~'"';
 
 NL: '\r'? '\n';
 
-fragment WORDCHAR: [\p{L}\p{N}\-_];
+//fragment WORDCHAR: [\p{L}\p{N}\-_.#];
 
 OPENBRACE : '{' ;
 CLOSEBRACE : '}' ;
 
-PRAGMA : '#' WORDCHAR+ (WS | WORDCHAR | '.')+;
+//PRAGMA : '#' WORDCHAR+ (WS | WORDCHAR | '.')+;

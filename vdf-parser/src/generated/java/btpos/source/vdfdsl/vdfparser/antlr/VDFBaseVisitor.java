@@ -25,13 +25,6 @@ public class VDFBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements VD
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitLine(VDFParser.LineContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

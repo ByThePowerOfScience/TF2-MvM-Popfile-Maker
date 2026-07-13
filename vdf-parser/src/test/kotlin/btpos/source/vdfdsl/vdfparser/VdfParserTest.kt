@@ -66,7 +66,7 @@ class VdfParserTest {
 	}
 }"""
 		
-		val parsed = assertDoesNotThrow { ParseVDF.parse(vdf1.byteInputStream()) }.keyvalues.single()
+		val parsed = assertDoesNotThrow { ParseVDF.parse(vdf1.byteInputStream()) }.entries.single()
 		assertAll("rootkey",
 			{ assertEquals("Squad", parsed.key.stringValue) },
 			{ assertNotNull(parsed.value.asSubtree, "rootkey.value is table") }

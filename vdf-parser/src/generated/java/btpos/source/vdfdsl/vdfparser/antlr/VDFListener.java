@@ -18,16 +18,6 @@ public interface VDFListener extends ParseTreeListener {
 	 */
 	void exitRoot(VDFParser.RootContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link VDFParser#header_allowed_lines}.
-	 * @param ctx the parse tree
-	 */
-	void enterHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link VDFParser#header_allowed_lines}.
-	 * @param ctx the parse tree
-	 */
-	void exitHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link VDFParser#line}.
 	 * @param ctx the parse tree
 	 */

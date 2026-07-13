@@ -29,18 +29,6 @@ public class VDFBaseListener implements VDFListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterLine(VDFParser.LineContext ctx) { }
 	/**
 	 * {@inheritDoc}
