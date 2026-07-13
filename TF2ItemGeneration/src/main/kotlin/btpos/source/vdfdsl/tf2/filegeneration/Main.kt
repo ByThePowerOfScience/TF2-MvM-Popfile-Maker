@@ -37,7 +37,7 @@ fun convertAttributesFromSchema(inGameDescriptionsByAttributeName: Map<String, S
 	return (ClassLoader.getSystemClassLoader()
 		.getResourceAsStream("items_game.txt") ?: error("Expected items_game.txt (the TF2 item schema) to be in the src/main/resources folder"))
 		.let {
-			ParseVDF.parse(it).keyvalues.single().value.asSubtree?.getSubtree("attributes") ?: error("Failed to locate attributes in item schema!")
+			ParseVDF.parse(it).entries.single().value.asSubtree?.getSubtree("attributes") ?: error("Failed to locate attributes in item schema!")
 		}.map { (_id, schema) ->
 			val schema: Map<String, String?> = schema.asSubtree!!.associate { it.key.stringValue to it.value.asString }.withDefault { "" }
 			val name: String by schema

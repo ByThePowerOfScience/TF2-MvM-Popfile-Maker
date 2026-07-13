@@ -193,7 +193,7 @@ fun getItemSchema(): InputStream {
 }
 
 fun main() {
-	val parsedItemSchema = ParseVDF.parse(getItemSchema()).keyvalues.single().asSubtree!!
+	val parsedItemSchema = ParseVDF.parse(getItemSchema()).entries.single().asSubtree!!
 	
 	generateAttributesNotes(parsedItemSchema, Path(BuildConfig.OUT_DIR).resolve("outfile.md"))
 }
