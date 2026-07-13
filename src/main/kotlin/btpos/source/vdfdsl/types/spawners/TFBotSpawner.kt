@@ -8,6 +8,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.modeling.IKeyValueMap
 import btpos.source.vdfdsl.modeling.KeyValueMapImpl
 import btpos.source.vdfdsl.tf2.items.TFItem
+import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.types.bots.BehaviorModifiers
 import btpos.source.vdfdsl.types.bots.BotSkill
 import btpos.source.vdfdsl.types.bots.TFBotAttributes
@@ -29,7 +30,7 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	override fun copy() = TFBotSpawner(copyInternal())
 	
 	
-	var template: String? by addField("Template")
+	var template: PopFileTemplate? by addField("Template")
 	
 	var `class`: TFClass? by addField("Class")
 	
@@ -78,7 +79,7 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	
 	
 	companion object {
-		inline operator fun invoke(name: String? = null, template: String? = null, configure: TFBotSpawner.() -> Unit = {}): TFBotSpawner {
+		inline operator fun invoke(name: String? = null, template: PopFileTemplate? = null, configure: TFBotSpawner.() -> Unit = {}): TFBotSpawner {
 			val newSpawner = TFBotSpawner()
 			if (name != null)
 				newSpawner.name = name
@@ -111,7 +112,7 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
  * @param template The template this bot should extend, for easy template usage. (e.g. `val FAST_SCOUT = TFBot(template="T_TFBot_Giant_Scout_Fast")`)
  * @param configure Set fields in here, and they'll be applied to the bot.
  */
-inline fun TFBot(name: String? = null, template: String? = null, configure: TFBotSpawner.() -> Unit = {}) = TFBotSpawner(name, template, configure)
+inline fun TFBot(name: String? = null, template: PopFileTemplate? = null, configure: TFBotSpawner.() -> Unit = {}) = TFBotSpawner(name, template, configure)
 
-inline fun Spawners.TFBot(name: String? = null, template: String? = null, configure: TFBotSpawner.() -> Unit = {}) = TFBotSpawner(name, template, configure)
+inline fun Spawners.TFBot(name: String? = null, template: PopFileTemplate? = null, configure: TFBotSpawner.() -> Unit = {}) = TFBotSpawner(name, template, configure)
 

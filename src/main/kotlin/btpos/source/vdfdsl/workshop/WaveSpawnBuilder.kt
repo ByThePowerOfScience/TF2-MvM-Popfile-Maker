@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.workshop
 
+import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
 import btpos.source.vdfdsl.types.populators.WaveSpawnPopulator
 import btpos.source.vdfdsl.types.populators.provideDelegate
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
@@ -51,5 +52,5 @@ fun spawn(number: Int, spawner: AbstractSpawner) = WaveSpawnBuilder(WaveSpawnPop
 })
 
 fun foo() {
-	val wave01b by spawn(2, TFBot(template="foo")) after 2.seconds inGroupsOf 1 waitingBetweenSpawns 2.seconds
+	val wave01b by spawn(2, TFBot(template=RobotStandardTemplates.Soldier.BUFF_BANNER)) after 2.seconds inGroupsOf 1 waitingBetweenSpawns 2.seconds
 }

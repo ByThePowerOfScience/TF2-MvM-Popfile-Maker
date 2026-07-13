@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tests.valvepopfiles
 
-import btpos.source.vdfdsl.backing.VDFRootFile
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.invoke
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
@@ -134,7 +135,7 @@ class mvm_coaltown_expert1 {
 			// TODO serialize with base #base robot_giant.pop, #base robot_standard.pop
 		}
 		
-		val file = VDFRootFile(pragmas = mutableListOf("base" to "base.pop"))
+		val file = VDFSubtree(null, mutableListOf(VDFKeyValue(VDFPrimitive("#base"), VDFPrimitive("robot_standard.pop"))))
 		x._serializeInto(file)
 		file.writeToVDF(System.out)
 	}

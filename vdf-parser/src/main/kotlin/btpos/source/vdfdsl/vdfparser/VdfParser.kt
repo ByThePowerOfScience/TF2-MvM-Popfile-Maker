@@ -124,6 +124,17 @@ data class RawKeyValue_TableWithSurroundingComments(
 	 * }
 	 */
 	val keyEOLComment: String?,
+	/**
+	 * Comments between the key and the opening brace:
+	 * ```
+	 * KEY
+	 * // comment
+	 * // comment
+	 * {
+	 *  ...
+	 * }
+	 * ```
+	 */
 	val afterKeyBeforeBraceComments: List<String>,
 	/**
 	 * The comment after a table's opening brace:
@@ -142,11 +153,12 @@ data class RawKeyValue_TableWithSurroundingComments(
 	override val value = StringOrTable(table)
 	
 	override fun printRaw(indent: Int): String {
-		return """${wrapStringIfNeeded(key)}${formatEolComment(keyEOLComment)}
-${afterKeyBeforeBraceComments.joinToString("\n") { formatEolComment(it) }}
+		val betweenKeyBraceComment = afterKeyBeforeBraceComments.joinToString("\n") { formatEolComment(it) }.takeIf { it.isNotBlank() }?.let { "\n" + it }.orEmpty()
+		
+		return """${wrapStringIfNeeded(key)}${formatEolComment(keyEOLComment)}${betweenKeyBraceComment}
 {${formatEolComment(openBracketEOLComment)}
-	${table.rawLines.joinToString("\n\t") { it.printRaw(indent + 1) } }
-}""".prependIndent("\t".repeat(indent))
+	${table.rawLines.joinToString("\n\t") { it.printRaw(indent + 1) }}
+}""".trimIndent().lineSequence().joinToString("\n" + "\t".repeat(indent))
 	}
 }
 

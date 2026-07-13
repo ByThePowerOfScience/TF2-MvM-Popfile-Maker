@@ -6,6 +6,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.notNull
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
+import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.types.specifics.OutputAction
 
 class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
@@ -35,7 +36,7 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	
 	override fun copy() = WaveSpawnPopulator(this.copyInternal())
 	
-	var template: String? by addField("Template")
+	var template: PopFileTemplate? by addField("Template")
 	
 	var where: String? by addField("Where")
 	

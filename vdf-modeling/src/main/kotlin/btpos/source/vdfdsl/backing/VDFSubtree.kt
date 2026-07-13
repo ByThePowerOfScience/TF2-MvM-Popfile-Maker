@@ -1,7 +1,6 @@
 package btpos.source.vdfdsl.backing
 
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 
 /**
  * A list of keyvalues, wrapped in braces when serialized.
@@ -28,12 +27,18 @@ open class VDFSubtree(val parent: VDFSubtree?, val entries: MutableList<VDFKeyVa
 	}
 	
 	override fun writeToVDF(writer: Appendable, indent: Int) {
-		writer.append('{')
+		if (this.parent != null)
+			writer.append('{')
+		
+		val kvindent = indent + if (this.parent == null) 0 else 1
+		
 		entries.forEach {
-			writer.writeLine(indent + 1)
-			it.writeToVDF(writer, indent + 1)
+			writer.writeLine(kvindent)
+			it.writeToVDF(writer, kvindent)
 		}
-		writer.writeLine(indent).append('}')
+		
+		if (this.parent != null)
+			writer.writeLine(indent).append('}')
 	}
 }
 
@@ -70,4 +75,12 @@ fun VDFSubtree.toMap(): Map<String, VDFObject> {
 
 fun VDFSubtree.toMultiMap(): Map<String, List<VDFObject>> {
 	return this.groupBy({ it.key.stringValue }, { it.value })
+}
+
+fun VDFSubtree.getRoot(): VDFSubtree {
+	var curr = this
+	while (curr.parent != null) {
+		curr = curr.parent
+	}
+	return curr;
 }
