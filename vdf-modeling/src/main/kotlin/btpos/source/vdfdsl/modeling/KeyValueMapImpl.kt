@@ -1,10 +1,11 @@
 package btpos.source.vdfdsl.modeling
 
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue.Companion.serializeDynamic
+import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.codecs.Codec
 import kotlin.collections.set
 
@@ -27,12 +28,15 @@ interface IKeyValueMap {
 
 
 open class KeyValueMapImpl(private val _attributes: MutableMap<Any, Any> = mutableMapOf())
-	: IVDFRepresentableValue<VDFSubtree>, IKeyValueMap
+	: IVDFRepresentableValue_Subtree, IKeyValueMap
 {
-	override val _vdfRepr
-		get() = VDFSubtree(_attributes.map { (k, v) ->
-			VDFKeyValue(VDFPrimitive(k), serializeDynamic(v))
-		})
+	override fun _vdfRepr(parent: VDFSubtree): VDFSubtree {
+		return VDFSubtree(parent).apply {
+			_attributes.forEach { (k, v) ->
+				IVDFRepresentableValue.serializeDynamic(VDFPrimitive(k), v)._serializeInto(this)
+			}
+		}
+	}
 	
 	@Suppress("UNCHECKED_CAST")
 	override fun <T> getTyped(key: Any): T? {

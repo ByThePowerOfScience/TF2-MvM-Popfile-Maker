@@ -44,7 +44,7 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	/**
 	 * (name of info_teamspawn entity)
 	 */
-	var teleportWhere: List<String> by addField("TeleportWhere", serializer = flatListWithKey("TeleportWhere")) { listOf() }
+	var teleportWhere: List<String> by addField("TeleportWhere", serializer = flatListWithKey()) { listOf() }
 	
 	var autoJumpMin: Number? by addField("AutoJumpMin")
 	
@@ -54,13 +54,13 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	
 	var weaponRestriction: WeaponRestrictions? by addField("WeaponRestrictions")
 	
-	var behaviorModifiers: List<BehaviorModifiers> by addField("BehaviorModifiers", serializer = flatListWithKey("BehaviorModifiers")) { listOf() }
+	var behaviorModifiers: List<BehaviorModifiers> by addField("BehaviorModifiers", serializer = flatListWithKey()) { listOf() }
 	
 	var maxVisionRange: Number? by addField("MaxVisionRange")
 	
 	val items: MutableList<TFItem<*>> by multiStruct()
 	
-	var attributes: List<TFBotAttributes> by addField("Attributes", serializer = flatListWithKey("Attributes")) { listOf() }
+	var attributes: List<TFBotAttributes> by addField("Attributes", serializer = flatListWithKey()) { listOf() }
 	
 	var characterAttributes: KeyValueMapImpl? by addField("CharacterAttributes")
 	
@@ -74,7 +74,7 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 		characterAttributes = KeyValueMapImpl().apply(configure)
 	}
 	
-	var tags: List<String> by addField("Tag", serializer = flatListWithKey("Tag")) { listOf() }
+	var tags: List<String> by addField("Tag", serializer = flatListWithKey()) { listOf() }
 	
 	
 	companion object {

@@ -87,8 +87,8 @@ object MyNotesFormatted {
 			)
 			
 			val customCodecs = mapOf(
-				"or_crit_vs_not_playercond" to FakeCodec("EnumSet<TFCritCondition>", "EnumSetOrCodec"),
-				"or_crit_vs_playercond" to FakeCodec("EnumSet<TFCritCondition>", "EnumSetOrCodec"),
+				"or_crit_vs_not_playercond" to FakeCodec("EnumSet<TFCritCondition>", "EnumSetOrCodec()"),
+				"or_crit_vs_playercond" to FakeCodec("EnumSet<TFCritCondition>", "EnumSetOrCodec()"),
 			)
 		}
 		
@@ -512,7 +512,7 @@ object MyNotesFormatted {
 	- One of the "only when weapon is active" kind of attributes.  These always only work if the weapon that provides them is active, while still allowing other attributes to be globally-applied.
 - `add_health_on_radius_damage`: Int
 	- Maximum amount of health that can be gained from an AoE damage source.  Health received is multiplied by `damage dealt / base damage of the weapon`, to a max of 100% of the defined value.
-- `mod_pierce_resists_absorbs`: Int
+- `mod_pierce_resists_absorbs`: Boolean
 - `or_crit_vs_playercond`: EnumSet<TFCritCondition>
 	- The weapon's "crit players with X condition" stat.  Each bit of this number specifies a condition that'll cause a forced crit, from [CritConditions][#CritConditions]
 - `crit_vs_wet_players`: Boolean
@@ -638,7 +638,7 @@ object MyNotesFormatted {
 - `lifeleech_on_damage`: Float
 	- Checked on attacker's active weapon, not the weapon that inflicted the damage.
 	- Health gained = this * damage dealt, capped at your maximum overheal amount.
-- `explosive_sniper_shot`: Boolean
+- `explosive_sniper_shot`: Int
 	- Only applies if in a gamemode with upgrades, but applies to all headshots.
 	- Also applies to any hitscan weapon with a `jarate_time` attribute that hit the head.
 - `crit_kill_will_gib`: Boolean

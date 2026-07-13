@@ -77,10 +77,11 @@ class MultiSubwavePopulator(
 ) : WaveSpawnPopulator(_subtree) {
 	val items: MutableList<WaveSpawnPopulator> = mutableListOf()
 	
-	override fun _serialize(input: VDFSubtree): VDFSubtree {
-		return items.map {
-			VDFStructWithPrototype(it, this) // allow stuff set in this to overwrite stuff set in each item
-		}.fold(input) { acc, waveSpawn -> waveSpawn._serialize(acc) }
+	override fun _serializeInto(input: VDFSubtree) {
+		return items.forEach {
+			// allow stuff set in this to overwrite stuff set in each item
+			VDFStructWithPrototype(it, this)._serializeInto(input)
+		}
 	}
 	
 	operator fun WaveSpawnPopulator.unaryPlus() {

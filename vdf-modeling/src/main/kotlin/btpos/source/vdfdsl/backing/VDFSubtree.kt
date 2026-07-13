@@ -1,27 +1,31 @@
 package btpos.source.vdfdsl.backing
 
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 
 /**
  * A list of keyvalues, wrapped in braces when serialized.
  */
-data class VDFSubtree(val entries: List<VDFKeyValue> = listOf()) : VDFObject(), IVDFRepresentableValue<VDFSubtree>, List<VDFKeyValue> by entries {
-	constructor(entries: Collection<VDFKeyValue>) : this(entries.toList())
+open class VDFSubtree(val parent: VDFSubtree?, val entries: MutableList<VDFKeyValue> = mutableListOf()) : VDFObject(), IVDFRepresentableValue_Subtree, MutableList<VDFKeyValue> by entries {
+	constructor(parent: VDFSubtree?, entries: Collection<VDFKeyValue>) : this(parent, entries.toMutableList())
 	
-	fun withEntry(entry: VDFKeyValue) = VDFSubtree(entries + entry)
+	fun withEntry(entry: VDFKeyValue) = this.apply {
+		entries += entry
+	}
 	
-	fun withEntries(vararg entries: VDFKeyValue) = VDFSubtree(this.entries + entries)
+	fun withEntries(vararg entries: VDFKeyValue) = this.apply {
+		this.entries += entries
+	}
 	
-	fun withEntries(entries: Iterable<VDFKeyValue>) = VDFSubtree(this.entries + entries)
+	fun withEntries(entries: Iterable<VDFKeyValue>) = this.apply {
+		this.entries += entries
+	}
 	
-	operator fun plus(entry: VDFKeyValue) = withEntry(entry)
-	
-	operator fun plus(entries: Iterable<VDFKeyValue>) = withEntries(entries)
-	
-	operator fun plus(other: VDFSubtree) = withEntries(other.entries)
-	
-	override val _vdfRepr: VDFSubtree
-		get() = this
+	override fun _vdfRepr(parent: VDFSubtree): VDFSubtree {
+		require(parent == this.parent) { "Failed sanity check: VDFSubtree parent '${this.parent}' does not equal the parent given to the function: '$parent'" }
+		
+		return this;
+	}
 	
 	override fun writeToVDF(writer: Appendable, indent: Int) {
 		writer.append('{')
@@ -51,4 +55,19 @@ fun VDFSubtree.getSubtree(index: String): VDFSubtree? {
 
 fun VDFSubtree.getString(index: String): String? {
 	return (this.getSingle(index) as? VDFPrimitive)?.stringValue
+}
+
+fun VDFSubtree.toMap(): Map<String, VDFObject> {
+	val map = this.associate { it.key.stringValue to it.value }
+	require(map.size == this.size) {
+		"Cannot convert subtree with multiple entries for a single key to a map.\n" +
+		"Duplicate keys: ${this.entries.groupBy { it.key }.filterValues { it.size == 1 }.keys.joinToString()}\n" +
+		"\n" +
+		"Subtree: $this"
+	}
+	return map
+}
+
+fun VDFSubtree.toMultiMap(): Map<String, List<VDFObject>> {
+	return this.groupBy({ it.key.stringValue }, { it.value })
 }

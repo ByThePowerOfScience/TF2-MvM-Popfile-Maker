@@ -1,12 +1,12 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.itemattributes.impl.BonusPenalty
-import btpos.source.vdfdsl.tf2.itemattributes.impl.BonusPenalty_BonusNested
-import btpos.source.vdfdsl.tf2.itemattributes.impl.BonusPenalty_BothNested
-import btpos.source.vdfdsl.tf2.itemattributes.impl.BonusPenalty_PenaltyNested
-import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
-import btpos.source.vdfdsl.tf2.itemattributes.impl.VisHidden
+import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty
+import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty_BonusNested
+import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty_BothNested
+import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty_PenaltyNested
+import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
+import btpos.source.vdfdsl.tf2.attributes.impl.VisHidden
 
 
 interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {

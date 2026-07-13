@@ -1,6 +1,6 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
+import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
 
 
 /**
@@ -16,7 +16,7 @@ interface JarAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * If unset, uses the weapon's default projectile type.
 	 *
-	 * Else use a numbered [btpos.source.vdfdsl.tf2.itemattributes.impl.ProjectileType].
+	 * Else use a numbered [btpos.source.vdfdsl.tf2.attributes.impl.ProjectileType].
 	 *
 	 * Used to select the model.
 	 *

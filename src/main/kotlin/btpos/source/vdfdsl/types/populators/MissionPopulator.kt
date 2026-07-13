@@ -4,7 +4,7 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 
 class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
@@ -57,7 +57,7 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	var desiredCount: Number? by addField("DesiredCount")
 }
 
-data class Objective(val item: String) : IVDFRepresentableValue<VDFPrimitive> {
+data class Objective(val item: String) : IVDFRepresentableValue_Trivial {
 	override val _vdfRepr: VDFPrimitive
 		get() = VDFPrimitive(item)
 	

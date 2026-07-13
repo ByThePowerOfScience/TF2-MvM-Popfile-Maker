@@ -1,7 +1,15 @@
-package btpos.source.vdfdsl.tf2.itemattributes
+package btpos.source.vdfdsl.tf2.attributes
 
 import btpos.source.vdfdsl.modeling.IKeyValueMap
 import btpos.source.vdfdsl.serialization.codecs.NumberSelectorCodec
+import btpos.source.vdfdsl.tf2.itemattributes.FistsAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.FlamethrowerAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.GrenadeLauncherAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.KnifeAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.LunchboxAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.SMGAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.SniperRifleAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.StickybombLauncherAttributes
 
 private const val lunchboxstring = "lunchbox adds minicrits"
 
@@ -53,9 +61,9 @@ var SMGAttributes.canHeadshot: Boolean?
 /**
  * 0 = standard (note: used for both Bonk and Sandvich)
  *
- * 1 = [adds max health][LunchboxAttributes.lunchboxAddsMaxhealthBonus]
+ * 1 = [adds max health][btpos.source.vdfdsl.tf2.itemattributes.LunchboxAttributes.lunchboxAddsMaxhealthBonus]
  *
- * 2 = [adds minicrits][LunchboxAttributes.lunchboxAddsMinicrits]
+ * 2 = [adds minicrits][btpos.source.vdfdsl.tf2.itemattributes.LunchboxAttributes.lunchboxAddsMinicrits]
  *
  * 3 = RoboSandvich
  *
@@ -121,7 +129,7 @@ var GrenadeLauncherAttributes.bombsShatterOnSurfaces: Boolean?
 /**
  * 0 = No special behavior
  *
- * 1 = [Radial Buff][FistsAttributes.fistsHaveRadialBuff]
+ * 1 = [Radial Buff][fistsHaveRadialBuff]
  *
  * 2 = Gloves of Running Urgently (Gives "penalty for spam-equipping gloves". Not present in SDK, but probably implemented.)
  */

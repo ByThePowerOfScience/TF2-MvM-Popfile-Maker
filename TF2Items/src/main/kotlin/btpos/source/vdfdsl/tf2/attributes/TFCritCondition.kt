@@ -1,7 +1,8 @@
 @file:Suppress("unused")
-package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.itemattributes.impl.IEnumCustomValue
+package btpos.source.vdfdsl.tf2.attributes
+
+import btpos.source.vdfdsl.tf2.attributes.impl.IEnumCustomValue
 import java.util.EnumSet
 
 

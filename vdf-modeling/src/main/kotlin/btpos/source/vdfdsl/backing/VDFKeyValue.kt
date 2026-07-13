@@ -11,8 +11,8 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
  * as they only differ from the standard "name: value" format in that they name _themselves_.
  */
 data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject) : VDFObject(), IVDFRepresentableKeyValue {
-	override fun _serialize(input: VDFSubtree): VDFSubtree {
-		return input.withEntry(this)
+	override fun _serializeInto(input: VDFSubtree) {
+		input += this
 	}
 	
 	override fun writeToVDF(writer: Appendable, indent: Int) {

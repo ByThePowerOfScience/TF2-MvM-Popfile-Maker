@@ -2,8 +2,8 @@ package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.IKeyValueMap
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.itemattributes.impl.BonusPenalty
-import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
+import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty
+import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
 
 
 /**
@@ -19,7 +19,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * If unset, uses the weapon's default projectile type.
 	 *
-	 * Else use a numbered [btpos.source.vdfdsl.tf2.itemattributes.impl.ProjectileType].
+	 * Else use a numbered [btpos.source.vdfdsl.tf2.attributes.impl.ProjectileType].
 	 */
 	context(attrs: IKeyValueMap)
 	var overrideProjectileType: Int?

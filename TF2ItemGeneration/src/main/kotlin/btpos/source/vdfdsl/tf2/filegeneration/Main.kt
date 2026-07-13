@@ -1,5 +1,8 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
+import btpos.source.vdfdsl.backing.asString
+import btpos.source.vdfdsl.backing.asSubtree
+import btpos.source.vdfdsl.backing.getSubtree
 import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
@@ -7,26 +10,14 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAtt
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyBonus
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Vis
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
-import btpos.source.vdfdsl.vdfparser.VdfParser
-import btpos.source.vdfdsl.vdfparser.VdfParser.get
-import btpos.source.vdfdsl.vdfparser.VdfParser.getTable
-import btpos.source.vdfdsl.vdfparser.component1
-import btpos.source.vdfdsl.vdfparser.component2
+import btpos.source.vdfdsl.vdfparser.ParseVDF
 import java.io.File
-import java.nio.file.Files.readAllBytes
-import kotlin.collections.first
-import kotlin.collections.fold
-import kotlin.collections.mapValues
-import kotlin.collections.single
-import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.exists
 import kotlin.io.path.useDirectoryEntries
-import kotlin.let
-import kotlin.text.startsWith
 
 data class ObjectInProgress(val name: String, val doc: String, val attrs: MutableList<ISortedNamedAttribute> = mutableListOf())
 
@@ -45,12 +36,10 @@ fun main() {
 fun convertAttributesFromSchema(inGameDescriptionsByAttributeName: Map<String, String>): List<NamedAttribute> {
 	return (ClassLoader.getSystemClassLoader()
 		.getResourceAsStream("items_game.txt") ?: error("Expected items_game.txt (the TF2 item schema) to be in the src/main/resources folder"))
-		.readAllBytes()
-		.toString(Charsets.UTF_8)
 		.let {
-			VdfParser.parse(it).second.tableOrNull()?.getTable("attributes")?.first() ?: error("Failed to locate attributes in item schema!")
+			ParseVDF.parse(it).keyvalues.single().value.asSubtree?.getSubtree("attributes") ?: error("Failed to locate attributes in item schema!")
 		}.map { (_id, schema) ->
-			val schema: Map<String, String?> = schema.tableOrNull()!!.associate { it.first to it.second.stringOrNull() }.withDefault { "" }
+			val schema: Map<String, String?> = schema.asSubtree!!.associate { it.key.stringValue to it.value.asString }.withDefault { "" }
 			val name: String by schema
 			val attribute_class: String by schema
 			val description_string: String? = inGameDescriptionsByAttributeName[name]
@@ -174,10 +163,10 @@ fun generateItemAttributes() {
 				writer.write(
 					"package ${BuildConfig.ATTRIBUTES_TARGET_PACKAGE}\n\n" +
 					"import btpos.source.vdfdsl.modeling.*\n" +
-					"import btpos.source.vdfdsl.serialization.codecs.*\n"
+					"import btpos.source.vdfdsl.serialization.codecs.*\n" +
+					"import ${BuildConfig.ATTRIBUTES_TARGET_PACKAGE}.impl.*\n" +
+					"import java.util.*\n\n"
 				)
-				writer.newLine()
-				writer.newLine()
 				scope.generateTopLevelMembers()
 					.forEach { topLevel ->
 						writer.write(topLevel)

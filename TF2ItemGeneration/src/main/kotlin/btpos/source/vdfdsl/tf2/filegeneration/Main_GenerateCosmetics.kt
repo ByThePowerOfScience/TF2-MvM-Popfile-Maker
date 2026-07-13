@@ -1,49 +1,51 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
+import btpos.source.vdfdsl.backing.VDFObject
+import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.asString
+import btpos.source.vdfdsl.backing.asSubtree
+import btpos.source.vdfdsl.backing.getString
+import btpos.source.vdfdsl.backing.getSubtree
+import btpos.source.vdfdsl.backing.toMap
 import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
-import btpos.source.vdfdsl.vdfparser.VdfParser
-import btpos.source.vdfdsl.vdfparser.VdfParser.getString
-import btpos.source.vdfdsl.vdfparser.VdfParser.getTable
-import btpos.source.vdfdsl.vdfparser.component1
-import btpos.source.vdfdsl.vdfparser.component2
+import btpos.source.vdfdsl.vdfparser.ParseVDF
 import java.io.File
+import java.io.InputStream
 import java.nio.file.Path
 import java.util.LinkedList
 import java.util.Queue
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
+import kotlin.sequences.asSequence
+import kotlin.sequences.mapNotNull
 
-
-fun VdfParser.Table.toMap(): Map<String, VdfParser.StringOrTable> {
-	return associate { it.first to it.second }
-}
 
 class WeaponDesc private constructor(val weapon_name: String, val item_class: String, /*val attributes: List<Attr>*/) {
 	companion object {
 
-		fun getBaseClass(prefab: String, prefabs: Map<String, VdfParser.StringOrTable>): String? {
+		fun getBaseClass(prefab: String, prefabs: Map<String, VDFObject>): String? {
 			for (item in prefab.split(" ")) {
 				if (!item.startsWith("weapon_"))
 					continue;
-				val x = prefabs[item]?.tableOrNull()?.let { it.toMap() } ?: error("No prefab entry for referenced prefab $item")
+				val x = prefabs[item]?.asSubtree?.let { it.toMap() } ?: error("No prefab entry for referenced prefab $item")
 				if ("item_class" in x) {
-					return x["item_class"]?.stringOrNull()!!
+					return x["item_class"]?.asString!!
 				} else if ("prefab" in x) {
-					return getBaseClass(x["prefab"]?.stringOrNull()!!, prefabs)
+					return getBaseClass(x["prefab"]?.asString!!, prefabs)
 				}
 			}
 			return null;
 		}
 
-		operator fun invoke(map: Map<String, VdfParser.StringOrTable>, prefabs: Map<String, VdfParser.StringOrTable>): WeaponDesc? {
-			val name = map["name"]?.stringOrNull() ?: return null
-			val cls = map["item_class"]?.stringOrNull()
-			          ?: map["prefab"]?.let { getBaseClass(it.stringOrNull()!!, prefabs) }
+		operator fun invoke(map: Map<String, VDFObject>, prefabs: Map<String, VDFObject>): WeaponDesc? {
+			val name = map["name"]?.asString ?: return null
+			val cls = map["item_class"]?.asString
+			          ?: map["prefab"]?.let { getBaseClass(it.asString!!, prefabs) }
 
 //			if ("Carbine" in name) {
 //				println("class: $cls")
-//				println("item_class: ${map["item_class"]!!.stringOrNull()}")
+//				println("item_class: ${map["item_class"]!!.asString}")
 //				println("prefab: ${map["prefab"]}")
 //			}
 			if (cls == null)
@@ -60,26 +62,23 @@ class WeaponDesc private constructor(val weapon_name: String, val item_class: St
 	}
 }
 
-fun Map<String, VdfParser.StringOrTable>.getMap(index: String): Map<String, VdfParser.StringOrTable>? {
-	return this[index]?.tableOrNull()?.toMap()
+fun Map<String, VDFObject>.getMap(index: String): Map<String, VDFObject>? {
+	return this[index]?.asSubtree?.toMap()
 }
 
-fun Map<String, VdfParser.StringOrTable>.getString(index: String): String? {
-	return this[index]?.stringOrNull()
+fun Map<String, VDFObject>.getString(index: String): String? {
+	return this[index]?.asString
 }
 
-val VdfParser.Table.prefabs get() = firstOrNull { it.first == "prefab" }?.second?.stringOrNull()
-
-operator fun VdfParser.Table.get(index: String): VdfParser.StringOrTable? = this.firstOrNull { it.first == index }?.second
+val VDFSubtree.prefabs get() = getString("prefab")
 
 
-
-fun getAllItemParentsRecursive(itemTable: VdfParser.Table, allPrefabs: Map<String, VdfParser.StringOrTable>): Sequence<VdfParser.Table> {
+fun getAllItemParentsRecursive(itemTable: VDFSubtree, allPrefabs: Map<String, VDFObject>): Sequence<VDFSubtree> {
 	return PrefabParentIterator(itemTable, allPrefabs).asSequence()
 }
 
-class PrefabParentIterator(startItem: VdfParser.Table, val allPrefabs: Map<String, VdfParser.StringOrTable>) : Iterator<VdfParser.Table> {
-	var startItem: VdfParser.Table? = startItem
+class PrefabParentIterator(startItem: VDFSubtree, val allPrefabs: Map<String, VDFObject>) : Iterator<VDFSubtree> {
+	var startItem: VDFSubtree? = startItem
 		private set
 	
 	val nextPrefabsToCheck: Queue<String> = LinkedList()
@@ -88,11 +87,11 @@ class PrefabParentIterator(startItem: VdfParser.Table, val allPrefabs: Map<Strin
 		return startItem != null || nextPrefabsToCheck.isNotEmpty()
 	}
 	
-	fun addPrefabsToQueue(itemTable: VdfParser.Table) {
+	fun addPrefabsToQueue(itemTable: VDFSubtree) {
 		itemTable.prefabs?.split(' ')?.let { nextPrefabsToCheck.addAll(it) }
 	}
 	
-	override fun next(): VdfParser.Table {
+	override fun next(): VDFSubtree {
 		if (startItem != null) {
 			return startItem!!.also {
 				addPrefabsToQueue(it)
@@ -100,7 +99,7 @@ class PrefabParentIterator(startItem: VdfParser.Table, val allPrefabs: Map<Strin
 			}
 		} else {
 			val nextPrefab = nextPrefabsToCheck.poll()
-			return allPrefabs[nextPrefab]?.tableOrNull()?.also {
+			return allPrefabs[nextPrefab]?.asSubtree?.also {
 				addPrefabsToQueue(it)
 			} ?: error("No prefab found: $nextPrefab")
 		}
@@ -153,24 +152,24 @@ data class CosmeticDesc(
 			}
 		}
 		
-	    fun fromItemTable(itemTable: VdfParser.Table, allPrefabs: Map<String, VdfParser.StringOrTable>): CosmeticDesc? {
-			val itemName = itemTable["name"]?.stringOrNull() ?: error("No name field found in $itemTable")
+	    fun fromItemTable(itemTable: VDFSubtree, allPrefabs: Map<String, VDFObject>): CosmeticDesc? {
+			val itemName = itemTable.getString("name") ?: error("No name field found in $itemTable")
 			
 			return getAllItemParentsRecursive(itemTable, allPrefabs).mapNotNull { item ->
 				val itemMap = item.toMap()
-				val itemSlot = itemMap["item_slot"]?.stringOrNull()?.also {
+				val itemSlot = itemMap["item_slot"]?.asString?.also {
 					when (it) {
 						"secondary", "primary", "melee", "action",
 							 "pda", "pda2", "building" -> return@mapNotNull null
 					};
 				}
 				
-				val usedByClasses = itemMap["used_by_classes"]?.tableOrNull()?.map { (k, v) ->
-					k
+				val usedByClasses = itemMap["used_by_classes"]?.asSubtree?.map { (k, v) ->
+					k.stringValue
 				}
 				val equipRegions = itemMap.getString("equip_region")?.let { listOf(it) }
 				                   ?: itemMap["equip_regions"]?.run {
-									   stringOrNull()?.split(' ') ?: tableOrNull()?.mapNotNull { (k, v) -> k.takeIf { v.stringOrNull() == "1" } }
+									   asString?.split(' ') ?: asSubtree?.mapNotNull { (k, v) -> k.takeIf { v.asString == "1" }?.stringValue }
 				                   }
 				
 				val isPaintable = itemMap.getMap("capabilities")?.getString("paintable") == "1"
@@ -189,20 +188,19 @@ private const val basecosmeticspackage = BuildConfig.COSMETICS_TARGET_PACKAGE
 
 const val itemsimport = BuildConfig.ITEM_FACTORY_LOCATION
 
-fun getItemSchema(): String {
-	val itemSchema = ClassLoader.getSystemClassLoader().getResourceAsStream("items_game.txt") ?: error("Expected item schema to be at src/main/resources/items_game.txt. Retrieve it at <TF2 folder>/tf/scripts/items/items_game.txt")
-	return itemSchema.bufferedReader().use { it.readText() }
+fun getItemSchema(): InputStream {
+	return ClassLoader.getSystemClassLoader().getResourceAsStream("items_game.txt") ?: error("Expected item schema to be at src/main/resources/items_game.txt. Retrieve it at <TF2 folder>/tf/scripts/items/items_game.txt")
 }
 
 fun main() {
-	val parsedItemSchema = VdfParser.parse(getItemSchema()).second.tableOrNull()!!
+	val parsedItemSchema = ParseVDF.parse(getItemSchema()).keyvalues.single().asSubtree!!
 	
 	generateAttributesNotes(parsedItemSchema, Path(BuildConfig.OUT_DIR).resolve("outfile.md"))
 }
 
 
-fun generateAttributesNotes(parsedItemSchema: VdfParser.Table, outputFile: Path) {
-//	val prefabs = parsedItemSchema.getTable("prefabs")!!.single().toMap()
+fun generateAttributesNotes(parsedItemSchema: VDFSubtree, outputFile: Path) {
+//	val prefabs = parsedItemSchema.getSubtree("prefabs")!!.single().toMap()
 	
 	val hierarchy = MyNotesFormatted.hierarchy
 	val attrsByClass = MyNotesFormatted.attrsByClass
@@ -244,16 +242,13 @@ fun generateAttributesNotes(parsedItemSchema: VdfParser.Table, outputFile: Path)
 	}
 	
 	outputFile.bufferedWriter().use { out ->
-		val attrs = parsedItemSchema.getTable("attributes")!!
-			.single()
+		val attrs = parsedItemSchema.getSubtree("attributes")!!
 			.asSequence()
 			.mapNotNull { (_, table) ->
-				val table = table.tableOrNull()!!
+				val table = table.asSubtree!!
 				val name = table.getString("name")
-					           ?.singleOrNull()
 				           ?: return@mapNotNull null
 				val attrClass = table.getString("attribute_class")
-					                ?.singleOrNull()
 				                ?: return@mapNotNull null
 				AttrSchema(name, attrClass)
 			}
@@ -286,12 +281,11 @@ fun generateAttributesNotes(parsedItemSchema: VdfParser.Table, outputFile: Path)
 	
 }
 
-fun generateCosmetics(parsedItemSchema: VdfParser.Table) {
-	val prefabs = parsedItemSchema.first { it.first == "prefabs" }.second.tableOrNull()!!
-		.let { it.toMap() }
+fun generateCosmetics(parsedItemSchema: VDFSubtree) {
+	val prefabs = parsedItemSchema.getSubtree("prefabs")!!.toMap()
 	
-	val (allCosmetics, allMedals) = parsedItemSchema.first { it.first == "items" }.second.tableOrNull()!!.asSequence().mapNotNull {
-		it.second.tableOrNull()
+	val (allCosmetics, allMedals) = parsedItemSchema.getSubtree("items")!!.asSequence().mapNotNull {
+		it.asSubtree
 	}.mapNotNull {
 		CosmeticDesc.fromItemTable(it, prefabs)
 	}.groupBy { "medal" in it.equipRegions }.let { it[false]!! to it[true]!! }

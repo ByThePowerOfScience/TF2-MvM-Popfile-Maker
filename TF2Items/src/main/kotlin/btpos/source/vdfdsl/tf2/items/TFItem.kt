@@ -14,13 +14,15 @@ import btpos.source.vdfdsl.tf2.items.weapons.WeaponsMelee
 class TFItem<ATTR>(val name: String, val attributes: KeyValueMapImpl? = null, @PublishedApi internal val scopedAttributeFunctions: ATTR)
 	: IVDFRepresentableKeyValue
 {
-	override fun _serialize(input: VDFSubtree): VDFSubtree {
-		return input + listOfNotNull(
-			VDFKeyValue(VDFPrimitive("Item"), VDFPrimitive (name)),
-			VDFKeyValue.orNull(
-				VDFPrimitive("ItemAttributes"),
-				attributes?._vdfRepr?.withEntry(VDFKeyValue(VDFPrimitive("ItemName"), VDFPrimitive(this.name)))
-			)
+	override fun _serializeInto(input: VDFSubtree) {
+		input +=
+			listOfNotNull(
+				VDFKeyValue(VDFPrimitive("Item"), VDFPrimitive (name)),
+				VDFKeyValue.orNull(
+					VDFPrimitive("ItemAttributes"),
+					attributes?._vdfRepr(input)?.withEntry(VDFKeyValue(VDFPrimitive("ItemName"), VDFPrimitive(this.name)))
+				)
+			
 		)
 	}
 	

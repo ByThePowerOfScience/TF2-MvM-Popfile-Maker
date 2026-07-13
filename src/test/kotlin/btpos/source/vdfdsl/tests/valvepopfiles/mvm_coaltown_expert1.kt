@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.tests.valvepopfiles
 
+import btpos.source.vdfdsl.backing.VDFRootFile
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.invoke
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
@@ -90,12 +91,12 @@ class mvm_coaltown_expert1 {
 			+Mission {
 				objective = Objective.DestroySentries
 				
-				initialCooldown = 5.0
+				initialCooldown = 5
 				where = basicSpawn
 				beginAtWave = 1
 				runForThisManyWaves = 9
 				
-				cooldownTime = 20.0
+				cooldownTime = 20
 				
 				TFBot(template = "T_TFBot_SentryBuster")
 			}
@@ -133,8 +134,9 @@ class mvm_coaltown_expert1 {
 			// TODO serialize with base #base robot_giant.pop, #base robot_standard.pop
 		}
 		
-		x._serialize(VDFSubtree())
-			.writeToVDF(System.out)
+		val file = VDFRootFile(pragmas = mutableListOf("base" to "base.pop"))
+		x._serializeInto(file)
+		file.writeToVDF(System.out)
 	}
 	
 	/**

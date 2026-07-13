@@ -1,4 +1,4 @@
-package btpos.source.vdfdsl.tf2.itemattributes.impl
+package btpos.source.vdfdsl.tf2.attributes.impl
 
 @DslMarker
 annotation class BlockScoped

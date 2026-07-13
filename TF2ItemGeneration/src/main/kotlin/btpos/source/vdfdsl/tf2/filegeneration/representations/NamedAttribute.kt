@@ -17,7 +17,6 @@ data class NamedAttribute(
 	val effectType: String? = null,
 	val armory_desc: ArmoryDesc? = null
 ) : ISortedNamedAttribute {
-	
 	override fun clone(): ISortedNamedAttribute {
 		return this.copy().also {
 			it.forceType = forceType
@@ -62,7 +61,7 @@ data class NamedAttribute(
 			"item_def" -> "ItemDef"
 			"killstreakeffect_index" -> "Int"
 			"killstreak_idleeffect_index" -> "Int"
-			"from_lookup_table" -> "FromLookupTable"
+			"from_lookup_table" -> "Int"
 			else -> error("unexpected type: $attrType")
 		}
 	}

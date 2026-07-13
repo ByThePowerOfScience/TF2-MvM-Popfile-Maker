@@ -1,6 +1,5 @@
 package btpos.source.vdfdsl.vdfparser
 
-import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.source.vdfdsl.backing.asSubtree
 import org.junit.jupiter.api.assertAll
@@ -9,7 +8,6 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class VdfParserTest {
 	@Test

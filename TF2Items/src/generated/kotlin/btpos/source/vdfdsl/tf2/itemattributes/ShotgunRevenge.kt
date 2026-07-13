@@ -1,7 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
+import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
 
 
 /**

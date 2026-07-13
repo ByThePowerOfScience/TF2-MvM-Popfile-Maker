@@ -1,8 +1,5 @@
 package btpos.source.vdfdsl.types.specifics
 
-import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
-
 /**
  * Presets for where
  */

@@ -202,10 +202,11 @@ object ParseVDF {
 			val bases = ctx.bases.mapNotNull {
 				it.accept(PragmaVisitor)
 			}
-			val items = listOfNotNull(ctx.firstLine.accept(LineVisitor)) +
-			       ctx.rest.mapNotNull { it.accept(LineVisitor) }
+			val lineVis = LineVisitor(null)
+			val items = listOfNotNull(ctx.firstLine.accept(lineVis)) +
+			       ctx.rest.mapNotNull { it.accept(lineVis) }
 			
-			return VDFRootFile(bases, items)
+			return VDFRootFile(bases.toMutableList(), items.toMutableList())
 		}
 		
 		object PragmaVisitor : VDFBaseVisitor<Pair<String, String>>() {
@@ -216,25 +217,27 @@ object ParseVDF {
 			}
 		}
 		
-		object LineVisitor : VDFBaseVisitor<VDFKeyValue?>() {
+		class LineVisitor(val parent: VDFSubtree?) : VDFBaseVisitor<VDFKeyValue?>() {
 			override fun visitLine(ctx: VDFParser.LineContext): VDFKeyValue? {
-				return ctx.keyvalue()?.accept(KeyValueVisitor)
+				return ctx.keyvalue()?.accept(KeyValueVisitor(parent))
 			}
 		}
 		
-		object TableVisitor : VDFBaseVisitor<VDFSubtree>() {
+		class TableVisitor(val parent: VDFSubtree?) : VDFBaseVisitor<VDFSubtree>() {
 			override fun visitTable(ctx: VDFParser.TableContext): VDFSubtree {
-				return VDFSubtree(ctx.lines.mapNotNull { it.accept(LineVisitor) })
+				val self = VDFSubtree(parent)
+				self += ctx.lines.mapNotNull { it.accept(LineVisitor(self)) }
+				return self
 			}
 		}
 		
-		object KeyValueVisitor : VDFBaseVisitor<VDFKeyValue>() {
+		class KeyValueVisitor(val parent: VDFSubtree?) : VDFBaseVisitor<VDFKeyValue>() {
 			override fun visitKeyvalue_strings(ctx: VDFParser.Keyvalue_stringsContext): VDFKeyValue {
 				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), VDFPrimitive(ctx.value.accept(KeyableVisitor)))
 			}
 			
 			override fun visitKeyvalue_table(ctx: VDFParser.Keyvalue_tableContext): VDFKeyValue {
-				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), ctx.table().accept(TableVisitor))
+				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), ctx.table().accept(TableVisitor(parent)))
 			}
 		}
 	}

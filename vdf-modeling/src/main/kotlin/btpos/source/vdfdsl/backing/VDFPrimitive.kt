@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.backing
 
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 
 @ExposedCopyVisibility
-data class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), IVDFRepresentableValue<VDFPrimitive> {
+data class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), IVDFRepresentableValue_Trivial {
 	constructor(i: Int) : this(i.toString())
 	
 	constructor(i: Float) : this(i.toString())
@@ -67,10 +67,9 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 	
 	override val _vdfRepr: VDFPrimitive
 		get() = this
-	
-	
 }
 
 val VDFPrimitive.intValue get() = this.stringValue.toInt()
 
 val VDFPrimitive.floatValue get() = this.stringValue.toFloat()
+

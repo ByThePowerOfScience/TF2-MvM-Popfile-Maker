@@ -1,7 +1,9 @@
-package btpos.source.vdfdsl.tf2.itemattributes
+package btpos.source.vdfdsl.tf2.attributes
 
 import btpos.source.vdfdsl.modeling.IKeyValueMap
 import btpos.source.vdfdsl.serialization.codecs.Codec
+import btpos.source.vdfdsl.tf2.itemattributes.WeaponBaseAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.WearableAttributes
 import btpos.source.vdfdsl.tf2.items.PaintColors
 import java.awt.Color
 

@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.types.bots
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 
-enum class TFClass : IVDFRepresentableValue<VDFPrimitive> {
+enum class TFClass : IVDFRepresentableValue_Trivial {
 	Scout,
 	Soldier,
 	Pyro,

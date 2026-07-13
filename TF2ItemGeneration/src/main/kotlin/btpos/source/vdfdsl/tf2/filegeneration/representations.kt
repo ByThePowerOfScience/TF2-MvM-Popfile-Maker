@@ -2,7 +2,7 @@ package btpos.source.vdfdsl.tf2.filegeneration
 
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
 
-private val spaceUnderscore = Regex("[_\\s]+")
+private val spaceUnderscore = Regex("[_\\s\\-]+")
 fun String.camelCase(): String {
 	val split = this.lowercase().split(spaceUnderscore)
 	if (split.size == 1) {

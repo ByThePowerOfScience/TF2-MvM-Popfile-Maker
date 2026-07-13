@@ -15,7 +15,9 @@ import btpos.source.vdfdsl.backing.VDFSubtree
 abstract class AbstractVDFStruct(private val _subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl())
 	: IVDFRepresentableKeyValue, IExtensibleSubtree by _subtree
 {
-	override fun _serialize(input: VDFSubtree): VDFSubtree = input.withEntry(VDFKeyValue(VDFPrimitive(_structIdentifier), _subtree._vdfRepr))
+	override fun _serializeInto(input: VDFSubtree) {
+		_subtree._toKeyValueRepresentable(VDFPrimitive(_structIdentifier))._serializeInto(input)
+	}
 	
 	/**
 	 * The key this item is always given in a subtree, used to identify it as a specific kind of structure.
