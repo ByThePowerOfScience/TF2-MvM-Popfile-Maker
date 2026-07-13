@@ -41,18 +41,6 @@ public class VDFBaseListener implements VDFListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterNl_line(VDFParser.Nl_lineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitNl_line(VDFParser.Nl_lineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterLine(VDFParser.LineContext ctx) { }
 	/**
 	 * {@inheritDoc}

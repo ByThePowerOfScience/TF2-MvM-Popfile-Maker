@@ -1,12 +1,11 @@
 
 grammar VDF;
 
-root : bases+=header_allowed_lines* firstLine=line rest+=nl_line*;
+root : (bases+=header_allowed_lines)* firstLine=line (NL rest+=line)*;
 
-header_allowed_lines : ((PRAGMA COMMENT?) | COMMENT) NL+;
+header_allowed_lines : PRAGMA? COMMENT? NL;
 
-nl_line : NL line ;
-line : keyvalue? COMMENT?;
+line : keyvalue | keyvalue COMMENT | COMMENT?;
 
 keyvalue : keyvalue_strings
    | keyvalue_table
@@ -25,7 +24,7 @@ keyvalue_table :
 
 
 table : OPENBRACE tableLBracketComment=COMMENT?
-        lines+=nl_line+
+        (NL lines+=line)+
         CLOSEBRACE;
 
 
@@ -35,7 +34,7 @@ COMMENT : COMMENT_START ~('\r' | '\n')* ;
 WS: [\t ]+ -> skip;
 
 STRING: '"' (STRING_ELEMENT)* '"' ;
-NUMBER: '-'? [0-9]+ ('.' [0-9]+)? ;
+NUMBER: '-'? (([0-9]+ ('.' [0-9]+)?) | ('.' [0-9]+)) ;
 LITERAL: [\p{L}] WORDCHAR+ ;
 
 COMMENT_START : '//';

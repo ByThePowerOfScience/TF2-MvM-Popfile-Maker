@@ -6,13 +6,9 @@ import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFRootFile
 import btpos.source.vdfdsl.backing.VDFSubtree
-import btpos.source.vdfdsl.vdfparser.ParseVDF.VDFVisitor_Comments.commentText
 import btpos.source.vdfdsl.vdfparser.antlr.VDFBaseVisitor
 import btpos.source.vdfdsl.vdfparser.antlr.VDFLexer
 import btpos.source.vdfdsl.vdfparser.antlr.VDFParser
-import btpos.source.vdfdsl.vdfparser.leftOrNull
-import btpos.source.vdfdsl.vdfparser.rightOrNull
-import com.mojang.datafixers.util.Either
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
@@ -20,7 +16,6 @@ import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.ParseTree
 import java.io.InputStream
 import kotlin.collections.map
-import kotlin.sequences.toList
 
 class StringOrTable private constructor(val item: Any) {
 	constructor(s: String) : this(item=s)
@@ -34,10 +29,18 @@ class StringOrTable private constructor(val item: Any) {
 	fun stringOrNull() = item as? String
 	
 	@Suppress("UNCHECKED_CAST")
-	fun tableOrNull() = item as? RawTable
+	fun subtreeOrNull() = item as? RawTable
 	
 	override fun toString(): String {
 		return item.toString()
+	}
+}
+
+interface IRawVDFItem {
+	fun printRaw(indent: Int): String
+	
+	fun formatEolComment(string: String?): String {
+		return string?.let { " // " + it }.orEmpty()
 	}
 }
 
@@ -46,10 +49,10 @@ interface ITable {
 	
 	fun getString(key: String) = get(key)?.stringOrNull()
 	
-	fun getTable(key: String) = get(key)?.tableOrNull()
+	fun getTable(key: String) = get(key)?.subtreeOrNull()
 }
 
-class RawTable(val rawLines: List<RawLine>) : List<RawLine> by rawLines, ITable {
+class RawTable(val rawLines: List<RawLine>) : List<RawLine> by rawLines, ITable, IRawVDFItem {
 	fun getDiscardingComments(): Sequence<RawKeyValue> {
 		return rawLines.asSequence().filterIsInstance<KeyValueWithEndOfLineComment>().map { it.kv }
 	}
@@ -57,22 +60,48 @@ class RawTable(val rawLines: List<RawLine>) : List<RawLine> by rawLines, ITable 
 	override operator fun get(key: String): StringOrTable? {
 		return getDiscardingComments().firstOrNull { it.key == key }?.value
 	}
+	
+	override fun printRaw(indent: Int): String {
+		return "{\n\t" + rawLines.joinToString("\n\t") { it.printRaw(1) } + "\n}".prependIndent("\t".repeat(indent))
+	}
+	
+	
 }
 
-sealed class RawLine
+sealed class RawLine : IRawVDFItem
 
-data class PragmaLineWithComment(val pragma: String, val arg: String?, val comment: String?) : RawLine()
+data class PragmaLineWithComment(val pragma: String, val arg: String?, val comment: String?) : RawLine() {
+	override fun printRaw(indent: Int): String {
+		return "#$pragma $arg" + formatEolComment(comment)
+	}
+}
 
-data class LineWithOnlyComment(val comment: String) : RawLine()
+data class LineWithOnlyComment(val comment: String) : RawLine() {
+	override fun printRaw(indent: Int): String {
+		return "// " + comment
+	}
+}
 
 object EmptyLine : RawLine() {
 	override fun toString() = "EmptyLine"
+	
+	override fun printRaw(indent: Int): String {
+		return ""
+	}
 }
 
-sealed class RawKeyValue {
+sealed class RawKeyValue : IRawVDFItem {
 	abstract val key: String
 	
 	abstract val value: StringOrTable
+	
+	fun wrapStringIfNeeded(str: String): String {
+		if (str.any { it.isWhitespace() }) {
+			return '"' + str + '"'
+		} else {
+			return str
+		}
+	}
 }
 
 data class RawKeyValueLiteral(
@@ -80,6 +109,10 @@ data class RawKeyValueLiteral(
 	val literalValue: String
 ) : RawKeyValue() {
 	override val value get() = StringOrTable(literalValue)
+	
+	override fun printRaw(indent: Int): String {
+		return "${wrapStringIfNeeded(key)} ${wrapStringIfNeeded(literalValue)}"
+	}
 }
 
 data class RawKeyValue_TableWithSurroundingComments(
@@ -108,9 +141,21 @@ data class RawKeyValue_TableWithSurroundingComments(
 	val table: RawTable
 ) : RawKeyValue() {
 	override val value = StringOrTable(table)
+	
+	override fun printRaw(indent: Int): String {
+		return """${wrapStringIfNeeded(key)}${formatEolComment(keyEOLComment)}
+${afterKeyBeforeBraceComments.joinToString("\n") { formatEolComment(it) }}
+{${formatEolComment(openBracketEOLComment)}
+	${table.rawLines.joinToString("\n\t") { it.printRaw(indent + 1) } }
+}""".prependIndent("\t".repeat(indent))
+	}
 }
 
-data class KeyValueWithEndOfLineComment(val kv: RawKeyValue, val eolComment: String?) : RawLine()
+data class KeyValueWithEndOfLineComment(val kv: RawKeyValue, val eolComment: String?) : RawLine() {
+	override fun printRaw(indent: Int): String {
+		return kv.printRaw(indent) + formatEolComment(eolComment)
+	}
+}
 
 
 object ParseVDF {
@@ -160,7 +205,7 @@ object ParseVDF {
 			ctx.bases.mapTo(outLines) {
 				it.accept(HeaderLineVisitor)
 			}
-			outLines.add(ctx.firstLine.accept(LineVisitor_Raw))
+			ctx.firstLine?.accept(LineVisitor_Raw)?.let { outLines.add(it) }
 			ctx.rest?.mapTo(outLines) { it.accept(LineVisitor_Raw) }
 			return outLines
 		}

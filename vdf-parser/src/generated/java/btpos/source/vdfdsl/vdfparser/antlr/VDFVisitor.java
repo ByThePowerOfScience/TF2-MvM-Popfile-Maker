@@ -23,12 +23,6 @@ public interface VDFVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitHeader_allowed_lines(VDFParser.Header_allowed_linesContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link VDFParser#nl_line}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNl_line(VDFParser.Nl_lineContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link VDFParser#line}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
