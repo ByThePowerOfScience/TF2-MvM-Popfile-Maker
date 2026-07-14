@@ -105,7 +105,18 @@ fun main() {
 		}?.let { Path.of(it) } ?: defaultPath
 	}
 	
-	val prefixToDiscard = prompt("What prefix should be discarded when generating names? (e.g. `T_TFBot_` turns \"T_TFBot_Sniper_Razorback\" into \"Sniper_Razorback\") [default = none]: ")
+	val useRobotName: Boolean = (promptWithCheck("Use the name of the robot instead of the template name? (e.g. \"COLONEL_BARRAGE\" instead of \"SLOWBARRAGE\") [Y/n]: ", allowEmpty = true) {
+		if (this.lowercase().let { it != "y" && it != "n" }) {
+			"Must be 'y' or 'n'."
+		} else null
+	} ?: "y") == "y"
+	
+	val prefixToDiscard = run {
+		if (useRobotName) {
+			""
+		} else
+			prompt("What prefix should be discarded when generating names? (e.g. `T_TFBot_` turns \"T_TFBot_Sniper_Razorback\" into \"Sniper_Razorback\") [default = none]: ")
+	}
 	
 	val groupByClass: Boolean = (promptWithCheck("Group entries by class? [Y/n]: ", allowEmpty = true) {
 		if (this.lowercase().let { it != "y" && it != "n" }) {
@@ -146,7 +157,7 @@ fun main() {
 				outfolder.resolve("${friendlyName}Templates.kt").bufferedWriter().use { out ->
 					val parsedPopFile = ParseVDF.directRepresentation(popfileLoc.inputStream()).iterator()
 					
-					context (TemplateGenerationSettings(popfileName, friendlyName, prefixToDiscard.orEmpty(), groupByClass, packageName = pkgName)) {
+					context (TemplateGenerationSettings(popfileName, friendlyName, prefixToDiscard.orEmpty(), groupByClass, packageName = pkgName, useRobotName)) {
 						out.writeObject(parsedPopFile)
 					}
 				}
@@ -163,7 +174,7 @@ fun main() {
 		}
 		
 		outfile.createParentDirectories().bufferedWriter().use { out ->
-			context (TemplateGenerationSettings(popfileName, friendlyName, prefixToDiscard.orEmpty(), groupByClass, packageName = pkgName)) {
+			context (TemplateGenerationSettings(popfileName, friendlyName, prefixToDiscard.orEmpty(), groupByClass, packageName = pkgName, useRobotName)) {
 				val parsedPopFile = ParseVDF.directRepresentation(popfileLoc.inputStream()).iterator()
 				
 				out.writeObject(parsedPopFile)
@@ -185,11 +196,24 @@ data class TemplateGenerationSettings(
 	val prefixToDiscard: String,
 	val groupByClass: Boolean,
 	val packageName: String,
+	/**
+	 * Use the Name field of the robot instead of the template name.  Ignores prefix.
+	 */
+	val useRobotName: Boolean,
 )
 
 data class TemplateEntry(val precedingComments: List<String>, val kv: RawKeyValue_TableWithSurroundingComments) {
 	context(settings: TemplateGenerationSettings)
 	fun getVariableName(className: String?): String {
+		run {
+			if (settings.useRobotName) {
+				val robotNameField = kv.table.getString("Name")
+				                     ?: return@run;
+				
+				return '`' + robotNameField + '`'
+			}
+		}
+		
 		return kv.key.uppercase().removePrefix(settings.prefixToDiscard.uppercase()).let { varName ->
 			(if (className != null) {
 				val classNameRegex = Regex("""(?:\b|_)${className.uppercase()}(?:\b|_)""")

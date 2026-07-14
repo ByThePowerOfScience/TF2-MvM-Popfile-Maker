@@ -1,11 +1,11 @@
 package btpos.source.vdfdsl.tests.valvepopfiles
 
-import btpos.source.vdfdsl.backing.VDFKeyValue
-import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.invoke
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsAll
+import btpos.source.vdfdsl.tf2.templates.RobotGiantTemplates
+import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
 import btpos.source.vdfdsl.types.WaveSchedule
 import btpos.source.vdfdsl.types.bots.Attributes
 import btpos.source.vdfdsl.types.bots.BehaviorModifiers
@@ -43,11 +43,11 @@ private const val tag_specialmainright = "special_main_right"
 private const val tag_specialmainleft = "special_main_left"
 
 class mvm_coaltown_expert1 {
-	val GIANT_SCOUT get() = TFBot(template = "T_TFBot_Giant_Scout_Fast")
+	val GIANT_SCOUT get() = TFBot(template = RobotGiantTemplates.Scout.GIANT_FAST)
 	
 	
-	val GIANT_HEAVY get() = TFBot(template = "T_TFBot_Giant_Heavyweapons")
-	val QUICKFIX_MEDIC get() = TFBotSpawner(template = "T_TFBot_Medic_QuickUber")
+	val GIANT_HEAVY get() = TFBot(template = RobotGiantTemplates.Heavyweapons.GIANT)
+	val QUICKFIX_MEDIC get() = TFBot(template = RobotStandardTemplates.Medic.QUICKUBER)
 	val EASY_SCOUT
 		get() = TFBot {
 			`class` = TFClass.Scout
@@ -99,7 +99,7 @@ class mvm_coaltown_expert1 {
 				
 				cooldownTime = 20
 				
-				TFBot(template = "T_TFBot_SentryBuster")
+				TFBot(template = RobotGiantTemplates.Demoman.SENTRYBUSTER)
 			}
 			
 			spyMission(1, 10)
@@ -114,7 +114,7 @@ class mvm_coaltown_expert1 {
 				desiredCount = 6
 				
 				+TFBot {
-					template = "T_TFBot_Sniper_Sydney_Sleeper"
+					template = RobotStandardTemplates.Sniper.SYDNEY_SLEEPER
 					items += WeaponsAll.RAZORBACK
 				}
 			}.also {
@@ -135,7 +135,7 @@ class mvm_coaltown_expert1 {
 			// TODO serialize with base #base robot_giant.pop, #base robot_standard.pop
 		}
 		
-		val file = VDFSubtree(null, mutableListOf(VDFKeyValue(VDFPrimitive("#base"), VDFPrimitive("robot_standard.pop"))))
+		val file = VDFSubtree()
 		x._serializeInto(file)
 		file.writeToVDF(System.out)
 	}
@@ -182,7 +182,7 @@ class mvm_coaltown_expert1 {
 				
 				totalCurrency = 200
 				
-				+TFBot(template = "T_TFBot_Scout_Bonk")
+				+TFBot(template = RobotStandardTemplates.Scout.BONK)
 			}
 			
 			val wave01b by WaveSpawn {
