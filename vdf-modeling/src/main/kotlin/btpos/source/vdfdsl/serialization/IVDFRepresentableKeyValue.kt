@@ -6,7 +6,7 @@ import kotlin.jvm.java
 
 fun interface IVDFRepresentableKeyValue : IVDFRepresentable {
 	/**
-	 * Add this value to the currently-serialized map.
+	 * Add this value to a subtree.
 	 *
 	 * @param input The current state of the map to be serialized.
 	 */

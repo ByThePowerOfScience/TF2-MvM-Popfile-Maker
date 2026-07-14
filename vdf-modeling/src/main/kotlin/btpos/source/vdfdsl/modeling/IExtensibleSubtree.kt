@@ -53,7 +53,6 @@ interface IExtensibleSubtree {
 	object Serializers {
 		typealias Serializer<T> = (T) -> IVDFRepresentableValue
 		
-		
 		inline fun <reified T : Any> flatListWithKey(): Serializer<Iterable<T>> {
 			IVDFRepresentableValue_Trivial.requireValueRepresentable(T::class.java)
 			return _flatListWithKey()
@@ -131,7 +130,7 @@ interface IExtensibleSubtree {
 		 *
 		 * Property:
 		 * ```kotlin
-		 * var MissionPopulator.objective by addField("Objective", StringLiteralCodec)
+		 * var MyThing.destination: Coord3D? by addField("Destination", serializer={ "$x $y $z" }) // turns Coord3D(x=1, y=2, z=3) into the string "1 2 3"
 		 * ```
 		 */
 		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S), isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, T?> {
@@ -155,8 +154,15 @@ interface IExtensibleSubtree {
 		 *
 		 * Property:
 		 * ```kotlin
-		 * var MissionPopulator.objective by addField("Objective", StringLiteralCodec)
+		 * var TFBot.items: MutableList<Item> by addField("Item", IExtensibleSubtree.Serializers.flatListWithKey()) { mutableListOf() }
+		 * //                                            key ^  |  puts each item in the subtree as `Item <it>` ^   |    ^ the list object that items are added to
 		 * ```
+		 *
+		 * @param serializationKey The key this value should have in the VDF.
+		 * @param serializer A function or lambda that transforms the value of type `T` into something serializable with type `S`.
+		 * @param initialValue An initial value for this property so it will not be null when retrieving it. (Only created when the property is first accessed.)
+		 * @param T The actual type of the item the user can put in this property.
+		 * @param S Some [serializable type][IVDFRepresentableValue.serializeDynamic].
 		 */
 		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S), isRequired: Boolean = false, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
 			@Suppress("UNCHECKED_CAST")

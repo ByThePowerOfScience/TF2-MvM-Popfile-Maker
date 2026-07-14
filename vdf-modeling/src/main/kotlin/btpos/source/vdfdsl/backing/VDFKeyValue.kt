@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
  *
  * These are often members of a [VDFSubtree] that represents some scope.
  *
- * Note: structs are represented as entries with a [VDFSubtree] as a value,
+ * Note: structs are represented as keyvalues with a [VDFSubtree] as a value,
  * as they only differ from the standard "name: value" format in that they name _themselves_.
  */
 data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject) : VDFObject(), IVDFRepresentableKeyValue {
