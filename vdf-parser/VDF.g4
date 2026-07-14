@@ -10,9 +10,9 @@ keyvalue : keyvalue_strings
    ;
 
 keyable : LITERAL | STRING;
-keyvalue_strings : key=keyable value=keyable;
+keyvalue_strings : (key=keyable CONDITIONAL value=keyable) | (key=keyable value=keyable CONDITIONAL?);
 keyvalue_table :
-                key=keyable ((keyEOLComment+=COMMENT)? NL)+
+                key=keyable CONDITIONAL? ((keyEOLComment+=COMMENT NL) | NL)*
                  value=table
                 ;
 
@@ -27,7 +27,11 @@ COMMENT : COMMENT_START ~('\r' | '\n')* ;
 WS: [\p{Zs}\t]+ -> skip;
 
 STRING: QUOTE (STRING_ELEMENT)* QUOTE ;
-LITERAL: ~["{}\p{Zs}\t\n\r]+ ;
+LITERAL: ~('[' | ["{}\p{Zs}\t\n\r]) ~["{}\p{Zs}\t\n\r]* ;
+
+fragment NON_LITERAL_ELEMENT : ["{}\p{Zs}\t\n\r] ;
+
+CONDITIONAL : '[' .+? ']';
 
 QUOTE : '"';
 

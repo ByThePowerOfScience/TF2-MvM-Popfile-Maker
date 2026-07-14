@@ -10,13 +10,16 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
  * Note: structs are represented as keyvalues with a [VDFSubtree] as a value,
  * as they only differ from the standard "name: value" format in that they name _themselves_.
  */
-data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject) : VDFObject(), IVDFRepresentableKeyValue {
+data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject, val conditional: String? = null) : VDFObject(), IVDFRepresentableKeyValue {
+	constructor(key: String, value: String) : this(VDFPrimitive(key), VDFPrimitive(value))
+	
 	override fun _serializeInto(input: VDFSubtree) {
 		input += this
 	}
 	
 	override fun writeToVDF(writer: Appendable, indent: Int) {
 		key.writeToVDF(writer, indent)
+		conditional?.let { writer.append(" [").append(it).append(']') }
 		when (value) {
 			is VDFSubtree -> {
 				writer.writeLine(indent)
