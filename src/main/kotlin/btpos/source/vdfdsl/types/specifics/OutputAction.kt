@@ -18,7 +18,6 @@ open class OutputAction : ExtensibleSubtreeImpl() {
 	
 	open var action: String? by addField("Action", isRequired = true)
 	
-	@get:Language("Squirrel") @set:Language("Squirrel")
 	open var param: String? by addField("Param")
 	
 	open fun trigger(target: String) {
