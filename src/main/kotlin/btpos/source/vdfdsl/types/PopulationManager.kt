@@ -80,7 +80,7 @@ var PopulationManager.addSentryBusterWhenDamageDealtExceeds: Int? by addField("A
  */
 var PopulationManager.addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
 
-var PopulationManager.canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (it) "true" else "false" })
+var PopulationManager.canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (it) "yes" else "no" })
 
 var PopulationManager.advanced: Boolean? by addField("Advanced")
 var PopulationManager.isEndless: Boolean? by addField("IsEndless")
