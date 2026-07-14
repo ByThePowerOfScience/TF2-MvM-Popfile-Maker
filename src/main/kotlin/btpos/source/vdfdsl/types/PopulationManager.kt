@@ -52,7 +52,7 @@ inline fun WaveSchedule(configure: PopulationManager.() -> Unit): PopulationMana
 
 
 
-val PopulationManager.populators: MutableList<AbstractPopulator> by multiStruct(isRequired = true)
+val PopulationManager.populators: MutableList<AbstractPopulator> by multiStruct()
 
 /**
  * Default: 0

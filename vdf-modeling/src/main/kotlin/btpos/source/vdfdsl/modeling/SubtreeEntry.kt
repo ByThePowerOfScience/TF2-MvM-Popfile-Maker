@@ -5,23 +5,13 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
-abstract class SubtreeEntry(val fieldName: String, val isRequired: Boolean) : IVDFRepresentableKeyValue {
-	protected fun throwIfRequired() {
-		if (isRequired)
-			error("Missing required field: $fieldName")
-	}
-}
 
-class NamedValue<V : Any>(isRequired: Boolean, var key: String, var value: V?, val serializer: ((V) -> Any)?)
-	: SubtreeEntry(key, isRequired)
+class NamedValue<V : Any>(var key: String, var value: V?, val serializer: ((V) -> Any)?)
+	: IVDFRepresentableKeyValue
 {
 	override fun _serializeInto(input: VDFSubtree) {
-		val value = value?.let {
-			serializer?.invoke(it) ?: it
-		} ?: run {
-			throwIfRequired()
-			return;
-		}
+		val value = value?.let { serializer?.invoke(it) ?: it }
+		                ?: return;
 		
 		if (value is IVDFRepresentableKeyValue) {
 			return value._serializeInto(input)
@@ -33,16 +23,13 @@ class NamedValue<V : Any>(isRequired: Boolean, var key: String, var value: V?, v
 	}
 }
 
-class SelfNamedValue<T : IVDFRepresentableKeyValue>(isRequired: Boolean)
-	: SubtreeEntry("subtree", isRequired)
+class SelfNamedValue<T : IVDFRepresentableKeyValue>()
+	: IVDFRepresentableKeyValue
 {
 	var item: T? = null
 	
 	override fun _serializeInto(input: VDFSubtree) {
-		return item?._serializeInto(input) ?: run {
-			throwIfRequired()
-			input
-		}
+		item?._serializeInto(input)
 	}
 }
 
@@ -51,13 +38,10 @@ class SelfNamedValue<T : IVDFRepresentableKeyValue>(isRequired: Boolean)
  *
  * All of these values will be placed flatly on the top level of the tree they're nested in.
  */
-class SelfNamedValueList<T : IVDFRepresentableKeyValue>(isRequired: Boolean, val innerList: MutableList<T> = mutableListOf())
-	: SubtreeEntry("subtrees", isRequired), MutableList<T> by innerList
+class SelfNamedValueList<T : IVDFRepresentableKeyValue>(val innerList: MutableList<T> = mutableListOf())
+	: IVDFRepresentableKeyValue, MutableList<T> by innerList
 {
 	override fun _serializeInto(input: VDFSubtree) {
-		if (innerList.isEmpty())
-			throwIfRequired()
-		
 		innerList.forEach { it._serializeInto(input) }
 	}
 }

@@ -14,9 +14,9 @@ open class OutputAction : ExtensibleSubtreeImpl() {
 	}
 	
 	
-	open var target: String? by addField("Target", isRequired = true)
+	open var target: String? by addField("Target")
 	
-	open var action: String? by addField("Action", isRequired = true)
+	open var action: String? by addField("Action")
 	
 	open var param: String? by addField("Param")
 	

@@ -19,7 +19,7 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 	
 	companion object {
 		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "RemoveRedundantQualifierName") // Int::class.java => int.class instead of Integer.class
-		val PRIMITIVE_SERIALIZERS = mapOf<Class<*>, (Any) -> VDFObject>(
+		private val PRIMITIVE_SERIALIZERS = mapOf<Class<*>, (Any) -> VDFPrimitive>(
 			java.lang.String::class.java to { VDFPrimitive(s=it as String) },
 			java.lang.Integer::class.java to { VDFPrimitive(it as Int) },
 			java.lang.Float::class.java to { VDFPrimitive(it as Float) },
@@ -27,6 +27,20 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 			java.lang.Boolean::class.java to { VDFPrimitive(it as Boolean) },
 			java.lang.Number::class.java to { VDFPrimitive(it as Number) }
 		)
+		
+		fun tryCreatePrimitive(obj: Any): VDFPrimitive? {
+			val javaClass = obj.javaClass
+			if (javaClass.isPrimitive) {
+				error("Somehow $obj got here as a primitive without being boxed.")
+			}
+			
+			PRIMITIVE_SERIALIZERS.forEach { (k, v) ->
+				if (k.isAssignableFrom(javaClass)) {
+					return v(obj);
+				}
+			}
+			return null;
+		}
 		
 		
 		val TRUE = VDFPrimitive(s="1")
@@ -55,7 +69,7 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 		}
 		
 		fun isPrimitive(cls: Class<*>): Boolean {
-			return VDFPrimitive::class.java.isAssignableFrom(cls) || cls in PRIMITIVE_SERIALIZERS
+			return VDFPrimitive::class.java.isAssignableFrom(cls) || PRIMITIVE_SERIALIZERS.any { it.key.isAssignableFrom(cls) }
 		}
 		
 		fun requirePrimitive(cls: Class<*>) {

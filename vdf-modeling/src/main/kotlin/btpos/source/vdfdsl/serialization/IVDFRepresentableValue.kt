@@ -3,7 +3,6 @@ package btpos.source.vdfdsl.serialization
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.backing.VDFPrimitive.Companion.PRIMITIVE_SERIALIZERS
 import btpos.source.vdfdsl.backing.VDFSubtree
 import kotlin.jvm.java
 
@@ -27,19 +26,41 @@ fun interface IVDFRepresentableValue : IVDFRepresentable {
 	fun _toKeyValueRepresentable(key: VDFPrimitive): IVDFRepresentableKeyValue
 	
 	companion object {
-		fun serializeDynamic(key: VDFPrimitive, obj: Any): IVDFRepresentableKeyValue {
-			return when (obj) {
-				is VDFObject -> VDFKeyValue(key, obj)
-				is IVDFRepresentable -> when (obj) {
-					is IVDFRepresentableValue -> obj._toKeyValueRepresentable(key)
-					is IVDFRepresentableKeyValue -> throw IllegalArgumentException("Error serializing dynamic keyvalue with '$key': Cannot give keyvalue '$obj' a key as it has one already.")
+		/**
+		 * Attempts to turn a [value] of an unknown type, along with a [key], into something that can be added to a subtree.
+		 *
+		 * This solely exists because we can't mark primitives and strings as "VDF representable values".
+		 *
+		 * Allowed types:
+		 * - String
+		 * - Number (Int, Float, Double, Long, etc.)
+		 * - Boolean
+		 * - [IVDFRepresentableValue]
+		 * - [VDFObject]
+		 */
+		fun serializeDynamic(key: VDFPrimitive, value: Any): IVDFRepresentableKeyValue {
+			return when (value) {
+				is VDFObject -> VDFKeyValue(key, value)
+				is IVDFRepresentable -> when (value) {
+					is IVDFRepresentableValue -> value._toKeyValueRepresentable(key)
+					is IVDFRepresentableKeyValue -> throw IllegalArgumentException("Error serializing dynamic keyvalue with '$key': Cannot give keyvalue '$value' a key as it has one already.")
 				}
 				else -> {
-					val serializer = PRIMITIVE_SERIALIZERS[obj.javaClass]
-					                 ?: throw IllegalArgumentException("'$obj' must be a String, Int, Float, Double, Boolean, VDFObject, or IVDFRepresentableValue to be dynamically serialized.")
-					VDFKeyValue(key, serializer.invoke(obj))
+					val primitive = VDFPrimitive.tryCreatePrimitive(value)
+					                ?: throw IllegalArgumentException("'$value' must be a String, Number, Boolean, VDFObject, or IVDFRepresentableValue to be dynamically serialized.")
+					VDFKeyValue(key, primitive)
 				}
 			}
+		}
+		
+		fun isValueRepresentable(cls: Class<*>): Boolean {
+			return IVDFRepresentableValue::class.java.isAssignableFrom(cls)
+			       || VDFPrimitive.isPrimitive(cls)
+		}
+		
+		fun requireValueRepresentable(cls: Class<*>) {
+			if (!isValueRepresentable(cls))
+				throw IllegalArgumentException("Type ${cls.simpleName} cannot be represented as a value given a key. Value must either implement IVDFRepresentableValue or be a String, number, or boolean.")
 		}
 	}
 }
@@ -72,20 +93,6 @@ interface IVDFRepresentableValue_Trivial : IVDFRepresentableValue {
 	
 	override fun _toKeyValueRepresentable(key: VDFPrimitive): IVDFRepresentableKeyValue {
 		return { it += VDFKeyValue(key, _vdfRepr) }
-	}
-	
-	companion object {
-		fun isValueRepresentable(cls: Class<*>): Boolean {
-			return IVDFRepresentableValue::class.java.isAssignableFrom(cls)
-			       || VDFPrimitive::class.java.isAssignableFrom(cls)
-			       || VDFSubtree::class.java.isAssignableFrom(cls)
-			       || cls in PRIMITIVE_SERIALIZERS
-		}
-		
-		fun requireValueRepresentable(cls: Class<*>) {
-			if (!isValueRepresentable(cls))
-				throw IllegalArgumentException("Type ${cls.simpleName} cannot be represented as a value given a key. Value must either implement IVDFRepresentableValue or be a String, number, or boolean.")
-		}
 	}
 }
 

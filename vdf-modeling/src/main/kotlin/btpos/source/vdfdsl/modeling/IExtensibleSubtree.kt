@@ -54,7 +54,7 @@ interface IExtensibleSubtree {
 		typealias Serializer<T> = (T) -> IVDFRepresentableValue
 		
 		inline fun <reified T : Any> flatListWithKey(): Serializer<Iterable<T>> {
-			IVDFRepresentableValue_Trivial.requireValueRepresentable(T::class.java)
+			IVDFRepresentableValue.requireValueRepresentable(T::class.java)
 			return _flatListWithKey()
 		}
 		
@@ -133,14 +133,15 @@ interface IExtensibleSubtree {
 		 * var MyThing.destination: Coord3D? by addField("Destination", serializer={ "$x $y $z" }) // turns Coord3D(x=1, y=2, z=3) into the string "1 2 3"
 		 * ```
 		 */
-		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S), isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return addField_serializer(serializationKey, serializer, null, isRequired, S::class.java)
+		@JvmName("addFieldSerializer")
+		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S)): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_serializer(serializationKey, serializer, null, S::class.java)
 		}
 		
 		/**
 		 * Extend a struct with a field that can only be in that subtree once.
 		 *
-		 * This version of the method allows you to specify a codec, which allows the user to input one thing and then it serializes another.
+		 * This version of the method allows you to specify a serializer, which allows the user to input one thing and then it serializes another.
 		 *
 		 * ## Example:
 		 *
@@ -164,14 +165,14 @@ interface IExtensibleSubtree {
 		 * @param T The actual type of the item the user can put in this property.
 		 * @param S Some [serializable type][IVDFRepresentableValue.serializeDynamic].
 		 */
-		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S), isRequired: Boolean = false, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
+		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: T.() -> S, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
 			@Suppress("UNCHECKED_CAST")
-			return addField_serializer(serializationKey, serializer, initialValue, isRequired, S::class.java) as ReadWriteProperty<IExtensibleSubtree, T>
+			return addField_serializer(serializationKey, serializer, initialValue, S::class.java) as ReadWriteProperty<IExtensibleSubtree, T>
 		}
 		
 		@PublishedApi
-		internal fun <T : Any, S : Any> addField_serializer(serializationKey: String, serializer: (T) -> S, initialValue: (() -> T)?, isRequired: Boolean, serClass: Class<S>): ReadWriteProperty<IExtensibleSubtree, T?> {
-			require(IVDFRepresentableValue_Trivial.isValueRepresentable(serClass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(serClass)) {
+		internal fun <T : Any, S : Any> addField_serializer(serializationKey: String, serializer: (T) -> S, initialValue: (() -> T)?, serClass: Class<S>): ReadWriteProperty<IExtensibleSubtree, T?> {
+			require(IVDFRepresentableValue.isValueRepresentable(serClass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(serClass)) {
 				"Post-serialized type ${serClass.simpleName} is neither a valid value or keyvalue."
 			}
 			
@@ -181,7 +182,7 @@ interface IExtensibleSubtree {
 				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
 					@Suppress("UNCHECKED_CAST")
 					return thisRef._rawEntries.computeIfAbsent(prop) {
-						NamedValue(isRequired, serializationKey, initialValue?.invoke(), serializer)
+						NamedValue(serializationKey, initialValue?.invoke(), serializer)
 					} as NamedValue<T>
 				}
 				
@@ -202,10 +203,9 @@ interface IExtensibleSubtree {
 		 * This method may only be used with natively-serializable values, i.e. numbers, booleans, strings, [VDFObjects][btpos.source.vdfdsl.backing.VDFObject], or objects that implement either [IVDFRepresentableValue_Trivial] or [IVDFRepresentableKeyValue].
 		 *
 		 * @param key The key this item will be serialized under.
-		 * @param isRequired If true, serialization throws an error if this value is not set.
 		 */
-		inline fun <reified T : Any> addField(key: String, isRequired: Boolean = false): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return addField_noSerializer(key, isRequired, T::class.java, null)
+		inline fun <reified T : Any> addField(key: String): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_noSerializer(key, T::class.java, null)
 		}
 		
 		/**
@@ -214,17 +214,16 @@ interface IExtensibleSubtree {
 		 * This method may only be used with natively-serializable values, i.e. numbers, booleans, strings, [VDFObjects][btpos.source.vdfdsl.backing.VDFObject], or objects that implement either [IVDFRepresentableValue_Trivial] or [IVDFRepresentableKeyValue].
 		 *
 		 * @param key The key this item will be serialized under.
-		 * @param isRequired If true, serialization throws an error if this value is not set.
 		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
 		 */
-		inline fun <reified T : Any, reified SUB : T> addField(key: String, isRequired: Boolean = false, noinline initialValue: (key: String) -> SUB): ReadWriteProperty<IExtensibleSubtree, T> {
+		inline fun <reified T : Any, reified SUB : T> addField(key: String, noinline initialValue: (key: String) -> SUB): ReadWriteProperty<IExtensibleSubtree, T> {
 			@Suppress("UNCHECKED_CAST")
-			return addField_noSerializer(key, isRequired, SUB::class.java, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>
+			return addField_noSerializer(key, SUB::class.java, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>
 		}
 		
 		@PublishedApi
-		internal fun <T : Any, V : T> addField_noSerializer(key: String, isRequired: Boolean, subclass: Class<V>, initialValue: ((String) -> V)?): ReadWriteProperty<IExtensibleSubtree, T?> {
-			require(IVDFRepresentableValue_Trivial.isValueRepresentable(subclass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(subclass)) {
+		internal fun <T : Any, V : T> addField_noSerializer(key: String, subclass: Class<V>, initialValue: ((String) -> V)?): ReadWriteProperty<IExtensibleSubtree, T?> {
+			require(IVDFRepresentableValue.isValueRepresentable(subclass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(subclass)) {
 				"${subclass.simpleName} is not natively serializable to a VDF.\n" +
 				"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableKeyValue or IVDFRepresentableValue.\n"
 			}
@@ -235,7 +234,7 @@ interface IExtensibleSubtree {
 				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
 					@Suppress("UNCHECKED_CAST")
 					return thisRef._rawEntries.computeIfAbsent(prop) {
-						NamedValue<T>(isRequired, key, initialValue?.invoke(key), null)
+						NamedValue<T>(key, initialValue?.invoke(key), null)
 					} as? NamedValue<T> ?: throw IllegalStateException("Expected a NamedValue for property $prop, but something replaced it.")
 				}
 				
@@ -259,12 +258,11 @@ interface IExtensibleSubtree {
 		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [btpos.source.vdfdsl.types.spawners.Spawner] and its subclasses),
 		 * use [addField] with a [VDFSubtree] as its value to allow the parent scope to decide its name.
 		 *
-		 * @param isRequired If true, throws an error if this value is not set when serializing.
 		 */
-		fun <T : IVDFRepresentableKeyValue> singleStruct(isRequired: Boolean = false) = object : ReadWriteProperty<IExtensibleSubtree, T?> {
+		fun <T : IVDFRepresentableKeyValue> singleStruct() = object : ReadWriteProperty<IExtensibleSubtree, T?> {
 			@Suppress("UNCHECKED_CAST")
 			private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries.computeIfAbsent(prop) {
-				SelfNamedValue<T>(isRequired)
+				SelfNamedValue<T>()
 			} as SelfNamedValue<T>
 			
 			override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
@@ -292,13 +290,12 @@ interface IExtensibleSubtree {
 		 * }
 		 * ```
 		 *
-		 * @param isRequired If true, throws an error if this value is not set when serializing.
 		 */
-		fun <T : IVDFRepresentableKeyValue> multiStruct(isRequired: Boolean = false): ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> {
+		fun <T : IVDFRepresentableKeyValue> multiStruct(): ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> {
 			@Suppress("UNCHECKED_CAST")
 			return ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> { thisRef, property ->
 				thisRef._rawEntries.computeIfAbsent(property) {
-					SelfNamedValueList<T>(isRequired)
+					SelfNamedValueList<T>()
 				} as SelfNamedValueList<T>
 			}
 		}
