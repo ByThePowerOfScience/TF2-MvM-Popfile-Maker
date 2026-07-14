@@ -4,7 +4,7 @@ import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
 import btpos.source.vdfdsl.types.populators.WaveSpawnPopulator
 import btpos.source.vdfdsl.types.populators.provideDelegate
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
-import btpos.source.vdfdsl.types.spawners.TFBot
+import btpos.source.vdfdsl.types.spawners.Spawners.TFBot
 import btpos.source.vdfdsl.utils.toSeconds
 import kotlin.reflect.KProperty
 import kotlin.time.Duration

@@ -11,5 +11,3 @@ abstract class AbstractSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = E
 	
 	abstract override fun copy(): AbstractSpawner
 }
-
-object Spawners

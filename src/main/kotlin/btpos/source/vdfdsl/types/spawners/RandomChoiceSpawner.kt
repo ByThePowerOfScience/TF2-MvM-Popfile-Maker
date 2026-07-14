@@ -16,9 +16,3 @@ class RandomChoiceSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extens
 		this@RandomChoiceSpawner.spawners += this@unaryPlus.copy()
 	}
 }
-
-inline fun Spawners.RandomChoice(spawners: List<AbstractSpawner>, configure: RandomChoiceSpawner.() -> Unit = {}): RandomChoiceSpawner {
-	return RandomChoiceSpawner().apply { this.spawners.addAll(spawners) }.apply(configure)
-}
-
-inline fun RandomChoice(vararg spawners: AbstractSpawner, configure: RandomChoiceSpawner.() -> Unit = {}) = Spawners.RandomChoice(spawners.asList(), configure)

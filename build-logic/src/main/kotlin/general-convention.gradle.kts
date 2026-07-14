@@ -12,7 +12,7 @@ kotlin {
 	jvmToolchain(21)
 	
 	compilerOptions {
-		freeCompilerArgs.set(listOf("-Xcontext-parameters"))
+		freeCompilerArgs.set(listOf("-Xcontext-parameters", "-Xreturn-value-checker=check"))
 	}
 }
 

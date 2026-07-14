@@ -48,8 +48,3 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 		addMultiple(second, first)
 	}
 }
-
-fun Spawners.Squad(configure: SquadSpawner.() -> Unit) = SquadSpawner().apply(configure)
-
-fun Squad(configure: SquadSpawner.() -> Unit) = Spawners.Squad(configure)
-

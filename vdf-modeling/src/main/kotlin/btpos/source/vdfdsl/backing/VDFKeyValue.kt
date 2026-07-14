@@ -32,6 +32,11 @@ data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject, val conditio
 		}
 	}
 	
+	override fun toString(): String {
+		return "VDFKeyValue(key=$key, value=$value${conditional?.let{ ", conditional=$it" }.orEmpty()})"
+	}
+	
+	
 	companion object {
 		/**
 		 * Factory for easy "Only make the entry if the value is set"

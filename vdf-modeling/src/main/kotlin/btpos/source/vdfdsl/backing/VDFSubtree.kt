@@ -40,6 +40,10 @@ open class VDFSubtree(val parent: VDFSubtree?, val entries: MutableList<VDFKeyVa
 		if (this.parent != null)
 			writer.writeLine(indent).append('}')
 	}
+	
+	override fun toString(): String {
+		return "VDFSubtree[entries=$entries]"
+	}
 }
 
 operator fun VDFSubtree.get(index: String) = getSingle(index)

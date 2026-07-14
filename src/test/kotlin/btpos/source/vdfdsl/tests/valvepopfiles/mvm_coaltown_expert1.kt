@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.tests.valvepopfiles
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.invoke
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
@@ -19,17 +20,22 @@ import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.populators.*
 import btpos.source.vdfdsl.types.populators.WaveSpawnPopulator.Support
 import btpos.source.vdfdsl.types.respawnWaveTime
-import btpos.source.vdfdsl.types.spawners.RandomChoice
-import btpos.source.vdfdsl.types.spawners.Squad
-import btpos.source.vdfdsl.types.spawners.TFBot
+import btpos.source.vdfdsl.types.spawners.Spawners.RandomChoice
+import btpos.source.vdfdsl.types.spawners.Spawners.Squad
+import btpos.source.vdfdsl.types.spawners.Spawners.TFBot
+import btpos.source.vdfdsl.types.spawners.Spawners.Tank
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
-import btpos.source.vdfdsl.types.spawners.Tank
 import btpos.source.vdfdsl.types.spawners.TankSpawner
 import btpos.source.vdfdsl.types.spawners.critBoosted
 import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.types.startingCurrency
 import btpos.source.vdfdsl.utils.plus
+import btpos.source.vdfdsl.vdfparser.ParseVDF
 import org.junit.jupiter.api.Test
+import kotlin.io.path.Path
+import kotlin.io.path.inputStream
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -43,10 +49,10 @@ private const val tag_specialmainright = "special_main_right"
 private const val tag_specialmainleft = "special_main_left"
 
 class mvm_coaltown_expert1 {
-	val GIANT_SCOUT get() = TFBot(template = RobotGiantTemplates.Scout.GIANT_FAST)
+	val GIANT_SCOUT get() = TFBot(template = RobotGiantTemplates.Scout.`Super Scout`)
 	
 	
-	val GIANT_HEAVY get() = TFBot(template = RobotGiantTemplates.Heavyweapons.GIANT)
+	val GIANT_HEAVY get() = TFBot(template = RobotGiantTemplates.Heavyweapons.`Giant Heavy`)
 	val QUICKFIX_MEDIC get() = TFBot(template = RobotStandardTemplates.Medic.QUICKUBER)
 	val EASY_SCOUT
 		get() = TFBot {
@@ -99,14 +105,26 @@ class mvm_coaltown_expert1 {
 				
 				cooldownTime = 20
 				
-				TFBot(template = RobotGiantTemplates.Demoman.SENTRYBUSTER)
+				+TFBot(template = RobotGiantTemplates.SENTRY_BUSTER)
 			}
 			
-			spyMission(1, 10)
-			spyMission(2, 20)
-			spyMission(4, 80)
+			+spyMission(1, 10)
+			+spyMission(2, 20)
+			+spyMission(4, 80)
 			
-			
+			+Mission(1) {
+				objective = Objective.Sniper
+				initialCooldown = 75
+				where = "spawnbot_mission_sniper"
+				cooldownTime = 20
+				desiredCount = 4
+				
+				+TFBot("Sniper") {
+					`class` = TFClass.Sniper
+					skill = BotSkill.Hard
+					maxVisionRange = 3000
+				}
+			}
 			+Mission(5) {
 				objective = Objective.Sniper
 				initialCooldown = 30
@@ -132,12 +150,65 @@ class mvm_coaltown_expert1 {
 			+wave5()
 			+wave6()
 			+wave7()
-			// TODO serialize with base #base robot_giant.pop, #base robot_standard.pop
 		}
 		
-		val file = VDFSubtree()
-		x._serializeInto(file)
-		file.writeToVDF(System.out)
+		val asSubtree = VDFSubtree(null).also { x._serializeInto(it) }
+		
+		checkAllKeysMatchRecursive(emptyList(), ParseVDF.parse(Path("mvm_coaltown_expert1.pop").inputStream()), asSubtree)
+	}
+	
+	fun List<String>.err() = this.joinToString(".")
+	
+	fun checkAllKeysMatchRecursive(prevKeys: List<String>, expected: VDFSubtree, actual: VDFSubtree) {
+		// check all keys present
+		val expectedKeys = expected.entries.groupBy ({ it.key }, { it.value })
+		val actualKeys = actual.entries.groupBy ({ it.key }, { it.value })
+		
+		assertEquals(expectedKeys.size, actualKeys.size, "${prevKeys.err()}: number of distinct keys not equal")
+		
+		expectedKeys.forEach { (k, expectedValues) ->
+			val currkey = prevKeys + k.stringValue
+			
+			val actualValues = actualKeys[k]!!
+			
+			assertEquals(expectedValues.size, actualValues.size, "${currkey.err()}: number of values not equal")
+			
+			val expectedValuesMutable = expectedValues.toMutableList()
+			actualValues.forEach { actual ->
+				// find matching value and remove it from the list
+				val m = when (actual) {
+					is VDFPrimitive -> {
+						val m = expectedValuesMutable.find { it is VDFPrimitive && comparePrimitives(it, actual) }
+						
+						assertNotNull(m, "${currkey.err()} - Actual value: $actual. Expected: one of " + expectedValuesMutable)
+					}
+					is VDFSubtree -> {
+						val m = expectedValuesMutable.asSequence()
+							.filterIsInstance<VDFSubtree>()
+							.map { runCatching { checkAllKeysMatchRecursive(currkey, it, actual) } }
+							.toList()
+						
+						assert(m.any { it.isSuccess }) {
+							"For key $k, no matching value found.\n\n" +
+							"Reasons for failure: " + m.map { "\n" + it.exceptionOrNull() }.joinToString("\n")
+						}
+						
+						m.first()
+					}
+					else -> error("Invalid type for value: $actual")
+				}
+				
+				expectedValuesMutable.remove(m)
+			}
+		}
+	}
+	
+	fun comparePrimitives(expected: VDFPrimitive, actual: VDFPrimitive): Boolean {
+		return expected.stringValue == actual.stringValue || run {
+			val float = expected.stringValue.toDoubleOrNull()
+			val f2 = actual.stringValue.toDoubleOrNull()
+			float != null && float == f2
+		}
 	}
 	
 	/**
@@ -438,7 +509,7 @@ class mvm_coaltown_expert1 {
 			waitBetweenSpawns = 25
 			totalCurrency = 100
 			
-			+TFBot(template = "T_TFBot_Giant_Heavyweapons_Deflector")
+			+TFBot(template = RobotGiantTemplates.Heavyweapons.`Giant Deflector Heavy`)
 		}
 		
 		+wave03a
@@ -492,7 +563,7 @@ class mvm_coaltown_expert1 {
 			totalCurrency = 200
 			
 			val huntsman = TFBot {
-				template = "T_TFBot_Sniper_Huntsman"
+				template = RobotStandardTemplates.Sniper.HUNTSMAN
 				behaviorModifiers += BehaviorModifiers.Push
 			}
 			+RandomChoice(huntsman.fromRight, huntsman.fromLeft)
@@ -590,11 +661,11 @@ class mvm_coaltown_expert1 {
 			waitBetweenSpawns = 7
 			totalCurrency = 350
 			
-			+TFBot(template = "T_TFBot_Demoman_Knight").critBoosted
+			+TFBot(template = RobotStandardTemplates.Demoman.KNIGHT).critBoosted
 		}
 		
 		fun squadWithSoldier(sideTag: String) = Squad {
-			+TFBot(template = "T_TFBot_Giant_Soldier_Spawner") {
+			+TFBot(template = RobotGiantTemplates.Soldier.`Giant Rapid Fire Soldier`) {
 				tags += sideTag
 				behaviorModifiers += BehaviorModifiers.Push
 			}
@@ -678,7 +749,7 @@ class mvm_coaltown_expert1 {
 			
 			+Squad {
 				+GIANT_HEAVY
-				+TFBot(template="T_TFBot_Giant_Medic")
+				+TFBot(template= RobotGiantTemplates.Medic.`Giant Medic`)
 			}
 		}
 		
@@ -746,7 +817,7 @@ fun wave7() = WaveBuilder {
 			`class` = TFClass.HeavyWeapons
 			skill = BotSkill.Hard
 		}
-		val huntsmanSniper = TFBot(template = "T_TFBot_Sniper_Huntsman") {
+		val huntsmanSniper = TFBot(template = RobotStandardTemplates.Sniper.HUNTSMAN) {
 			items += WeaponsAll.HUNTSMAN {
 				damage.bonus.visible = 0.075f
 				fasterReloadRate = 0.4f

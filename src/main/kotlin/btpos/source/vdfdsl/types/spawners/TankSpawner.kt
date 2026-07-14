@@ -26,8 +26,3 @@ class TankSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubt
 	
 	var onBombDroppedOutput: OutputAction? by addField("OnBombDroppedOutput")
 }
-
-inline fun Spawners.Tank(configure: TankSpawner.() -> Unit = {}) = TankSpawner().apply(configure)
-
-inline fun Tank(configure: TankSpawner.() -> Unit) = Spawners.Tank(configure)
-

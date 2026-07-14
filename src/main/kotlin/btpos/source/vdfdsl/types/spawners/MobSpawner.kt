@@ -18,13 +18,3 @@ class MobSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 	
 	override fun copy() = MobSpawner(copyInternal())
 }
-
-
-
-@Deprecated("Old and crusty")
-fun Spawners.Mob(count: Int, spawner: AbstractSpawner): MobSpawner {
-	return MobSpawner().apply {
-		this.count = count
-		this.spawner = spawner
-	}
-}
