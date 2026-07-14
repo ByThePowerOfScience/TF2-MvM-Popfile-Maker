@@ -30,7 +30,7 @@ object Spawners {
 	
 	
 	inline fun RandomChoice(vararg spawners: AbstractSpawner, configure: RandomChoiceSpawner.() -> Unit = {}): RandomChoiceSpawner {
-		return RandomChoiceSpawner().apply { this.spawners.addAll(spawners) }.apply(configure)
+		return RandomChoiceSpawner().apply { this.spawners += spawners }.apply(configure)
 	}
 	
 	@Deprecated("Old and crusty")

@@ -6,12 +6,12 @@ import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
 
-class NamedValue<V : Any>(var key: String, var value: V?, val serializer: ((V) -> Any)?)
+@JvmRecord
+data class NamedValue<V : Any>(val key: String, val value: V, val serializer: ((V) -> Any)?)
 	: IVDFRepresentableKeyValue
 {
 	override fun _serializeInto(input: VDFSubtree) {
-		val value = value?.let { serializer?.invoke(it) ?: it }
-		                ?: return;
+		val value = serializer?.invoke(value) ?: value
 		
 		if (value is IVDFRepresentableKeyValue) {
 			return value._serializeInto(input)
@@ -23,13 +23,10 @@ class NamedValue<V : Any>(var key: String, var value: V?, val serializer: ((V) -
 	}
 }
 
-class SelfNamedValue<T : IVDFRepresentableKeyValue>()
-	: IVDFRepresentableKeyValue
-{
-	var item: T? = null
-	
+@JvmRecord
+data class SelfNamedValue<T : IVDFRepresentableKeyValue>(val item: T) : IVDFRepresentableKeyValue {
 	override fun _serializeInto(input: VDFSubtree) {
-		item?._serializeInto(input)
+		item._serializeInto(input)
 	}
 }
 
@@ -38,8 +35,8 @@ class SelfNamedValue<T : IVDFRepresentableKeyValue>()
  *
  * All of these values will be placed flatly on the top level of the tree they're nested in.
  */
-class SelfNamedValueList<T : IVDFRepresentableKeyValue>(val innerList: MutableList<T> = mutableListOf())
-	: IVDFRepresentableKeyValue, MutableList<T> by innerList
+data class SelfNamedValueList<T : IVDFRepresentableKeyValue>(val innerList: List<T>)
+	: IVDFRepresentableKeyValue, List<T> by innerList
 {
 	override fun _serializeInto(input: VDFSubtree) {
 		innerList.forEach { it._serializeInto(input) }

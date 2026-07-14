@@ -23,3 +23,6 @@ val VDFObject.asPrimitive get() = this as? VDFPrimitive
 val VDFObject.asKeyValue get() = this as? VDFKeyValue
 
 val VDFObject.asString get() = asPrimitive?.stringValue
+
+
+fun VDFObject.toFormattedString() = StringBuilder().also { this.writeToVDF(it) }.toString()

@@ -10,7 +10,6 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import kotlin.jvm.java
-import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -114,21 +113,11 @@ interface IExtensibleSubtree {
 	
 	companion object {
 		/**
-		 * Extend a struct with a field that can only be in that subtree once.
+		 * Extend a struct with a field that can only be in that subtree once. VALUES MUST BE **IMMUTABLE** FOR DEEP COPYING TO WORK CORRECTLY. (i.e. don't use `MutableList`, use `List`.)
 		 *
-		 * This version of the method allows you to specify a codec, which allows the user to input one thing and then it serializes another.
+		 * This version of the method allows you to specify a serializer, which allows the user to input one thing and then it serializes another.
 		 *
 		 * ## Example:
-		 *
-		 * Popfile:
-		 * ```txt
-		 * Mission
-		 * {
-		 *      Objective "DestroySentries"
-		 * }
-		 * ```
-		 *
-		 * Property:
 		 * ```kotlin
 		 * var MyThing.destination: Coord3D? by addField("Destination", serializer={ "$x $y $z" }) // turns Coord3D(x=1, y=2, z=3) into the string "1 2 3"
 		 * ```
@@ -139,24 +128,14 @@ interface IExtensibleSubtree {
 		}
 		
 		/**
-		 * Extend a struct with a field that can only be in that subtree once.
+		 * Extend a struct with a field that can only be in that subtree once.  VALUES MUST BE **IMMUTABLE** FOR DEEP COPYING TO WORK CORRECTLY. (i.e. don't use `MutableList`, use `List`.)
 		 *
 		 * This version of the method allows you to specify a serializer, which allows the user to input one thing and then it serializes another.
 		 *
 		 * ## Example:
-		 *
-		 * Popfile:
-		 * ```txt
-		 * Mission
-		 * {
-		 *      Objective "DestroySentries"
-		 * }
-		 * ```
-		 *
-		 * Property:
 		 * ```kotlin
-		 * var TFBot.items: MutableList<Item> by addField("Item", IExtensibleSubtree.Serializers.flatListWithKey()) { mutableListOf() }
-		 * //                                            key ^  |  puts each item in the subtree as `Item <it>` ^   |    ^ the list object that items are added to
+		 * var TFBot.items: List<Item> by addField("Item", IExtensibleSubtree.Serializers.flatListWithKey()) { listOf() }
+		 * //                                    key ^  |   ^ serializes each item in the subtree as `Item <it>` |   ^ a default value so you can use `+=` without a "null" warning
 		 * ```
 		 *
 		 * @param serializationKey The key this value should have in the VDF.
@@ -176,24 +155,22 @@ interface IExtensibleSubtree {
 				"Post-serialized type ${serClass.simpleName} is neither a valid value or keyvalue."
 			}
 			
-			val serializationKey = serializationKey.intern()
+			return RegularFieldProperty(serializationKey.intern(), initialValue, serializer)
+		}
+		
+		private class RegularFieldProperty<T : Any>(val key: String, val initialValue: (() -> T)?, val serializer: ((T) -> Any)?) : ReadWriteProperty<IExtensibleSubtree, T?> {
+			override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
+				@Suppress("UNCHECKED_CAST")
+				return (thisRef._rawEntries[property] as NamedValue<T>?)?.value ?: initialValue?.invoke()
+			}
 			
-			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
-				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
-					@Suppress("UNCHECKED_CAST")
-					return thisRef._rawEntries.computeIfAbsent(prop) {
-						NamedValue(serializationKey, initialValue?.invoke(), serializer)
-					} as NamedValue<T>
+			override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
+				if (value == null) {
+					thisRef._rawEntries.remove(property)
+					return;
 				}
-				
-				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
-					return getFromMap(thisRef, property).value
-				}
-				
-				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
-					@Suppress("UNCHECKED_CAST")
-					getFromMap(thisRef, property).value = ((value as? String)?.intern() ?: value) as T?
-				}
+				@Suppress("UNCHECKED_CAST")
+				thisRef._rawEntries[property] = NamedValue(key, ((value as? String)?.intern() ?: value) as T, serializer)
 			}
 		}
 		
@@ -216,37 +193,23 @@ interface IExtensibleSubtree {
 		 * @param key The key this item will be serialized under.
 		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
 		 */
-		inline fun <reified T : Any, reified SUB : T> addField(key: String, noinline initialValue: (key: String) -> SUB): ReadWriteProperty<IExtensibleSubtree, T> {
+		inline fun <reified T : Any> addField(key: String, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
 			@Suppress("UNCHECKED_CAST")
-			return addField_noSerializer(key, SUB::class.java, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>
+			return addField_noSerializer(key, T::class.java, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>
 		}
 		
 		@PublishedApi
-		internal fun <T : Any, V : T> addField_noSerializer(key: String, subclass: Class<V>, initialValue: ((String) -> V)?): ReadWriteProperty<IExtensibleSubtree, T?> {
-			require(IVDFRepresentableValue.isValueRepresentable(subclass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(subclass)) {
+		internal fun <T : Any> addField_noSerializer(key: String, subclass: Class<T>, initialValue: (() -> T)?): ReadWriteProperty<IExtensibleSubtree, T?> {
+			require(!IVDFRepresentableKeyValue.isKeyValueRepresentable(subclass)) {
+				"Cannot give an IVDFRepresentableKeyValue a key, as it determines its own key.  This is likely an error.  Use the `selfNamed()` provider to declare this field."
+			}
+			
+			require(IVDFRepresentableValue.isValueRepresentable(subclass)) {
 				"${subclass.simpleName} is not natively serializable to a VDF.\n" +
-				"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableKeyValue or IVDFRepresentableValue.\n"
+				"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableValue.\n"
 			}
 			
-			val key = key.intern()
-			
-			return object : ReadWriteProperty<IExtensibleSubtree, T?> {
-				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>): NamedValue<T> {
-					@Suppress("UNCHECKED_CAST")
-					return thisRef._rawEntries.computeIfAbsent(prop) {
-						NamedValue<T>(key, initialValue?.invoke(key), null)
-					} as? NamedValue<T> ?: throw IllegalStateException("Expected a NamedValue for property $prop, but something replaced it.")
-				}
-				
-				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
-					return getFromMap(thisRef, property).value
-				}
-				
-				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
-					@Suppress("UNCHECKED_CAST")
-					getFromMap(thisRef, property).value = ((value as? String)?.intern() ?: value) as T?
-				}
-			}
+			return RegularFieldProperty(key.intern(), initialValue, null)
 		}
 		
 		
@@ -255,22 +218,24 @@ interface IExtensibleSubtree {
 		 *
 		 * Note that the only difference between a struct and a named subtree is that structs have their _own_ names.
 		 * As such, there is no way to name these.
-		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [btpos.source.vdfdsl.types.spawners.Spawner] and its subclasses),
-		 * use [addField] with a [VDFSubtree] as its value to allow the parent scope to decide its name.
+		 *
+		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [AbstractVDFStruct] and its subclasses),
+		 * use [addField] with an [IVDFRepresentableValue_Subtree][btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree] as its value to allow the parent scope to decide its name.
 		 *
 		 */
-		fun <T : IVDFRepresentableKeyValue> singleStruct() = object : ReadWriteProperty<IExtensibleSubtree, T?> {
+		fun <T : IVDFRepresentableKeyValue> selfNamed() = object : ReadWriteProperty<IExtensibleSubtree, T?> {
 			@Suppress("UNCHECKED_CAST")
-			private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries.computeIfAbsent(prop) {
-				SelfNamedValue<T>()
-			} as SelfNamedValue<T>
+			private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries[prop] as SelfNamedValue<T>?
 			
 			override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
-				return getFromMap(thisRef, property).item
+				return getFromMap(thisRef, property)?.item
 			}
 			
 			override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
-				getFromMap(thisRef, property).item = value
+				if (value == null)
+					thisRef._rawEntries.remove(property)
+				else
+					thisRef._rawEntries[property] = SelfNamedValue(value)
 			}
 		}
 		
@@ -291,12 +256,16 @@ interface IExtensibleSubtree {
 		 * ```
 		 *
 		 */
-		fun <T : IVDFRepresentableKeyValue> multiStruct(): ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> {
+		fun <T : IVDFRepresentableKeyValue> selfNamedList(): ReadWriteProperty<IExtensibleSubtree, List<T>> {
 			@Suppress("UNCHECKED_CAST")
-			return ReadOnlyProperty<IExtensibleSubtree, MutableList<T>> { thisRef, property ->
-				thisRef._rawEntries.computeIfAbsent(property) {
-					SelfNamedValueList<T>()
-				} as SelfNamedValueList<T>
+			return object : ReadWriteProperty<IExtensibleSubtree, List<T>> {
+				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): List<T> {
+					return (thisRef._rawEntries[property] as SelfNamedValueList<T>?)?.innerList ?: emptyList()
+				}
+				
+				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: List<T>) {
+					thisRef._rawEntries[property] = SelfNamedValueList(value)
+				}
 			}
 		}
 	}

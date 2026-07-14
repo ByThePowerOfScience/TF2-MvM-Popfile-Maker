@@ -2,6 +2,8 @@ package btpos.source.vdfdsl.tests.valvepopfiles
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.getAll
+import btpos.source.vdfdsl.backing.toFormattedString
 import btpos.source.vdfdsl.modeling.invoke
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsAll
@@ -95,13 +97,11 @@ class mvm_coaltown_expert1 {
 			respawnWaveTime = 7
 			canBotsAttackWhileInSpawnRoom = false
 			
-			+Mission {
+			+Mission(1, 9) {
 				objective = Objective.DestroySentries
 				
 				initialCooldown = 5
 				where = basicSpawn
-				beginAtWave = 1
-				runForThisManyWaves = 9
 				
 				cooldownTime = 20
 				
@@ -110,7 +110,9 @@ class mvm_coaltown_expert1 {
 			
 			+spyMission(1, 10)
 			+spyMission(2, 20)
-			+spyMission(4, 80)
+			+spyMission(4, 80).apply {
+				cooldownTime = 50
+			}
 			
 			+Mission(1) {
 				objective = Objective.Sniper
@@ -127,6 +129,7 @@ class mvm_coaltown_expert1 {
 			}
 			+Mission(5) {
 				objective = Objective.Sniper
+				where = "spawnbot_mission_sniper"
 				initialCooldown = 30
 				cooldownTime = 20
 				desiredCount = 6
@@ -136,8 +139,7 @@ class mvm_coaltown_expert1 {
 					items += WeaponsAll.RAZORBACK
 				}
 			}.also {
-				populators += it.copy()
-					.apply {
+				populators += it.copy().apply {
 						beginAtWave = 7
 						desiredCount = 4
 					}
@@ -154,62 +156,10 @@ class mvm_coaltown_expert1 {
 		
 		val asSubtree = VDFSubtree(null).also { x._serializeInto(it) }
 		
-		checkAllKeysMatchRecursive(emptyList(), ParseVDF.parse(Path("mvm_coaltown_expert1.pop").inputStream()), asSubtree)
+		compareSubtreesUnordered(emptyList(), ParseVDF.parse(Path("mvm_coaltown_expert1.pop").inputStream()), asSubtree)
 	}
 	
-	fun List<String>.err() = this.joinToString(".")
 	
-	fun checkAllKeysMatchRecursive(prevKeys: List<String>, expected: VDFSubtree, actual: VDFSubtree) {
-		// check all keys present
-		val expectedKeys = expected.entries.groupBy ({ it.key }, { it.value })
-		val actualKeys = actual.entries.groupBy ({ it.key }, { it.value })
-		
-		assertEquals(expectedKeys.size, actualKeys.size, "${prevKeys.err()}: number of distinct keys not equal")
-		
-		expectedKeys.forEach { (k, expectedValues) ->
-			val currkey = prevKeys + k.stringValue
-			
-			val actualValues = actualKeys[k]!!
-			
-			assertEquals(expectedValues.size, actualValues.size, "${currkey.err()}: number of values not equal")
-			
-			val expectedValuesMutable = expectedValues.toMutableList()
-			actualValues.forEach { actual ->
-				// find matching value and remove it from the list
-				val m = when (actual) {
-					is VDFPrimitive -> {
-						val m = expectedValuesMutable.find { it is VDFPrimitive && comparePrimitives(it, actual) }
-						
-						assertNotNull(m, "${currkey.err()} - Actual value: $actual. Expected: one of " + expectedValuesMutable)
-					}
-					is VDFSubtree -> {
-						val m = expectedValuesMutable.asSequence()
-							.filterIsInstance<VDFSubtree>()
-							.map { runCatching { checkAllKeysMatchRecursive(currkey, it, actual) } }
-							.toList()
-						
-						assert(m.any { it.isSuccess }) {
-							"For key $k, no matching value found.\n\n" +
-							"Reasons for failure: " + m.map { "\n" + it.exceptionOrNull() }.joinToString("\n")
-						}
-						
-						m.first()
-					}
-					else -> error("Invalid type for value: $actual")
-				}
-				
-				expectedValuesMutable.remove(m)
-			}
-		}
-	}
-	
-	fun comparePrimitives(expected: VDFPrimitive, actual: VDFPrimitive): Boolean {
-		return expected.stringValue == actual.stringValue || run {
-			val float = expected.stringValue.toDoubleOrNull()
-			val f2 = actual.stringValue.toDoubleOrNull()
-			float != null && float == f2
-		}
-	}
 	
 	/**
 	 * Presets for all waves
@@ -906,3 +856,78 @@ fun wave7() = WaveBuilder {
 	+finalTankBoss
 }
 }
+
+
+fun comparePrimitives(expected: VDFPrimitive, actual: VDFPrimitive): Boolean {
+	return expected.stringValue == actual.stringValue || run {
+		val float = expected.stringValue.toDoubleOrNull()
+		val f2 = actual.stringValue.toDoubleOrNull()
+		float != null && float == f2
+	}
+}
+
+fun compareSubtreesUnordered(prevKeys: List<String>, expected: VDFSubtree, actual: VDFSubtree) {
+	fun pathToHere(currKey: VDFPrimitive? = null): String {
+		return (currKey?.let { prevKeys + it.stringValue } ?: prevKeys).joinToString(".")
+	}
+	
+	// check all keys present
+	assertEquals(expected.size, actual.size, "${pathToHere()}: subtrees' size")
+	
+	val expectedKeys = expected.entries.groupBy ({ it.key }, { it.value })
+	val actualKeys = actual.entries.groupBy ({ it.key }, { it.value })
+	
+	expectedKeys.forEach { (k, expectedValues) ->
+		val actualValues = actualKeys[k]!!
+		
+		assertEquals(expectedValues.size, actualValues.size, "${pathToHere(k)}: number of values for key")
+		
+		// Track what keys have been matched
+		val actualValuesMutable = actualValues.toMutableList()
+		
+		expectedValues.forEach { expected ->
+			// find matching value and remove it from the list
+			val m = when (expected) {
+				is VDFPrimitive -> {
+					val m = actualValuesMutable.find { it is VDFPrimitive && comparePrimitives(expected, it) }
+					
+					assertNotNull(m, "${pathToHere(k)} - Expected value: ${expected.toFormattedString()}. Actual: " + actualValuesMutable.map { it.toFormattedString() })
+				}
+				is VDFSubtree -> {
+					val m = actualValuesMutable.asSequence()
+						.filterIsInstance<VDFSubtree>()
+						.mapIndexed { i, it -> i to runCatching { compareSubtreesUnordered(prevKeys + k.stringValue, expected, it) } }
+						.toList()
+					
+					assert(m.any { (_, it) -> it.isSuccess }) {
+						"${pathToHere(k)}: no matching value found.\n" +
+						"Expected: ${expected.toFormattedString()}\n\n\n" +
+						
+						"Reasons for failure: \n" + m.joinToString("\n") { (i, it) -> "$i. ${it.exceptionOrNull()!!.message}" } + "\n=======================================================================================\n\n"
+					}
+					
+					m.first()
+				}
+				else -> error("Invalid type for value: $actual")
+			}
+			
+			actualValuesMutable.remove(m)
+		}
+	}
+}
+//
+//fun assertContainsAllUnordered(expected: VDFSubtree, actual: VDFSubtree) {
+//	assertEquals(expected.size, actual.size, "Subtrees same size")
+//
+//	val expectedGroupedByKey = expected.groupByTo(LinkedHashMap()) { it.key }
+//	val actualGroupedByKey = actual.groupByTo(LinkedHashMap()) { it.key }
+//
+//	assertEquals(expectedGroupedByKey.size, actualGroupedByKey.size, "Same number of unique keys")
+//
+//	expectedGroupedByKey.forEach { (key, expectedValues) ->
+//		val fromActual = actual.getAll(key.stringValue)
+//		assertEquals(expectedValues.size, fromActual.size, "Same number of entries for key $key")
+//
+//
+//	}
+//}

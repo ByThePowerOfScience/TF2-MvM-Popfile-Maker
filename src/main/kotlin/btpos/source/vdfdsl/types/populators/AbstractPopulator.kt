@@ -2,7 +2,7 @@ package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.singleStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamed
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
@@ -20,7 +20,7 @@ abstract class AbstractPopulator(_subtree: IExtensibleSubtree_VDFRepresentable =
 	 *
 	 * @see AbstractSpawner
 	 */
-	var spawner: AbstractSpawner? by singleStruct()
+	var spawner: AbstractSpawner? by selfNamed()
 	
 	abstract override fun copy(): AbstractPopulator
 	

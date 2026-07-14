@@ -8,7 +8,6 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 	
 	constructor(i: Float) : this(i.toString())
 	
-	
 	override fun writeToVDF(writer: Appendable, indent: Int) {
 		if (stringValue.none { it.isWhitespace() }) {
 			writer.append(stringValue)

@@ -2,7 +2,7 @@ package btpos.source.vdfdsl.types.spawners
 
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.modeling.IKeyValueMap
@@ -59,7 +59,7 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	
 	var maxVisionRange: Number? by addField("MaxVisionRange")
 	
-	val items: MutableList<TFItem<*>> by multiStruct()
+	var items: List<TFItem<*>> by selfNamedList()
 	
 	var attributes: List<TFBotAttributes> by addField("Attributes", serializer = flatListWithKey()) { listOf() }
 	

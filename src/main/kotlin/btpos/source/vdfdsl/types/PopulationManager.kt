@@ -3,7 +3,7 @@ package btpos.source.vdfdsl.types
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.populators.AbstractPopulator
@@ -52,7 +52,7 @@ inline fun WaveSchedule(configure: PopulationManager.() -> Unit): PopulationMana
 
 
 
-val PopulationManager.populators: MutableList<AbstractPopulator> by multiStruct()
+var PopulationManager.populators: List<AbstractPopulator> by selfNamedList()
 
 /**
  * Default: 0

@@ -2,7 +2,7 @@ package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.utils.ReadOnlyConstant
@@ -20,7 +20,7 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	}
 	
 	
-	val waveSpawns: MutableList<WaveSpawnPopulator> by multiStruct()
+	var waveSpawns: List<WaveSpawnPopulator> by selfNamedList()
 	
 	var sound: String? by addField("Sound")
 	

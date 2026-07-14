@@ -1,7 +1,7 @@
 package btpos.source.vdfdsl.types.spawners
 
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.multiStruct
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 
@@ -30,7 +30,7 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	 */
 	var shouldPreserveSquad: Boolean? by addField("ShouldPreserveSquad")
 	
-	val spawners: MutableList<AbstractSpawner> by multiStruct()
+	var spawners: List<AbstractSpawner> by selfNamedList()
 	
 	/**
 	 * Add the same spawner multiple times.

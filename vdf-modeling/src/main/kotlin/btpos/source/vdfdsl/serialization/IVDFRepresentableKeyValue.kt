@@ -24,10 +24,10 @@ fun interface IVDFRepresentableKeyValue : IVDFRepresentable {
  * An item that just serializes to a single key-value entry.
  */
 interface IVDFRepresentableKeyValueSingle : IVDFRepresentableKeyValue {
-	fun _popFileEntryRepr(): VDFKeyValue
+	val vdfRepr: VDFKeyValue
 	
 	override fun _serializeInto(input: VDFSubtree) {
-		input += this._popFileEntryRepr()
+		input += this.vdfRepr
 	}
 }
 
