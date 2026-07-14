@@ -43,20 +43,12 @@ interface IRawVDFItem {
 	}
 }
 
-interface ITable {
-	operator fun get(key: String): StringOrTable?
-	
-	fun getString(key: String) = get(key)?.stringOrNull()
-	
-	fun getTable(key: String) = get(key)?.subtreeOrNull()
-}
-
-class RawTable(val rawLines: List<RawLine>) : List<RawLine> by rawLines, ITable, IRawVDFItem {
+class RawTable(val rawLines: List<RawLine>) : List<RawLine> by rawLines, IRawVDFItem {
 	fun getDiscardingComments(): Sequence<RawKeyValue> {
 		return rawLines.asSequence().filterIsInstance<KeyValueWithEndOfLineComment>().map { it.kv }
 	}
 	
-	override operator fun get(key: String): StringOrTable? {
+	operator fun get(key: String): StringOrTable? {
 		return getDiscardingComments().firstOrNull { it.key == key }?.value
 	}
 	
@@ -64,7 +56,9 @@ class RawTable(val rawLines: List<RawLine>) : List<RawLine> by rawLines, ITable,
 		return "{\n\t" + rawLines.joinToString("\n\t") { it.printRaw(1) } + "\n}".prependIndent("\t".repeat(indent))
 	}
 	
+	fun getString(key: String) = get(key)?.stringOrNull()
 	
+	fun getTable(key: String) = get(key)?.subtreeOrNull()
 }
 
 sealed class RawLine : IRawVDFItem
