@@ -241,6 +241,13 @@ First, you'll want to use [IntelliJ IDEA](https://www.jetbrains.com/idea/downloa
 
 ## Project
 
+Open IntelliJ and click "New Project".  Create a Kotlin project, but make sure it's set up to use **Gradle** as its build tool.
+
+Once it's set up, go to `build.gradle.kts` and:
+- Add the line `maven(url="https://jitpack.io")` to the `repositories` block,
+- Add the line `implementation("com.github.ByThePowerOfScience:TF2-MvM-Popfile-Maker:v1.0-beta")` to the `dependencies` block.
+- Click the little elephant/refresh icon floating in the top right corner.
+
 
 
 # Credits

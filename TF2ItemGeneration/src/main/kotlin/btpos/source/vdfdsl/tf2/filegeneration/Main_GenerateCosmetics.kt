@@ -399,7 +399,7 @@ fun generateCosmetics(parsedItemSchema: VDFSubtree) {
 					file.append("\n\t\tobject ").append(slotName).append(" {")
 					
 					cosmetics.forEach { cosm ->
-						file.append("\n\t\t\tval ").append(cosm.varname).append(" get() = AllCosmetics.").append(cosm.varname)
+						file.append("\n\t\t\tval ").append(cosm.varname).append(" get() = Cosmetics.").append(cosm.varname)
 					}
 					
 					file.append("\n\t\t}")

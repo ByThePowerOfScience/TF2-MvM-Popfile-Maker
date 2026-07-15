@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.tf2.items.cosmetics.byslot
 
-import btpos.source.vdfdsl.tf2.items.cosmetics.AllCosmetics
+import btpos.source.vdfdsl.tf2.items.cosmetics.Cosmetics
 
 
 
 object CosmeticsBySlot_DemoHeadReplacement {
-	val ALCOHOLIC_AUTOMATON get() = AllCosmetics.ALCOHOLIC_AUTOMATON
+	val ALCOHOLIC_AUTOMATON get() = Cosmetics.ALCOHOLIC_AUTOMATON
 }
