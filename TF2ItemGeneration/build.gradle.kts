@@ -5,7 +5,7 @@ plugins {
 }
 
 group = Constants.Groups.tf2("filegeneration")
-version = "1.0-SNAPSHOT"
+version = Constants.PROJECT_VERSION
 
 repositories {
 	mavenCentral()
@@ -18,7 +18,7 @@ repositories {
 dependencies {
 	api("com.mojang:datafixerupper:1.0.20")
 	
-	implementation("btpos.source.vdfdsl.vdf:vdf-parser:1.0-SNAPSHOT")
+	implementation("btpos.source.vdfdsl.vdf:vdf-parser:${Constants.PROJECT_VERSION}")
 	testImplementation(kotlin("test"))
 }
 

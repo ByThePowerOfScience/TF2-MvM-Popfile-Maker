@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "btpos.source.vdfdsl.vdf"
-version = "1.0-SNAPSHOT"
+version = Constants.PROJECT_VERSION
 
 repositories {
 	mavenCentral()

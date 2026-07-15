@@ -5,7 +5,7 @@ plugins {
 }
 
 group = Constants.Groups.tf2("itemattributes")
-version = "1.0-SNAPSHOT"
+version = Constants.PROJECT_VERSION
 
 repositories {
 	mavenCentral()
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-	implementation("btpos.source.vdfdsl.vdf:vdf-modeling:1.0-SNAPSHOT")
+	implementation("btpos.source.vdfdsl.vdf:vdf-modeling:${Constants.PROJECT_VERSION}")
 	
 	testImplementation(platform("org.junit:junit-bom:6.0.0"))
 	testImplementation("org.junit.jupiter:junit-jupiter")

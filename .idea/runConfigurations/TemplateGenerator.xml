@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TemplateGenerator" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="btpos.source.vdfdsl.tf2.filegeneration.Main_GenerateTemplateEntriesKt" />
+    <module name="TF2ItemGeneration.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

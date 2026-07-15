@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "btpos.source.vdfdsl"
-version = "1.0-SNAPSHOT"
+version = Constants.PROJECT_VERSION
 
 repositories {
 	mavenCentral()
@@ -17,9 +17,9 @@ repositories {
 
 
 dependencies {
-	api("btpos.source.vdfdsl.vdf:vdf-modeling:1.0-SNAPSHOT")
-	api("btpos.source.vdfdsl.vdf:vdf-parser:1.0-SNAPSHOT")
-	api("btpos.source.vdfdsl.tf2:TF2Items:1.0-SNAPSHOT")
+	api("btpos.source.vdfdsl.vdf:vdf-modeling:${Constants.PROJECT_VERSION}")
+	api("btpos.source.vdfdsl.vdf:vdf-parser:${Constants.PROJECT_VERSION}")
+	api("btpos.source.vdfdsl.tf2:TF2Items:${Constants.PROJECT_VERSION}")
 }
 
 // make every single thing extensible so people can add as many utilities as they want
