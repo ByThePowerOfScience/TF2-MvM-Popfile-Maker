@@ -15,8 +15,6 @@ repositories {
 }
 
 dependencies {
-	implementation(libs.datafixerupper)
-	
 	testImplementation(kotlin("test"))
 }
 
