@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.workshop
 
 import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
+import btpos.source.vdfdsl.types.populators.WaveSpawn
 import btpos.source.vdfdsl.types.populators.WaveSpawnPopulator
 import btpos.source.vdfdsl.types.populators.provideDelegate
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
@@ -46,11 +47,14 @@ import kotlin.time.Duration.Companion.seconds
 	inline operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>) = internal.provideDelegate(thisRef, prop)
 }
 
-fun spawn(number: Int, spawner: AbstractSpawner) = WaveSpawnBuilder(WaveSpawnPopulator().apply {
+fun WaveSpawnPopulator.spawn(number: Int) = WaveSpawnBuilder(this.apply {
 	totalCount = number
-	this.spawner = spawner
 })
 
 fun foo() {
-	val wave01b by spawn(2, TFBot(template=RobotStandardTemplates.Soldier.BUFF_BANNER)) after 2.seconds inGroupsOf 1 waitingBetweenSpawns 2.seconds
+	val wave01b by WaveSpawn {
+		spawn(2) after 2.seconds inGroupsOf 1 waitingBetweenSpawns 2.seconds
+		
+		+TFBot(template = RobotStandardTemplates.Soldier.BUFF_BANNER)
+	}
 }

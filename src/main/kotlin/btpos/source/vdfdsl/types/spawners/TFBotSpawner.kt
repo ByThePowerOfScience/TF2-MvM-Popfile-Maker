@@ -69,7 +69,7 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	 *
 	 * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
 	 *
-	 * @see addAttributesFor
+	 * @see addAttributesForExisting
 	 */
 	var itemAttributes: List<KeyValueMapImpl> by addField("ItemAttributes", serializer=flatListWithKey()) { listOf() }
 	
@@ -110,7 +110,7 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
  *
  * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
  */
-inline fun <ATTR : Any> TFBotSpawner.addAttributesFor(item: TFItem<ATTR>, attrScope: context(IKeyValueMap) ATTR.() -> Unit) {
+inline fun <ATTR : Any> TFBotSpawner.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(IKeyValueMap) ATTR.() -> Unit) {
 	itemAttributes += item.usingAttributesScope(KeyValueMapImpl(), attrScope)
 }
 

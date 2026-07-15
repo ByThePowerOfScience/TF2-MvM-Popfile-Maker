@@ -9,14 +9,14 @@ object Spawners {
 	/**
 	 * Create a TFBot.
 	 *
-	 *  To set it as the current [populator][btpos.source.vdfdsl.types.populators.AbstractPopulator]'s spawner, either set the populator's [spawner][btpos.source.vdfdsl.types.populators.AbstractPopulator.spawner] field (`spawner = TFBot { ... }`) or use the unary `+` operator (`+TFBot { ... }`).
+	 * To set it as the current [populator][btpos.source.vdfdsl.types.populators.AbstractPopulator]'s spawner, either set the populator's [spawner][btpos.source.vdfdsl.types.populators.AbstractPopulator.spawner] field (`spawner = TFBot { ... }`) or use the unary `+` operator (`+TFBot { ... }`).
 	 *
 	 * Example usage:
 	 * ```kotlin
 	 * val jacob = TFBot(name="Jacob") {
 	 *      `class` = TFClass.Heavy
 	 *      skill = BotSkill.Hard
-	 *      items += WeaponsAll.STOCK_MINIGUN {
+	 *      items += Weapons.STOCK_MINIGUN {
 	 *          fireRate.bonus = 0.5
 	 *      }
 	 * }

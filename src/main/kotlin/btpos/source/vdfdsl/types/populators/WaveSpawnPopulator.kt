@@ -62,9 +62,17 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	
 	var startWaveOutput: OutputAction? by addField("StartWaveOutput")
 	
+	final inline fun startWaveOutput(configure: OutputAction.() -> Unit) {
+		startWaveOutput = OutputAction().apply(configure)
+	}
+	
 	var firstSpawnWarningSound: String? by addField("FirstSpawnWarningSound")
 	
 	var firstSpawnOutput: OutputAction? by addField("FirstSpawnOutput")
+	
+	final inline fun firstSpawnOutput(configure: OutputAction.() -> Unit) {
+		firstSpawnOutput = OutputAction().apply(configure)
+	}
 	
 	var lastSpawnWarningSound: String? by addField("LastSpawnWarningSound")
 	
@@ -73,6 +81,10 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	var doneWarningSound: String? by addField("DoneWarningSound")
 	
 	var doneOutput: OutputAction? by addField("DoneOutput")
+	
+	final inline fun doneOutput(configure: OutputAction.() -> Unit) {
+		doneOutput = OutputAction().apply(configure)
+	}
 	
 	var totalCurrency: Int? by addField("TotalCurrency")
 	

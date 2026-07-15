@@ -13,6 +13,14 @@ fun WaveSpawnPopulator.individualGroupsOf(amount: Int) {
 	spawnCount = amount
 }
 
+/**
+ * Alias for:
+ * ```
+ * maxActive = totalCount
+ * spawnCount = totalCount
+ * waitBetweenSpawns = 0
+ * ```
+ */
 fun WaveSpawnPopulator.allAtOnce() {
 	this.maxActive = this.totalCount!!
 	this.spawnCount = this.totalCount!!
@@ -27,10 +35,10 @@ fun WaveSpawnPopulator.allAtOnce() {
  * waitBetweenSpawns = delayBetweenSpawns
  * ```
  */
-fun WaveSpawnPopulator.trickleIn(delayBetweenSpawns: Int, groupSize: Int = 1) {
+fun WaveSpawnPopulator.trickleInEvery(delayBetweenSpawns: Duration, groupSize: Int = 1) {
 	maxActive = totalCount ?: error("Total count not set.")
 	spawnCount = groupSize
-	waitBetweenSpawns = delayBetweenSpawns
+	waitBetweenSpawns = delayBetweenSpawns.toSeconds()
 }
 
 /**

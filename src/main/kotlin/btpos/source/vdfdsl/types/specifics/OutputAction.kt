@@ -25,5 +25,3 @@ open class OutputAction : ExtensibleSubtreeImpl() {
 		this.action = "Trigger"
 	}
 }
-
-

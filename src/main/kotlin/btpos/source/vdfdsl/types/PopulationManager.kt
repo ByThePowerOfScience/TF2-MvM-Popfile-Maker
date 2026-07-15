@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.types
 
+import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
@@ -7,6 +8,9 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.populators.AbstractPopulator
+import kotlin.io.path.Path
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createDirectories
 
 @PopFileDSL
 class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
@@ -18,6 +22,43 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	operator fun AbstractPopulator.unaryPlus() {
 		this@PopulationManager.populators += this
 	}
+	
+	
+	var populators: List<AbstractPopulator> by selfNamedList()
+	
+	/**
+	 * Default: 0
+	 */
+	var startingCurrency: Int? by addField("StartingCurrency")
+	
+	/**
+	 * Default: 10
+	 */
+	var respawnWaveTime: Int? by addField("RespawnWaveTime")
+	
+	/**
+	 * e.g. `"Halloween"`
+	 */
+	var eventPopFile: String? by addField("EventPopFile")
+	
+	var fixedRespawnWaveTime: Boolean? by addField("FixedRespawnWaveTime")
+	
+	/**
+	 * Default: 3000
+	 */
+	var addSentryBusterWhenDamageDealtExceeds: Int? by addField("AddSentryBusterWhenDamageDealtExceeds")
+	
+	/**
+	 * Default: 15
+	 */
+	var addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
+	
+	var canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (it) "yes" else "no" })
+	
+	var advanced: Boolean? by addField("Advanced")
+	
+	var isEndless: Boolean? by addField("IsEndless")
+	
 }
 
 typealias WaveSchedule = PopulationManager
@@ -52,37 +93,10 @@ inline fun WaveSchedule(configure: PopulationManager.() -> Unit): PopulationMana
 
 
 
-var PopulationManager.populators: List<AbstractPopulator> by selfNamedList()
 
-/**
- * Default: 0
- */
-var PopulationManager.startingCurrency: Int? by addField("StartingCurrency")
-
-/**
- * Default: 10
- */
-var PopulationManager.respawnWaveTime: Int? by addField("RespawnWaveTime")
-
-/**
- * e.g. `"Halloween"`
- */
-var PopulationManager.eventPopFile: String? by addField("EventPopFile")
-var PopulationManager.fixedRespawnWaveTime: Boolean? by addField("FixedRespawnWaveTime")
-
-/**
- * Default: 3000
- */
-var PopulationManager.addSentryBusterWhenDamageDealtExceeds: Int? by addField("AddSentryBusterWhenDamageDealtExceeds")
-
-/**
- * Default: 15
- */
-var PopulationManager.addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
-
-var PopulationManager.canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (it) "yes" else "no" })
-
-var PopulationManager.advanced: Boolean? by addField("Advanced")
-var PopulationManager.isEndless: Boolean? by addField("IsEndless")
-
+fun PopulationManager.writeToFile(fileName: String) {
+	Path(fileName).createDirectories().bufferedWriter().use { writer ->
+		VDFSubtree(null).also { this._serializeInto(it) }.writeToVDF(writer)
+	}
+}
 
