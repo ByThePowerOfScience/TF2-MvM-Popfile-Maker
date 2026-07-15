@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: TF_WEAPON_StickybombLauncher, The Scottish Resistance, Upgradeable TF_WEAPON_StickybombLauncher, Stickybomb Jumper, Festive Stickybomb Launcher 2011, Silver Botkiller Stickybomb Launcher Mk.I, Gold Botkiller Stickybomb Launcher Mk.I, Rust Botkiller Stickybomb Launcher Mk.I, Blood Botkiller Stickybomb Launcher Mk.I, Carbonado Botkiller Stickybomb Launcher Mk.I, Diamond Botkiller Stickybomb Launcher Mk.I, Silver Botkiller Stickybomb Launcher Mk.II, Gold Botkiller Stickybomb Launcher Mk.II, The Quickiebomb Launcher
@@ -18,8 +18,8 @@ interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Not actually the "rate", rather the time it takes to fully charge a stickybomb launch when holding MOUSE1.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var stickybombChargeRate: Float?
+	context(attrs: IKeyValueMap)
+	var stickybombChargeRate: Number?
 		get() = attrs.getTyped("stickybomb charge rate")
 		set(value) = attrs.setNullable("stickybomb charge rate", value)
 	
@@ -30,7 +30,7 @@ interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * If true, stickies destroy other stickies.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var stickiesDetonateStickies: Boolean?
 		get() = attrs.getTyped("stickies detonate stickies", BinaryIntCodec)
 		set(value) = attrs.setNullable("stickies detonate stickies", value, BinaryIntCodec)
@@ -42,8 +42,8 @@ interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * damage = `2*basedamage * (this - 1.0) * currentChargeProportion`.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var stickybombChargeDamageIncrease: Float?
+	context(attrs: IKeyValueMap)
+	var stickybombChargeDamageIncrease: Number?
 		get() = attrs.getTyped("stickybomb_charge_damage_increase")
 		set(value) = attrs.setNullable("stickybomb_charge_damage_increase", value)
 	

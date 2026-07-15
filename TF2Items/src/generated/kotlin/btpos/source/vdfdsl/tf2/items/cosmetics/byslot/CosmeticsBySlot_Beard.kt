@@ -1,0 +1,79 @@
+package btpos.source.vdfdsl.tf2.items.cosmetics.byslot
+
+import btpos.source.vdfdsl.tf2.items.cosmetics.AllCosmetics
+
+
+
+object CosmeticsBySlot_Beard {
+	val CAMERA_BEARD get() = AllCosmetics.CAMERA_BEARD
+	val MEDIC_MASK get() = AllCosmetics.MEDIC_MASK
+	val PYRO_MONOCLE get() = AllCosmetics.PYRO_MONOCLE
+	val PYROMANCERS_MASK get() = AllCosmetics.PYROMANCERS_MASK
+	val VILLAINS_VEIL get() = AllCosmetics.VILLAINS_VEIL
+	val LORD_COCKSWAINS_NOVELTY_MUTTON_CHOPS_AND_PIPE get() = AllCosmetics.LORD_COCKSWAINS_NOVELTY_MUTTON_CHOPS_AND_PIPE
+	val BIG_STEEL_JAW_OF_SUMMER_FUN get() = AllCosmetics.BIG_STEEL_JAW_OF_SUMMER_FUN
+	val THE_ANGER get() = AllCosmetics.THE_ANGER
+	val MONOCULUS get() = AllCosmetics.MONOCULUS
+	val THE_ALLFATHER get() = AllCosmetics.THE_ALLFATHER
+	val THE_HOLIDAY_HEADCASE get() = AllCosmetics.THE_HOLIDAY_HEADCASE
+	val THE_DOUBLECROSSCOMM get() = AllCosmetics.THE_DOUBLECROSSCOMM
+	val MEDIMASK get() = AllCosmetics.MEDIMASK
+	val THE_BEARDED_BOMBARDIER get() = AllCosmetics.THE_BEARDED_BOMBARDIER
+	val THE_MENPO get() = AllCosmetics.THE_MENPO
+	val THE_MUTTON_MANN get() = AllCosmetics.THE_MUTTON_MANN
+	val THE_GRIZZLED_GROWTH get() = AllCosmetics.THE_GRIZZLED_GROWTH
+	val THE_DREAD_HIDING_HOOD get() = AllCosmetics.THE_DREAD_HIDING_HOOD
+	val THE_MEGAPIXEL_BEARD get() = AllCosmetics.THE_MEGAPIXEL_BEARD
+	val THE_BOLTED_BOMBARDIER get() = AllCosmetics.THE_BOLTED_BOMBARDIER
+	val PRACTITIONERS_PROCESSING_MASK get() = AllCosmetics.PRACTITIONERS_PROCESSING_MASK
+	val THE_VIKING_BRAIDER get() = AllCosmetics.THE_VIKING_BRAIDER
+	val THE_CUBAN_BRISTLE_CRISIS get() = AllCosmetics.THE_CUBAN_BRISTLE_CRISIS
+	val THE_GOLD_DIGGER get() = AllCosmetics.THE_GOLD_DIGGER
+	val A_BRUSH_WITH_DEATH get() = AllCosmetics.A_BRUSH_WITH_DEATH
+	val CAPN_CALAMARI get() = AllCosmetics.CAPN_CALAMARI
+	val THE_FAUX_MANCHU get() = AllCosmetics.THE_FAUX_MANCHU
+	val THE_MONSTROUS_MANDIBLE get() = AllCosmetics.THE_MONSTROUS_MANDIBLE
+	val TEUTONKAHMUN get() = AllCosmetics.TEUTONKAHMUN
+	val THE_DICTATOR get() = AllCosmetics.THE_DICTATOR
+	val THE_FIVEMONTH_SHADOW get() = AllCosmetics.THE_FIVEMONTH_SHADOW
+	val FACE_FULL_OF_FESTIVE get() = AllCosmetics.FACE_FULL_OF_FESTIVE
+	val THE_RUFFLED_RUPRECHT get() = AllCosmetics.THE_RUFFLED_RUPRECHT
+	val MARSHALLS_MUTTON_CHOPS get() = AllCosmetics.MARSHALLS_MUTTON_CHOPS
+	val THE_LEFTOVER_TRAP get() = AllCosmetics.THE_LEFTOVER_TRAP
+	val THE_SCOTCH_SAVER get() = AllCosmetics.THE_SCOTCH_SAVER
+	val THE_FASHIONABLE_MEGALOMANIAC get() = AllCosmetics.THE_FASHIONABLE_MEGALOMANIAC
+	val THE_FRICKIN_SWEET_NINJA_HOOD get() = AllCosmetics.THE_FRICKIN_SWEET_NINJA_HOOD
+	val THE_BRUISERS_BANDANNA get() = AllCosmetics.THE_BRUISERS_BANDANNA
+	val YURIS_REVENGE get() = AllCosmetics.YURIS_REVENGE
+	val THE_LEVEL_THREE_CHIN get() = AllCosmetics.THE_LEVEL_THREE_CHIN
+	val ZE_UBERMENSCH get() = AllCosmetics.ZE_UBERMENSCH
+	val THE_SCOPERS_SMOKE get() = AllCosmetics.THE_SCOPERS_SMOKE
+	val THE_LONE_SURVIVOR get() = AllCosmetics.THE_LONE_SURVIVOR
+	val THE_UNSHAVED_BEAR get() = AllCosmetics.THE_UNSHAVED_BEAR
+	val SUPERNATURAL_STALKER get() = AllCosmetics.SUPERNATURAL_STALKER
+	val GARDEN_BRISTLES get() = AllCosmetics.GARDEN_BRISTLES
+	val BULL_LOCKS get() = AllCosmetics.BULL_LOCKS
+	val EOTL_BEARD get() = AllCosmetics.EOTL_BEARD
+	val DEC2014_HUNTER_BEARD get() = AllCosmetics.DEC2014_HUNTER_BEARD
+	val EL_DUDERINO get() = AllCosmetics.EL_DUDERINO
+	val EL_PATRON get() = AllCosmetics.EL_PATRON
+	val BERLIN_BRAIN_BOWL get() = AllCosmetics.BERLIN_BRAIN_BOWL
+	val THE_MOST_DANGEROUS_MANE get() = AllCosmetics.THE_MOST_DANGEROUS_MANE
+	val WILD_WEST_WHISKERS get() = AllCosmetics.WILD_WEST_WHISKERS
+	val GAELIC_GLUTTON get() = AllCosmetics.GAELIC_GLUTTON
+	val MISERS_MUTTONCHOPS get() = AllCosmetics.MISERS_MUTTONCHOPS
+	val WISE_WHISKERS get() = AllCosmetics.WISE_WHISKERS
+	val BREAD_BITER get() = AllCosmetics.BREAD_BITER
+	val MADMANNS_MUZZLE get() = AllCosmetics.MADMANNS_MUZZLE
+	val FUEL_INJECTOR get() = AllCosmetics.FUEL_INJECTOR
+	val GOURD_GRIN get() = AllCosmetics.GOURD_GRIN
+	val PARTICULATE_PROTECTOR get() = AllCosmetics.PARTICULATE_PROTECTOR
+	val GNOME_DOME get() = AllCosmetics.GNOME_DOME
+	val ELFMADE_BANDANNA get() = AllCosmetics.ELFMADE_BANDANNA
+	val BROTHER_MANN get() = AllCosmetics.BROTHER_MANN
+	val CLOWNS_COVERUP get() = AllCosmetics.CLOWNS_COVERUP
+	val WANDERERS_WOOL get() = AllCosmetics.WANDERERS_WOOL
+	val SCRUFFED_N_STITCHED get() = AllCosmetics.SCRUFFED_N_STITCHED
+	val CATTLEMANS_KETTLE get() = AllCosmetics.CATTLEMANS_KETTLE
+	val SEAMANNS_STUBBLE get() = AllCosmetics.SEAMANNS_STUBBLE
+}

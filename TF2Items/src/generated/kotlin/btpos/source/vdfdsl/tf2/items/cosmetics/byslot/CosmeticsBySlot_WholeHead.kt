@@ -1,0 +1,58 @@
+package btpos.source.vdfdsl.tf2.items.cosmetics.byslot
+
+import btpos.source.vdfdsl.tf2.items.cosmetics.AllCosmetics
+
+
+
+object CosmeticsBySlot_WholeHead {
+	val MILDLY_DISTURBING_HALLOWEEN_MASK get() = AllCosmetics.MILDLY_DISTURBING_HALLOWEEN_MASK
+	val HALLOWEEN_MASK__SCOUT get() = AllCosmetics.HALLOWEEN_MASK__SCOUT
+	val HALLOWEEN_MASK__SNIPER get() = AllCosmetics.HALLOWEEN_MASK__SNIPER
+	val HALLOWEEN_MASK__SOLDIER get() = AllCosmetics.HALLOWEEN_MASK__SOLDIER
+	val HALLOWEEN_MASK__DEMOMAN get() = AllCosmetics.HALLOWEEN_MASK__DEMOMAN
+	val HALLOWEEN_MASK__MEDIC get() = AllCosmetics.HALLOWEEN_MASK__MEDIC
+	val HALLOWEEN_MASK__HEAVY get() = AllCosmetics.HALLOWEEN_MASK__HEAVY
+	val HALLOWEEN_MASK__SPY get() = AllCosmetics.HALLOWEEN_MASK__SPY
+	val HALLOWEEN_MASK__ENGINEER get() = AllCosmetics.HALLOWEEN_MASK__ENGINEER
+	val HALLOWEEN_MASK__PYRO get() = AllCosmetics.HALLOWEEN_MASK__PYRO
+	val HALLOWEEN_MASK__SAXTON_HALE get() = AllCosmetics.HALLOWEEN_MASK__SAXTON_HALE
+	val HORSELESS_HEADLESS_HORSEMANS_HEAD get() = AllCosmetics.HORSELESS_HEADLESS_HORSEMANS_HEAD
+	val MASK_OF_THE_SHAMAN get() = AllCosmetics.MASK_OF_THE_SHAMAN
+	val BUZZ_KILLER get() = AllCosmetics.BUZZ_KILLER
+	val MONOCULUS get() = AllCosmetics.MONOCULUS
+	val THE_TRICLOPS get() = AllCosmetics.THE_TRICLOPS
+	val THE_NINJA_COWL get() = AllCosmetics.THE_NINJA_COWL
+	val THE_PERSON_IN_THE_IRON_MASK get() = AllCosmetics.THE_PERSON_IN_THE_IRON_MASK
+	val THE_BIG_DADDY get() = AllCosmetics.THE_BIG_DADDY
+	val THE_FIRST_AMERICAN get() = AllCosmetics.THE_FIRST_AMERICAN
+	val YETI_HEAD get() = AllCosmetics.YETI_HEAD
+	val THE_WHIRLY_WARRIOR get() = AllCosmetics.THE_WHIRLY_WARRIOR
+	val ETHEREAL_HOOD get() = AllCosmetics.ETHEREAL_HOOD
+	val THE_GOTHIC_GUISE get() = AllCosmetics.THE_GOTHIC_GUISE
+	val MEDIMEDES get() = AllCosmetics.MEDIMEDES
+	val THE_FREEDOM_FEATHERS get() = AllCosmetics.THE_FREEDOM_FEATHERS
+	val THE_HEADTAKERS_HOOD get() = AllCosmetics.THE_HEADTAKERS_HOOD
+	val THE_MACABRE_MASK get() = AllCosmetics.THE_MACABRE_MASK
+	val THE_DARK_HELM get() = AllCosmetics.THE_DARK_HELM
+	val THE_MANNBIRD_OF_ABERDEEN get() = AllCosmetics.THE_MANNBIRD_OF_ABERDEEN
+	val SIR_SHOOTSALOT get() = AllCosmetics.SIR_SHOOTSALOT
+	val HUNDEKOPF get() = AllCosmetics.HUNDEKOPF
+	val NUGGET_NOGGIN get() = AllCosmetics.NUGGET_NOGGIN
+	val MARSUPIAL_MUZZLE get() = AllCosmetics.MARSUPIAL_MUZZLE
+	val TEMPLARS_SPIRIT get() = AllCosmetics.TEMPLARS_SPIRIT
+	val FORGOTTEN_KINGS_RESTLESS_HEAD get() = AllCosmetics.FORGOTTEN_KINGS_RESTLESS_HEAD
+	val CORONA_AUSTRALIS get() = AllCosmetics.CORONA_AUSTRALIS
+	val TEUFORT_KNIGHT get() = AllCosmetics.TEUFORT_KNIGHT
+	val HERALDS_HELM get() = AllCosmetics.HERALDS_HELM
+	val THE_GAUZED_GAZE get() = AllCosmetics.THE_GAUZED_GAZE
+	val BLAST_DEFENSE get() = AllCosmetics.BLAST_DEFENSE
+	val THE_FRAG_PROOF_FRAGGER get() = AllCosmetics.THE_FRAG_PROOF_FRAGGER
+	val CROCODILE_MUNDEE get() = AllCosmetics.CROCODILE_MUNDEE
+	val WANDERING_WRAITH get() = AllCosmetics.WANDERING_WRAITH
+	val CRANIAL_COWL get() = AllCosmetics.CRANIAL_COWL
+	val SHADOW_SHROUD get() = AllCosmetics.SHADOW_SHROUD
+	val HELLISH_OVERLORD get() = AllCosmetics.HELLISH_OVERLORD
+	val ONEMAN_CONVOY get() = AllCosmetics.ONEMAN_CONVOY
+	val FACE_LIFT get() = AllCosmetics.FACE_LIFT
+	val ZEPHENIAHS_SHROUD get() = AllCosmetics.ZEPHENIAHS_SHROUD
+}

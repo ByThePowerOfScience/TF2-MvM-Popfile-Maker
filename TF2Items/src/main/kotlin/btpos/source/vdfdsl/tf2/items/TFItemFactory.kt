@@ -16,7 +16,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.FistsAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.FlamethrowerAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.FlareGunAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.GrenadeLauncherAttributes
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
+import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 import btpos.source.vdfdsl.tf2.itemattributes.InvisAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.JarAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.KnifeAttributes

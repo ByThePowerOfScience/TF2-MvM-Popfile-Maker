@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 
 interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes, IBlockScoped {
@@ -15,7 +16,7 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes, IBlockScop
 	 *
 	 * Checked on launcher.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var stickybombFizzleTime: Int?
 		get() = attrs.getTyped("stickybomb fizzle time")
 		set(value) = attrs.setNullable("stickybomb fizzle time", value)
@@ -27,7 +28,7 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes, IBlockScop
 	 *
 	 * Checked on launcher.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var grenadeNoBounce: Boolean?
 		get() = attrs.getTyped("grenade no bounce", BinaryIntCodec)
 		set(value) = attrs.setNullable("grenade no bounce", value, BinaryIntCodec)
@@ -56,8 +57,8 @@ interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes, IBlockScop
 	 *
 	 * Checked on launcher.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var grenadeDamageReductionOnWorldContact: Float?
+	context(attrs: IKeyValueMap)
+	var grenadeDamageReductionOnWorldContact: Number?
 		get() = attrs.getTyped("grenade damage reduction on world contact")
 		set(value) = attrs.setNullable("grenade damage reduction on world contact", value)
 }

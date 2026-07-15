@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 
 interface BaseProjectileAttributes : IBlockScoped {
@@ -14,7 +16,7 @@ interface BaseProjectileAttributes : IBlockScoped {
 	 *
 	 * If true, applies mad milk on hit. Yes, this is in the base projectile.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var madMilkSyringes: Boolean?
 		get() = attrs.getTyped("mad milk syringes", BinaryIntCodec)
 		set(value) = attrs.setNullable("mad milk syringes", value, BinaryIntCodec)

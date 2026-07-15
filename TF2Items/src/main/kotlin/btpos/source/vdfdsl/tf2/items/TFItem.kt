@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.modeling.IKeyValueMap
 import btpos.source.vdfdsl.modeling.KeyValueMapImpl
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.tf2.PopFileDSL
-import btpos.source.vdfdsl.tf2.items.weapons.WeaponsAll
+import btpos.source.vdfdsl.tf2.items.weapons.Weapons
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsMelee
 
 @PopFileDSL
@@ -61,7 +61,7 @@ open class TFItem<ATTR : Any>(val name: String, val attributes: KeyValueMapImpl?
 		@Suppress("RemoveRedundantQualifierName", "RedundantSuppression")
 		val WeaponsByClass get() = btpos.source.vdfdsl.tf2.items.weapons.WeaponsByClass
 		
-		val WeaponsByName get() = WeaponsAll
+		val WeaponsByName get() = Weapons
 		
 		val MeleeWeapons get() = WeaponsMelee
 	}

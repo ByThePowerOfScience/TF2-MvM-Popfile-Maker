@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.NumberSelectorCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Flare Gun, The Scorch Shot, The Detonator, The Manmelter
@@ -23,7 +24,7 @@ interface FlareGunAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 3: Scorch Shot.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var flaregunFiresPelletsWithKnockback: Boolean?
 		get() = attrs.getTyped("mod flaregun fires pellets with knockback", NumberSelectorCodec(3))
 		set(value) = attrs.setNullable("mod flaregun fires pellets with knockback", value, NumberSelectorCodec(3))

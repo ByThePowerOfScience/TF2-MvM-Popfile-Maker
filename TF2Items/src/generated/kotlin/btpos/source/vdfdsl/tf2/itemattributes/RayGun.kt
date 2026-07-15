@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Righteous Bison, The Pomson 6000
@@ -15,7 +16,7 @@ interface RayGunAttributes : RocketLauncherAttributes, IBlockScoped {
 	 *
 	 * Removes ammo requirement to fire weapon.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var energyWeaponNoDrain: Boolean?
 		get() = attrs.getTyped("energy weapon no drain", BinaryIntCodec)
 		set(value) = attrs.setNullable("energy weapon no drain", value, BinaryIntCodec)

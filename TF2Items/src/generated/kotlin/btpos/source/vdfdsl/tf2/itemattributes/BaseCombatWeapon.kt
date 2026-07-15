@@ -1,11 +1,12 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 
-interface BaseCombatWeaponAttributes : IBlockScoped {
+interface BaseCombatWeaponAttributes : BaseEntityAttributes, IBlockScoped {
 	companion object : BaseCombatWeaponAttributes
 	
 	/**

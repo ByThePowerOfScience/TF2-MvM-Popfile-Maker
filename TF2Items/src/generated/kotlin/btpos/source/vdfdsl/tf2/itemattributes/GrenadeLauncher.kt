@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty_BonusNested
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-import btpos.source.vdfdsl.tf2.attributes.impl.VisHidden
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: TF_WEAPON_GRENADELAUNCHER, Upgradeable TF_WEAPON_GRENADELAUNCHER, The Loch-n-Load, Festive Grenade Launcher, The Iron Bomber, The Loose Cannon
@@ -18,8 +18,8 @@ interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Flat multiplier applied to initial damage.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var grenadeDetonationDamagePenalty: Float?
+	context(attrs: IKeyValueMap)
+	var grenadeDetonationDamagePenalty: Number?
 		get() = attrs.getTyped("grenade detonation damage penalty")
 		set(value) = attrs.setNullable("grenade detonation damage penalty", value)
 	
@@ -42,7 +42,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val projectileSpeed get() = BonusPenalty_BonusNested<VisHidden<Float, Float>, Float>(VisHidden<Float, Float>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
+	val projectileSpeed get() = BonusPenalty_BonusNested<VisHidden<Number, Number>, Number>(VisHidden<Number, Number>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
 	
 	/**
 	 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
@@ -51,7 +51,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * "Mortar" (loose cannon) detonation time length.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var grenadeLauncherMortarMode: Int?
 		get() = attrs.getTyped("grenade launcher mortar mode")
 		set(value) = attrs.setNullable("grenade launcher mortar mode", value)

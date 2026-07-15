@@ -1,10 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Wrangler, Festive Wrangler, The Giger Counter
@@ -19,7 +18,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * If unset, uses the weapon's default projectile type.
 	 *
-	 * Else use a numbered [btpos.source.vdfdsl.tf2.attributes.impl.ProjectileType].
+	 * Else use a numbered [ProjectileType].
 	 */
 	context(attrs: IKeyValueMap)
 	var overrideProjectileType: Int?
@@ -53,7 +52,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Used when firing any projectile, including pipe bombs.
 	 */
-	val projectileRange get() = BonusPenalty<Float, Float>("Projectile range increased", "Projectile range decreased")
+	val projectileRange get() = BonusPenalty<Number, Number>("Projectile range increased", "Projectile range decreased")
 	
 	/**
 	 * 
@@ -77,9 +76,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	context(attrs: IKeyValueMap)
 	override var projectilePenetration: Int?
 		get() = super.projectilePenetration
-		set(value) {
-			super.projectilePenetration = value
-		}
+		set(value) { super.projectilePenetration = value }
 	
 	/**
 	 * In-Game: "Bullets penetrate +N enemies"
@@ -93,9 +90,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	context(attrs: IKeyValueMap)
 	override var projectilePenetrationHeavy: Int?
 		get() = super.projectilePenetrationHeavy
-		set(value) {
-			super.projectilePenetrationHeavy = value
-		}
+		set(value) { super.projectilePenetrationHeavy = value }
 	
 	/**
 	 * Bonus:
@@ -112,7 +107,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Modifies bullet spread.
 	 */
-	val weaponSpread get() = BonusPenalty<Float, Float>("weapon spread bonus", "spread penalty")
+	val weaponSpread get() = BonusPenalty<Number, Number>("weapon spread bonus", "spread penalty")
 	
 	/**
 	 * In-Game: "Weapon spread increases as health decreases"
@@ -122,7 +117,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * Multiplier applied to bullet spread as health gets lower.
 	 */
 	context(attrs: IKeyValueMap)
-	var multSpreadAsHealthDecreases: Float?
+	var multSpreadAsHealthDecreases: Number?
 		get() = attrs.getTyped("panic_attack_negative")
 		set(value) = attrs.setNullable("panic_attack_negative", value)
 	
@@ -134,7 +129,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * Scales weapon spread when firing consecutive shots, like the _New_ Panic Attack.
 	 */
 	context(attrs: IKeyValueMap)
-	var spreadIncreasesOnConsecutiveShots: Float?
+	var spreadIncreasesOnConsecutiveShots: Number?
 		get() = attrs.getTyped("mult_spread_scales_consecutive")
 		set(value) = attrs.setNullable("mult_spread_scales_consecutive", value)
 	
@@ -146,7 +141,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * When disguised (only checks if the player has the condition, doesn't check class), multiply damage by this amount.
 	 */
 	context(attrs: IKeyValueMap)
-	var damageBonusWhileDisguised: Float?
+	var damageBonusWhileDisguised: Number?
 		get() = attrs.getTyped("damage bonus while disguised")
 		set(value) = attrs.setNullable("damage bonus while disguised", value)
 	
@@ -158,7 +153,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * If the projectile being fired is a bullet, multiply damage by your hit ratio over the past few seconds.
 	 */
 	context(attrs: IKeyValueMap)
-	var accuracyScalesDamage: Float?
+	var accuracyScalesDamage: Number?
 		get() = attrs.getTyped("accuracy scales damage")
 		set(value) = attrs.setNullable("accuracy scales damage", value)
 	
@@ -180,8 +175,8 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * 
 	 */
 	context(attrs: IKeyValueMap)
-	var dmgPiercesResistsAbsorbs: Boolean?
-		get() = attrs.getTyped("dmg pierces resists absorbs", BinaryIntCodec)
-		set(value) = attrs.setNullable("dmg pierces resists absorbs", value, BinaryIntCodec)
+	override var dmgPiercesResistsAbsorbs: Boolean?
+		get() = super.dmgPiercesResistsAbsorbs
+		set(value) { super.dmgPiercesResistsAbsorbs = value }
 }
 

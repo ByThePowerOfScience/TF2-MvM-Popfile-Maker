@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Air Strike
@@ -16,11 +18,9 @@ interface RocketLauncher_AirStrikeAttributes : RocketLauncherAttributes, IBlockS
 	 *
 	 * This attribute is on all weapons, but it's specifically checked for here as well.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	override var clipsizeIncreaseOnKill: Int?
 		get() = super.clipsizeIncreaseOnKill
-		set(value) {
-			super.clipsizeIncreaseOnKill = value
-		}
+		set(value) { super.clipsizeIncreaseOnKill = value }
 }
 

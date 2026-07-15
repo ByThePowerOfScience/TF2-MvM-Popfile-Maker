@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 
 interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
@@ -32,9 +33,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	context(attrs: IKeyValueMap)
 	override var isASword: Boolean?
 		get() = super.isASword
-		set(value) {
-			super.isASword = value
-		}
+		set(value) { super.isASword = value }
 	
 	/**
 	 * 
@@ -44,7 +43,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * Yes, it DOES use a bounding box.
 	 */
 	context(attrs: IKeyValueMap)
-	var meleeBoundsMultiplier: Float?
+	var meleeBoundsMultiplier: Number?
 		get() = attrs.getTyped("melee bounds multiplier")
 		set(value) = attrs.setNullable("melee bounds multiplier", value)
 	
@@ -146,7 +145,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * If health < 50%, apply mult.
 	 */
 	context(attrs: IKeyValueMap)
-	var dmgBonusWhileHalfDead: Float?
+	var dmgBonusWhileHalfDead: Number?
 		get() = attrs.getTyped("dmg bonus while half dead")
 		set(value) = attrs.setNullable("dmg bonus while half dead", value)
 	
@@ -158,7 +157,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * If health >= 50%, apply mult.
 	 */
 	context(attrs: IKeyValueMap)
-	var dmgPenaltyWhileHalfAlive: Float?
+	var dmgPenaltyWhileHalfAlive: Number?
 		get() = attrs.getTyped("dmg penalty while half alive")
 		set(value) = attrs.setNullable("dmg penalty while half alive", value)
 }

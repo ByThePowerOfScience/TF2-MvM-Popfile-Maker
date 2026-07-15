@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Huntsman, Festive Huntsman, The Fortified Compound
@@ -18,11 +20,9 @@ interface CompoundBowAttributes : StickybombLauncherAttributes, IBlockScoped {
 	 *
 	 * Mult applied to reload speed.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	override var fasterReloadRate: Float?
+	context(attrs: IKeyValueMap)
+	override var fasterReloadRate: Number?
 		get() = super.fasterReloadRate
-		set(value) {
-			super.fasterReloadRate = value
-		}
+		set(value) { super.fasterReloadRate = value }
 }
 

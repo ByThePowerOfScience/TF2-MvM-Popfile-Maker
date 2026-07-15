@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: TF_WEAPON_SCATTERGUN, The Force-a-Nature, Upgradeable TF_WEAPON_SCATTERGUN, Festive Scattergun 2011, Silver Botkiller Scattergun Mk.I, Gold Botkiller Scattergun Mk.I, Rust Botkiller Scattergun Mk.I, Blood Botkiller Scattergun Mk.I, Carbonado Botkiller Scattergun Mk.I, Diamond Botkiller Scattergun Mk.I, Silver Botkiller Scattergun Mk.II, Gold Botkiller Scattergun Mk.II, Festive Force-a-Nature, The Back Scatter
@@ -17,7 +18,7 @@ interface ScattergunAttributes : ShotgunAttributes, IBlockScoped {
 	 *
 	 * Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var scattergunHasKnockback: Boolean?
 		get() = attrs.getTyped("scattergun has knockback", BinaryIntCodec)
 		set(value) = attrs.setNullable("scattergun has knockback", value, BinaryIntCodec)
@@ -25,8 +26,8 @@ interface ScattergunAttributes : ShotgunAttributes, IBlockScoped {
 	/**
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var scattergunKnockbackMult: Float?
+	context(attrs: IKeyValueMap)
+	var scattergunKnockbackMult: Number?
 		get() = attrs.getTyped("scattergun knockback mult")
 		set(value) = attrs.setNullable("scattergun knockback mult", value)
 	
@@ -39,11 +40,9 @@ interface ScattergunAttributes : ShotgunAttributes, IBlockScoped {
 	 *
 	 * If true, reloads entire clip at once.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	override var scattergunNoReloadSingle: Boolean?
 		get() = super.scattergunNoReloadSingle
-		set(value) {
-			super.scattergunNoReloadSingle = value
-		}
+		set(value) { super.scattergunNoReloadSingle = value }
 }
 

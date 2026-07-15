@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 
 interface ProjectileArrowAttributes : BaseRocketAttributes, IBlockScoped {
@@ -14,7 +16,7 @@ interface ProjectileArrowAttributes : BaseRocketAttributes, IBlockScoped {
 	 *
 	 * Checked on player.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var arrowHealsBuildings: Boolean?
 		get() = attrs.getTyped("arrow heals buildings", BinaryIntCodec)
 		set(value) = attrs.setNullable("arrow heals buildings", value, BinaryIntCodec)

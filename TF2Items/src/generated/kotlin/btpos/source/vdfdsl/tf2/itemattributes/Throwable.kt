@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: Spellbook
@@ -13,7 +14,7 @@ interface ThrowableAttributes : JarAttributes, IBlockScoped {
 	/**
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var throwableRechargeTime: Int?
 		get() = attrs.getTyped("throwable recharge time")
 		set(value) = attrs.setNullable("throwable recharge time", value)
@@ -21,7 +22,7 @@ interface ThrowableAttributes : JarAttributes, IBlockScoped {
 	/**
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var throwableDetonationTime: Int?
 		get() = attrs.getTyped("throwable detonation time")
 		set(value) = attrs.setNullable("throwable detonation time", value)
@@ -31,7 +32,7 @@ interface ThrowableAttributes : JarAttributes, IBlockScoped {
 	 *
 	 * For timed explosions.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var isThrowablePrimable: Boolean?
 		get() = attrs.getTyped("is throwable primable", BinaryIntCodec)
 		set(value) = attrs.setNullable("is throwable primable", value, BinaryIntCodec)
@@ -41,7 +42,7 @@ interface ThrowableAttributes : JarAttributes, IBlockScoped {
 	 *
 	 * For things like distance/power increases.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var isThrowableChargeable: Boolean?
 		get() = attrs.getTyped("is throwable chargeable", BinaryIntCodec)
 		set(value) = attrs.setNullable("is throwable chargeable", value, BinaryIntCodec)

@@ -1,10 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Chargin' Targe, The Splendid Screen, The Tide Turner, Festive Targe 2014
@@ -56,6 +55,16 @@ interface WearableDemoShieldAttributes : WearableAttributes, IBlockScoped {
 	 *
 	 * Impact damage mult.
 	 */
-	val chargeImpactDamage get() = BonusPenalty<Float, Float>("charge impact damage increased", "charge impact damage decreased")
+	val chargeImpactDamage get() = BonusPenalty<Number, Number>("charge impact damage increased", "charge impact damage decreased")
+	
+	/**
+	 * In-Game: "Immune to the effects of afterburn."
+	 *
+	 * 
+	 */
+	context(attrs: IKeyValueMap)
+	var afterburnImmunity: Boolean?
+		get() = attrs.getTyped("afterburn immunity", BinaryIntCodec)
+		set(value) = attrs.setNullable("afterburn immunity", value, BinaryIntCodec)
 }
 

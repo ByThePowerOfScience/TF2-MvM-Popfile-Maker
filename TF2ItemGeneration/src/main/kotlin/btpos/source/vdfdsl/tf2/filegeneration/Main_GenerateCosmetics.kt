@@ -4,9 +4,11 @@ import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.asString
 import btpos.source.vdfdsl.backing.asSubtree
+import btpos.source.vdfdsl.backing.getAll
 import btpos.source.vdfdsl.backing.getString
 import btpos.source.vdfdsl.backing.getSubtree
 import btpos.source.vdfdsl.backing.toMap
+import btpos.source.vdfdsl.backing.toMultiMap
 import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
 import btpos.source.vdfdsl.vdfparser.ParseVDF
 import java.io.File
@@ -70,8 +72,6 @@ fun Map<String, VDFObject>.getString(index: String): String? {
 	return this[index]?.asString
 }
 
-val VDFSubtree.prefabs get() = getString("prefab")
-
 
 fun getAllItemParentsRecursive(itemTable: VDFSubtree, allPrefabs: Map<String, VDFObject>): Sequence<VDFSubtree> {
 	return PrefabParentIterator(itemTable, allPrefabs).asSequence()
@@ -88,7 +88,9 @@ class PrefabParentIterator(startItem: VDFSubtree, val allPrefabs: Map<String, VD
 	}
 	
 	fun addPrefabsToQueue(itemTable: VDFSubtree) {
-		itemTable.prefabs?.split(' ')?.let { nextPrefabsToCheck.addAll(it) }
+		itemTable.getAll("prefab").forEach {
+			it.asString?.split(' ')?.let { nextPrefabsToCheck.addAll(it) } ?: error("Not a string: $it")
+		}
 	}
 	
 	override fun next(): VDFSubtree {
@@ -156,23 +158,23 @@ data class CosmeticDesc(
 			val itemName = itemTable.getString("name") ?: error("No name field found in $itemTable")
 			
 			return getAllItemParentsRecursive(itemTable, allPrefabs).mapNotNull { item ->
-				val itemMap = item.toMap()
-				val itemSlot = itemMap["item_slot"]?.asString?.also {
+				val itemMap = item.toMultiMap()
+				val itemSlot = itemMap["item_slot"]?.single()?.asString?.also {
 					when (it) {
 						"secondary", "primary", "melee", "action",
 							 "pda", "pda2", "building" -> return@mapNotNull null
 					};
 				}
 				
-				val usedByClasses = itemMap["used_by_classes"]?.asSubtree?.map { (k, v) ->
+				val usedByClasses = itemMap["used_by_classes"]?.single()?.asSubtree?.map { (k, v) ->
 					k.stringValue
 				}
-				val equipRegions = itemMap.getString("equip_region")?.let { listOf(it) }
-				                   ?: itemMap["equip_regions"]?.run {
+				val equipRegions = itemMap["equip_region"]?.single()?.asString?.let { listOf(it) }
+				                   ?: itemMap["equip_regions"]?.single()?.run {
 									   asString?.split(' ') ?: asSubtree?.mapNotNull { (k, v) -> k.takeIf { v.asString == "1" }?.stringValue }
 				                   }
 				
-				val isPaintable = itemMap.getMap("capabilities")?.getString("paintable") == "1"
+				val isPaintable = itemMap["capabilities"]?.single()?.asSubtree?.getString("paintable") == "1"
 				if (usedByClasses == null && equipRegions == null && !isPaintable)
 					null
 				else
@@ -188,14 +190,13 @@ private const val basecosmeticspackage = BuildConfig.COSMETICS_TARGET_PACKAGE
 
 const val itemsimport = BuildConfig.ITEM_FACTORY_LOCATION
 
-fun getItemSchema(): InputStream {
-	return ClassLoader.getSystemClassLoader().getResourceAsStream("items_game.txt") ?: error("Expected item schema to be at src/main/resources/items_game.txt. Retrieve it at <TF2 folder>/tf/scripts/items/items_game.txt")
+fun getItemSchema(): VDFSubtree {
+	val schemaFile =  ClassLoader.getSystemClassLoader().getResourceAsStream("items_game.txt") ?: error("Expected item schema to be at src/main/resources/items_game.txt. Retrieve it at <TF2 folder>/tf/scripts/items/items_game.txt")
+	return ParseVDF.parse(schemaFile).getSubtree("items_game") ?: error("No items_game entry found in item schema...")
 }
 
 fun main() {
-	val parsedItemSchema = ParseVDF.parse(getItemSchema()).entries.single().asSubtree!!
-	
-	generateAttributesNotes(parsedItemSchema, Path(BuildConfig.OUT_DIR).resolve("outfile.md"))
+	generateCosmetics(getItemSchema())
 }
 
 
@@ -284,14 +285,15 @@ fun generateAttributesNotes(parsedItemSchema: VDFSubtree, outputFile: Path) {
 fun generateCosmetics(parsedItemSchema: VDFSubtree) {
 	val prefabs = parsedItemSchema.getSubtree("prefabs")!!.toMap()
 	
-	val (allCosmetics, allMedals) = parsedItemSchema.getSubtree("items")!!.asSequence().mapNotNull {
-		it.asSubtree
-	}.mapNotNull {
-		CosmeticDesc.fromItemTable(it, prefabs)
-	}.groupBy { "medal" in it.equipRegions }.let { it[false]!! to it[true]!! }
+	val (allCosmetics, allMedals) = parsedItemSchema.getSubtree("items")!!
+		.asSequence()
+		.mapNotNull { it.value.asSubtree }
+		.mapNotNull { CosmeticDesc.fromItemTable(it, prefabs) }
+		.groupBy { "medal" in it.equipRegions }
+		.let { it[false]!! to it[true]!! }
 	
 	
-	val outDir = Path(BuildConfig.OUT_DIR).resolve(BuildConfig.ATTRIBUTES_TARGET_PACKAGE.replace('.', File.separatorChar)).createDirectories()
+	val outDir = Path(BuildConfig.OUT_DIR).resolve(BuildConfig.COSMETICS_TARGET_PACKAGE.replace('.', File.separatorChar)).createDirectories()
 	
 	fun Appendable.writeObjectHeader(pkg: String, objName: String, vararg imports: String) {
 		append("package ").append(pkg)
@@ -303,8 +305,8 @@ fun generateCosmetics(parsedItemSchema: VDFSubtree) {
 		
 	}
 	
-	outDir.resolve("AllCosmetics.kt").bufferedWriter().use { writer ->
-		writer.writeObjectHeader(basecosmeticspackage, "AllCosmetics", itemsimport)
+	outDir.resolve("Cosmetics.kt").bufferedWriter().use { writer ->
+		writer.writeObjectHeader(basecosmeticspackage, "Cosmetics", itemsimport)
 		
 		allCosmetics.forEach {
 			writer.append("\n\t@JvmField val ").append(it.varname).append(" = TFItemFactory.WEARABLE(\"").append(it.item_name).append("\")")
@@ -316,7 +318,7 @@ fun generateCosmetics(parsedItemSchema: VDFSubtree) {
 	outDir.resolve("CosmeticsMedals.kt").bufferedWriter().use { writer ->
 		writer.writeObjectHeader(basecosmeticspackage, "CosmeticsMedals", itemsimport)
 		
-		allCosmetics.forEach {
+		allMedals.forEach {
 			writer.append("\n\t@JvmField val ").append(it.varname).append(" = TFItemFactory.WEARABLE(\"").append(it.item_name).append("\")")
 		}
 		
@@ -344,9 +346,9 @@ fun generateCosmetics(parsedItemSchema: VDFSubtree) {
 				val slotname = slot.camelCase().replaceFirstChar { it.uppercaseChar() }
 				val objName = "CosmeticsBySlot_" + slotname
 				out.resolve(objName + ".kt").bufferedWriter().use { writer ->
-					writer.writeObjectHeader(basecosmeticspackage + ".byslot", objName, basecosmeticspackage + ".AllCosmetics")
+					writer.writeObjectHeader(basecosmeticspackage + ".byslot", objName, basecosmeticspackage + ".Cosmetics")
 					for (cosmetic in cosmetics) {
-						writer.append("\n\tval ").append(cosmetic.varname).append(" get() = AllCosmetics.").append(cosmetic.varname)
+						writer.append("\n\tval ").append(cosmetic.varname).append(" get() = Cosmetics.").append(cosmetic.varname)
 					}
 					writer.append("\n}")
 				}
@@ -362,7 +364,7 @@ fun generateCosmetics(parsedItemSchema: VDFSubtree) {
 	// by class -> by slot
 	mutableMapOf<String, MutableMap<String, MutableList<CosmeticDesc>>>().let { byClassBySlot ->
 		fun putCosmetic(tfclass: String, slot: String, desc: CosmeticDesc) {
-			byClassBySlot.computeIfAbsent(tfclass) { mutableMapOf() }.computeIfAbsent(slot) { mutableListOf() }.add(desc)
+			byClassBySlot.computeIfAbsent(tfclass.trim().lowercase()) { mutableMapOf() }.computeIfAbsent(slot.trim().lowercase()) { mutableListOf() }.add(desc)
 		}
 		
 		allCosmetics.forEach { cosm ->

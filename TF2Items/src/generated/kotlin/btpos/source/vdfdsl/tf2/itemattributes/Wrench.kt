@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: Stock Wrench + Reskins, Golden Wrench, The Southern Hospitality, The Jag, The Eureka Effect, The Gunslinger
@@ -18,7 +18,7 @@ interface WrenchAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * If set, pressing reload shows the Eureka Effect menu.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var altFireTeleportToSpawn: Boolean?
 		get() = attrs.getTyped("alt fire teleport to spawn", BinaryIntCodec)
 		set(value) = attrs.setNullable("alt fire teleport to spawn", value, BinaryIntCodec)
@@ -38,12 +38,10 @@ interface WrenchAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * Also determines if it's a "PDQ", which obviously builds minisentries.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	override var wrenchBuildsMinisentry: Boolean?
 		get() = super.wrenchBuildsMinisentry
-		set(value) {
-			super.wrenchBuildsMinisentry = value
-		}
+		set(value) { super.wrenchBuildsMinisentry = value }
 	
 	/**
 	 * Bonus:
@@ -60,6 +58,6 @@ interface WrenchAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * Passive build rate multiplier, same as the convar `tf_construction_build_rate_multiplier`.
 	 */
-	val constructionRate get() = BonusPenalty<Float, Float>("Construction rate increased", "Construction rate decreased")
+	val constructionRate get() = BonusPenalty<Number, Number>("Construction rate increased", "Construction rate decreased")
 }
 

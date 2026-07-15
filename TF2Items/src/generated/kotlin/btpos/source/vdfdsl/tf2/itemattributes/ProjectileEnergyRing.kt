@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 
 interface ProjectileEnergyRingAttributes : BaseProjectileAttributes, IBlockScoped {
@@ -12,9 +14,9 @@ interface ProjectileEnergyRingAttributes : BaseProjectileAttributes, IBlockScope
 	 *
 	 * 
 	 *
-	 * Checked on owner.
+	 * Checked on player.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var energyWeaponPenetration: Boolean?
 		get() = attrs.getTyped("energy weapon penetration", BinaryIntCodec)
 		set(value) = attrs.setNullable("energy weapon penetration", value, BinaryIntCodec)

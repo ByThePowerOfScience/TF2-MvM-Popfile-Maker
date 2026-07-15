@@ -49,7 +49,7 @@ data class NamedAttribute(
 			return forceType!!
 		
 		if ("percentage" in attrType)
-			return "Float"
+			return "Number"
 		
 		return when (attrType) {
 			"additive" -> "Int"

@@ -1,10 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.serialization.codecs.NumberSelectorCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.BonusPenalty
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: TF_WEAPON_SNIPERRIFLE, Upgradeable TF_WEAPON_SNIPERRIFLE, The Sydney Sleeper, The Machina, Festive Sniper Rifle 2011, The Hitman's Heatmaker, Silver Botkiller Sniper Rifle Mk.I, Gold Botkiller Sniper Rifle Mk.I, The AWPer Hand, Rust Botkiller Sniper Rifle Mk.I, Blood Botkiller Sniper Rifle Mk.I, Carbonado Botkiller Sniper Rifle Mk.I, Diamond Botkiller Sniper Rifle Mk.I, Silver Botkiller Sniper Rifle Mk.II, Gold Botkiller Sniper Rifle Mk.II, Shooting Star, The Bazaar Bargain, The Classic
@@ -25,7 +24,7 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 3: Classic.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var cannotHeadshot: Boolean?
 		get() = attrs.getTyped("sniper no headshots", NumberSelectorCodec(1))
 		set(value) = attrs.setNullable("sniper no headshots", value, NumberSelectorCodec(1))
@@ -33,22 +32,26 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
+	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
+	 *
 	 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var soldierBuffType: Int?
-		get() = attrs.getTyped("mod soldier buff type")
-		set(value) = attrs.setNullable("mod soldier buff type", value)
+	context(attrs: IKeyValueMap)
+	override var soldierBuffType: Int?
+		get() = super.soldierBuffType
+		set(value) { super.soldierBuffType = value }
 	
 	/**
 	 * 
 	 *
+	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
+	 *
 	 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var demoBuffType: Int?
-		get() = attrs.getTyped("mod demo buff type")
-		set(value) = attrs.setNullable("mod demo buff type", value)
+	context(attrs: IKeyValueMap)
+	override var demoBuffType: Int?
+		get() = super.demoBuffType
+		set(value) { super.demoBuffType = value }
 	
 	/**
 	 * In-Game: "On Full Charge: +N% damage per shot"
@@ -57,8 +60,8 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var fullChargeDamageBonus: Float?
+	context(attrs: IKeyValueMap)
+	var fullChargeDamageBonus: Number?
 		get() = attrs.getTyped("sniper full charge damage bonus")
 		set(value) = attrs.setNullable("sniper full charge damage bonus", value)
 	
@@ -73,12 +76,10 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Fun fact: this is also affected by the Precision mannpower powerup.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	override var fasterReloadRate: Float?
+	context(attrs: IKeyValueMap)
+	override var fasterReloadRate: Number?
 		get() = super.fasterReloadRate
-		set(value) {
-			super.fasterReloadRate = value
-		}
+		set(value) { super.fasterReloadRate = value }
 	
 	/**
 	 * Bonus:
@@ -93,14 +94,14 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val srifleChargeRate get() = BonusPenalty<Float, Float>("sniper charge per sec", "SRifle Charge rate decreased")
+	val srifleChargeRate get() = BonusPenalty<Number, Number>("sniper charge per sec", "SRifle Charge rate decreased")
 	
 	/**
 	 * In-Game: "Cannot fire unless zoomed"
 	 *
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var canOnlyFireWhenZoomed: Boolean?
 		get() = attrs.getTyped("sniper only fire zoomed", BinaryIntCodec)
 		set(value) = attrs.setNullable("sniper only fire zoomed", value, BinaryIntCodec)
@@ -110,17 +111,17 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var penetratesWhenFullyCharged: Boolean?
-		get() = attrs.getTyped("sniper penetrate players when charged", BinaryIntCodec)
-		set(value) = attrs.setNullable("sniper penetrate players when charged", value, BinaryIntCodec)
+	context(attrs: IKeyValueMap)
+	override var penetratesWhenFullyCharged: Boolean?
+		get() = super.penetratesWhenFullyCharged
+		set(value) { super.penetratesWhenFullyCharged = value }
 	
 	/**
 	 * In-Game: "No headshots when not fully charged"
 	 *
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var cannotHeadshotWithoutFullCharge: Boolean?
 		get() = attrs.getTyped("sniper no headshot without full charge", BinaryIntCodec)
 		set(value) = attrs.setNullable("sniper no headshot without full charge", value, BinaryIntCodec)
@@ -132,7 +133,7 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Funnily enough, it checks if your FOV is lower than your default FOV to see if you're zoomed.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var canHeadshotUnscoped: Boolean?
 		get() = attrs.getTyped("sniper crit no scope", BinaryIntCodec)
 		set(value) = attrs.setNullable("sniper crit no scope", value, BinaryIntCodec)
@@ -142,14 +143,18 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
+	 * Only applies if in a gamemode with upgrades, but applies to all headshots.
+	 *
+	 * Also applies to any hitscan weapon with a `jarate_time` attribute that hit the head.
+	 *
 	 * On attacker.
 	 *
 	 * Level of explosive headshot.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var explosiveHeadshotLevel: Int?
-		get() = attrs.getTyped("explosive sniper shot")
-		set(value) = attrs.setNullable("explosive sniper shot", value)
+	context(attrs: IKeyValueMap)
+	override var explosiveHeadshotLevel: Int?
+		get() = super.explosiveHeadshotLevel
+		set(value) { super.explosiveHeadshotLevel = value }
 	
 	/**
 	 * In-Game: "On Scoped Hit: Apply Jarate for 2 to N seconds based on charge level. Nature's Call: Scoped headshots always mini-crits and reduce the remaining cooldown of Jarate by 1 second."
@@ -164,9 +169,35 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Note: Not actually used in Sydney Sleeper Jarate calculation, as far as I could tell.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var jarateDuration: Int?
 		get() = attrs.getTyped("jarate duration")
 		set(value) = attrs.setNullable("jarate duration", value)
+	
+	/**
+	 * In-Game: "N% movement speed on targets"
+	 *
+	 * 
+	 *
+	 * Multiplier applied to target move-speed on hit.
+	 *
+	 * Duration is equal to the rifle's `jarate_duration` attribute.
+	 */
+	context(attrs: IKeyValueMap)
+	var appliesSnareEffect: Number?
+		get() = attrs.getTyped("applies snare effect")
+		set(value) = attrs.setNullable("applies snare effect", value)
+	
+	/**
+	 * In-Game: "No flinching when aiming and fully charged"
+	 *
+	 * 
+	 *
+	 * Prevents flinching from damage when scoped and fully charged.
+	 */
+	context(attrs: IKeyValueMap)
+	var aimingNoFlinch: Boolean?
+		get() = attrs.getTyped("aiming no flinch", BinaryIntCodec)
+		set(value) = attrs.setNullable("aiming no flinch", value, BinaryIntCodec)
 }
 

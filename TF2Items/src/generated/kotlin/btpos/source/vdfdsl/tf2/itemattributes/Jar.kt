@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: Jarate, Festive Jarate, The Self-Aware Beauty Mark, Mad Milk, Mutated Milk, The Flying Guillotine, The Gas Passer, Unimplemented Spy Decoy Weapon
@@ -16,7 +18,7 @@ interface JarAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * If unset, uses the weapon's default projectile type.
 	 *
-	 * Else use a numbered [btpos.source.vdfdsl.tf2.attributes.impl.ProjectileType].
+	 * Else use a numbered [ProjectileType].
 	 *
 	 * Used to select the model.
 	 *
@@ -24,12 +26,10 @@ interface JarAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Otherwise uses default for its class.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	override var overrideProjectileType: Int?
 		get() = super.overrideProjectileType
-		set(value) {
-			super.overrideProjectileType = value
-		}
+		set(value) { super.overrideProjectileType = value }
 	
 	/**
 	 * In-Game: "N% movement speed on targets"
@@ -40,8 +40,8 @@ interface JarAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * If NOT `1.0`, stun the victim.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var appliesSnareEffect: Float?
+	context(attrs: IKeyValueMap)
+	var appliesSnareEffect: Number?
 		get() = attrs.getTyped("applies snare effect")
 		set(value) = attrs.setNullable("applies snare effect", value)
 	
@@ -52,8 +52,8 @@ interface JarAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Subtracts this value from the cooldown.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var extinguishReducesCooldown: Float?
+	context(attrs: IKeyValueMap)
+	var extinguishReducesCooldown: Number?
 		get() = attrs.getTyped("extinguish reduces cooldown")
 		set(value) = attrs.setNullable("extinguish reduces cooldown", value)
 }

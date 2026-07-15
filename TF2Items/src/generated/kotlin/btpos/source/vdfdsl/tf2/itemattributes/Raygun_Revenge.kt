@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: NONE (but it's there at least?)
@@ -16,11 +18,9 @@ interface Raygun_RevengeAttributes : RayGunAttributes, IBlockScoped {
 	 *
 	 * Removes ammo requirement to fire weapon.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	override var energyWeaponNoDrain: Boolean?
 		get() = super.energyWeaponNoDrain
-		set(value) {
-			super.energyWeaponNoDrain = value
-		}
+		set(value) { super.energyWeaponNoDrain = value }
 }
 

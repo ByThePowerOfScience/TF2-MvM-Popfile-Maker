@@ -1,0 +1,74 @@
+package btpos.source.vdfdsl.tf2.items.cosmetics.byslot
+
+import btpos.source.vdfdsl.tf2.items.cosmetics.AllCosmetics
+
+
+
+object CosmeticsBySlot_Feet {
+	val MNC_MASCOT_OUTFIT get() = AllCosmetics.MNC_MASCOT_OUTFIT
+	val PRAIRIE_HEEL_BITERS get() = AllCosmetics.PRAIRIE_HEEL_BITERS
+	val SCOUT_FLIPFLOPS get() = AllCosmetics.SCOUT_FLIPFLOPS
+	val BALLKICKING_BOOTS get() = AllCosmetics.BALLKICKING_BOOTS
+	val PICKLED_PAWS get() = AllCosmetics.PICKLED_PAWS
+	val FUTANKHAMUN get() = AllCosmetics.FUTANKHAMUN
+	val SHOESTRING_BUDGET get() = AllCosmetics.SHOESTRING_BUDGET
+	val STEELTOED_STOMPERS get() = AllCosmetics.STEELTOED_STOMPERS
+	val LEGEND_OF_BUGFOOT get() = AllCosmetics.LEGEND_OF_BUGFOOT
+	val THE_BOOTIE_TIME get() = AllCosmetics.THE_BOOTIE_TIME
+	val THE_TEUFORT_TOOTH_KICKER get() = AllCosmetics.THE_TEUFORT_TOOTH_KICKER
+	val THE_SNEAKY_SPATS_OF_SNEAKING get() = AllCosmetics.THE_SNEAKY_SPATS_OF_SNEAKING
+	val FLUNKYWARE get() = AllCosmetics.FLUNKYWARE
+	val THE_SPOOKY_SHOES get() = AllCosmetics.THE_SPOOKY_SHOES
+	val AQUA_FLOPS get() = AllCosmetics.AQUA_FLOPS
+	val BUCK_TURNER_ALLSTARS get() = AllCosmetics.BUCK_TURNER_ALLSTARS
+	val THE_LONG_FALL_LOAFERS get() = AllCosmetics.THE_LONG_FALL_LOAFERS
+	val YETI_LEGS get() = AllCosmetics.YETI_LEGS
+	val THE_CHEET_SHEET get() = AllCosmetics.THE_CHEET_SHEET
+	val THE_COLONIAL_CLOGS get() = AllCosmetics.THE_COLONIAL_CLOGS
+	val THE_ROGUES_BROGUES get() = AllCosmetics.THE_ROGUES_BROGUES
+	val TW_MEDIBOT_CHARIOT get() = AllCosmetics.TW_MEDIBOT_CHARIOT
+	val THE_BAPHOMET_TROTTERS get() = AllCosmetics.THE_BAPHOMET_TROTTERS
+	val THE_TERRIER_TROUSERS get() = AllCosmetics.THE_TERRIER_TROUSERS
+	val THE_LOGRAV_LOAFERS get() = AllCosmetics.THE_LOGRAV_LOAFERS
+	val FAUN_FEET get() = AllCosmetics.FAUN_FEET
+	val THE_SPRINTING_CEPHALOPOD get() = AllCosmetics.THE_SPRINTING_CEPHALOPOD
+	val THE_MONSTERS_STOMPERS get() = AllCosmetics.THE_MONSTERS_STOMPERS
+	val BOZOS_BROGUES get() = AllCosmetics.BOZOS_BROGUES
+	val HIGHLAND_HIGH_HEELS get() = AllCosmetics.HIGHLAND_HIGH_HEELS
+	val THE_RAT_STOMPERS get() = AllCosmetics.THE_RAT_STOMPERS
+	val THE_SOLE_SAVIORS get() = AllCosmetics.THE_SOLE_SAVIORS
+	val THE_ARCHERS_GROUNDINGS get() = AllCosmetics.THE_ARCHERS_GROUNDINGS
+	val THE_GAITER_GUARDS get() = AllCosmetics.THE_GAITER_GUARDS
+	val THE_RED_SOCKS get() = AllCosmetics.THE_RED_SOCKS
+	val THE_LONESOME_LOAFERS get() = AllCosmetics.THE_LONESOME_LOAFERS
+	val THE_ARGYLE_ACE get() = AllCosmetics.THE_ARGYLE_ACE
+	val THE_XENO_SUIT get() = AllCosmetics.THE_XENO_SUIT
+	val TALON_TROTTERS get() = AllCosmetics.TALON_TROTTERS
+	val CRAZY_LEGS get() = AllCosmetics.CRAZY_LEGS
+	val KANGA_KICKERS get() = AllCosmetics.KANGA_KICKERS
+	val MOCCASIN_MACHINERY get() = AllCosmetics.MOCCASIN_MACHINERY
+	val EOTL_BLINKS_BREECHES get() = AllCosmetics.EOTL_BLINKS_BREECHES
+	val EOTL_WINTER_PANTS get() = AllCosmetics.EOTL_WINTER_PANTS
+	val EOTL_HIPHUNTER_BOOTS get() = AllCosmetics.EOTL_HIPHUNTER_BOOTS
+	val EOTL_COLDFRONT_CURBSTOMPERS get() = AllCosmetics.EOTL_COLDFRONT_CURBSTOMPERS
+	val THE_BOOTENKHAMUNS get() = AllCosmetics.THE_BOOTENKHAMUNS
+	val DEC2014_FOOLS_FOOTWEAR get() = AllCosmetics.DEC2014_FOOLS_FOOTWEAR
+	val DEC2014_VIKING_BOOTS get() = AllCosmetics.DEC2014_VIKING_BOOTS
+	val SUPPORT_SPURS get() = AllCosmetics.SUPPORT_SPURS
+	val FINAL_FRONTIERSMAN get() = AllCosmetics.FINAL_FRONTIERSMAN
+	val ROBOOT get() = AllCosmetics.ROBOOT
+	val HOT_HEELS get() = AllCosmetics.HOT_HEELS
+	val SQUIRES_SABATONS get() = AllCosmetics.SQUIRES_SABATONS
+	val FOREST_FOOTWEAR get() = AllCosmetics.FOREST_FOOTWEAR
+	val THE_HOT_HUARACHES get() = AllCosmetics.THE_HOT_HUARACHES
+	val ROBIN_WALKERS get() = AllCosmetics.ROBIN_WALKERS
+	val OLYMPIC_LEAPERS get() = AllCosmetics.OLYMPIC_LEAPERS
+	val BANDITS_BOOTS get() = AllCosmetics.BANDITS_BOOTS
+	val LOAF_LOAFERS get() = AllCosmetics.LOAF_LOAFERS
+	val FESTIVE_FLIPTHWOMPS get() = AllCosmetics.FESTIVE_FLIPTHWOMPS
+	val BAREFOOT_BRAWLER get() = AllCosmetics.BAREFOOT_BRAWLER
+	val THE_MAIN_CAST get() = AllCosmetics.THE_MAIN_CAST
+	val SLUMBER_SLACKS get() = AllCosmetics.SLUMBER_SLACKS
+	val MINE_SWEEPERS get() = AllCosmetics.MINE_SWEEPERS
+	val ZOMBIE_SCOUT get() = AllCosmetics.ZOMBIE_SCOUT
+}

@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: Engineer PDA, Sapper
@@ -17,7 +18,7 @@ interface BuilderAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * On owner.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var markForDeathOnBuildingPickup: Boolean?
 		get() = attrs.getTyped("mark for death on building pickup", BinaryIntCodec)
 		set(value) = attrs.setNullable("mark for death on building pickup", value, BinaryIntCodec)
@@ -27,7 +28,7 @@ interface BuilderAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * If true.0, it's a wheatley sapper.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var sapperVoicePak: Int?
 		get() = attrs.getTyped("sapper voice pak")
 		set(value) = attrs.setNullable("sapper voice pak", value)
@@ -41,7 +42,7 @@ interface BuilderAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Gives the sapper a radius instead of being single-target.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var roboSapper: Int?
 		get() = attrs.getTyped("robo sapper")
 		set(value) = attrs.setNullable("robo sapper", value)

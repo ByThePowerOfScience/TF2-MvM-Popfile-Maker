@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.serialization.codecs.NumberSelectorCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: TF_WEAPON_KNIFE, Upgradeable TF_WEAPON_KNIFE, Your Eternal Reward, Conniver's Kunai, The Big Earner, The Wanga Prick, The Sharp Dresser, The Spy-cicle, Festive Knife 2011, The Black Rose, Stock Botkiller Knives
@@ -24,7 +24,7 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * The 'Your Eternal Reward' setting is used by sentries to not target spies after a stab, and the 'Spycicle' setting is used to display the recharge meter.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var setIcicleKnifeMode: Boolean?
 		get() = attrs.getTyped("set icicle knife mode", NumberSelectorCodec(3))
 		set(value) = attrs.setNullable("set icicle knife mode", value, NumberSelectorCodec(3))
@@ -34,7 +34,7 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var meltsInFire: Boolean?
 		get() = attrs.getTyped("melts in fire", BinaryIntCodec)
 		set(value) = attrs.setNullable("melts in fire", value, BinaryIntCodec)
@@ -44,7 +44,7 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var disguiseOnBackstab: Boolean?
 		get() = attrs.getTyped("disguise on backstab", BinaryIntCodec)
 		set(value) = attrs.setNullable("disguise on backstab", value, BinaryIntCodec)
@@ -85,7 +85,7 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var armorPiercing: Int?
 		get() = attrs.getTyped("armor piercing")
 		set(value) = attrs.setNullable("armor piercing", value)
@@ -97,7 +97,7 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * Gain health on backstab. (Kunai).
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var gainHealthOnBackstab: Boolean?
 		get() = attrs.getTyped("sanguisuge", BinaryIntCodec)
 		set(value) = attrs.setNullable("sanguisuge", value, BinaryIntCodec)

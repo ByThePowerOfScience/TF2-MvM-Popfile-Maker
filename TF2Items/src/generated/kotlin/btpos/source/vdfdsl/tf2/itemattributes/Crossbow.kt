@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Crusader's Crossbow, Festive Crusader's Crossbow
@@ -29,12 +31,10 @@ interface CrossbowAttributes : RocketLauncherAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	override var reloadTimeIncreasedHidden: Float?
+	context(attrs: IKeyValueMap)
+	override var reloadTimeIncreasedHidden: Number?
 		get() = super.reloadTimeIncreasedHidden
-		set(value) {
-			super.reloadTimeIncreasedHidden = value
-		}
+		set(value) { super.reloadTimeIncreasedHidden = value }
 	
 	/**
 	 * In-Game: "+N% faster reload time"
@@ -43,11 +43,9 @@ interface CrossbowAttributes : RocketLauncherAttributes, IBlockScoped {
 	 *
 	 * This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	override var fasterReloadRate: Float?
+	context(attrs: IKeyValueMap)
+	override var fasterReloadRate: Number?
 		get() = super.fasterReloadRate
-		set(value) {
-			super.fasterReloadRate = value
-		}
+		set(value) { super.fasterReloadRate = value }
 }
 

@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.NumberSelectorCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Sandvich, The Dalokohs Bar, The Buffalo Steak Sandvich, Fishcake, The Robo-Sandvich, Festive Sandvich, The Second Banana, Bonk! Atomic Punch, Crit-a-Cola, Festive Bonk 2014
@@ -31,7 +32,7 @@ interface LunchboxAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 7 = LUNCHBOX_FISHCAKE.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var lunchboxAddsMaxhealthBonus: Boolean?
 		get() = attrs.getTyped("lunchbox adds maxhealth bonus", NumberSelectorCodec(1))
 		set(value) = attrs.setNullable("lunchbox adds maxhealth bonus", value, NumberSelectorCodec(1))
@@ -57,7 +58,7 @@ interface LunchboxAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 7 = LUNCHBOX_FISHCAKE.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	var lunchboxAddsMinicrits: Boolean?
 		get() = attrs.getTyped("lunchbox adds minicrits", NumberSelectorCodec(2))
 		set(value) = attrs.setNullable("lunchbox adds minicrits", value, NumberSelectorCodec(2))
@@ -67,8 +68,8 @@ interface LunchboxAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var lunchboxHealingDecreased: Float?
+	context(attrs: IKeyValueMap)
+	var lunchboxHealingDecreased: Number?
 		get() = attrs.getTyped("lunchbox healing decreased")
 		set(value) = attrs.setNullable("lunchbox healing decreased", value)
 }

@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Short Circuit
@@ -16,11 +18,9 @@ interface MechanicalArmAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * How much ammo is used per shot. If 0, uses default.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
+	context(attrs: IKeyValueMap)
 	override var ammoPerShot: Int?
 		get() = super.ammoPerShot
-		set(value) {
-			super.ammoPerShot = value
-		}
+		set(value) { super.ammoPerShot = value }
 }
 

@@ -1,8 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.attributes.impl.IBlockScoped
-
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
+import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: TF_WEAPON_FIREAXE, The Axtinguisher, The Homewrecker, Upgradeable TF_WEAPON_FIREAXE, The Powerjack, The Back Scratcher, Sharpened Volcano Fragment, The Postal Pummeler, The Maul, The Third Degree, The Lollichop, Festive Axtinguisher
@@ -15,13 +16,13 @@ interface FireAxeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Ignite enemies on hit.
+	 * Ignites player on hit.
 	 *
-	 * In vanilla, this is indeed only checked on Fire Axes.
+	 * Ignite enemies on hit.
 	 */
-	context(attrs: btpos.source.vdfdsl.modeling.IKeyValueMap)
-	var setDamagetypeIgnite: Boolean?
-		get() = attrs.getTyped("Set DamageType Ignite", BinaryIntCodec)
-		set(value) = attrs.setNullable("Set DamageType Ignite", value, BinaryIntCodec)
+	context(attrs: IKeyValueMap)
+	override var setDamagetypeIgnite: Boolean?
+		get() = super.setDamagetypeIgnite
+		set(value) { super.setDamagetypeIgnite = value }
 }
 

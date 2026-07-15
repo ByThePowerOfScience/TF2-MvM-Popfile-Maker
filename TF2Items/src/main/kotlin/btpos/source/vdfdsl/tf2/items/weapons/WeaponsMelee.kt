@@ -6,7 +6,7 @@ object WeaponsMelee {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.KUKRI
+	 * @see Weapons.TrueStock.KUKRI
 	 */
 	val STOCK_KUKRI = TFItemFactory.BASE_MELEE("Upgradeable TF_WEAPON_CLUB")
 	val TRIBALMANS_SHIV = TFItemFactory.BASE_MELEE("The Tribalman's Shiv")
@@ -16,7 +16,7 @@ object WeaponsMelee {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.SHOVEL
+	 * @see Weapons.TrueStock.SHOVEL
 	 */
 	val STOCK_SHOVEL = TFItemFactory.SHOVEL("Upgradeable TF_WEAPON_SHOVEL")
 	val EQUALIZER = TFItemFactory.SHOVEL("The Equalizer")
@@ -28,7 +28,7 @@ object WeaponsMelee {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.FISTS
+	 * @see Weapons.TrueStock.FISTS
 	 */
 	val STOCK_FISTS = TFItemFactory.FISTS("Upgradeable TF_WEAPON_FISTS")
 	val KILLING_GLOVES_OF_BOXING = TFItemFactory.FISTS("The Killing Gloves of Boxing")
@@ -44,14 +44,14 @@ object WeaponsMelee {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.FIREAXE
+	 * @see Weapons.TrueStock.FIREAXE
 	 */
 	val STOCK_FIREAXE = TFItemFactory.FIRE_AXE("Upgradeable TF_WEAPON_FIREAXE")
 	
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.BOTTLE
+	 * @see Weapons.TrueStock.BOTTLE
 	 */
 	val STOCK_BOTTLE = TFItemFactory.BOTTLE("Upgradeable TF_WEAPON_BOTTLE")
 	val SCOTTISH_HANDSHAKE = TFItemFactory.BOTTLE("The Scottish Handshake")
@@ -75,7 +75,7 @@ object WeaponsMelee {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.KNIFE
+	 * @see Weapons.TrueStock.KNIFE
 	 */
 	val STOCK_KNIFE = TFItemFactory.KNIFE("Upgradeable TF_WEAPON_KNIFE")
 	val STOCK_KNIFE_FESTIVE = TFItemFactory.KNIFE("Festive Knife 2011")
@@ -101,7 +101,7 @@ object WeaponsMelee {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.WRENCH
+	 * @see Weapons.TrueStock.WRENCH
 	 */
 	val STOCK_WRENCH = TFItemFactory.WRENCH("Upgradeable TF_WEAPON_WRENCH")
 	val JAG = TFItemFactory.WRENCH("The Jag")
@@ -137,7 +137,7 @@ object WeaponsMelee {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.BONESAW
+	 * @see Weapons.TrueStock.BONESAW
 	 */
 	val STOCK_BONESAW = TFItemFactory.BONESAW("Upgradeable TF_WEAPON_BONESAW")
 	val AMPUTATOR = TFItemFactory.BONESAW("The Amputator")
@@ -149,7 +149,7 @@ object WeaponsMelee {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see WeaponsAll.TrueStock.BAT
+	 * @see Weapons.TrueStock.BAT
 	 */
 	val STOCK_BAT = TFItemFactory.BAT("Upgradeable TF_WEAPON_BAT")
 	val CANDY_CANE = TFItemFactory.BAT("The Candy Cane")
