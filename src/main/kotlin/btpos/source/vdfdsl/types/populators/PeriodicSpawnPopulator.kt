@@ -43,12 +43,4 @@ class PeriodicSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Ext
 	var `when`: Any? by addField("When")
 }
 
-inline fun Populators.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure)
-/**
- * Creates and adds a new PeriodicSpawn populator to the PopulationManager
- */
-fun PopulationManager.PeriodicSpawn(configure: PeriodicSpawnPopulator.() -> Unit) = PeriodicSpawnPopulator().apply(configure).also {
-	this.populators += it
-}
-
 

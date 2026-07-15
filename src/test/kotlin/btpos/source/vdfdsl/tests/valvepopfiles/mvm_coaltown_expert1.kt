@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.backing.getString
 import btpos.source.vdfdsl.backing.toFormattedString
 import btpos.source.vdfdsl.modeling.invoke
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
-import btpos.source.vdfdsl.tf2.items.weapons.WeaponsAll
+import btpos.source.vdfdsl.tf2.items.weapons.Weapons
 import btpos.source.vdfdsl.tf2.templates.RobotGiantTemplates
 import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
 import btpos.source.vdfdsl.types.WaveSchedule
@@ -17,11 +17,10 @@ import btpos.source.vdfdsl.types.bots.BotSkill.Companion.Easy
 import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
 import btpos.source.vdfdsl.types.bots.WeaponRestrictions
-import btpos.source.vdfdsl.types.canBotsAttackWhileInSpawnRoom
-import btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.types.populators.*
+import btpos.source.vdfdsl.types.populators.Populators.Mission
+import btpos.source.vdfdsl.types.populators.Populators.WaveSpawn_Multi
 import btpos.source.vdfdsl.types.populators.WaveSpawnPopulator.Support
-import btpos.source.vdfdsl.types.respawnWaveTime
 import btpos.source.vdfdsl.types.spawners.Spawners.RandomChoice
 import btpos.source.vdfdsl.types.spawners.Spawners.Squad
 import btpos.source.vdfdsl.types.spawners.Spawners.TFBot
@@ -29,9 +28,8 @@ import btpos.source.vdfdsl.types.spawners.Spawners.Tank
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 import btpos.source.vdfdsl.types.spawners.TankSpawner
 import btpos.source.vdfdsl.types.spawners.critBoosted
-import btpos.source.vdfdsl.types.spawners.addAttributesFor
+import btpos.source.vdfdsl.types.spawners.addAttributesForExisting
 import btpos.source.vdfdsl.types.specifics.OutputAction
-import btpos.source.vdfdsl.types.startingCurrency
 import btpos.source.vdfdsl.utils.plus
 import btpos.source.vdfdsl.vdfparser.ParseVDF
 import org.junit.jupiter.api.Test
@@ -138,7 +136,7 @@ class mvm_coaltown_expert1 {
 				
 				+TFBot {
 					template = RobotStandardTemplates.Sniper.SYDNEY_SLEEPER
-					items += WeaponsAll.RAZORBACK
+					items += Weapons.RAZORBACK
 				}
 			}.also {
 				populators += it.copy().apply {
@@ -364,7 +362,7 @@ class mvm_coaltown_expert1 {
 				+TFBot {
 					`class` = TFClass.Soldier
 					skill = BotSkill.Expert
-					items += WeaponsAll.DIRECT_HIT
+					items += Weapons.DIRECT_HIT
 					tags += tag_preferFlankRight
 				}
 			}
@@ -648,7 +646,7 @@ class mvm_coaltown_expert1 {
 			giantSpawnLocation()
 			
 			totalCount = 4
-			trickleIn(45)
+			trickleInEvery(45.seconds)
 			waitBeforeStarting = 60
 			totalCurrency = 50
 			
@@ -659,7 +657,7 @@ class mvm_coaltown_expert1 {
 			giantSpawnLocation()
 			
 			totalCount = 6
-			trickleIn(delayBetweenSpawns = 2)
+			trickleInEvery(2.seconds)
 			waitForAllSpawned = wave05d
 			waitBeforeStarting = 60
 			totalCurrency = 50
@@ -775,7 +773,7 @@ fun wave7() = WaveBuilder {
 			skill = BotSkill.Hard
 		}
 		val huntsmanSniper = TFBot(template = RobotStandardTemplates.Sniper.HUNTSMAN) {
-			addAttributesFor(WeaponsAll.HUNTSMAN) {
+			addAttributesForExisting(Weapons.HUNTSMAN) {
 				damage.bonus.visible = 0.075f
 				fasterReloadRate = 0.4f
 			}
@@ -822,8 +820,8 @@ fun wave7() = WaveBuilder {
 			`class` = TFClass.Soldier
 			skill = BotSkill.Expert
 			weaponRestriction = WeaponRestrictions.PrimaryOnly
-			items += WeaponsAll.DIRECT_HIT
-			items += WeaponsAll.BUFF_BANNER
+			items += Weapons.DIRECT_HIT
+			items += Weapons.BUFF_BANNER
 			attributes += Attributes.SpawnWithFullCharge
 			characterAttributes {
 				BuffItemAttributes.increaseBuffDuration = 9.0f

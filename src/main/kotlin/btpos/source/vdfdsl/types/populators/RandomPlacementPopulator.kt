@@ -20,13 +20,5 @@ class RandomPlacementPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = E
 	var navAreaFilter: NavArea? by addField("NavAreaFilter")
 }
 
-inline fun Populators.RandomPlacement(configure: RandomPlacementPopulator.() -> Unit) = RandomPlacementPopulator().apply(configure)
-/**
- * Creates and adds a new RandomPlacement populator to the PopulationManager
- */
-fun PopulationManager.RandomPlacement(configure: RandomPlacementPopulator.() -> Unit) = RandomPlacementPopulator().apply(configure).also {
-	this.populators += it
-}
-
 
 	

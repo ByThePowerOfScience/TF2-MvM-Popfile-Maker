@@ -70,33 +70,6 @@ data class Objective(val item: String) : IVDFRepresentableValue_Trivial {
 	}
 }
 
-/**
- * Define a set of bots that spawn on a cooldown instead of based on the normal wave schedule.
- *
- * Example: sentry busters, snipers, spies.
- */
-fun Populators.Mission(configure: MissionPopulator.() -> Unit) = MissionPopulator().apply(configure)
-
-/**
- * Define a set of bots that spawn on a cooldown instead of based on the normal wave schedule.
- *
- * Example: sentry busters, snipers, spies.
- *
- * @param wave What wave this mission should start proc'ing on.
- * @param runForWaves How many waves this mission should run for, including its start wave.  Defaults to `1`.
- */
-fun Mission(wave: Int? = null, runForWaves: Int = 1, configure: MissionPopulator.() -> Unit): MissionPopulator {
-	return MissionPopulator().also {
-		if (wave != null)
-			it.beginAtWave = wave
-		
-		it.runForThisManyWaves = runForWaves
-	}.apply(configure)
-}
-
-
-
-
 
 
 
