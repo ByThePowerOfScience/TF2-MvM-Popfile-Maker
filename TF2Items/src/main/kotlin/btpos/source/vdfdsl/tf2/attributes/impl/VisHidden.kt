@@ -14,3 +14,11 @@ open class VisHidden<VIS : Any, HIDDEN : Any>(private val visible_attrName: Stri
 	    get() = attrs.getTyped(hidden_attrName, hiddenCodec)
 	    set(value) = attrs.setNullable(hidden_attrName, value, hiddenCodec)
 }
+
+/**
+ * Overloaded assignment operator to implicitly set the visible one if you have that compiler plugin.
+ */
+context(attrs: IKeyValueMap)
+fun <VIS : Any> VisHidden<VIS, *>.assign(value: VIS?) {
+	this.visible = value
+}
