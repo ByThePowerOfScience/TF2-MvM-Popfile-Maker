@@ -66,7 +66,6 @@ object CosmeticsBySlot {
 	val SoldierLegs get() = CosmeticsBySlot_SoldierLegs
 	val SniperQuiver get() = CosmeticsBySlot_SniperQuiver
 	val SniperPocketLeft get() = CosmeticsBySlot_SniperPocketLeft
-	val Back get() = CosmeticsBySlot_Back
 	val Ears get() = CosmeticsBySlot_Ears
 	val RightShoulder get() = CosmeticsBySlot_RightShoulder
 	val DemoHeadReplacement get() = CosmeticsBySlot_DemoHeadReplacement

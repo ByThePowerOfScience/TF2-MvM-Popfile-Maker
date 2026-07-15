@@ -315,15 +315,15 @@ fun generateCosmetics(parsedItemSchema: VDFSubtree) {
 		writer.append("\n}")
 	}
 	
-	outDir.resolve("CosmeticsMedals.kt").bufferedWriter().use { writer ->
-		writer.writeObjectHeader(basecosmeticspackage, "CosmeticsMedals", itemsimport)
-		
-		allMedals.forEach {
-			writer.append("\n\t@JvmField val ").append(it.varname).append(" = TFItemFactory.WEARABLE(\"").append(it.item_name).append("\")")
-		}
-		
-		writer.append("\n}")
-	}
+//	outDir.resolve("CosmeticsMedals.kt").bufferedWriter().use { writer ->
+//		writer.writeObjectHeader(basecosmeticspackage, "CosmeticsMedals", itemsimport)
+//
+//		allMedals.forEach {
+//			writer.append("\n\t@JvmField val ").append(it.varname).append(" = TFItemFactory.WEARABLE(\"").append(it.item_name).append("\")")
+//		}
+//
+//		writer.append("\n}")
+//	}
 	
 	// this is why I got a laptop with an insane amount of RAM: so I can do lazy stuff like this in my scripts
 	mutableMapOf<String, MutableList<CosmeticDesc>>().let { bySlot ->
@@ -332,7 +332,7 @@ fun generateCosmetics(parsedItemSchema: VDFSubtree) {
 				bySlot.computeIfAbsent("hat") { mutableListOf() }.add(cosmetic)
 			else {
 				for (slot in cosmetic.equipRegions) {
-					bySlot.computeIfAbsent(slot) { mutableListOf() }.add(cosmetic)
+					bySlot.computeIfAbsent(slot.lowercase()) { mutableListOf() }.add(cosmetic)
 				}
 			}
 		}
