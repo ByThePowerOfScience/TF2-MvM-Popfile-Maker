@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED")
 package btpos.source.vdfdsl.types.spawners
 
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
@@ -67,8 +68,8 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	 * Define arbitrary item attributes without adding the weapon itself.
 	 *
 	 * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
-	 *TODO
-	 * @see TFItem.addAttributesTo
+	 *
+	 * @see addAttributesFor
 	 */
 	var itemAttributes: List<KeyValueMapImpl> by addField("ItemAttributes", serializer=flatListWithKey()) { listOf() }
 	

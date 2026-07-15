@@ -174,6 +174,7 @@ class mvm_coaltown_expert1 {
 			trigger("wave_finished_relay")
 		}
 		waitWhenDone = 65
+		@Suppress("Deprecation")
 		checkpoint = true
 	}
 	

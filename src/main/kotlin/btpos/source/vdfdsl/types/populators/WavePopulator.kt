@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED")
 package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
@@ -28,7 +29,7 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	
 	var waitWhenDone: Number? by addField("WaitWhenDone")
 	
-	@Deprecated("Apparently doesn't do anything?")
+	@Deprecated("According to sigsegv, doesn't do anything.")
 	var checkpoint: Boolean? by addField("Checkpoint", serializer = { if (it) "yes" else "no" })
 	
 	/**
