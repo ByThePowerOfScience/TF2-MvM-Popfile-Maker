@@ -97,10 +97,6 @@ class WaveBuilder(subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 	
 	var _currentTimeOffset: Duration = 0.seconds
 	
-	/**
-	 * The default `Where` field for any WaveSpawns that don't have it set.
-	 */
-	lateinit var defaultSpawnLocation: String
 	
 	/**
 	 * The next wavespawns added with `+` should happen after [duration] amount of time has passed since the previous subwaves began.
@@ -149,14 +145,6 @@ class WaveBuilder(subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 			
 			waitingFor.applyToWaveSpawn(this, this@WaveBuilder._currentTimeOffset)
 			
-			
-			if (this.where == null) {
-				if (this@WaveBuilder::defaultSpawnLocation.isInitialized) {
-					this.where = this@WaveBuilder.defaultSpawnLocation
-				} else {
-					error("WaveSpawn did not have a `where`, but WaveBuilder#defaultSpawnLocation is not set.")
-				}
-			}
 		}
 	}
 }
@@ -188,7 +176,7 @@ class WaveBuilder(subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 fun WaveBuilder.waitForAllDead(subwave: WaveSpawnPopulator) {
 	this._currentTimeOffset = 0.seconds
 	this._offsetAfter = WaveBuilder.WaitingFor.AllDead(subwave)
-}
+} // TODO make this not require a subwave, instead just do waitForAllDead() and have it automatically rename stuff to make that work. WaitForAllDead <whatever is at the leaf of the dependency tree>
 
 
 /**

@@ -15,6 +15,7 @@ import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
 import btpos.source.vdfdsl.types.bots.WeaponRestrictions
 import kotlin.apply
+import kotlin.collections.plus
 
 /**
  * ```
@@ -23,7 +24,8 @@ import kotlin.apply
  * val SYDNEY_SNIPER_BOT = SNIPER_BOT.copy(item = listOf(TFItems.Sniper.SYDNEY_SLEEPER))
  * ```
  */
-class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractSpawner(_subtree) {
+@Suppress("RedundantModalityModifier")
+open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractSpawner(_subtree) {
 	override val _structIdentifier: String
 		get() = "TFBot"
 	
@@ -61,6 +63,16 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	
 	var items: List<TFItem<*>> by selfNamedList()
 	
+	/**
+	 * Define arbitrary item attributes without adding the weapon itself.
+	 *
+	 * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
+	 *TODO
+	 * @see TFItem.addAttributesTo
+	 */
+	var itemAttributes: List<KeyValueMapImpl> by addField("ItemAttributes", serializer=flatListWithKey()) { listOf() }
+	
+	
 	var attributes: List<TFBotAttributes> by addField("Attributes", serializer = flatListWithKey()) { listOf() }
 	
 	var characterAttributes: KeyValueMapImpl? by addField("CharacterAttributes")
@@ -89,5 +101,15 @@ class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 			return newSpawner
 		}
 	}
+}
+
+
+/**
+ * Define attributes for an item without adding the item itself.
+ *
+ * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
+ */
+inline fun <ATTR : Any> TFBotSpawner.addAttributesFor(item: TFItem<ATTR>, attrScope: context(IKeyValueMap) ATTR.() -> Unit) {
+	itemAttributes += item.usingAttributesScope(KeyValueMapImpl(), attrScope)
 }
 

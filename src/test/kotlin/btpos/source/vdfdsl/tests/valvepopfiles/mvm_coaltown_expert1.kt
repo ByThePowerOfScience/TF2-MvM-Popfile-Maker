@@ -2,7 +2,7 @@ package btpos.source.vdfdsl.tests.valvepopfiles
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
-import btpos.source.vdfdsl.backing.getAll
+import btpos.source.vdfdsl.backing.getString
 import btpos.source.vdfdsl.backing.toFormattedString
 import btpos.source.vdfdsl.modeling.invoke
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
@@ -29,6 +29,7 @@ import btpos.source.vdfdsl.types.spawners.Spawners.Tank
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 import btpos.source.vdfdsl.types.spawners.TankSpawner
 import btpos.source.vdfdsl.types.spawners.critBoosted
+import btpos.source.vdfdsl.types.spawners.addAttributesFor
 import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.types.startingCurrency
 import btpos.source.vdfdsl.utils.plus
@@ -53,8 +54,9 @@ private const val tag_specialmainleft = "special_main_left"
 class mvm_coaltown_expert1 {
 	val GIANT_SCOUT get() = TFBot(template = RobotGiantTemplates.Scout.`Super Scout`)
 	
-	
+	val HEAVY_FIST get() = TFBot(template= RobotStandardTemplates.Heavyweapons.FIST)
 	val GIANT_HEAVY get() = TFBot(template = RobotGiantTemplates.Heavyweapons.`Giant Heavy`)
+	val GIANT_DEFLECTOR_HEAVY = TFBot(template = RobotGiantTemplates.Heavyweapons.`Giant Deflector Heavy`)
 	val QUICKFIX_MEDIC get() = TFBot(template = RobotStandardTemplates.Medic.QUICKUBER)
 	val EASY_SCOUT
 		get() = TFBot {
@@ -217,7 +219,7 @@ class mvm_coaltown_expert1 {
 				totalCurrency = 100
 				
 				+Squad {
-					+GIANT_HEAVY
+					+HEAVY_FIST
 					+QUICKFIX_MEDIC
 				}
 			}
@@ -248,7 +250,7 @@ class mvm_coaltown_expert1 {
 				totalCurrency = 150
 				
 				+Squad {
-					+GIANT_HEAVY
+					+HEAVY_FIST
 					+QUICKFIX_MEDIC
 					+TFBot {
 						`class` = TFClass.Pyro
@@ -459,7 +461,7 @@ class mvm_coaltown_expert1 {
 			waitBetweenSpawns = 25
 			totalCurrency = 100
 			
-			+TFBot(template = RobotGiantTemplates.Heavyweapons.`Giant Deflector Heavy`)
+			+GIANT_DEFLECTOR_HEAVY
 		}
 		
 		+wave03a
@@ -492,6 +494,7 @@ class mvm_coaltown_expert1 {
 			totalCount = 48
 			individualGroupsOf(12)
 			waitBeforeStarting = 30
+			waitBetweenSpawns = 20
 			totalCurrency = 200
 			
 			+TFBot {
@@ -633,17 +636,17 @@ class mvm_coaltown_expert1 {
 			waitBetweenSpawns = 60
 			totalCurrency = 100
 			
-			spawner = squadWithSoldier(tag_specialmainright)
+			spawner = squadWithSoldier(tag_specialmainleft)
 		}
 		val wave05c by wave05b.copy()
 			.apply {
-				spawner = squadWithSoldier(tag_specialmainleft)
+				spawner = squadWithSoldier(tag_specialmainright)
 			}
 		
 		val wave05d by WaveSpawn {
 			giantSpawnLocation()
 			
-			
+			totalCount = 4
 			trickleIn(45)
 			waitBeforeStarting = 60
 			totalCurrency = 50
@@ -654,6 +657,7 @@ class mvm_coaltown_expert1 {
 		val wave05e by WaveSpawn {
 			giantSpawnLocation()
 			
+			totalCount = 6
 			trickleIn(delayBetweenSpawns = 2)
 			waitForAllSpawned = wave05d
 			waitBeforeStarting = 60
@@ -672,9 +676,9 @@ class mvm_coaltown_expert1 {
 	fun wave6() = WaveBuilder {
 		myDefaultWaveSettings()
 		
-		defaultSpawnLocation = basicSpawn
-		
 		val hardScouts = WaveSpawn("wave06a") {
+			defaultSpawnLocation()
+			
 			totalCount = 36
 			individualGroupsOf(18)
 			waitBetweenSpawns = 10
@@ -698,12 +702,13 @@ class mvm_coaltown_expert1 {
 			totalCurrency = 100
 			
 			+Squad {
-				+GIANT_HEAVY
+				+GIANT_DEFLECTOR_HEAVY
 				+TFBot(template= RobotGiantTemplates.Medic.`Giant Medic`)
 			}
 		}
 		
 		val fastScouts = WaveSpawn("wave06c") {
+			defaultSpawnLocation()
 			totalCount = 5
 			maxActive = 5
 			spawnCount = 2
@@ -715,6 +720,7 @@ class mvm_coaltown_expert1 {
 		}
 		
 		val hardSoldiers = WaveSpawn("wave06d") {
+			defaultSpawnLocation()
 			totalCount = 12
 			allAtOnce()
 			totalCurrency = 100
@@ -737,7 +743,6 @@ class mvm_coaltown_expert1 {
 fun wave7() = WaveBuilder {
 	myDefaultWaveSettings()
 	
-	defaultSpawnLocation = basicSpawn
 	
 	val tanksEvery30Seconds = tankSubWave(20_000, 75) {
 		name = "wave07a"
@@ -747,6 +752,7 @@ fun wave7() = WaveBuilder {
 		totalCurrency = 500
 	}
 	val hardScoutsWithMedics = WaveSpawn(name="wave07c") {
+		defaultSpawnLocation()
 		totalCount = 54
 		maxActive = 6
 		spawnCount = 4
@@ -768,7 +774,7 @@ fun wave7() = WaveBuilder {
 			skill = BotSkill.Hard
 		}
 		val huntsmanSniper = TFBot(template = RobotStandardTemplates.Sniper.HUNTSMAN) {
-			items += WeaponsAll.HUNTSMAN {
+			addAttributesFor(WeaponsAll.HUNTSMAN) {
 				damage.bonus.visible = 0.075f
 				fasterReloadRate = 0.4f
 			}
@@ -794,6 +800,7 @@ fun wave7() = WaveBuilder {
 				addMultiple(3, huntsmanSniper)
 			}
 		}
+		defaultSpawnLocation()
 		totalCount = 36
 		maxActive = 12
 		spawnCount = 6
@@ -803,6 +810,7 @@ fun wave7() = WaveBuilder {
 	}
 	
 	val directHitBannerSoldiers = WaveSpawn("wave07e") {
+		defaultSpawnLocation()
 		totalCount = 12
 		maxActive = 12
 		spawnCount = 6
@@ -823,6 +831,7 @@ fun wave7() = WaveBuilder {
 	}
 	
 	fun giantHeavy(letter: String, tag: String) = WaveSpawn(name="wave07$letter") {
+		defaultSpawnLocation()
 		totalCount = 1
 		allAtOnce()
 		totalCurrency = 50
@@ -837,6 +846,10 @@ fun wave7() = WaveBuilder {
 		skin = 1
 	}) {
 		name = "wave07j"
+		totalCount = 1
+		waitBetweenSpawns = 0
+		waitBeforeStarting = 15
+		totalCurrency = 0
 	}
 	
 	+tanksEvery30Seconds
@@ -859,7 +872,7 @@ fun wave7() = WaveBuilder {
 
 
 fun comparePrimitives(expected: VDFPrimitive, actual: VDFPrimitive): Boolean {
-	return expected.stringValue == actual.stringValue || run {
+	return expected.stringValue.equals(actual.stringValue, ignoreCase = true) || run {
 		val float = expected.stringValue.toDoubleOrNull()
 		val f2 = actual.stringValue.toDoubleOrNull()
 		float != null && float == f2
@@ -872,7 +885,38 @@ fun compareSubtreesUnordered(prevKeys: List<String>, expected: VDFSubtree, actua
 	}
 	
 	// check all keys present
-	assertEquals(expected.size, actual.size, "${pathToHere()}: subtrees' size")
+	if (expected.size != actual.size) {
+		val expectedKeySet = expected.asSequence().map { it.key.toFormattedString() }.groupingBy { it }.eachCount()
+		val actualKeySet = actual.asSequence().map { it.key.toFormattedString() }.groupingBy { it }.eachCount()
+		val differences = mutableSetOf<Pair<String, Int>>()
+		for (key in expectedKeySet.keys) {
+			val fromExpected = expectedKeySet[key]!!
+			val fromActual = actualKeySet[key] ?: 0
+			
+			if (fromExpected != fromActual) {
+				differences += key to (fromExpected - fromActual)
+			}
+		}
+		val extraKeys = mutableListOf<Pair<String, Int>>()
+		for ((actualKey, actualCount) in actualKeySet) {
+			if (actualKey !in expectedKeySet) {
+				extraKeys += actualKey to actualCount
+			}
+		}
+		val keycount = { (k: String, count: Int): Map.Entry<String, Int> -> k + (if (count > 1) " [$count]" else "") }
+		assertEquals(expected.size, actual.size,
+			"${pathToHere()}: Key count not equal. \n" +
+			"Expected keys: ${expectedKeySet.map(keycount).sorted() }\n" +
+			"Actual keys: ${actualKeySet.map(keycount).sorted()}\n" +
+			"Differences: \n" +
+			(if (differences.isNotEmpty()) {
+				"\tExpected: ${differences.map { (k, count) -> k + (if (count > 1) " [+$count]" else "") }}"
+			} else "") +
+			(if (extraKeys.isNotEmpty()) {
+				"\tActual had extra keys: ${extraKeys.map { (k, count) -> k + (if (count > 1) " [$count]" else "") }}\n"
+			} else "")
+		)
+	}
 	
 	val expectedKeys = expected.entries.groupBy ({ it.key }, { it.value })
 	val actualKeys = actual.entries.groupBy ({ it.key }, { it.value })
@@ -885,25 +929,30 @@ fun compareSubtreesUnordered(prevKeys: List<String>, expected: VDFSubtree, actua
 		// Track what keys have been matched
 		val actualValuesMutable = actualValues.toMutableList()
 		
-		expectedValues.forEach { expected ->
+		expectedValues.forEach { expectedValue ->
 			// find matching value and remove it from the list
-			val m = when (expected) {
+			val m = when (expectedValue) {
 				is VDFPrimitive -> {
-					val m = actualValuesMutable.find { it is VDFPrimitive && comparePrimitives(expected, it) }
+					val m = actualValuesMutable.find { it is VDFPrimitive && comparePrimitives(expectedValue, it) }
 					
-					assertNotNull(m, "${pathToHere(k)} - Expected value: ${expected.toFormattedString()}. Actual: " + actualValuesMutable.map { it.toFormattedString() })
+					assertNotNull(m, "${pathToHere(k)} - Expected value: ${expectedValue.toFormattedString()}. Actual: " + actualValuesMutable.map { it.toFormattedString() })
 				}
+				// TODO if it's a Wave, it has to be sequential-ish ugh this is annoying
 				is VDFSubtree -> {
 					val m = actualValuesMutable.asSequence()
-						.filterIsInstance<VDFSubtree>()
-						.mapIndexed { i, it -> i to runCatching { compareSubtreesUnordered(prevKeys + k.stringValue, expected, it) } }
-						.toList()
+						.filterIsInstance<VDFSubtree>().let {
+							val expectedName = expectedValue.getString("Name")
+							if (expectedName != null) {
+								it.filter { it.getString("Name") == expectedName }
+							} else {
+								it
+							}.mapIndexed { i, it -> i to runCatching { compareSubtreesUnordered(prevKeys + k.stringValue, expectedValue, it) } }
+						}
 					
 					assert(m.any { (_, it) -> it.isSuccess }) {
 						"${pathToHere(k)}: no matching value found.\n" +
-						"Expected: ${expected.toFormattedString()}\n\n\n" +
-						
-						"Reasons for failure: \n" + m.joinToString("\n") { (i, it) -> "$i. ${it.exceptionOrNull()!!.message}" } + "\n=======================================================================================\n\n"
+						"Expected: \n${expectedValue.toFormattedString().prependIndent()}\n" +
+						"Actual possibilities: \n" + m.joinToString("\n") { (i, it) -> "$i. { \n${it.exceptionOrNull()?.message?.prependIndent()} \n}" } + "\n\n"
 					}
 					
 					m.first()

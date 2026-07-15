@@ -28,7 +28,7 @@ fun WaveSpawnPopulator.allAtOnce() {
  * ```
  */
 fun WaveSpawnPopulator.trickleIn(delayBetweenSpawns: Int, groupSize: Int = 1) {
-	maxActive = totalCount
+	maxActive = totalCount ?: error("Total count not set.")
 	spawnCount = groupSize
 	waitBetweenSpawns = delayBetweenSpawns
 }
