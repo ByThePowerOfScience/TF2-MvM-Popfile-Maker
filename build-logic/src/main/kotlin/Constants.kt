@@ -15,5 +15,5 @@ object Constants {
 	
 	
 	
-	const val PROJECT_VERSION = "1.0"
+	const val PROJECT_VERSION = "1.0-beta"
 }
