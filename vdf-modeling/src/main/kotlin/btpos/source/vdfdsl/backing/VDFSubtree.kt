@@ -70,7 +70,7 @@ fun VDFSubtree.toMap(): Map<String, VDFObject> {
 	val map = this.associate { it.key.stringValue to it.value }
 	require(map.size == this.size) {
 		"Cannot convert subtree with multiple entries for a single key to a map.\n" +
-		"Duplicate keys: ${this.entries.groupBy { it.key }.filterValues { it.size == 1 }.keys.joinToString()}\n" +
+		"Duplicate keys: ${this.entries.groupBy { it.key }.filterValues { it.size != 1 }.keys.joinToString()}\n" +
 		"\n" +
 		"Subtree: $this"
 	}
