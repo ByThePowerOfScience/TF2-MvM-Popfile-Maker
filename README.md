@@ -52,6 +52,11 @@ fun main() {
 	myWaveSchedule.writeToFile("./my_popfile.pop") // <-- Writes everything to a VDF, exactly as if you'd written it by hand
 }
 ```
+
+Full example: [mvm_coaltown_expert1.kt](src/test/kotlin/btpos/source/vdfdsl/tests/valvepopfiles/mvm_coaltown_expert1.kt)
+
+Compare to: [mvm_coaltown_expert1.pop](mvm_coaltown_expert1.pop)
+
 ## Utilities!
 
 ### Implicit subwave naming:
