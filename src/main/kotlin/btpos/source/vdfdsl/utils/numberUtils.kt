@@ -11,7 +11,7 @@ private fun Double.orInt(): Number {
 	else
 		return this
 }
-
+//TODO: just make it SERIALIZE as an int, even if it's always stored as a double
 operator fun Number.plus(other: Number): Number {
 	return (this.toDouble() + other.toDouble()).orInt()
 }

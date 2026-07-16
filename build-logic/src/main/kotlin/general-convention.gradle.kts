@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 plugins {
 	kotlin("jvm")
 	id("com.github.gmazzo.buildconfig")
+	id("publishing-convention")
 }
 
 val kotlin: KotlinJvmExtension get() = extensions.getByType()
@@ -14,6 +15,11 @@ kotlin {
 	compilerOptions {
 		freeCompilerArgs.set(listOf("-Xcontext-parameters", "-Xreturn-value-checker=check"))
 	}
+}
+
+java {
+	withSourcesJar()
+	withJavadocJar()
 }
 
 repositories {

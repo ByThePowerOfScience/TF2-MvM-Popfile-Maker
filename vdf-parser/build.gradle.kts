@@ -27,7 +27,16 @@ dependencies {
 
 
 configurations {
-	implementation.extendsFrom(shadow)
+	compileClasspath.extendsFrom(shadow)
+	runtimeClasspath.extendsFrom(shadow)
+	
+	runtimeElements {
+		outgoing.artifacts.clear()
+	}
+}
+
+artifacts {
+	add(configurations.runtimeElements.name, tasks.shadowJar)
 }
 
 tasks.shadowJar {

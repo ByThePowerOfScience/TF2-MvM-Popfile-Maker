@@ -1,10 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
 	id("general-convention")
 }
 
-group = Constants.Groups.tf2("itemattributes")
+group = Constants.Groups.TF2
 version = Constants.PROJECT_VERSION
 
 repositories {
@@ -16,7 +14,7 @@ repositories {
 }
 
 dependencies {
-	implementation("btpos.source.vdfdsl.vdf:vdf-modeling:${Constants.PROJECT_VERSION}")
+	api("btpos.source.vdfdsl.vdf:vdf-modeling:${Constants.PROJECT_VERSION}")
 	
 	testImplementation(platform("org.junit:junit-bom:6.0.0"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
@@ -27,12 +25,6 @@ sourceSets.main {
 	kotlin.srcDir("src/generated/kotlin")
 }
 
-sourceSets.create("file-generation")
-
 tasks.test {
 	useJUnitPlatform()
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.compilerOptions {
-	freeCompilerArgs.set(listOf("-XXLanguage:+ContextParameters"))
 }
