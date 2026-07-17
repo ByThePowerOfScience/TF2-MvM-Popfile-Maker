@@ -1,4 +1,4 @@
-package btpos.source.vdfdsl.tf2.rafmod
+package btpos.source.vdfdsl.tf2.rafmod.tftypes
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial

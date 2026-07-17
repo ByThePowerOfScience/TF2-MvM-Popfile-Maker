@@ -6,9 +6,9 @@ import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.rafmod.TFTeam
+import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
-import btpos.source.vdfdsl.tf2.rafmod.TFSpell
+import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFSpell
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.collections.map
 
@@ -20,37 +20,37 @@ abstract class RafmodHalloween {
 	/**
 	 * Enforces Halloween mode, but does not enable wave 666 and zombie bots.
 	 */
-	var WaveSchedule.forceHolloween: Boolean? by addField("ForceHoliday", conditional = SIGSEGV, serializer = { if (this) 2 else 0 })
+	open var WaveSchedule.forceHolloween: Boolean? by addField("ForceHoliday", conditional = SIGSEGV, serializer = { if (this) 2 else 0 })
 	
 	/**
 	 * If true, disallows the thriller taunt while Halloween is active.
 	 */
-	var WaveSchedule.noThrillerTaunt: Boolean? by addField("NoThrillerTaunt", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noThrillerTaunt: Boolean? by addField("NoThrillerTaunt", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, player deaths during Halloween will not spawn a crit-pumpkin.
 	 */
-	var WaveSchedule.noCritPumpkin: Boolean? by addField("NoCritPumpkin", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noCritPumpkin: Boolean? by addField("NoCritPumpkin", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, ammo boxes and health packs will retain their default model even while a holiday is active.
 	 */
-	var WaveSchedule.noHolidayPickups: Boolean? by addField("NoHolidayPickups", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noHolidayPickups: Boolean? by addField("NoHolidayPickups", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, the game will not display "Wave 666" when [eventPopFile][btpos.source.vdfdsl.types.PopulationManager.eventPopFile] is set.
 	 */
-	var WaveSchedule.zombiesNoWave666: Boolean? by addField("ZombiesNoWave666", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.zombiesNoWave666: Boolean? by addField("ZombiesNoWave666", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, bots will drop spells on death.
 	 */
-	var WaveSchedule.botsDropSpells: Boolean? by addField("BotsDropSpells", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.botsDropSpells: Boolean? by addField("BotsDropSpells", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, giants will drop rare spells instead of common ones.
 	 */
-	var WaveSchedule.giantsDropRareSpells: Boolean? by addField("GiantsDropRareSpells", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.giantsDropRareSpells: Boolean? by addField("GiantsDropRareSpells", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * Drop chance for common spell books, from `0` to `1`.
@@ -60,7 +60,7 @@ abstract class RafmodHalloween {
 	 * spellDropRateCommon = 0.5
 	 * ```
 	 */
-	var WaveSchedule.spellDropRateCommon: Double? by addField("SpellDropRateCommon", conditional = SIGSEGV)
+	open var WaveSchedule.spellDropRateCommon: Double? by addField("SpellDropRateCommon", conditional = SIGSEGV)
 	
 	/**
 	 * Drop chance for rare spell books from giants when [giantsDropRareSpells] is set, from `0` to `1`.
@@ -70,7 +70,7 @@ abstract class RafmodHalloween {
 	 * spellDropRateGiant = 0.5
 	 * ```
 	 */
-	var WaveSchedule.spellDropRateGiant: Double? by addField("SpellDropRateGiant", conditional = SIGSEGV)
+	open var WaveSchedule.spellDropRateGiant: Double? by addField("SpellDropRateGiant", conditional = SIGSEGV)
 	
 	/**
 	 * When set, drop spells only if bots are from the given team.
@@ -80,7 +80,7 @@ abstract class RafmodHalloween {
 	 * spellDropForBotsInTeam = TFTeam.BLUE
 	 * ```
 	 */
-	var WaveSchedule.teamThatDropsSpellsOnDeath: TFTeam? by addField("SpellDropForBotsInTeam", conditional = SIGSEGV, serializer = {
+	open var WaveSchedule.teamThatDropsSpellsOnDeath: TFTeam? by addField("SpellDropForBotsInTeam", conditional = SIGSEGV, serializer = {
 		return@addField when (this) {
 			TFTeam.BLU -> "Blue"
 			TFTeam.RED -> "Red"
@@ -114,7 +114,7 @@ abstract class RafmodHalloween {
 	 *
 	 * @see TFSpell
 	 */
-	var WaveSchedule.spellBookNormalRoll: List<Pair<TFSpell, Int>>? by addField("SpellBookNormalRoll", conditional = SIGSEGV, serializer = SPELL_MAP_SERIALIZER)
+	open var WaveSchedule.spellBookNormalRoll: List<Pair<TFSpell, Int>>? by addField("SpellBookNormalRoll", conditional = SIGSEGV, serializer = SPELL_MAP_SERIALIZER)
 	
 	/**
 	 * Overrides the spells that can be rolled from a rare (purple and sparkly) spellbook.
@@ -136,5 +136,5 @@ abstract class RafmodHalloween {
 	 *
 	 * @see TFSpell
 	 */
-	var WaveSchedule.spellBookRareRoll: List<Pair<TFSpell, Int>>? by addField("SpellBookNormalRoll", conditional = SIGSEGV, serializer = SPELL_MAP_SERIALIZER)
+	open var WaveSchedule.spellBookRareRoll: List<Pair<TFSpell, Int>>? by addField("SpellBookNormalRoll", conditional = SIGSEGV, serializer = SPELL_MAP_SERIALIZER)
 }

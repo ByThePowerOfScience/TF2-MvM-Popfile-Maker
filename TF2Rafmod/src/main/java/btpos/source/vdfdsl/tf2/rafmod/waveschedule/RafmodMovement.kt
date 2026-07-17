@@ -19,7 +19,7 @@ abstract class RafmodMovement {
 	 * allowBunnyHopping = BHop.AUTO_BHOP
 	 * ```
 	 */
-	var WaveSchedule.allowBunnyHopping: BHop? by addField("BunnyHop", conditional = SIGSEGV)
+	open var WaveSchedule.allowBunnyHopping: BHop? by addField("BunnyHop", conditional = SIGSEGV)
 	
 	
 	class BHop(override val _vdfRepr: VDFPrimitive) : IVDFRepresentableValue_Trivial {
@@ -46,7 +46,7 @@ abstract class RafmodMovement {
 	 * groundAcceleration = 100
 	 * ```
 	 */
-	var WaveSchedule.groundAcceleration: Number? by addField("Accelerate", conditional = SIGSEGV)
+	open var WaveSchedule.groundAcceleration: Number? by addField("Accelerate", conditional = SIGSEGV)
 	
 	/**
 	 * Air acceleration (turning rate while in the air)
@@ -56,7 +56,7 @@ abstract class RafmodMovement {
 	 * airAcceleration = 100
 	 * ```
 	 */
-	var WaveSchedule.airAcceleration: Number? by addField("AirAccelerate", conditional = SIGSEGV)
+	open var WaveSchedule.airAcceleration: Number? by addField("AirAccelerate", conditional = SIGSEGV)
 	
 	
 	/**
@@ -67,7 +67,7 @@ abstract class RafmodMovement {
 	 * maxSpeedLimit = 521
 	 * ```
 	 */
-	var WaveSchedule.maxSpeedLimit: Number? by addField("MaxSpeedLimit", conditional = SIGSEGV)
+	open var WaveSchedule.maxSpeedLimit: Number? by addField("MaxSpeedLimit", conditional = SIGSEGV)
 	
 	/**
 	 * Maximum entity speed limit override. (Default: 3500 HU/s)
@@ -77,7 +77,7 @@ abstract class RafmodMovement {
 	 * maxEntitySpeed = 10000
 	 * ```
 	 */
-	var WaveSchedule.maxEntitySpeed: Number? by addField("MaxEntitySpeed", conditional = SIGSEGV)
+	open var WaveSchedule.maxEntitySpeed: Number? by addField("MaxEntitySpeed", conditional = SIGSEGV)
 	
 	
 }

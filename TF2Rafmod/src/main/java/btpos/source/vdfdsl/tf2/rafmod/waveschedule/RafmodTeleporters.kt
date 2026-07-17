@@ -20,10 +20,10 @@ abstract class RafmodTeleporters {
 	 * botTeleportUberDuration = 2.seconds
 	 * ```
 	 */
-	var WaveSchedule.botTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = DURATION_IN_SECONDS)
+	open var WaveSchedule.botTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = DURATION_IN_SECONDS)
 	
 	/**
 	 * If true, robots can use players' teleporter entrances. (Default: true)
 	 */
-	var WaveSchedule.canBotsUsePlayerTeleporters: Boolean? by addField("BotsUsePlayerTeleporters", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.canBotsUsePlayerTeleporters: Boolean? by addField("BotsUsePlayerTeleporters", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 }

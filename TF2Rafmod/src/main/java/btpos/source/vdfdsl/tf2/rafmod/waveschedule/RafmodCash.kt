@@ -18,7 +18,7 @@ abstract class RafmodCash {
 	 * ratioForHalfBonus = 0.75
 	 * ```
 	 */
-	var WaveSchedule.ratioForHalfBonus: Double? by addField("BonusRatioHalf", conditional = SIGSEGV)
+	open var WaveSchedule.ratioForHalfBonus: Double? by addField("BonusRatioHalf", conditional = SIGSEGV)
 	
 	/**
 	 * The ratio of collected cash to total cash dropped required to award the players 100 bonus credits at the end of the wave. (Default: 1.0)
@@ -28,14 +28,14 @@ abstract class RafmodCash {
 	 * ratioForFullBonus = 0.8
 	 * ```
 	 */
-	var WaveSchedule.ratioForFullBonus: Double? by addField("BonusRatioFull", conditional = SIGSEGV)
+	open var WaveSchedule.ratioForFullBonus: Double? by addField("BonusRatioFull", conditional = SIGSEGV)
 	
 	/**
 	 * If true, players can only buy a quick respawn a set number of times per wave, specified via [fixedBuybacksPerWave].
 	 * 
 	 * Note: fixed buybacks are free.
 	 */
-	var WaveSchedule.useFixedBuybacks: Boolean? by addField("FixedBuybacks", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.useFixedBuybacks: Boolean? by addField("FixedBuybacks", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * How many times a player can buy a quick respawn if [useFixedBuybacks] is true. (Default: 0)
@@ -45,7 +45,7 @@ abstract class RafmodCash {
 	 * fixedBuybacksPerWave = 6
 	 * ```
 	 */
-	var WaveSchedule.fixedBuybacksPerWave: Int? by addField("BuybacksPerWave", conditional = SIGSEGV)
+	open var WaveSchedule.fixedBuybacksPerWave: Int? by addField("BuybacksPerWave", conditional = SIGSEGV)
 	
 	/**
 	 * How many credits players will lose upon death. (Default: 0)
@@ -55,11 +55,11 @@ abstract class RafmodCash {
 	 * creditsLostOnDeath = 100
 	 * ```
 	 */
-	var WaveSchedule.creditsLostOnDeath: Int? by addField("DeathPenalty", conditional = SIGSEGV)
+	open var WaveSchedule.creditsLostOnDeath: Int? by addField("DeathPenalty", conditional = SIGSEGV)
 	
 	/**
 	 * If true, credits spawn with zero velocity, and drop straight to the ground when a robot is killed.
 	 */
-	var WaveSchedule.noCreditsVelocity: Boolean? by addField("NoCreditsVelocity", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noCreditsVelocity: Boolean? by addField("NoCreditsVelocity", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 }

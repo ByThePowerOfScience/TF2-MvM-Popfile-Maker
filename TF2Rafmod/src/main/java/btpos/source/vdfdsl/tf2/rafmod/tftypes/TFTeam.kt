@@ -1,4 +1,4 @@
-package btpos.source.vdfdsl.tf2.rafmod
+package btpos.source.vdfdsl.tf2.rafmod.tftypes
 
 
 class TFTeam(private val s: String) {

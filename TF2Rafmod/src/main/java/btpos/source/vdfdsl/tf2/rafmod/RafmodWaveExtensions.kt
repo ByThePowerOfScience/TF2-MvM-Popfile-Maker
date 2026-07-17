@@ -10,7 +10,7 @@ import btpos.source.vdfdsl.modeling.KeyValueMapImpl
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
-import btpos.source.vdfdsl.tf2.rafmod.data.Coord3D
+import btpos.source.vdfdsl.tf2.rafmod.data.Vec3
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.types.populators.WavePopulator
 
@@ -27,7 +27,7 @@ abstract class RafmodWaveExtensions {
 	 * waveNumber = 419
 	 * ```
 	 */
-	var WavePopulator.waveNumber: Int? by addField("CustomWaveNumber", conditional = SIGSEGV)
+	open var WavePopulator.waveNumber: Int? by addField("CustomWaveNumber", conditional = SIGSEGV)
 	
 	/**
 	 * Displays a custom maximum wave count while this wave is active.  0 hides the max wave number in the display.
@@ -39,22 +39,22 @@ abstract class RafmodWaveExtensions {
 	 * maxWaveNumber = 0  // Shows "Wave X"
 	 * ```
 	 */
-	var WavePopulator.maxWaveNumber: Int? by addField("CustomMaxWaveNumber", conditional = SIGSEGV)
+	open var WavePopulator.maxWaveNumber: Int? by addField("CustomMaxWaveNumber", conditional = SIGSEGV)
 	
 	/**
 	 * If true, the wave is immediately lost if all RED players are dead at the same time.
 	 */
-	var WavePopulator.redTeamWipeCausesWaveLoss: Boolean? by addField("RedTeamWipeCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WavePopulator.redTeamWipeCausesWaveLoss: Boolean? by addField("RedTeamWipeCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, the wave is immediately lost if all BLU _human_ players are dead at the same time.
 	 */
-	var WavePopulator.blueTeamWipeCausesWaveLoss: Boolean? by addField("BlueTeamWipeCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WavePopulator.blueTeamWipeCausesWaveLoss: Boolean? by addField("BlueTeamWipeCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, the moment all non-support wavespawns are finished (killed), the wave is immediately **lost**.
 	 */
-	var WavePopulator.finishingWaveCausesWaveLoss: Boolean? by addField("FinishingWaveCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WavePopulator.finishingWaveCausesWaveLoss: Boolean? by addField("FinishingWaveCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	// TODO Explanation builder
 	
@@ -63,7 +63,7 @@ abstract class RafmodWaveExtensions {
 	 *
 	 * @see playerAttributes
 	 */
-	var WavePopulator.playerAttributes: KeyValueMapImpl? by addField("PlayerAttributes", conditional = SIGSEGV)
+	open var WavePopulator.playerAttributes: KeyValueMapImpl? by addField("PlayerAttributes", conditional = SIGSEGV)
 	
 	
 	/**
@@ -71,7 +71,7 @@ abstract class RafmodWaveExtensions {
 	 *
 	 * @see btpos.source.vdfdsl.tf2.itemattributes
 	 */
-	inline fun WavePopulator.playerAttributes(scope: context (IKeyValueMap) () -> Unit) {
+	open fun WavePopulator.playerAttributes(scope: context (IKeyValueMap) () -> Unit) {
 		val attrs = this.playerAttributes ?: run {
 			KeyValueMapImpl().also {
 				this.playerAttributes = it
@@ -92,7 +92,7 @@ abstract class RafmodWaveExtensions {
 	 * }
 	 * ```
 	 */
-	var WavePopulator.itemAttributes: List<KeyValueMapImpl> by addField("ItemAttributes", conditional = SIGSEGV, serializer = flatListWithKey(), initialValue = ::listOf)
+	open var WavePopulator.itemAttributes: List<KeyValueMapImpl> by addField("ItemAttributes", conditional = SIGSEGV, serializer = flatListWithKey(), initialValue = ::listOf)
 	
 	/**
 	 * Add this condition to players when the wave starts.
@@ -102,7 +102,7 @@ abstract class RafmodWaveExtensions {
 	 * playerAddCond = 56
 	 * ```
 	 */
-	var WavePopulator.playerAddCond: Int? by addField("PlayerAddCond", conditional = SIGSEGV)
+	open var WavePopulator.playerAddCond: Int? by addField("PlayerAddCond", conditional = SIGSEGV)
 	
 	// TODO add a TFCondition enum
 	
@@ -111,13 +111,13 @@ abstract class RafmodWaveExtensions {
 	 * 
 	 * Example:
 	 * ```kotlin
-	 * spawnedTemplatesAtStart += MyTemplates.SENTRY to Coord3D(0, -800, 500)
+	 * spawnedTemplatesAtStart += MyTemplates.SENTRY to Vec3(0, -800, 500)
 	 * ```
 	 */
-	var WavePopulator.spawnedTemplatesAtStart: List<Pair<PopFileTemplate, Coord3D>> by addField(
+	open var WavePopulator.spawnedTemplatesAtStart: List<Pair<PopFileTemplate, Vec3>> by addField(
 		"SpawnTemplate",
 		conditional = SIGSEGV,
-		serializer = flatListWithKey<IVDFRepresentableValue_Subtree>().compose { list: List<Pair<PopFileTemplate, Coord3D>> ->
+		serializer = flatListWithKey<IVDFRepresentableValue_Subtree>().compose { list: List<Pair<PopFileTemplate, Vec3>> ->
 			list.map { (template, coord) ->
 				IVDFRepresentableValue_Subtree { parent ->
 					VDFSubtree(

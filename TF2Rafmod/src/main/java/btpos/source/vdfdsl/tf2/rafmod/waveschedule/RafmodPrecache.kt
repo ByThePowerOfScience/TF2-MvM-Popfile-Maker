@@ -21,7 +21,7 @@ abstract class RafmodPrecache {
 	 * precachedSounds += "weapons/rocket_directhit_shoot_crit.wav"
 	 * ```
 	 */
-	var WaveSchedule.sounds: List<String> by IExtensibleSubtree.addField("PrecacheSound", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
+	open var WaveSchedule.sounds: List<String> by IExtensibleSubtree.addField("PrecacheSound", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
 	
 	/**
 	 * If your mission contains custom sounds that are used by pointtemplate entities or sound overrides, you must include those sounds here.
@@ -35,7 +35,7 @@ abstract class RafmodPrecache {
 	 *
 	 * Script sound version of [sounds]
 	 */
-	var WaveSchedule.scriptSounds: List<String> by IExtensibleSubtree.addField("PrecacheScriptSound", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
+	open var WaveSchedule.scriptSounds: List<String> by IExtensibleSubtree.addField("PrecacheScriptSound", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
 	
 	/**
 	 * Precaches model. This might be required in some circumstances, such as "custom projectile model" attribute, or prop with custom model.
@@ -47,7 +47,7 @@ abstract class RafmodPrecache {
 	 * precachedModels += "models/props_soho/bookstand002.mdl"
 	 * ```
 	 */
-	var WaveSchedule.models: List<String> by IExtensibleSubtree.addField("PrecacheModel", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
+	open var WaveSchedule.models: List<String> by IExtensibleSubtree.addField("PrecacheModel", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
 	
 	/**
 	 *
@@ -59,7 +59,7 @@ abstract class RafmodPrecache {
 	 * precachedSentenceFiles += "scripts/sentences.txt"
 	 * ```
 	 */
-	var WaveSchedule.sentenceFiles: List<String> by IExtensibleSubtree.addField("PrecacheSentenceFile", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
+	open var WaveSchedule.sentenceFiles: List<String> by IExtensibleSubtree.addField("PrecacheSentenceFile", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
 	
 	/**
 	 * Precache decals.
@@ -71,7 +71,7 @@ abstract class RafmodPrecache {
 	 * precachedDecals += "decals/tscorch"
 	 * ```
 	 */
-	var WaveSchedule.decals: List<String> by IExtensibleSubtree.addField("PrecacheDecal", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
+	open var WaveSchedule.decals: List<String> by IExtensibleSubtree.addField("PrecacheDecal", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
 	
 	/**
 	 * Precache generic files.
@@ -83,7 +83,7 @@ abstract class RafmodPrecache {
 	 * precachedGenericFiles += ""
 	 * ```
 	 */
-	var WaveSchedule.genericFiles: List<String> by IExtensibleSubtree.addField("PrecacheGeneric", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
+	open var WaveSchedule.genericFiles: List<String> by IExtensibleSubtree.addField("PrecacheGeneric", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
 	
 	/**
 	 * Precache particles.
@@ -95,5 +95,5 @@ abstract class RafmodPrecache {
 	 * precachedParticles += "env_fire_large_smoke"
 	 * ```
 	 */
-	var WaveSchedule.particles: List<String> by IExtensibleSubtree.addField("PrecacheParticle", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
+	open var WaveSchedule.particles: List<String> by IExtensibleSubtree.addField("PrecacheParticle", conditional = RafmodConstants.SIGSEGV, serializer = IExtensibleSubtree.Serializers.flatListWithKey(), initialValue = ::listOf)
 }

@@ -20,7 +20,7 @@ abstract class RafmodGameplay {
 	 * conchHealthOnHit = 0.77
 	 * ```
 	 */
-	var WaveSchedule.conchHealthOnHit: Double? by addField("ConchHealthOnHit", conditional = SIGSEGV)
+	open var WaveSchedule.conchHealthOnHit: Double? by addField("ConchHealthOnHit", conditional = SIGSEGV)
 	
 	/**
 	 * Number of seconds the "Marked for Death" status lasts on a target.
@@ -32,7 +32,7 @@ abstract class RafmodGameplay {
 	 * markedForDeathLifetime = 1
 	 * ```
 	 */
-	var WaveSchedule.markedForDeathLifetime: Duration? by addField("MarkedForDeathLifetime", conditional = SIGSEGV, serializer = RafmodSerializers.DURATION_IN_SECONDS)
+	open var WaveSchedule.markedForDeathLifetime: Duration? by addField("MarkedForDeathLifetime", conditional = SIGSEGV, serializer = RafmodSerializers.DURATION_IN_SECONDS)
 	
 	/**
 	 * Number of ubercharges the Vaccinator can hold. (Default: 4)
@@ -42,7 +42,7 @@ abstract class RafmodGameplay {
 	 * numVaccinatorCharges = 16
 	 * ```
 	 */
-	var WaveSchedule.numVaccinatorCharges: Int? by addField("VacNumCharges", conditional = SIGSEGV)
+	open var WaveSchedule.numVaccinatorCharges: Int? by addField("VacNumCharges", conditional = SIGSEGV)
 	
 	/**
 	 * The maximum amount of time that can pass between hitting an enemy with the cannonball and said cannonball exploding to hit a double-donk on the target. (Default: 0.5 seconds)
@@ -52,7 +52,7 @@ abstract class RafmodGameplay {
 	 * doubleDonkWindow = 99.seconds
 	 * ```
 	 */
-	var WaveSchedule.doubleDonkWindow: Duration? by addField("DoubleDonkWindow", conditional = SIGSEGV)
+	open var WaveSchedule.doubleDonkWindow: Duration? by addField("DoubleDonkWindow", conditional = SIGSEGV)
 	
 	/**
 	 * Speed boost provided by the Concheror buff in Hammer Units per second, capped to a 40% total speed increase on the player. (Default: 105)
@@ -62,7 +62,7 @@ abstract class RafmodGameplay {
 	 * conchSpeedBoost = 10
 	 * ```
 	 */
-	var WaveSchedule.conchSpeedBoost: Number? by addField("ConchSpeedBoost", conditional = SIGSEGV)
+	open var WaveSchedule.conchSpeedBoost: Number? by addField("ConchSpeedBoost", conditional = SIGSEGV)
 	
 	/**
 	 * Multiplier to damage received while cloaked. (Default: 0.8)
@@ -72,17 +72,17 @@ abstract class RafmodGameplay {
 	 * stealthDamageReduction = 0.1
 	 * ```
 	 */
-	var WaveSchedule.cloakedDamageMultiplier: Double? by addField("StealthDamageReduction", conditional = SIGSEGV)
+	open var WaveSchedule.cloakedDamageMultiplier: Double? by addField("StealthDamageReduction", conditional = SIGSEGV)
 	
 	/**
 	 * If true, heal-on-kill - when proc'd by melee weapons - can overheal the user.
 	 */
-	var WaveSchedule.healOnKillOverhealMelee: Boolean? by addField("HealOnKillOverhealMelee", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.healOnKillOverhealMelee: Boolean? by addField("HealOnKillOverhealMelee", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, fixes the Huntsman's "damage bonus" upgrade so it is applied properly. (Default: false)
 	 */
-	var WaveSchedule.fixHuntsmanDamageBonus: Boolean? by addField("FixHuntsmanDamageBonus", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.fixHuntsmanDamageBonus: Boolean? by addField("FixHuntsmanDamageBonus", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	
 	

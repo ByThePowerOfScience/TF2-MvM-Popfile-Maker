@@ -24,47 +24,47 @@ abstract class RafmodWaveScheduleScope {
 		@PublishedApi @JvmField internal val INSTANCE = object : RafmodWaveScheduleScope() {}
 	}
 	
-	inline fun bomb(configure: RafmodBomb.() -> Unit) {
+	open fun bomb(configure: RafmodBomb.() -> Unit) {
 		RafmodBomb.INSTANCE.configure()
 	}
 	
-	inline fun botBehavior(configure: RafmodBotBehavior.() -> Unit) {
+	open fun botBehavior(configure: RafmodBotBehavior.() -> Unit) {
 		RafmodBotBehavior.INSTANCE.configure()
 	}
 	
-	inline fun cash(configure: RafmodCash.() -> Unit) {
+	open fun cash(configure: RafmodCash.() -> Unit) {
 		RafmodCash.INSTANCE.configure()
 	}
 	
-	inline fun gameplay(configure: RafmodGameplay.() -> Unit) {
+	open fun gameplay(configure: RafmodGameplay.() -> Unit) {
 		RafmodGameplay.INSTANCE.configure()
 	}
 	
-	inline fun halloween(configure: RafmodHalloween.() -> Unit) {
+	open fun halloween(configure: RafmodHalloween.() -> Unit) {
 		RafmodHalloween.INSTANCE.configure()
 	}
 	
-	inline fun modelsAndAnimations(configure: RafmodModelsAndAnimations.() -> Unit) {
+	open fun modelsAndAnimations(configure: RafmodModelsAndAnimations.() -> Unit) {
 		RafmodModelsAndAnimations.INSTANCE.configure()
 	}
 	
-	inline fun movement(configure: RafmodMovement.() -> Unit) {
+	open fun movement(configure: RafmodMovement.() -> Unit) {
 		RafmodMovement.INSTANCE.configure()
 	}
 	
-	inline fun precache(configure: RafmodPrecache.() -> Unit) {
+	open fun precache(configure: RafmodPrecache.() -> Unit) {
 		RafmodPrecache.INSTANCE.configure()
 	}
 	
-	inline fun reverseMvM(configure: RafmodReverseMvM.() -> Unit) {
+	open fun reverseMvM(configure: RafmodReverseMvM.() -> Unit) {
 		RafmodReverseMvM.INSTANCE.configure()
 	}
 	
-	inline fun teleporters(configure: RafmodTeleporters.() -> Unit) {
+	open fun teleporters(configure: RafmodTeleporters.() -> Unit) {
 		RafmodTeleporters.INSTANCE.configure()
 	}
 	
-	inline fun upgradeStation(configure: RafmodBotBehavior.() -> Unit) {
+	open fun upgradeStation(configure: RafmodBotBehavior.() -> Unit) {
 		RafmodBotBehavior.INSTANCE.configure()
 	}
 	
@@ -72,13 +72,13 @@ abstract class RafmodWaveScheduleScope {
 	/**
 	 * If true, players no longer drop reanimators (that would let a Medic resurrect them) on death.
 	 */
-	var WaveSchedule.disableReanimators: Boolean? by addField("NoReanimators", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.disableReanimators: Boolean? by addField("NoReanimators", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	
 	/**
 	 * If true, disables the sound played when a player dies.
 	 */
-	var WaveSchedule.disableMvMDeathTune: Boolean? by addField("NoMvMDeathTune", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.disableMvMDeathTune: Boolean? by addField("NoMvMDeathTune", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	
 	/**
@@ -89,17 +89,17 @@ abstract class RafmodWaveScheduleScope {
 	 * grapplingHooksDisconnectAfter = 1.seconds
 	 * ```
 	 */
-	var WaveSchedule.grapplingHooksDisconnectAfter: Duration? by addField("RemoveGrapplingHooks", conditional = SIGSEGV, serializer = DURATION_IN_SECONDS)
+	open var WaveSchedule.grapplingHooksDisconnectAfter: Duration? by addField("RemoveGrapplingHooks", conditional = SIGSEGV, serializer = DURATION_IN_SECONDS)
 	
 	/**
 	 * If true, players can only use melee weapons. Bots are not weapon-restricted.
 	 */
-	var WaveSchedule.isMedievalMode: Boolean? by addField("MedievalMode", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.isMedievalMode: Boolean? by addField("MedievalMode", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, allows equipping the Mannpower grappling hook, which replaces the Power-Up Canteen.
 	 */
-	var WaveSchedule.enableGrapplingHook: Boolean? by addField("GrapplingHook", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.enableGrapplingHook: Boolean? by addField("GrapplingHook", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * List of sounds to be disabled. Note that client-side sounds cannot be disabled, and you must use a sound script unless there is only a raw version of the sound.
@@ -109,7 +109,7 @@ abstract class RafmodWaveScheduleScope {
 	 * disabledSounds += "Weapon_Shotgun.Single"
 	 * ```
 	 */
-	var WaveSchedule.disabledSounds: List<String> by addField("DisableSound", conditional = SIGSEGV, serializer = flatListWithKey(), initialValue = ::listOf)
+	open var WaveSchedule.disabledSounds: List<String> by addField("DisableSound", conditional = SIGSEGV, serializer = flatListWithKey(), initialValue = ::listOf)
 	
 	/**
 	 * Configures the robot limit. (Default: 22)
@@ -122,17 +122,17 @@ abstract class RafmodWaveScheduleScope {
 	 * robotLimit = 26
 	 * ```
 	 */
-	var WaveSchedule.robotLimit: Int? by addField("RobotLimit", conditional = SIGSEGV)
+	open var WaveSchedule.robotLimit: Int? by addField("RobotLimit", conditional = SIGSEGV)
 	
 	/**
 	 * If true, allows players or bots to dominate players. (Default: true)
 	 */
-	var WaveSchedule.enableDominations: Boolean? by addField("EnableDominations", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.enableDominations: Boolean? by addField("EnableDominations", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, sends dead bots directly to spectator after dying. Use this if your mission consists of lots of easy-to-kill enemies.
 	 */
-	var WaveSchedule.sendBotsToSpectatorOnDeath: Boolean? by addField("SendBotsToSpectatorImmediately", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.sendBotsToSpectatorOnDeath: Boolean? by addField("SendBotsToSpectatorImmediately", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * Configure the maximum number of spectaotrs. (Default: infinite)
@@ -142,7 +142,7 @@ abstract class RafmodWaveScheduleScope {
 	 * maxSpectators = 0
 	 * ```
 	 */
-	var WaveSchedule.maxSpectators: Int? by addField("MaxSpectators", conditional = SIGSEGV)
+	open var WaveSchedule.maxSpectators: Int? by addField("MaxSpectators", conditional = SIGSEGV)
 	
 	/**
 	 * OVerride the maximum RED player count. (Default: 6)
@@ -152,12 +152,12 @@ abstract class RafmodWaveScheduleScope {
 	 * maxRedPlayers = 6
 	 * ```
 	 */
-	var WaveSchedule.maxRedPlayers: Int? by addField("MaxRedPlayers", conditional = SIGSEGV)
+	open var WaveSchedule.maxRedPlayers: Int? by addField("MaxRedPlayers", conditional = SIGSEGV)
 	
 	/**
 	 * If true, regular robot deaths show up in the killfeed for all players. (Default: false)
 	 */
-	var WaveSchedule.displayRobotDeathNotice: Boolean? by addField("DisplayRobotDeathNotice", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.displayRobotDeathNotice: Boolean? by addField("DisplayRobotDeathNotice", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * How fast a line from the wave description is displayed in the middle of the screen. Use 0 to disable. (default: 4 seconds)
@@ -167,12 +167,12 @@ abstract class RafmodWaveScheduleScope {
 	 * textPrintTime = 7.seconds
 	 * ```
 	 */
-	var WaveSchedule.textPrintTime: Duration? by addField("TextPrintTime", conditional = SIGSEGV)
+	open var WaveSchedule.textPrintTime: Duration? by addField("TextPrintTime", conditional = SIGSEGV)
 	
 	/**
 	 * If true, disables the `!missioninfo` command. (Default: false)
 	 */
-	var WaveSchedule.disableMissionInfo: Boolean? by addField("NoMissionInfo", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.disableMissionInfo: Boolean? by addField("NoMissionInfo", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * The maximum number of Skeletons that may be alive at any given time. (Default: 30)
@@ -182,7 +182,7 @@ abstract class RafmodWaveScheduleScope {
 	 * maxActiveSkeletons = 999
 	 * ```
 	 */
-	var WaveSchedule.maxActiveSkeletons: Int? by addField("MaxActiveSkeletons", conditional = SIGSEGV)
+	open var WaveSchedule.maxActiveSkeletons: Int? by addField("MaxActiveSkeletons", conditional = SIGSEGV)
 	
 	/**
 	 * How long of a countdown should be given after all players ready up. (Default: 10)
@@ -196,32 +196,32 @@ abstract class RafmodWaveScheduleScope {
 	 * waveStartCountdown = 9
 	 * ```
 	 */
-	var WaveSchedule.waveStartCountdown: Int? by addField("WaveStartCountdown", conditional = SIGSEGV)
+	open var WaveSchedule.waveStartCountdown: Int? by addField("WaveStartCountdown", conditional = SIGSEGV)
 	
 	/**
 	 * If true, NPCs such as Halloween bosses will update every tick. (Default: false)
 	 */
-	var WaveSchedule.fastNPCUpdate: Boolean? by addField("FastNPCUpdate", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.fastNPCUpdate: Boolean? by addField("FastNPCUpdate", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, players that join the server while a wave is in prograss may not spawn unless they buy back. (Default: false)
 	 */
-	var WaveSchedule.canJoinMidwave: Boolean? by addField("NoJoinMidwave", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.canJoinMidwave: Boolean? by addField("NoJoinMidwave", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, minibosses only count as a single kill on a sentry gun instead of TODO
 	 */
-	var WaveSchedule.minibossSentrySingleKill: Boolean? by addField("MinibossSentrySingleKill", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.minibossSentrySingleKill: Boolean? by addField("MinibossSentrySingleKill", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, bots with human models have the robot voice. (Default: false)
 	 */
-	var WaveSchedule.botHumansHaveRobotVoice: Boolean? by addField("BotHumansHaveRobotVoice", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.botHumansHaveRobotVoice: Boolean? by addField("BotHumansHaveRobotVoice", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, robots that use human models will have glowing eyes. (Default: false)
 	 */
-	var WaveSchedule.botHumansHaveEyeGlow: Boolean? by addField("BotHumansHaveEyeGlow", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.botHumansHaveEyeGlow: Boolean? by addField("BotHumansHaveEyeGlow", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * Custom particle to use on bots' eyes. (Default: `""`)
@@ -231,12 +231,12 @@ abstract class RafmodWaveScheduleScope {
 	 * customEyeParticle = "eye_powerup_green_lvl_4"
 	 * ```
 	 */
-	var WaveSchedule.customEyeParticle: String? by addField("CustomEyeParticle", conditional = SIGSEGV)
+	open var WaveSchedule.customEyeParticle: String? by addField("CustomEyeParticle", conditional = SIGSEGV)
 	
 	/**
 	 * If true, medium Skeletons will not split into small skeletons on death. (Default: false)
 	 */
-	var WaveSchedule.noSkeletonSplit: Boolean? by addField("NoSkeletonSplit", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noSkeletonSplit: Boolean? by addField("NoSkeletonSplit", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * Multiplier for how fast a robot detects that it's stuck. By default, detects after staying in the same 100 HU area for 12 seconds.
@@ -247,17 +247,17 @@ abstract class RafmodWaveScheduleScope {
 	 * stuckTimeMultiplier = 3 // Detects that it's stuck after 4 seconds, 3 times faster
 	 * ```
 	 */
-	var WaveSchedule.stuckTimeMultiplier: Number? by addField("StuckTimeMultiplier", conditional = SIGSEGV)
+	open var WaveSchedule.stuckTimeMultiplier: Number? by addField("StuckTimeMultiplier", conditional = SIGSEGV)
 	
 	/**
 	 * If true, hitting a target for negative damage will heal them.
 	 */
-	var WaveSchedule.negativeDamageHealsTargets: Boolean? by addField("RestoreNegativeDamageHealing", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.negativeDamageHealsTargets: Boolean? by addField("RestoreNegativeDamageHealing", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
 	 * If true, disables "turbo physics", but allows players to interact with physics objects like vehicles.
 	 */
-	var WaveSchedule.disableTurboPhysics: Boolean? by addField("TurboPhysics", conditional = SIGSEGV, serializer = BOOL_SER_INVERT)
+	open var WaveSchedule.disableTurboPhysics: Boolean? by addField("TurboPhysics", conditional = SIGSEGV, serializer = BOOL_SER_INVERT)
 	
 	/**
 	 * Custom "sound script"
@@ -267,14 +267,14 @@ abstract class RafmodWaveScheduleScope {
 	 * customSoundScriptFile = "scripts/sigsegv_sound_overrides.txt"
 	 * ```
 	 */
-	var WaveSchedule.customSoundScriptFile: String? by addField("CustomSoundScriptFile", conditional = SIGSEGV)
+	open var WaveSchedule.customSoundScriptFile: String? by addField("CustomSoundScriptFile", conditional = SIGSEGV)
 	
 	/**
 	 * If true, decreases entity lookup time by 2-4 times.  (Default: true)
 	 *
 	 * Set to false if you are reading m_iName or m_iClassname from datamaps directly and expecting uppercase letters (with `$getdata` or `$setdata` input for example).
 	 */
-	var WaveSchedule.useFastEntityNameLookup: Boolean? by addField("FastEntityNameLookup", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.useFastEntityNameLookup: Boolean? by addField("FastEntityNameLookup", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	
 }

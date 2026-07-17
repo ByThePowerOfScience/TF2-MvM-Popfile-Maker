@@ -19,7 +19,7 @@ abstract class RafmodBomb {
 	 * flagCarrierMovementPenalty = 0.4
 	 * ```
 	 */
-	var WaveSchedule.flagCarrierMovementPenalty: Double? by addField("FlagCarrierMovementPenalty", conditional = SIGSEGV)
+	open var WaveSchedule.flagCarrierMovementPenalty: Double? by addField("FlagCarrierMovementPenalty", conditional = SIGSEGV)
 	
 	/**
 	 * Allow this many extra bots to latch onto and follow the bomb carrier as they move. (Default: 0)
@@ -29,12 +29,12 @@ abstract class RafmodBomb {
 	 * flagEscortCountOffset = 5 // makes there be 6 bombs on the field
 	 * ```
 	 */
-	var WaveSchedule.additionalEscorts: Int? by addField("FlagEscortCountOffset", conditional = SIGSEGV)
+	open var WaveSchedule.additionalEscorts: Int? by addField("FlagEscortCountOffset", conditional = SIGSEGV)
 	
 	
 	
 	/**
 	 * If false, the bomb carrier cannot fire or swing their weapon. (Default: true)
 	 */
-	var WaveSchedule.canBombCarrierFight: Boolean? by addField("AllowFlagCarrierToFight", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.canBombCarrierFight: Boolean? by addField("AllowFlagCarrierToFight", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 }
