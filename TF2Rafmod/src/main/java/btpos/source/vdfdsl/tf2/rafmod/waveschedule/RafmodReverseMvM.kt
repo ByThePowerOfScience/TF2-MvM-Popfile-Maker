@@ -1,0 +1,100 @@
+package btpos.source.vdfdsl.tf2.rafmod.waveschedule
+
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
+import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
+import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
+import btpos.source.vdfdsl.types.WaveSchedule
+import kotlin.time.Duration
+
+abstract class RafmodReverseMvM {
+	companion object {
+		@PublishedApi @JvmField internal val INSTANCE = object : RafmodReverseMvM() {}
+	}
+	
+	/**
+	 * If true, the player team wins if the bomb is delivered to the hatch.
+	 */
+	var WaveSchedule.enable: Boolean? by addField("ReverseWinConditions", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	/**
+	 * If true, only the BLU team can pick up money instead of the RED team.
+	 */
+	var WaveSchedule.canBluPickUpMoney: Boolean? by addField("SetCreditTeam", conditional = SIGSEGV, serializer = {
+		when (this) {
+			true -> 3
+			else -> null
+		}
+	})
+	
+	
+	/**
+	 * If true, blu humans can capture the flag/bomb.
+	 */
+	var WaveSchedule.canHumansCaptureBomb: Boolean? by addField("BluHumanFlagCapture", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	/**
+	 * If true, BLU players can pick up the bomb.
+	 */
+	var WaveSchedule.canHumansPickupBomb: Boolean? by addField("BluHumanFlagPickup", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	/**
+	 * If true, BLU players have infinite ammo. (Default: true)
+	 */
+	var WaveSchedule.bluHasInfiniteAmmo: Boolean? by addField("BluHumanInfiniteAmmo", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	/**
+	 * If true, BLU players have infinite cloak. (Default: true)
+	 */
+	var WaveSchedule.bluHasInfiniteCloak: Boolean? by addField("BluHumanInfiniteCloak", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	/**
+	 * Sets the maximum number of players that can exist on the BLU team at any given time.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * maxAllowedOnBlu = 4
+	 * ```
+	 */
+	var WaveSchedule.maxAllowedOnBlu: Int? by addField("AllowJoinTeamBlueMax", conditional = SIGSEGV)
+	
+	/**
+	 * If true, human players can join the BLU team.
+	 */
+	var WaveSchedule.canPlayersJoinBluTeam: Boolean? by addField("AllowJoinTeamBlue", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	/**
+	 * If true, human players are forcibly assigned to BLU upon joining.
+	 *
+	 * Also sets [canBluPickUpMoney] to true and, if not already set, sets [maxAllowedOnBlu] to 6.
+	 */
+	var WaveSchedule.playersMustJoinBlu: Boolean? by addField("HumansMustJoinTeam", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	
+	/**
+	 * If true, BLU players use robot models, regardless of if they are human or not.
+	 */
+	var WaveSchedule.bluPlayersUseRobotModels: Boolean? by addField("BluPlayersAreRobots", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	/**
+	 * How many seconds the "stock ubercharge" invincibility effect should be applied to BLU entities exiting a BLU teleporter. (Default: 5)
+	 *
+	 * Example:
+	 * ```kotlin
+	 * botPostTeleportUberDuration = 5.seconds
+	 * ```
+	 */
+	var WaveSchedule.botPostTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = RafmodSerializers.DURATION_IN_SECONDS)
+	
+	/**
+	 * If true, humans should be teleported to an Engineer-bot's teleporter when spawning instead of their default spawn location. (Default: false)
+	 */
+	var WaveSchedule.spawnOnBotTeleporter: Boolean? by addField("BluHumanTeleportOnSpawn", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	/**
+	 * If true, player-built teleporters teleport players and robots on spawn.
+	 */
+	var WaveSchedule.spawnOnHumanTeleporter: Boolean? by addField("BluHumanBotTeleporter", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	
+	
+}
