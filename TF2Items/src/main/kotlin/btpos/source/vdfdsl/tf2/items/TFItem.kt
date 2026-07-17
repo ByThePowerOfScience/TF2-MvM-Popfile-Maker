@@ -36,7 +36,7 @@ class TFItem<ATTR : Any>(
 	 */
 	inline fun withAttributes(attributesScope: context(IKeyValueMap) ATTR.() -> Unit): TFItem<ATTR> {
 		val attrs = attributes?.copy() ?: KeyValueMapImpl()
-		usingAttributesScope(attrs, attributesScope)
+		configureAttributes(attrs, attributesScope)
 		return this.copy(attributes=attrs)
 	}
 	
@@ -52,11 +52,22 @@ class TFItem<ATTR : Any>(
 	 *
 	 * @param configure A block scope to allow you to easily access the attributes defined in the items [ATTR] parameter.
 	 */
-	inline fun <MAP : IKeyValueMap> usingAttributesScope(map: MAP, configure: context(IKeyValueMap) ATTR.() -> Unit): MAP {
+	inline fun <MAP : IKeyValueMap> configureAttributes(map: MAP, configure: context(MAP) ATTR.() -> Unit): MAP {
 		return map.apply {
 			scopedAttributeFunctions.configure()
 			this.setNullable("ItemName", this@TFItem.name)
 		}
+	}
+	
+	/**
+	 * Create a new attributes map in the _context_ of an item's allowed attributes, without creating a new TFItem object for it as well.
+	 *
+	 * This is generally only needed if you're using a template that already has an item set on it, and you just want to configure that item.
+	 *
+	 * @param configurationScope A block scope to allow you to easily access the attributes that are valid for this item.
+	 */
+	inline fun configureAttributes(configurationScope: context(KeyValueMapImpl) ATTR.() -> Unit): KeyValueMapImpl {
+		return configureAttributes(KeyValueMapImpl(), configurationScope)
 	}
 	
 	fun copy(name: String = this.name, attributes: KeyValueMapImpl? = this.attributes?.copy(), conditional: String? = this.conditional): TFItem<ATTR> {
