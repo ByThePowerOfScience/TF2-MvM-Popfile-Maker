@@ -1,11 +1,11 @@
 package btpos.source.vdfdsl.tf2.rafmod
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.durationInSeconds
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers.BOOL_SER_INVERT
-import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers.DURATION_IN_SECONDS
 import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodBomb
 import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodBotBehavior
 import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodCash
@@ -89,7 +89,7 @@ abstract class RafmodWaveScheduleScope {
 	 * grapplingHooksDisconnectAfter = 1.seconds
 	 * ```
 	 */
-	open var WaveSchedule.grapplingHooksDisconnectAfter: Duration? by addField("RemoveGrapplingHooks", conditional = SIGSEGV, serializer = DURATION_IN_SECONDS)
+	open var WaveSchedule.grapplingHooksDisconnectAfter: Duration? by addField("RemoveGrapplingHooks", conditional = SIGSEGV, serializer = durationInSeconds())
 	
 	/**
 	 * If true, players can only use melee weapons. Bots are not weapon-restricted.

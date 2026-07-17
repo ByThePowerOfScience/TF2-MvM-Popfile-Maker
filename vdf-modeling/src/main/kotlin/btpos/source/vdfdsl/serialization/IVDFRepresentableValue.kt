@@ -96,3 +96,7 @@ interface IVDFRepresentableValue_Trivial : IVDFRepresentableValue {
 	}
 }
 
+fun IVDFRepresentableValue_Trivial(repr: () -> VDFPrimitive) = object : IVDFRepresentableValue_Trivial {
+	override val _vdfRepr: VDFPrimitive
+		get() = repr()
+}

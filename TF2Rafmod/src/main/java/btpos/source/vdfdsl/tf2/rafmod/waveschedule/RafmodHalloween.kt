@@ -8,6 +8,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
+import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
 import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFSpell
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.collections.map
@@ -80,13 +81,7 @@ abstract class RafmodHalloween {
 	 * spellDropForBotsInTeam = TFTeam.BLUE
 	 * ```
 	 */
-	open var WaveSchedule.teamThatDropsSpellsOnDeath: TFTeam? by addField("SpellDropForBotsInTeam", conditional = SIGSEGV, serializer = {
-		return@addField when (this) {
-			TFTeam.BLU -> "Blue"
-			TFTeam.RED -> "Red"
-			else -> error("Invalid team: $this")
-		}
-	})
+	open var WaveSchedule.teamThatDropsSpellsOnDeath: TFTeam? by addField("SpellDropForBotsInTeam", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NAME)
 	
 	
 	private val SPELL_MAP_SERIALIZER = { list: Iterable<Pair<TFSpell, Int>> ->

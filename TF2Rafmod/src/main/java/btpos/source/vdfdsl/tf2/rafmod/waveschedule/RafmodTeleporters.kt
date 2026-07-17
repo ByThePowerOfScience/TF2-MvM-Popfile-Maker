@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.durationInSeconds
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
-import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers.DURATION_IN_SECONDS
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.time.Duration
 
@@ -20,7 +20,7 @@ abstract class RafmodTeleporters {
 	 * botTeleportUberDuration = 2.seconds
 	 * ```
 	 */
-	open var WaveSchedule.botTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = DURATION_IN_SECONDS)
+	open var WaveSchedule.botTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = durationInSeconds())
 	
 	/**
 	 * If true, robots can use players' teleporter entrances. (Default: true)

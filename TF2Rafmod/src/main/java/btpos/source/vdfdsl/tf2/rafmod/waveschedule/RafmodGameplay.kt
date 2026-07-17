@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
@@ -32,7 +33,7 @@ abstract class RafmodGameplay {
 	 * markedForDeathLifetime = 1
 	 * ```
 	 */
-	open var WaveSchedule.markedForDeathLifetime: Duration? by addField("MarkedForDeathLifetime", conditional = SIGSEGV, serializer = RafmodSerializers.DURATION_IN_SECONDS)
+	open var WaveSchedule.markedForDeathLifetime: Duration? by addField("MarkedForDeathLifetime", conditional = SIGSEGV, serializer = IExtensibleSubtree.Serializers.durationInSeconds())
 	
 	/**
 	 * Number of ubercharges the Vaccinator can hold. (Default: 4)

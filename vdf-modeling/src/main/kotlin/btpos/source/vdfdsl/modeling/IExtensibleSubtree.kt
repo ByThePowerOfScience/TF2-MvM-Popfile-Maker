@@ -12,6 +12,8 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import kotlin.jvm.java
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 /**
  * Essentially a list of key-value pairs (e.g. "x, y") that can contain multiple keys as well as multiple values.
@@ -61,13 +63,9 @@ interface IExtensibleSubtree {
 			}
 		}
 		
-		fun <T : Any> withConditional(conditional: String): Serializer<T> {
-			return { it: T ->
-				IVDFRepresentableValue { key, conditional ->
-					IVDFRepresentableKeyValue { parent: VDFSubtree ->
-						IVDFRepresentableValue.serializeDynamic(key, it, conditional)._serializeInto(parent)
-					}
-				}
+		fun durationInSeconds(): Serializer<Duration> = { it: Duration ->
+			IVDFRepresentableValue_Trivial {
+				VDFPrimitive(it.toDouble(DurationUnit.SECONDS))
 			}
 		}
 		

@@ -1,9 +1,11 @@
 package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
+import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.time.Duration
 
@@ -18,14 +20,9 @@ abstract class RafmodReverseMvM {
 	open var WaveSchedule.enable: Boolean? by addField("ReverseWinConditions", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
 	/**
-	 * If true, only the BLU team can pick up money instead of the RED team.
+	 * If `TFTeam.BLU`, only the BLU team can pick up money instead of the RED team.
 	 */
-	open var WaveSchedule.canBluPickUpMoney: Boolean? by addField("SetCreditTeam", conditional = SIGSEGV, serializer = {
-		when (this) {
-			true -> 3
-			else -> null
-		}
-	})
+	open var WaveSchedule.teamThatCanPickUpMoney: TFTeam? by addField("SetCreditTeam", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NUMBER)
 	
 	
 	/**
@@ -66,7 +63,7 @@ abstract class RafmodReverseMvM {
 	/**
 	 * If true, human players are forcibly assigned to BLU upon joining.
 	 *
-	 * Also sets [canBluPickUpMoney] to true and, if not already set, sets [maxAllowedOnBlu] to 6.
+	 * Also sets [teamThatCanPickUpMoney] to true and, if not already set, sets [maxAllowedOnBlu] to 6.
 	 */
 	open var WaveSchedule.playersMustJoinBlu: Boolean? by addField("HumansMustJoinTeam", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
 	
@@ -84,7 +81,7 @@ abstract class RafmodReverseMvM {
 	 * botPostTeleportUberDuration = 5.seconds
 	 * ```
 	 */
-	open var WaveSchedule.botPostTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = RafmodSerializers.DURATION_IN_SECONDS)
+	open var WaveSchedule.botPostTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = IExtensibleSubtree.Serializers.durationInSeconds())
 	
 	/**
 	 * If true, humans should be teleported to an Engineer-bot's teleporter when spawning instead of their default spawn location. (Default: false)
