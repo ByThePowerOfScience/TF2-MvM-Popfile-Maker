@@ -10,8 +10,8 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
  * Note: structs are represented as keyvalues with a [VDFSubtree] as a value,
  * as they only differ from the standard "name: value" format in that they name _themselves_.
  */
-data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject, val conditional: String? = null) : VDFObject(), IVDFRepresentableKeyValue {
-	constructor(key: String, value: String) : this(VDFPrimitive(key), VDFPrimitive(value))
+data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject, val conditional: String?) : VDFObject(), IVDFRepresentableKeyValue {
+	constructor(key: String, value: String, conditional: String?) : this(VDFPrimitive(key), VDFPrimitive(value), conditional)
 	
 	override fun _serializeInto(input: VDFSubtree) {
 		input += this
@@ -41,11 +41,11 @@ data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject, val conditio
 		/**
 		 * Factory for easy "Only make the entry if the value is set"
 		 */
-		fun orNull(key: VDFPrimitive, value: VDFObject?): VDFKeyValue? {
+		fun orNull(key: VDFPrimitive, value: VDFObject?, conditional: String?): VDFKeyValue? {
 	        if (value == null)
 				return null
 			
-			return VDFKeyValue(key, value)
+			return VDFKeyValue(key, value, conditional)
 	    }
 	}
 }

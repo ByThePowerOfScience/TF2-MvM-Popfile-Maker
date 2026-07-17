@@ -11,16 +11,22 @@ import btpos.source.vdfdsl.tf2.items.weapons.Weapons
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsMelee
 
 @PopFileDSL
-open class TFItem<ATTR : Any>(val name: String, val attributes: KeyValueMapImpl? = null, @PublishedApi internal val scopedAttributeFunctions: ATTR)
+class TFItem<ATTR : Any>(
+	val name: String,
+	val attributes: KeyValueMapImpl? = null,
+	@PublishedApi internal val scopedAttributeFunctions: ATTR,
+	private val conditional: String? = null
+)
 	: IVDFRepresentableKeyValue
 {
 	override fun _serializeInto(input: VDFSubtree) {
 		input +=
 			listOfNotNull(
-				VDFKeyValue(VDFPrimitive("Item"), VDFPrimitive (name)),
+				VDFKeyValue(VDFPrimitive("Item"), VDFPrimitive(name), null),
 				VDFKeyValue.orNull(
 					VDFPrimitive("ItemAttributes"),
-					attributes?._vdfRepr(input)?.withEntry(VDFKeyValue(VDFPrimitive("ItemName"), VDFPrimitive(this.name)))
+					attributes?._vdfRepr(input)?.withEntry(VDFKeyValue(VDFPrimitive("ItemName"), VDFPrimitive(this.name), null)),
+					conditional
 				)
 		)
 	}
@@ -53,8 +59,8 @@ open class TFItem<ATTR : Any>(val name: String, val attributes: KeyValueMapImpl?
 		}
 	}
 	
-	fun copy(name: String = this.name, attributes: KeyValueMapImpl? = this.attributes?.copy()): TFItem<ATTR> {
-		return TFItem(name, attributes, this.scopedAttributeFunctions)
+	fun copy(name: String = this.name, attributes: KeyValueMapImpl? = this.attributes?.copy(), conditional: String? = this.conditional): TFItem<ATTR> {
+		return TFItem(name, attributes, this.scopedAttributeFunctions, conditional)
 	}
 	
 	companion object {
@@ -66,4 +72,3 @@ open class TFItem<ATTR : Any>(val name: String, val attributes: KeyValueMapImpl?
 		val MeleeWeapons get() = WeaponsMelee
 	}
 }
-

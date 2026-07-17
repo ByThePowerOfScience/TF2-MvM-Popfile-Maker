@@ -7,26 +7,32 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 
 
 @JvmRecord
-data class NamedValue<V : Any>(val key: String, val value: V, val serializer: ((V) -> Any)?)
+data class NamedValue<V : Any>(val key: String, val value: V, val conditional: String?, val serializer: ((V) -> Any?)?)
 	: IVDFRepresentableKeyValue
 {
 	override fun _serializeInto(input: VDFSubtree) {
-		val value = serializer?.invoke(value) ?: value
+		val value = if (serializer == null) {
+			value
+		} else {
+			serializer.invoke(value)
+				?: return; // allow setting "null" to stop it from being serialized
+		}
+		
 		
 		if (value is IVDFRepresentableKeyValue) {
 			return value._serializeInto(input)
 		}
 		
-		val dynamic = IVDFRepresentableValue.serializeDynamic(VDFPrimitive(key), value)
+		val dynamic = IVDFRepresentableValue.serializeDynamic(VDFPrimitive(key), value, conditional)
 		
 		return dynamic._serializeInto(input)
 	}
 }
 
 @JvmRecord
-data class SelfNamedValue<T : IVDFRepresentableKeyValue>(val item: T) : IVDFRepresentableKeyValue {
+data class SelfNamedValue<T : IVDFRepresentableKeyValue>(val item: T, val transformer: (T) -> IVDFRepresentableKeyValue) : IVDFRepresentableKeyValue {
 	override fun _serializeInto(input: VDFSubtree) {
-		item._serializeInto(input)
+		transformer(item)._serializeInto(input)
 	}
 }
 
@@ -35,10 +41,10 @@ data class SelfNamedValue<T : IVDFRepresentableKeyValue>(val item: T) : IVDFRepr
  *
  * All of these values will be placed flatly on the top level of the tree they're nested in.
  */
-data class SelfNamedValueList<T : IVDFRepresentableKeyValue>(val innerList: List<T>)
+data class SelfNamedValueList<T : IVDFRepresentableKeyValue>(val innerList: List<T>, val transformer: (T) -> IVDFRepresentableKeyValue)
 	: IVDFRepresentableKeyValue, List<T> by innerList
 {
 	override fun _serializeInto(input: VDFSubtree) {
-		innerList.forEach { it._serializeInto(input) }
+		innerList.forEach { transformer(it)._serializeInto(input) }
 	}
 }

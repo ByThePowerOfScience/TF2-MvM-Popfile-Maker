@@ -253,11 +253,11 @@ object ParseVDF {
 		
 		class KeyValueVisitor(val parent: VDFSubtree?) : VDFBaseVisitor<VDFKeyValue>() {
 			override fun visitKeyvalue_strings(ctx: VDFParser.Keyvalue_stringsContext): VDFKeyValue {
-				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), VDFPrimitive(ctx.value.accept(KeyableVisitor)))
+				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), VDFPrimitive(ctx.value.accept(KeyableVisitor)), ctx.CONDITIONAL()?.text)
 			}
 			
 			override fun visitKeyvalue_table(ctx: VDFParser.Keyvalue_tableContext): VDFKeyValue {
-				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), ctx.table().accept(TableVisitor(parent)))
+				return VDFKeyValue(VDFPrimitive(ctx.key.accept(KeyableVisitor)), ctx.table().accept(TableVisitor(parent)), ctx.CONDITIONAL()?.text)
 			}
 		}
 	}
