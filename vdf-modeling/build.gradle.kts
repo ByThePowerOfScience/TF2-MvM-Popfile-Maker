@@ -1,6 +1,5 @@
 plugins {
 	id("general-convention")
-	id("clojure-convention")
 }
 
 group = "btpos.source.vdfdsl.vdf"
@@ -12,16 +11,4 @@ repositories {
 	flatDir {
 		dir("../libs")
 	}
-}
-
-dependencies {
-	testImplementation(kotlin("test"))
-}
-
-kotlin {
-	jvmToolchain(21)
-}
-
-tasks.test {
-	useJUnitPlatform()
 }
