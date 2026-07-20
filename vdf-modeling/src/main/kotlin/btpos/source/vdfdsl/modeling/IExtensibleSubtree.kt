@@ -8,7 +8,9 @@ import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
+import kotlin.collections.forEach
 import kotlin.jvm.java
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -107,6 +109,16 @@ interface IExtensibleSubtree {
 		fun <T : Any, U : Any> notNull(getter: (T) -> U?): (T) -> U {
 			return { it: T ->
 				getter(it) ?: error("Expected $getter to return not null.")
+			}
+		}
+		
+		fun <T : IVDFRepresentableKeyValue> subtreeOfSubtrees(): Serializer<Iterable<T>> {
+			return { items ->
+				IVDFRepresentableValue_Subtree { parent ->
+					VDFSubtree(parent).also { newSubtree ->
+						items.forEach { it._serializeInto(newSubtree) }
+					}
+				}
 			}
 		}
 	}

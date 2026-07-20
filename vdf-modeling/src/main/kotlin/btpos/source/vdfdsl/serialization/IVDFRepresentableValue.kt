@@ -65,7 +65,7 @@ fun interface IVDFRepresentableValue : IVDFRepresentable {
 	}
 }
 
-interface IVDFRepresentableValue_Subtree : IVDFRepresentableValue {
+fun interface IVDFRepresentableValue_Subtree : IVDFRepresentableValue {
 	fun _vdfRepr(parent: VDFSubtree): VDFSubtree
 	
 	override fun _toKeyValueRepresentable(key: VDFPrimitive): IVDFRepresentableKeyValue {
