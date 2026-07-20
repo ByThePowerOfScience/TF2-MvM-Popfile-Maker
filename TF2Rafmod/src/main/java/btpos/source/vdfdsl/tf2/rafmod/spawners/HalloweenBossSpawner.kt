@@ -4,6 +4,7 @@ import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
@@ -164,7 +165,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * spawnedTemplates += MyPointTemplates.WEAPON_MIMIC
 	 * ```
 	 */
-	open var spawnedTemplates: List<PointTemplate> by addField("SpawnTemplate", conditional = SIGSEGV, serializer = flatListWithKey(), initialValue = ::listOf)
+	open var spawnedTemplates: List<PointTemplate> by addField("SpawnTemplate", conditional = SIGSEGV, serializer = flatListWithKey<String>().mapEach(RafmodSerializers.POINTTEMPLATE_NAME), initialValue = ::listOf)
 	
 	
 	

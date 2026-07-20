@@ -6,11 +6,11 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
+import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
 import btpos.source.vdfdsl.tf2.rafmod.data.Vec3
 import btpos.source.vdfdsl.tf2.rafmod.data.Rot3
 import btpos.source.vdfdsl.tf2.rafmod.types.PointTemplate
 import btpos.source.vdfdsl.types.bots.TFClass
-import btpos.source.vdfdsl.types.populators.WavePopulator
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 
 /**
@@ -73,7 +73,7 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * templateToSpawn = MyPointTemplates.SENTRY_STACK
 	 * ```
 	 */
-	open var templateToSpawn: PointTemplate? by addField("Name", conditional = SIGSEGV)
+	open var templateToSpawn: PointTemplate? by addField("Name", conditional = SIGSEGV, serializer = RafmodSerializers.POINTTEMPLATE_NAME)
 	
 	/**
 	 * The position to spawn the template.  If [spawnAtEntity] is set, this is a relative offset from that entity's position.

@@ -1,8 +1,10 @@
 package btpos.source.vdfdsl.tf2.rafmod
 
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.selector
 import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.data.Vec3
 import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
+import btpos.source.vdfdsl.tf2.rafmod.types.PointTemplate
 
 object RafmodSerializers {
 	
@@ -24,4 +26,6 @@ object RafmodSerializers {
 			else -> error("Invalid team: $this")
 		}
 	}
+	
+	@JvmField val POINTTEMPLATE_NAME = selector(PointTemplate::name)
 }
