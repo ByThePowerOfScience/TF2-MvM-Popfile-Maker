@@ -85,7 +85,7 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	var eventChangeAttributes: KeyValueMapImpl? by addField("EventChangeAttributes")
 	
 	final inline fun eventChangeAttributes(configure: IKeyValueMap.() -> Unit) {
-		characterAttributes = KeyValueMapImpl().apply(configure)
+		eventChangeAttributes = KeyValueMapImpl().apply(configure)
 	}
 	
 	var tags: List<String> by addField("Tag", serializer = flatListWithKey()) { listOf() }
