@@ -11,6 +11,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import kotlin.jvm.java
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KCallable
 import kotlin.reflect.KProperty
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -63,6 +64,12 @@ interface IExtensibleSubtree {
 			}
 		}
 		
+		fun <T, U> Serializer<Iterable<U>>.mapEach(transformer: (T) -> U): Serializer<Iterable<T>> {
+			return { it: Iterable<T> ->
+				this(it.map(transformer))
+			}
+		}
+		
 		fun durationInSeconds(): Serializer<Duration> = { it: Duration ->
 			IVDFRepresentableValue_Trivial {
 				VDFPrimitive(it.toDouble(DurationUnit.SECONDS))
@@ -85,6 +92,16 @@ interface IExtensibleSubtree {
 				}
 			}
 		}
+		
+		fun <T : Any, U : Any> selector(extractor: (T) -> U?): (T) -> U {
+			val name = if (extractor is KCallable<*>) {
+				" \"${extractor.name}\""
+			} else ""
+			return {
+				extractor(it) ?: throw IllegalArgumentException("Serializer$name returned null.\nValue: $it.")
+			}
+		}
+		
 		
 		/**
 		 * A list represented as a subtree, with the keys being the items in the list and its values being ignored. (usually `"1"`)
