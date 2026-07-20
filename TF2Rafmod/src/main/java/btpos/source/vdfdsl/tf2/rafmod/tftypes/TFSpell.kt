@@ -38,7 +38,7 @@ class TFSpell(override val _vdfRepr: VDFPrimitive) : IVDFRepresentableValue_Triv
 		val `Meteor Shower` = TFSpell("Meteor Shower")
 		
 		@JvmField
-		val `Summon Monoculous` = TFSpell("Summon Monoculous")
+		val `Summon Monoculus` = TFSpell("Summon Monoculus")
 		
 		@JvmField
 		val `Summon Skeletons` = TFSpell("Summon Skeletons")

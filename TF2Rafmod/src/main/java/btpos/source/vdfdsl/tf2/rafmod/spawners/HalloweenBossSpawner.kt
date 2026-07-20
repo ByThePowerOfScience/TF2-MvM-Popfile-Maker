@@ -33,7 +33,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 *
 	 * Example:
 	 * ```kotlin
-	 * boss = TFHalloweenBoss.MONOCULOUS
+	 * boss = TFHalloweenBoss.MONOCULUS
 	 * ```
 	 */
 	open var boss: TFHalloweenBoss? by addField("BossType", conditional = SIGSEGV)
