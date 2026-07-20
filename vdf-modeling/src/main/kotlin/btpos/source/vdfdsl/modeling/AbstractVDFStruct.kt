@@ -16,13 +16,22 @@ abstract class AbstractVDFStruct(private val _subtree: IExtensibleSubtree_VDFRep
 	: IVDFRepresentableKeyValue, IExtensibleSubtree by _subtree
 {
 	override fun _serializeInto(input: VDFSubtree) {
-		_subtree._toKeyValueRepresentable(VDFPrimitive(_structIdentifier))._serializeInto(input)
+		_subtree._toKeyValueRepresentable(VDFPrimitive(_structIdentifier), _conditional)._serializeInto(input)
 	}
 	
 	/**
 	 * The key this item is always given in a subtree, used to identify it as a specific kind of structure.
 	 */
 	abstract val _structIdentifier: String
+	
+	/**
+	 * Only activate when the server environment is this.
+	 *
+	 * Examples: `"$WIN32"`, `"$SIGSEGV"`
+	 *
+	 * Defaults to `null`.
+	 */
+	open val _conditional: String? get() = null
 	
 	protected fun copyInternal() = _subtree.copy()
 	

@@ -18,10 +18,10 @@ data class PopFileTemplate(
 	 */
 	val base: String
 ) : IVDFRepresentableValue {
-	override fun _toKeyValueRepresentable(key: VDFPrimitive): IVDFRepresentableKeyValue {
+	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
 		return IVDFRepresentableKeyValue { parent ->
 			parent.addBase()
-			parent += VDFKeyValue(key, VDFPrimitive(name))
+			parent += VDFKeyValue(key, VDFPrimitive(name), conditional)
 		}
 	}
 	
@@ -30,7 +30,7 @@ data class PopFileTemplate(
 		val rootEntries = this.getRoot().entries
 		
 		if (rootEntries.none { it.key.stringValue == "#base" && it.value.asString == base }) {
-			rootEntries.add(0, VDFKeyValue(VDFPrimitive("#base"), VDFPrimitive(base)))
+			rootEntries.add(0, VDFKeyValue(VDFPrimitive("#base"), VDFPrimitive(base), null))
 		}
 	}
 }

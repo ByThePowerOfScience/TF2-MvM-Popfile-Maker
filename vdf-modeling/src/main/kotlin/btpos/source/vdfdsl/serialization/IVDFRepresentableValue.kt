@@ -23,7 +23,7 @@ fun interface IVDFRepresentableValue : IVDFRepresentable {
 	 * @param key The key this value should be given.
 	 * @return A function that adds this value, with the corresponding key, to a subtree, allowing full traversal of the tree. (see [IVDFRepresentableKeyValue._serializeInto])
 	 */
-	fun _toKeyValueRepresentable(key: VDFPrimitive): IVDFRepresentableKeyValue
+	fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue
 	
 	companion object {
 		/**
@@ -38,17 +38,17 @@ fun interface IVDFRepresentableValue : IVDFRepresentable {
 		 * - [IVDFRepresentableValue]
 		 * - [VDFObject]
 		 */
-		fun serializeDynamic(key: VDFPrimitive, value: Any): IVDFRepresentableKeyValue {
+		fun serializeDynamic(key: VDFPrimitive, value: Any, conditional: String? = null): IVDFRepresentableKeyValue {
 			return when (value) {
-				is VDFObject -> VDFKeyValue(key, value)
+				is VDFObject -> VDFKeyValue(key, value, conditional)
 				is IVDFRepresentable -> when (value) {
-					is IVDFRepresentableValue -> value._toKeyValueRepresentable(key)
+					is IVDFRepresentableValue -> value._toKeyValueRepresentable(key, conditional)
 					is IVDFRepresentableKeyValue -> throw IllegalArgumentException("Error serializing dynamic keyvalue with '$key': Cannot give keyvalue '$value' a key as it has one already.")
 				}
 				else -> {
 					val primitive = VDFPrimitive.tryCreatePrimitive(value)
 					                ?: throw IllegalArgumentException("'$value' must be a String, Number, Boolean, VDFObject, or IVDFRepresentableValue to be dynamically serialized.")
-					VDFKeyValue(key, primitive)
+					VDFKeyValue(key, primitive, conditional)
 				}
 			}
 		}
@@ -68,9 +68,9 @@ fun interface IVDFRepresentableValue : IVDFRepresentable {
 fun interface IVDFRepresentableValue_Subtree : IVDFRepresentableValue {
 	fun _vdfRepr(parent: VDFSubtree): VDFSubtree
 	
-	override fun _toKeyValueRepresentable(key: VDFPrimitive): IVDFRepresentableKeyValue {
+	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
 		return { parent ->
-			parent += VDFKeyValue(key, _vdfRepr(parent))
+			parent += VDFKeyValue(key, _vdfRepr(parent), conditional)
 		}
 	}
 }
@@ -91,8 +91,12 @@ interface IVDFRepresentableValue_Trivial : IVDFRepresentableValue {
 	 */
 	val _vdfRepr: VDFPrimitive
 	
-	override fun _toKeyValueRepresentable(key: VDFPrimitive): IVDFRepresentableKeyValue {
-		return { it += VDFKeyValue(key, _vdfRepr) }
+	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
+		return { it += VDFKeyValue(key, _vdfRepr, conditional) }
 	}
 }
 
+fun IVDFRepresentableValue_Trivial(repr: () -> VDFPrimitive) = object : IVDFRepresentableValue_Trivial {
+	override val _vdfRepr: VDFPrimitive
+		get() = repr()
+}

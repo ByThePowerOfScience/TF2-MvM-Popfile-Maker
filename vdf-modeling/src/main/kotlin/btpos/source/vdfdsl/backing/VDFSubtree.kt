@@ -88,3 +88,14 @@ fun VDFSubtree.getRoot(): VDFSubtree {
 	}
 	return curr;
 }
+
+/**
+ * Creates a new subtree inside [this] with the specified [key] and [conditional], and returns it for modification.
+ *
+ * Does not check if the key already exists in this.
+ */
+fun VDFSubtree.addSubtree(key: VDFPrimitive, conditional: String? = null): VDFSubtree {
+	return VDFSubtree(parent=this).also { newSubtree ->
+		this += VDFKeyValue(key, newSubtree, conditional)
+	}
+}

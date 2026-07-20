@@ -3,7 +3,6 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
-import java.util.*
 
 /**
  * Items: The Wrangler, Festive Wrangler, The Giger Counter
@@ -18,7 +17,7 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * If unset, uses the weapon's default projectile type.
 	 *
-	 * Else use a numbered [ProjectileType].
+	 * Else use a numbered [btpos.source.vdfdsl.tf2.tftypes.ProjectileType].
 	 */
 	context(attrs: IKeyValueMap)
 	var overrideProjectileType: Int?

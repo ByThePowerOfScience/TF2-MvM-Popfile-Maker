@@ -3,7 +3,6 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
-import java.util.*
 
 /**
  * Items: TF_WEAPON_ROCKETLAUNCHER, Upgradeable TF_WEAPON_ROCKETLAUNCHER, The Black Box, Rocket Jumper, The Liberty Launcher, The Original, Festive Rocket Launcher 2011, The Beggar's Bazooka, Silver Botkiller Rocket Launcher Mk.I, Gold Botkiller Rocket Launcher Mk.I, Rust Botkiller Rocket Launcher Mk.I, Blood Botkiller Rocket Launcher Mk.I, Carbonado Botkiller Rocket Launcher Mk.I, Diamond Botkiller Rocket Launcher Mk.I, Silver Botkiller Rocket Launcher Mk.II, Gold Botkiller Rocket Launcher Mk.II, Festive Black Box
@@ -18,7 +17,7 @@ interface RocketLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * If unset, uses the weapon's default projectile type.
 	 *
-	 * Else use a numbered [ProjectileType].
+	 * Else use a numbered [btpos.source.vdfdsl.tf2.tftypes.ProjectileType].
 	 */
 	context(attrs: IKeyValueMap)
 	override var overrideProjectileType: Int?

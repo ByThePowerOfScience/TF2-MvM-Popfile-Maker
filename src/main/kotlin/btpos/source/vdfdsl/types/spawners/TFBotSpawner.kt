@@ -65,7 +65,7 @@ var ChangeableBotAttributes.tags: List<String> by addField("Tag", serializer = f
  * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
  */
 inline fun <ATTR : Any> ChangeableBotAttributes.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(IKeyValueMap) ATTR.() -> Unit) {
-	itemAttributes += item.usingAttributesScope(KeyValueMapImpl(), attrScope)
+	itemAttributes += item.configureAttributes(KeyValueMapImpl(), attrScope)
 }
 
 @Suppress("RedundantModalityModifier")
@@ -115,3 +115,14 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 		}
 	}
 }
+
+
+/**
+ * Define attributes for an item without adding the item itself.
+ *
+ * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
+ */
+inline fun <ATTR : Any> TFBotSpawner.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(IKeyValueMap) ATTR.() -> Unit) {
+	itemAttributes += item.configureAttributes(KeyValueMapImpl(), attrScope)
+}
+

@@ -4,8 +4,10 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 
-class TFBotAttributes(val name: String) : IVDFRepresentableValue_Trivial {
-	override val _vdfRepr get() = VDFPrimitive(name)
+open class TFBotAttributes(name: String) : IVDFRepresentableValue_Trivial {
+	override val _vdfRepr = VDFPrimitive(name)
+	
+	
 	
 	companion object {
 		@JvmField val RemoveOnDeath = TFBotAttributes("RemoveOnDeath")

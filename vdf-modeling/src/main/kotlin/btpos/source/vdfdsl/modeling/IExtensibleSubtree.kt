@@ -13,7 +13,10 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import kotlin.collections.forEach
 import kotlin.jvm.java
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KCallable
 import kotlin.reflect.KProperty
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 /**
  * Essentially a list of key-value pairs (e.g. "x, y") that can contain multiple keys as well as multiple values.
@@ -54,6 +57,27 @@ interface IExtensibleSubtree {
 	object Serializers {
 		typealias Serializer<T> = (T) -> IVDFRepresentableValue
 		
+		/**
+		 * Transform the input before [this] serializer reaches it.
+		 */
+		fun <T, U> Serializer<U>.compose(transformer: (T) -> U): Serializer<T> {
+			return { it: T ->
+				this(transformer(it))
+			}
+		}
+		
+		fun <T, U> Serializer<Iterable<U>>.mapEach(transformer: (T) -> U): Serializer<Iterable<T>> {
+			return { it: Iterable<T> ->
+				this(it.map(transformer))
+			}
+		}
+		
+		fun durationInSeconds(): Serializer<Duration> = { it: Duration ->
+			IVDFRepresentableValue_Trivial {
+				VDFPrimitive(it.toDouble(DurationUnit.SECONDS))
+			}
+		}
+		
 		inline fun <reified T : Any> flatListWithKey(): Serializer<Iterable<T>> {
 			IVDFRepresentableValue.requireValueRepresentable(T::class.java)
 			return _flatListWithKey()
@@ -61,15 +85,25 @@ interface IExtensibleSubtree {
 		
 		@PublishedApi
 		internal fun <T : Any> _flatListWithKey(): Serializer<Iterable<T>> = { iterable: Iterable<T> ->
-			{ key ->
+			IVDFRepresentableValue { key, conditional ->
 				IVDFRepresentableKeyValue { input: VDFSubtree ->
 					iterable.forEach {
-						IVDFRepresentableValue.serializeDynamic(key, it)
+						IVDFRepresentableValue.serializeDynamic(key, it, conditional)
 							._serializeInto(input)
 					}
 				}
 			}
 		}
+		
+		fun <T : Any, U : Any> selector(extractor: (T) -> U?): (T) -> U {
+			val name = if (extractor is KCallable<*>) {
+				" \"${extractor.name}\""
+			} else ""
+			return {
+				extractor(it) ?: throw IllegalArgumentException("Serializer$name returned null.\nValue: $it.")
+			}
+		}
+		
 		
 		/**
 		 * A list represented as a subtree, with the keys being the items in the list and its values being ignored. (usually `"1"`)
@@ -91,15 +125,17 @@ interface IExtensibleSubtree {
 		@PublishedApi
 		internal fun <T : Any> _listAsMap(dummyValue: VDFPrimitive): Serializer<Iterable<T>> {
 			return { iterable ->
-				IVDFRepresentableValue { key ->
+				IVDFRepresentableValue { key, conditional ->
 					IVDFRepresentableKeyValue { parent ->
 						parent += VDFKeyValue(
 							key,
 							VDFSubtree(parent).apply {
 								iterable.forEach {
-									this += VDFKeyValue(VDFPrimitive(it), dummyValue)
+									this += VDFKeyValue(VDFPrimitive(it), dummyValue, null)
 								}
-							})
+							},
+							conditional
+						)
 						
 					}
 				}
@@ -135,8 +171,8 @@ interface IExtensibleSubtree {
 		 * ```
 		 */
 		@JvmName("addFieldSerializer")
-		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: ((T) -> S)): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return addField_serializer(serializationKey, serializer, null, S::class.java)
+		inline fun <T : Any, reified S : Any> addField(serializationKey: String, conditional: String? = null, noinline serializer: (T.() -> S?)): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_serializer(serializationKey, conditional, serializer, null, S::class.java)
 		}
 		
 		/**
@@ -156,21 +192,21 @@ interface IExtensibleSubtree {
 		 * @param T The actual type of the item the user can put in this property.
 		 * @param S Some [serializable type][IVDFRepresentableValue.serializeDynamic].
 		 */
-		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: T.() -> S, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
+		inline fun <T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: T.() -> S?, conditional: String? = null, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
 			@Suppress("UNCHECKED_CAST")
-			return addField_serializer(serializationKey, serializer, initialValue, S::class.java) as ReadWriteProperty<IExtensibleSubtree, T>
+			return addField_serializer(serializationKey, conditional, serializer, initialValue, S::class.java) as ReadWriteProperty<IExtensibleSubtree, T>
 		}
 		
 		@PublishedApi
-		internal fun <T : Any, S : Any> addField_serializer(serializationKey: String, serializer: (T) -> S, initialValue: (() -> T)?, serClass: Class<S>): ReadWriteProperty<IExtensibleSubtree, T?> {
+		internal fun <T : Any, S : Any> addField_serializer(serializationKey: String, conditional: String?, serializer: (T) -> S?, initialValue: (() -> T)?, serClass: Class<S>): ReadWriteProperty<IExtensibleSubtree, T?> {
 			require(IVDFRepresentableValue.isValueRepresentable(serClass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(serClass)) {
 				"Post-serialized type ${serClass.simpleName} is neither a valid value or keyvalue."
 			}
 			
-			return RegularFieldProperty(serializationKey.intern(), initialValue, serializer)
+			return RegularFieldProperty(serializationKey.intern(), initialValue, conditional, serializer)
 		}
 		
-		private class RegularFieldProperty<T : Any>(val key: String, val initialValue: (() -> T)?, val serializer: ((T) -> Any)?) : ReadWriteProperty<IExtensibleSubtree, T?> {
+		private class RegularFieldProperty<T : Any>(val key: String, val initialValue: (() -> T)?, val conditional: String?, val serializer: ((T) -> Any?)?) : ReadWriteProperty<IExtensibleSubtree, T?> {
 			override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
 				@Suppress("UNCHECKED_CAST")
 				return (thisRef._rawEntries[property] as NamedValue<T>?)?.value ?: initialValue?.invoke()
@@ -182,7 +218,7 @@ interface IExtensibleSubtree {
 					return;
 				}
 				@Suppress("UNCHECKED_CAST")
-				thisRef._rawEntries[property] = NamedValue(key, ((value as? String)?.intern() ?: value) as T, serializer)
+				thisRef._rawEntries[property] = NamedValue(key, ((value as? String)?.intern() ?: value) as T, conditional, serializer)
 			}
 		}
 		
@@ -193,8 +229,8 @@ interface IExtensibleSubtree {
 		 *
 		 * @param key The key this item will be serialized under.
 		 */
-		inline fun <reified T : Any> addField(key: String): ReadWriteProperty<IExtensibleSubtree, T?> {
-			return addField_noSerializer(key, T::class.java, null)
+		inline fun <reified T : Any> addField(key: String, conditional: String? = null): ReadWriteProperty<IExtensibleSubtree, T?> {
+			return addField_noSerializer(key, T::class.java, conditional, null)
 		}
 		
 		/**
@@ -205,13 +241,13 @@ interface IExtensibleSubtree {
 		 * @param key The key this item will be serialized under.
 		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
 		 */
-		inline fun <reified T : Any> addField(key: String, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
+		inline fun <reified T : Any> addField(key: String, conditional: String? = null, noinline initialValue: () -> T): ReadWriteProperty<IExtensibleSubtree, T> {
 			@Suppress("UNCHECKED_CAST")
-			return addField_noSerializer(key, T::class.java, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>
+			return addField_noSerializer(key, T::class.java, conditional, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>
 		}
 		
 		@PublishedApi
-		internal fun <T : Any> addField_noSerializer(key: String, subclass: Class<T>, initialValue: (() -> T)?): ReadWriteProperty<IExtensibleSubtree, T?> {
+		internal fun <T : Any> addField_noSerializer(key: String, subclass: Class<T>, conditional: String?, initialValue: (() -> T)?): ReadWriteProperty<IExtensibleSubtree, T?> {
 			require(!IVDFRepresentableKeyValue.isKeyValueRepresentable(subclass)) {
 				"Cannot give an IVDFRepresentableKeyValue a key, as it determines its own key.  This is likely an error.  Use the `selfNamed()` provider to declare this field."
 			}
@@ -221,7 +257,7 @@ interface IExtensibleSubtree {
 				"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableValue.\n"
 			}
 			
-			return RegularFieldProperty(key.intern(), initialValue, null)
+			return RegularFieldProperty(key, initialValue, conditional, null)
 		}
 		
 		
@@ -234,8 +270,9 @@ interface IExtensibleSubtree {
 		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [AbstractVDFStruct] and its subclasses),
 		 * use [addField] with an [IVDFRepresentableValue_Subtree][btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree] as its value to allow the parent scope to decide its name.
 		 *
+		 * @param transformer Something to postprocess the value in some way before its representation is pulled, like giving it a conditional.
 		 */
-		fun <T : IVDFRepresentableKeyValue> selfNamed() = object : ReadWriteProperty<IExtensibleSubtree, T?> {
+		fun <T : IVDFRepresentableKeyValue> selfNamed(transformer: (T) -> IVDFRepresentableKeyValue = { it }) = object : ReadWriteProperty<IExtensibleSubtree, T?> {
 			@Suppress("UNCHECKED_CAST")
 			private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries[prop] as SelfNamedValue<T>?
 			
@@ -247,7 +284,7 @@ interface IExtensibleSubtree {
 				if (value == null)
 					thisRef._rawEntries.remove(property)
 				else
-					thisRef._rawEntries[property] = SelfNamedValue(value)
+					thisRef._rawEntries[property] = SelfNamedValue(value, transformer)
 			}
 		}
 		
@@ -268,7 +305,7 @@ interface IExtensibleSubtree {
 		 * ```
 		 *
 		 */
-		fun <T : IVDFRepresentableKeyValue> selfNamedList(): ReadWriteProperty<IExtensibleSubtree, List<T>> {
+		fun <T : IVDFRepresentableKeyValue> selfNamedList(transformer: (T) -> IVDFRepresentableKeyValue = { it }): ReadWriteProperty<IExtensibleSubtree, List<T>> {
 			@Suppress("UNCHECKED_CAST")
 			return object : ReadWriteProperty<IExtensibleSubtree, List<T>> {
 				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): List<T> {
@@ -276,7 +313,7 @@ interface IExtensibleSubtree {
 				}
 				
 				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: List<T>) {
-					thisRef._rawEntries[property] = SelfNamedValueList(value)
+					thisRef._rawEntries[property] = SelfNamedValueList(value, transformer)
 				}
 			}
 		}
@@ -295,12 +332,12 @@ open class ExtensibleSubtreeImpl(
 	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf(),
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
 ) : IExtensibleSubtree_VDFRepresentable {
-	override fun _toKeyValueRepresentable(key: VDFPrimitive): IVDFRepresentableKeyValue {
+	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
 		return { parent ->
 			try {
 				val ourSub = VDFSubtree(parent)
 				_rawEntries.values.forEach { it._serializeInto(ourSub) }
-				parent += VDFKeyValue(key, ourSub)
+				parent += VDFKeyValue(key, ourSub, conditional)
 			} catch (e: Exception) {
 				throw RequiredFieldNotFoundException(_instantiationSite, e)
 			}
