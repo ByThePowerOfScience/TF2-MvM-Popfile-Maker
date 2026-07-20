@@ -1,4 +1,4 @@
-package btpos.source.vdfdsl.tf2.itemattributes.impl
+package btpos.source.vdfdsl.tf2.tftypes
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial

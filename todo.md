@@ -8,4 +8,13 @@ Assess VMTs and map files, auto-import and auto-generate bindings using a gradle
 
 MAKE AN ACTUALLY USEFUL EXAMPLE FILE
 
-give eventchangeattributes its own block with https://steamcommunity.com/sharedfiles/filedetails/?id=199458688
+Add spellbooks to cosmetics
+
+// TODO make a proper DSL for this
+// TODO rename to IOAction
+
+
+NoCrouchButtonRelease 1 in TFBot
+
+
+Rafmod chat message coloring parsing, components etc

@@ -10,14 +10,14 @@ enum class TFCritCondition : IEnumCustomValue {
 	/**
 	 * Currently on fire, whether or not they experience afterburn damage. (Includes Pyros currently caught in flames.)
 	 *
-	 * TF_COND_BURNING
+	 * [TF_COND_BURNING][btpos.source.vdfdsl.tf2.tftypes.TFCondition.Burning]
 	 */
 	Burning,
 	
 	/**
 	 * Scoped into a sniper-rifle OR revved-up with a minigun.
 	 *
-	 * TF_COND_BURNING
+	 * TF_COND_AIMING
 	 */
 	Aiming,
 	
@@ -154,12 +154,7 @@ enum class TFCritCondition : IEnumCustomValue {
 	 */
 	MinicritBoosted;
 	
-	infix fun or(other: TFCritCondition): EnumSet<TFCritCondition> = EnumSet.of(this, other)
-	
 	override val value: Int
 		get() = 1 shl this.ordinal
-	
 }
 
-infix fun EnumSet<TFCritCondition>.or(other: TFCritCondition) = this.apply { add(other) }
-infix fun EnumSet<TFCritCondition>.or(other: EnumSet<TFCritCondition>) = this.apply { addAll(other) }
