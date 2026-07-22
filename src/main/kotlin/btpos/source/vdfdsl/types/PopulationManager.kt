@@ -53,7 +53,7 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	 */
 	var addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
 	
-	var canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (it) "yes" else "no" })
+	var canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (this) "yes" else "no" })
 	
 	var advanced: Boolean? by addField("Advanced")
 	

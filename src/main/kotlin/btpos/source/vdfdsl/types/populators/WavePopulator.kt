@@ -30,7 +30,7 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	var waitWhenDone: Number? by addField("WaitWhenDone")
 	
 	@Deprecated("According to sigsegv, doesn't do anything.")
-	var checkpoint: Boolean? by addField("Checkpoint", serializer = { if (it) "yes" else "no" })
+	var checkpoint: Boolean? by addField("Checkpoint", serializer = { if (this) "yes" else "no" })
 	
 	/**
 	 * The action that should be triggered once the bots start spawning.
