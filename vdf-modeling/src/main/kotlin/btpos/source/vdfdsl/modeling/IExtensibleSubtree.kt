@@ -270,9 +270,24 @@ interface IExtensibleSubtree {
 		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [AbstractVDFStruct] and its subclasses),
 		 * use [addField] with an [IVDFRepresentableValue_Subtree][btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree] as its value to allow the parent scope to decide its name.
 		 *
-		 * @param transformer Something to postprocess the value in some way before its representation is pulled, like giving it a conditional.
+		 * Note: Self-named values are expected to provide their own conditionals.
 		 */
-		fun <T : IVDFRepresentableKeyValue> selfNamed(transformer: (T) -> IVDFRepresentableKeyValue = { it }) = object : ReadWriteProperty<IExtensibleSubtree, T?> {
+		fun <T : IVDFRepresentableKeyValue> selfNamed() = selfNamed<T> { it }
+		
+		/**
+		 * A struct that may only appear once in the subtree.
+		 *
+		 * Note that the only difference between a struct and a named subtree is that structs have their _own_ names.
+		 * As such, there is no way to name these.
+		 *
+		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [AbstractVDFStruct] and its subclasses),
+		 * use [addField] with an [IVDFRepresentableValue_Subtree][btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree] as its value to allow the parent scope to decide its name.
+		 *
+		 * Note: Self-named values are expected to provide their own conditionals.
+		 *
+		 * @param transformer Something to turn the item saved in this field into 1+ keyvalues, or otherwise postprocess the value (like adding a conditional if the struct doesn't have one already).
+		 */
+		fun <T : Any> selfNamed(transformer: (T) -> IVDFRepresentableKeyValue) = object : ReadWriteProperty<IExtensibleSubtree, T?> {
 			@Suppress("UNCHECKED_CAST")
 			private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries[prop] as SelfNamedValue<T>?
 			

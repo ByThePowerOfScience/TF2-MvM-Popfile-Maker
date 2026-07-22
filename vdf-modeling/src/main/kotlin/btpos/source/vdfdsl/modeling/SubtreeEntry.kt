@@ -30,7 +30,7 @@ data class NamedValue<V : Any>(val key: String, val value: V, val conditional: S
 }
 
 @JvmRecord
-data class SelfNamedValue<T : IVDFRepresentableKeyValue>(val item: T, val transformer: (T) -> IVDFRepresentableKeyValue) : IVDFRepresentableKeyValue {
+data class SelfNamedValue<T : Any>(val item: T, val transformer: (T) -> IVDFRepresentableKeyValue) : IVDFRepresentableKeyValue {
 	override fun _serializeInto(input: VDFSubtree) {
 		transformer(item)._serializeInto(input)
 	}
