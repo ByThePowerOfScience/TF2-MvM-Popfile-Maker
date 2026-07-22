@@ -25,7 +25,7 @@ open class AddCondBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	 * condition = TFCondition.Urine
 	 * ```
 	 */
-	open var condition: TFCondition? by IExtensibleSubtree.addField("Name", conditional = RafmodConstants.SIGSEGV, serializer = TFCondition::TF_COND)
+	open var condition: TFCondition? by IExtensibleSubtree.addField("Name", conditional = RafmodConstants.SIGSEGV, serializer = TFCondition::TF_COND_primitive)
 	
 	/**
 	 * Number of seconds after the bot spawns before the condition is applied. (Default: 0 seconds / instant)

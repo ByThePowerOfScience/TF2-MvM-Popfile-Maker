@@ -1,5 +1,7 @@
 package btpos.source.vdfdsl.tf2.tftypes
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
+
 /**
  * Documentation sourced from [https://developer.valvesoftware.com/wiki/Condition_list]
  */
@@ -13,6 +15,8 @@ class TFCondition(
 	 */
 	val index: Int
 ) {
+	val TF_COND_primitive = VDFPrimitive(TF_COND)
+	
 	companion object {
 		private var currentIndex = 0
 		
