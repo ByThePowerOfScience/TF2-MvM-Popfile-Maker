@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers.BOOL_SER_INVERT
 import btpos.source.vdfdsl.types.WaveSchedule
@@ -25,7 +24,7 @@ abstract class RafmodUpgradeStation {
 	/**
 	 * If true, upgrade station is permanently disabled for this mission.
 	 */
-	open var WaveSchedule.disableUpgradeStations: Boolean? by addField("DisableUpgradeStations", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.disableUpgradeStations: Boolean? by addField("DisableUpgradeStations", conditional = SIGSEGV)
 	
 	/**
 	 * Prevent players from gaining these upgrades.  You can also use the position on the upgrade list, starting from 1.
@@ -40,12 +39,12 @@ abstract class RafmodUpgradeStation {
 	/**
 	 * If true, prevents upgrades from changing the player's currently-equipped weapons to the items specified in their loadout.
 	 */
-	open var WaveSchedule.upgradeStationKeepWeapons: Boolean? by addField("UpgradeStationKeepWeapons", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.upgradeStationKeepWeapons: Boolean? by addField("UpgradeStationKeepWeapons", conditional = SIGSEGV)
 	
 	/**
 	 * If true, only shows the extended upgrade menu, and does not show the regular upgrade menu.
 	 */
-	open var WaveSchedule.extendedUpgradesOnly: Boolean? by addField("ExtendedUpgradesOnly", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.extendedUpgradesOnly: Boolean? by addField("ExtendedUpgradesOnly", conditional = SIGSEGV)
 	
 	/**
 	 * If true, prevents players from refunding their upgrades

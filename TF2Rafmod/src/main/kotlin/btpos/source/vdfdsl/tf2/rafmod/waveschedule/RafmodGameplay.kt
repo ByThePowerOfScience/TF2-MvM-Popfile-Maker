@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
 import btpos.source.vdfdsl.types.WaveSchedule
@@ -78,12 +77,12 @@ abstract class RafmodGameplay {
 	/**
 	 * If true, heal-on-kill - when proc'd by melee weapons - can overheal the user.
 	 */
-	open var WaveSchedule.healOnKillOverhealMelee: Boolean? by addField("HealOnKillOverhealMelee", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.healOnKillOverhealMelee: Boolean? by addField("HealOnKillOverhealMelee", conditional = SIGSEGV)
 	
 	/**
 	 * If true, fixes the Huntsman's "damage bonus" upgrade so it is applied properly. (Default: false)
 	 */
-	open var WaveSchedule.fixHuntsmanDamageBonus: Boolean? by addField("FixHuntsmanDamageBonus", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.fixHuntsmanDamageBonus: Boolean? by addField("FixHuntsmanDamageBonus", conditional = SIGSEGV)
 	
 	
 	

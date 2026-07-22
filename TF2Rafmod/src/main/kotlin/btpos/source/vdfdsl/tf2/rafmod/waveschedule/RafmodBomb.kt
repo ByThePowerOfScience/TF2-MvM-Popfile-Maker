@@ -1,7 +1,6 @@
 package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.types.WaveSchedule
 
@@ -36,5 +35,5 @@ abstract class RafmodBomb {
 	/**
 	 * If false, the bomb carrier cannot fire or swing their weapon. (Default: true)
 	 */
-	open var WaveSchedule.canBombCarrierFight: Boolean? by addField("AllowFlagCarrierToFight", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.canBombCarrierFight: Boolean? by addField("AllowFlagCarrierToFight", conditional = SIGSEGV)
 }

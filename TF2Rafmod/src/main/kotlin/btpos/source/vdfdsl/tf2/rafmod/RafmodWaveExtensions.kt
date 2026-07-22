@@ -8,7 +8,6 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithK
 import btpos.source.vdfdsl.modeling.IKeyValueMap
 import btpos.source.vdfdsl.modeling.KeyValueMapImpl
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.data.Vec3
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
@@ -44,17 +43,17 @@ abstract class RafmodWaveExtensions {
 	/**
 	 * If true, the wave is immediately lost if all RED players are dead at the same time.
 	 */
-	open var WavePopulator.redTeamWipeCausesWaveLoss: Boolean? by addField("RedTeamWipeCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WavePopulator.redTeamWipeCausesWaveLoss: Boolean? by addField("RedTeamWipeCausesWaveLoss", conditional = SIGSEGV)
 	
 	/**
 	 * If true, the wave is immediately lost if all BLU _human_ players are dead at the same time.
 	 */
-	open var WavePopulator.blueTeamWipeCausesWaveLoss: Boolean? by addField("BlueTeamWipeCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WavePopulator.blueTeamWipeCausesWaveLoss: Boolean? by addField("BlueTeamWipeCausesWaveLoss", conditional = SIGSEGV)
 	
 	/**
 	 * If true, the moment all non-support wavespawns are finished (killed), the wave is immediately **lost**.
 	 */
-	open var WavePopulator.finishingWaveCausesWaveLoss: Boolean? by addField("FinishingWaveCausesWaveLoss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WavePopulator.finishingWaveCausesWaveLoss: Boolean? by addField("FinishingWaveCausesWaveLoss", conditional = SIGSEGV)
 	
 	// TODO Explanation builder
 	

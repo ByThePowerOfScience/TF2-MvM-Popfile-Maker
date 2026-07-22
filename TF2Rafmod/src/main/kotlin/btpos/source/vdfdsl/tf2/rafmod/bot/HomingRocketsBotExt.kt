@@ -3,7 +3,6 @@ package btpos.source.vdfdsl.tf2.rafmod.bot
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 
 /**
@@ -20,12 +19,12 @@ open class HomingRocketsBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Ex
 	/**
 	 * If true, homing rockets ignore spies that are disguised as the team this is from.
 	 */
-	open var ignoreDisguisedSpies: Boolean? by addField("IgnoreDisguisedSpies", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var ignoreDisguisedSpies: Boolean? by addField("IgnoreDisguisedSpies", conditional = SIGSEGV)
 	
 	/**
 	 * If true, homing rockets ignore spies that are currently cloaked.
 	 */
-	open var ignoreCloakedSpies: Boolean? by addField("IgnoreStealthedSpies", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var ignoreCloakedSpies: Boolean? by addField("IgnoreStealthedSpies", conditional = SIGSEGV)
 	
 	/**
 	 * Multiplier applied to rocket speed. 1 = default speed.

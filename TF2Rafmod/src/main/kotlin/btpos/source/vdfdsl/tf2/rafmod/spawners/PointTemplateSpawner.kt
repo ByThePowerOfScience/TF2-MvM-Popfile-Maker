@@ -3,7 +3,6 @@ package btpos.source.vdfdsl.tf2.rafmod.spawners
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
@@ -48,12 +47,12 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	/**
 	 * If true, gives this bot's icon in the wave preview a "crit" outline.
 	 */
-	open var iconHasCritOutline: Boolean? by addField("IsCrit", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var iconHasCritOutline: Boolean? by addField("IsCrit", conditional = SIGSEGV)
 	
 	/**
 	 * If true, gives this bot's icon in the wave preview a red background.
 	 */
-	open var iconHasMinibossBackground: Boolean? by addField("IsMiniboss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var iconHasMinibossBackground: Boolean? by addField("IsMiniboss", conditional = SIGSEGV)
 	
 	/**
 	 * The class icon to use for this bot.

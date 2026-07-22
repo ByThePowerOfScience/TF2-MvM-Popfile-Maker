@@ -1,7 +1,6 @@
 package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.types.WaveSchedule
 
@@ -13,12 +12,12 @@ abstract class RafmodModelsAndAnimations {
 	/**
 	 * If true, robots use player animations instead of robot ones.
 	 */
-	open var WaveSchedule.robotsUsePlayerAnimation: Boolean? by addField("PlayerRobotsUsePlayerAnimation", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.robotsUsePlayerAnimation: Boolean? by addField("PlayerRobotsUsePlayerAnimation", conditional = SIGSEGV)
 	
 	/**
 	 * If true, fixes the lack of player animations after firing the [setCustomModel] input on a player.
 	 */
-	open var WaveSchedule.fixSetCustomModelInput: Boolean? by addField("FixSetCustomModelInput", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.fixSetCustomModelInput: Boolean? by addField("FixSetCustomModelInput", conditional = SIGSEGV)
 	
 	/**
 	 * If set at all, bots use human models. If 1, bots cannot be sapped, but if set to 2, they can.

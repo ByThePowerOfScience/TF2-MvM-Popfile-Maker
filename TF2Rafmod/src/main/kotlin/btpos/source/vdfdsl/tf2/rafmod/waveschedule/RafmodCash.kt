@@ -1,7 +1,6 @@
 package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.types.WaveSchedule
 
@@ -35,7 +34,7 @@ abstract class RafmodCash {
 	 * 
 	 * Note: fixed buybacks are free.
 	 */
-	open var WaveSchedule.useFixedBuybacks: Boolean? by addField("FixedBuybacks", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.useFixedBuybacks: Boolean? by addField("FixedBuybacks", conditional = SIGSEGV)
 	
 	/**
 	 * How many times a player can buy a quick respawn if [useFixedBuybacks] is true. (Default: 0)
@@ -60,6 +59,6 @@ abstract class RafmodCash {
 	/**
 	 * If true, credits spawn with zero velocity, and drop straight to the ground when a robot is killed.
 	 */
-	open var WaveSchedule.noCreditsVelocity: Boolean? by addField("NoCreditsVelocity", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noCreditsVelocity: Boolean? by addField("NoCreditsVelocity", conditional = SIGSEGV)
 	
 }

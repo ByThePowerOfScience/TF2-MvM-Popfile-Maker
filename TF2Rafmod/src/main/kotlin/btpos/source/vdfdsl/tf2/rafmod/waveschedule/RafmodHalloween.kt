@@ -5,7 +5,6 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
@@ -26,32 +25,32 @@ abstract class RafmodHalloween {
 	/**
 	 * If true, disallows the thriller taunt while Halloween is active.
 	 */
-	open var WaveSchedule.noThrillerTaunt: Boolean? by addField("NoThrillerTaunt", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noThrillerTaunt: Boolean? by addField("NoThrillerTaunt", conditional = SIGSEGV)
 	
 	/**
 	 * If true, player deaths during Halloween will not spawn a crit-pumpkin.
 	 */
-	open var WaveSchedule.noCritPumpkin: Boolean? by addField("NoCritPumpkin", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noCritPumpkin: Boolean? by addField("NoCritPumpkin", conditional = SIGSEGV)
 	
 	/**
 	 * If true, ammo boxes and health packs will retain their default model even while a holiday is active.
 	 */
-	open var WaveSchedule.noHolidayPickups: Boolean? by addField("NoHolidayPickups", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.noHolidayPickups: Boolean? by addField("NoHolidayPickups", conditional = SIGSEGV)
 	
 	/**
 	 * If true, the game will not display "Wave 666" when [eventPopFile][btpos.source.vdfdsl.types.PopulationManager.eventPopFile] is set.
 	 */
-	open var WaveSchedule.zombiesNoWave666: Boolean? by addField("ZombiesNoWave666", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.zombiesNoWave666: Boolean? by addField("ZombiesNoWave666", conditional = SIGSEGV)
 	
 	/**
 	 * If true, bots will drop spells on death.
 	 */
-	open var WaveSchedule.botsDropSpells: Boolean? by addField("BotsDropSpells", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.botsDropSpells: Boolean? by addField("BotsDropSpells", conditional = SIGSEGV)
 	
 	/**
 	 * If true, giants will drop rare spells instead of common ones.
 	 */
-	open var WaveSchedule.giantsDropRareSpells: Boolean? by addField("GiantsDropRareSpells", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.giantsDropRareSpells: Boolean? by addField("GiantsDropRareSpells", conditional = SIGSEGV)
 	
 	/**
 	 * Drop chance for common spell books, from `0` to `1`.

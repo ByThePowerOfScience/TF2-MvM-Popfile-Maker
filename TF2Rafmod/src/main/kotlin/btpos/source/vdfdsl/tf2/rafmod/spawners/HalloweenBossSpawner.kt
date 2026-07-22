@@ -6,7 +6,6 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
 import btpos.source.vdfdsl.tf2.rafmod.data.Vec3
@@ -42,12 +41,12 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	/**
 	 * If true, gives this boss's icon in the wave preview a "crit" outline.
 	 */
-	open var iconHasCritOutline: Boolean? by addField("IsCrit", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var iconHasCritOutline: Boolean? by addField("IsCrit", conditional = SIGSEGV)
 	
 	/**
 	 * If true, gives this boss's icon in the wave preview a red background.
 	 */
-	open var iconHasMinibossBackground: Boolean? by addField("IsMiniboss", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var iconHasMinibossBackground: Boolean? by addField("IsMiniboss", conditional = SIGSEGV)
 	
 	/**
 	 * The class icon to use for this bot.
@@ -62,7 +61,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	/**
 	 * If true, the boss will drop money on death. If false, its money is distributed automatically upon death. (Default: true)
 	 */
-	open var spawnCurrencyPackOnDeath: Boolean? by addField("SpawnCurrencyPack", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var spawnCurrencyPackOnDeath: Boolean? by addField("SpawnCurrencyPack", conditional = SIGSEGV)
 	
 	/**
 	 * Monoculus will not target this team.

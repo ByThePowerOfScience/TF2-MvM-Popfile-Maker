@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
 import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
@@ -17,7 +16,7 @@ abstract class RafmodReverseMvM {
 	/**
 	 * If true, the player team wins if the bomb is delivered to the hatch.
 	 */
-	open var WaveSchedule.enable: Boolean? by addField("ReverseWinConditions", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.enable: Boolean? by addField("ReverseWinConditions", conditional = SIGSEGV)
 	
 	/**
 	 * If `TFTeam.BLU`, only the BLU team can pick up money instead of the RED team.
@@ -28,22 +27,22 @@ abstract class RafmodReverseMvM {
 	/**
 	 * If true, blu humans can capture the flag/bomb.
 	 */
-	open var WaveSchedule.canHumansCaptureBomb: Boolean? by addField("BluHumanFlagCapture", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.canHumansCaptureBomb: Boolean? by addField("BluHumanFlagCapture", conditional = SIGSEGV)
 	
 	/**
 	 * If true, BLU players can pick up the bomb.
 	 */
-	open var WaveSchedule.canHumansPickupBomb: Boolean? by addField("BluHumanFlagPickup", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.canHumansPickupBomb: Boolean? by addField("BluHumanFlagPickup", conditional = SIGSEGV)
 	
 	/**
 	 * If true, BLU players have infinite ammo. (Default: true)
 	 */
-	open var WaveSchedule.bluHasInfiniteAmmo: Boolean? by addField("BluHumanInfiniteAmmo", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.bluHasInfiniteAmmo: Boolean? by addField("BluHumanInfiniteAmmo", conditional = SIGSEGV)
 	
 	/**
 	 * If true, BLU players have infinite cloak. (Default: true)
 	 */
-	open var WaveSchedule.bluHasInfiniteCloak: Boolean? by addField("BluHumanInfiniteCloak", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.bluHasInfiniteCloak: Boolean? by addField("BluHumanInfiniteCloak", conditional = SIGSEGV)
 	
 	/**
 	 * Sets the maximum number of players that can exist on the BLU team at any given time.
@@ -58,20 +57,20 @@ abstract class RafmodReverseMvM {
 	/**
 	 * If true, human players can join the BLU team.
 	 */
-	open var WaveSchedule.canPlayersJoinBluTeam: Boolean? by addField("AllowJoinTeamBlue", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.canPlayersJoinBluTeam: Boolean? by addField("AllowJoinTeamBlue", conditional = SIGSEGV)
 	
 	/**
 	 * If true, human players are forcibly assigned to BLU upon joining.
 	 *
 	 * Also sets [teamThatCanPickUpMoney] to true and, if not already set, sets [maxAllowedOnBlu] to 6.
 	 */
-	open var WaveSchedule.playersMustJoinBlu: Boolean? by addField("HumansMustJoinTeam", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.playersMustJoinBlu: Boolean? by addField("HumansMustJoinTeam", conditional = SIGSEGV)
 	
 	
 	/**
 	 * If true, BLU players use robot models, regardless of if they are human or not.
 	 */
-	open var WaveSchedule.bluPlayersUseRobotModels: Boolean? by addField("BluPlayersAreRobots", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.bluPlayersUseRobotModels: Boolean? by addField("BluPlayersAreRobots", conditional = SIGSEGV)
 	
 	/**
 	 * How many seconds the "stock ubercharge" invincibility effect should be applied to BLU entities exiting a BLU teleporter. (Default: 5)
@@ -86,12 +85,12 @@ abstract class RafmodReverseMvM {
 	/**
 	 * If true, humans should be teleported to an Engineer-bot's teleporter when spawning instead of their default spawn location. (Default: false)
 	 */
-	open var WaveSchedule.spawnOnBotTeleporter: Boolean? by addField("BluHumanTeleportOnSpawn", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.spawnOnBotTeleporter: Boolean? by addField("BluHumanTeleportOnSpawn", conditional = SIGSEGV)
 	
 	/**
 	 * If true, player-built teleporters teleport players and robots on spawn.
 	 */
-	open var WaveSchedule.spawnOnHumanTeleporter: Boolean? by addField("BluHumanBotTeleporter", conditional = SIGSEGV, serializer = BinaryIntCodec::write)
+	open var WaveSchedule.spawnOnHumanTeleporter: Boolean? by addField("BluHumanBotTeleporter", conditional = SIGSEGV)
 	
 	
 }

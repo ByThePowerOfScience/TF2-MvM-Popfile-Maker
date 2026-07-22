@@ -1,14 +1,12 @@
 package btpos.source.vdfdsl.tf2.rafmod
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.selector
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
 import btpos.source.vdfdsl.tf2.rafmod.data.Vec3
 import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
 import btpos.source.vdfdsl.tf2.rafmod.types.PointTemplate
 
 object RafmodSerializers {
-	
-	@JvmField val BOOL_SER_INVERT = { it: Boolean -> BinaryIntCodec.write(!it) }
+	@JvmField val BOOL_SER_INVERT = Boolean::not
 	
 	@JvmField val COORD3D = { it: Vec3 -> "${it.x} ${it.y} ${it.z}" }
 	
