@@ -41,19 +41,19 @@ data class Vec3(val x: Number, val y: Number, val z: Number)
 	) : this(Vec3(pitch, yaw, roll))
 	
 	/**
-	 * Degrees of rotation about the LEFT/RIGHT axis.
+	 * Degrees of clockwise rotation about the LEFT/RIGHT axis.
 	 *
 	 * Imagine a shishkebab, where the stick is the axis.  If you hold it so the stick is pointing away from you, and then spin the kebab so the meat is turning clockwise, that's roll.
 	 */
 	val pitch get() = vec.x
 	/**
-	 * Degrees of rotation about the UP/DOWN axis.
+	 * Degrees of COUNTER-CLOCKWISE rotation about the UP/DOWN axis.
 	 *
-	 * Imagine a shishkebab, where the stick is the axis.  If you hold it so the stick is pointing straight up, and then rotate the stick so the meat is turning clockwise to your perspective, that's yaw.
+	 * Imagine a shishkebab, where the stick is the axis.  If you hold it so the stick is pointing straight up, and then rotate the stick so the meat is turning COUNTER-CLOCKWISE to your perspective, that's yaw.
 	 */
 	val yaw get() = vec.y
 	/**
-	 * Degrees of rotation about the FORWARD/BACKWARD axis.
+	 * Degrees of clockwise rotation about the FORWARD/BACKWARD axis.
 	 *
 	 * Imagine a shishkebab, where the stick is the axis.  If you hold it so the stick is pointing away from you, and then spin the kebab so the meat is turning clockwise, that's roll.
 	 */
