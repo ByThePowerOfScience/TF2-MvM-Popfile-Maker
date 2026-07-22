@@ -61,6 +61,7 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 		}
 		
 		operator fun invoke(o: Any) = when (o) {
+			is VDFPrimitive -> o
 			is String -> VDFPrimitive(s=o)
 			is Number -> VDFPrimitive(o)
 			is Boolean -> VDFPrimitive(bool=o)

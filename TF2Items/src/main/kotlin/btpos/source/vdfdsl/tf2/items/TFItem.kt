@@ -19,13 +19,15 @@ class TFItem<ATTR : Any>(
 )
 	: IVDFRepresentableKeyValue
 {
+	val namePrimitive = VDFPrimitive(name)
+	
 	override fun _serializeInto(input: VDFSubtree) {
 		input +=
 			listOfNotNull(
-				VDFKeyValue(VDFPrimitive("Item"), VDFPrimitive(name), null),
+				VDFKeyValue(VDFPrimitive("Item"), namePrimitive, null),
 				VDFKeyValue.orNull(
 					VDFPrimitive("ItemAttributes"),
-					attributes?._vdfRepr(input)?.withEntry(VDFKeyValue(VDFPrimitive("ItemName"), VDFPrimitive(this.name), null)),
+					attributes?._vdfRepr(input)?.withEntry(VDFKeyValue(VDFPrimitive("ItemName"), namePrimitive, null)),
 					conditional
 				)
 		)
