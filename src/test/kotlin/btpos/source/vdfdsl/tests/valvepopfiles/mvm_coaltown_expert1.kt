@@ -29,6 +29,14 @@ import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 import btpos.source.vdfdsl.types.spawners.TankSpawner
 import btpos.source.vdfdsl.types.spawners.critBoosted
 import btpos.source.vdfdsl.types.spawners.addAttributesForExisting
+import btpos.source.vdfdsl.types.spawners.attributes
+import btpos.source.vdfdsl.types.spawners.behaviorModifiers
+import btpos.source.vdfdsl.types.spawners.characterAttributes
+import btpos.source.vdfdsl.types.spawners.items
+import btpos.source.vdfdsl.types.spawners.maxVisionRange
+import btpos.source.vdfdsl.types.spawners.skill
+import btpos.source.vdfdsl.types.spawners.tags
+import btpos.source.vdfdsl.types.spawners.weaponRestriction
 import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.utils.plus
 import btpos.source.vdfdsl.vdfparser.ParseVDF
