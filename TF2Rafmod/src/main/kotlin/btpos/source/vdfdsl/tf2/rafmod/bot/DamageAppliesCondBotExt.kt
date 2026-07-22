@@ -1,50 +1,53 @@
 package btpos.source.vdfdsl.tf2.rafmod.bot
 
 
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.compose
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
+import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.FIELD_NAME
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.bot.tasks.RafmodPeriodicTask
 import btpos.source.vdfdsl.tf2.tftypes.TFCondition
+import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 import btpos.source.vdfdsl.utils.toSeconds
+import java.util.Map.entry
 import kotlin.time.Duration
 
 /**
- * Adds conditions to players on hit.
+ * Apply these conditions with these durations when this bot hits a player.
  *
- * Alternatively, use the [RafmodItemAttributes.addCondOnHit] attribute.
+ * Example:
+ * ```kotlin
+ * damageAppliesConditions += TFCondition.Urine to 3.seconds
+ * damageAppliesConditions += mapOf(
+ *     TFCondition.Invulnerable to Duration.INFINITE,
+ *     TFCondition.CritBoosted to 2.minutes
+ * )
+ * ```
+ *
+ * @see Duration.INFINITE
  */
-open class DamageAppliesCondBotExt(subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : RafmodBotExtension(subtree) {
-	override fun copy() = DamageAppliesCondBotExt(copyInternal())
-	
-	override val _structIdentifier get() = "DamageAppliesCond"
-	
-	/**
-	 * The condition to apply to players when hit by this bot.
-	 *
-	 * Example:
-	 * ```kotlin
-	 * condition = TFCondition.Urine
-	 * ```
-	 */
-	open var condition: TFCondition? by addField("Name", conditional = SIGSEGV, serializer = TFCondition::index)
-	
-	/**
-	 * How long the condition should be applied to the hit player. (Default: [infinite duration][Duration.INFINITE])
-	 *
-	 * Example:
-	 * ```kotlin
-	 * duration = 99.seconds
-	 *
-	 * duration = Duration.INFINITE // condition will never be removed
-	 * ```
-	 * @see Duration.INFINITE
-	 */
-	open var duration: Duration? by addField("Duration", conditional = SIGSEGV, serializer = {
-		if (this == Duration.INFINITE)
+var TFBotSpawner.damageAppliesConditions: Map<TFCondition, Duration> by addField(
+	"DamageAppliesCond",
+	conditional = SIGSEGV,
+	initialValue = { mapOf() },
+	serializer = flatListWithKey<IVDFRepresentableValue_Subtree>().mapEach { (cond, duration): Map.Entry<TFCondition, Duration> ->
+		val duration = if (duration.isInfinite()) {
 			-1
-		else
-			this.toSeconds()
-	})
-}
+		} else duration.toSeconds()
+		IVDFRepresentableValue_Subtree { parent ->
+			VDFSubtree(parent, mutableListOf(
+				VDFKeyValue(FIELD_NAME, cond.TF_COND_primitive),
+				VDFKeyValue(VDFPrimitive("Duration"), VDFPrimitive(duration))
+			))
+		}
+	}.compose { it.entries }
+)
+
