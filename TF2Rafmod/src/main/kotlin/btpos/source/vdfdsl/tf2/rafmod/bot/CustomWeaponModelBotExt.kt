@@ -7,7 +7,6 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
-import btpos.source.vdfdsl.tf2.rafmod.bot.tasks.RafmodPeriodicTask
 import btpos.source.vdfdsl.tf2.rafmod.types.ItemSlot
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 
@@ -36,7 +35,7 @@ open class CustomWeaponModelBotExt protected constructor(subtree: IExtensibleSub
 	/**
 	 * The model to replace the item in the given [slot] with.
 	 *
-	 * Note: The model must be [precached][btpos.source.vdfdsl.tf2.rafmod.RafmodWaveScheduleScope.precache] if it isn't part of the current map.  Double-check this if you end up with "ERROR" models.
+	 * Note: The model must be [precached][btpos.source.vdfdsl.tf2.rafmod.RafmodWaveScheduleExtensions.precache] if it isn't part of the current map.  Double-check this if you end up with "ERROR" models.
 	 *
 	 * Example:
 	 * ```kotlin
@@ -51,7 +50,7 @@ open class CustomWeaponModelBotExt protected constructor(subtree: IExtensibleSub
  *
  * Alternatively, you can use the [customItemModel] attribute. // TODO
  *
- * Note: The model must be [precached][btpos.source.vdfdsl.tf2.rafmod.RafmodWaveScheduleScope.precache] if it isn't part of the current map.  Double-check this if you end up with "ERROR" models.
+ * Note: The model must be [precached][btpos.source.vdfdsl.tf2.rafmod.RafmodWaveScheduleExtensions.precache] if it isn't part of the current map.  Double-check this if you end up with "ERROR" models.
  *
  * Example:
  * ```kotlin

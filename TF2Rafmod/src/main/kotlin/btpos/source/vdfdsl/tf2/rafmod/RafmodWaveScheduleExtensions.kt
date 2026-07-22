@@ -18,9 +18,9 @@ import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodTeleporters
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.time.Duration
 
-abstract class RafmodWaveScheduleScope {
+abstract class RafmodWaveScheduleExtensions {
 	companion object {
-		@PublishedApi @JvmField internal val INSTANCE = object : RafmodWaveScheduleScope() {}
+		@PublishedApi @JvmField internal val INSTANCE = object : RafmodWaveScheduleExtensions() {}
 	}
 	
 	open fun bomb(configure: RafmodBomb.() -> Unit) {
@@ -279,6 +279,6 @@ abstract class RafmodWaveScheduleScope {
 }
 
 @Suppress("UnusedReceiverParameter")
-inline fun WaveSchedule.rafmod(scope: RafmodWaveScheduleScope.() -> Unit) {
-	RafmodWaveScheduleScope.INSTANCE.scope()
+inline fun WaveSchedule.rafmod(scope: RafmodWaveScheduleExtensions.() -> Unit) {
+	RafmodWaveScheduleExtensions.INSTANCE.scope()
 }
