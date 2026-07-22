@@ -13,24 +13,24 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	override val _structIdentifier: String
 		get() = "WaveSpawn"
 	
-	class Support(val name: String) : IVDFRepresentableValue_Trivial {
-		override val _vdfRepr get() = VDFPrimitive(name)
+	open class Support(val name: String) : IVDFRepresentableValue_Trivial {
+		override val _vdfRepr = VDFPrimitive(name)
 		
 		companion object {
 			/**
 			 * When set, enables support bots, respecting the maximum number of bots set by [WaveSpawner.totalCount][totalCount].
 			 */
-			val LIMITED = Support("Limited")
+			@JvmField val LIMITED = Support("Limited")
 			
 			/**
 			 * When set, enables support bots, **ignoring** the maximum number of bots set by [WaveSpawner.totalCount][totalCount].
 			 */
-			val IGNORED = Support("Ignored")
+			@JvmField val IGNORED = Support("Ignored")
 			
 			/**
 			 * When set, this WaveSpawn defines support bots that will continue spawning throughout the wave.
 			 */
-			val INFINITE = Support("1")
+			@JvmField val INFINITE = Support("1")
 		}
 	}
 	

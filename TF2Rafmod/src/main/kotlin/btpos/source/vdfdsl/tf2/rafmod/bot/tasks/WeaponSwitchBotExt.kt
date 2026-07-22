@@ -26,13 +26,14 @@ open class WeaponSwitchBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Ext
 	 */
 	open var type: Type? by addField("Type", conditional = SIGSEGV)
 	
-	enum class Type : IVDFRepresentableValue_Trivial {
-		Primary,
-		Secondary,
-		Melee,
-		PDA,
-		Building;
-		
+	open class Type(val name: String) : IVDFRepresentableValue_Trivial {
+		companion object {
+			@JvmField val Primary = Type("Primary")
+			@JvmField val Secondary = Type("Secondary")
+			@JvmField val Melee = Type("Melee")
+			@JvmField val PDA = Type("PDA")
+			@JvmField val Building = Type("Building")
+		}
 		override val _vdfRepr: VDFPrimitive = VDFPrimitive(this.name)
 	}
 }
