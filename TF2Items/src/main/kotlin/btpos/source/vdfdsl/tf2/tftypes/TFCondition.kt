@@ -72,7 +72,7 @@ class TFCondition(
 		@JvmField val SelectedToTeleport = TFCondition("TF_COND_SELECTED_TO_TELEPORT", 10)
 		
 		/**
-		 * Crit boost (Kritzkrieg, Revenge crits). Drops under the same conditions as 5.
+		 * Crit boost (Kritzkrieg, Revenge crits). Drops under the same conditions as [Invulnerable].
 		 */
 		@JvmField val CritBoosted = TFCondition("TF_COND_CRITBOOSTED", 11)
 		
@@ -149,7 +149,7 @@ class TFCondition(
 		/**
 		 * Battalion's Backup effect.
 		 */
-		@JvmField val Defensebuff = TFCondition("TF_COND_DEFENSEBUFF", 26)
+		@JvmField val DefenseBuff = TFCondition("TF_COND_DEFENSEBUFF", 26)
 		
 		/**
 		 * Mad Milk effect.
@@ -157,19 +157,19 @@ class TFCondition(
 		@JvmField val MadMilk = TFCondition("TF_COND_MAD_MILK", 27)
 		
 		/**
-		 * Quick-Fix visual effects + knock back/movement immunity (no healing). Drops under the same conditions as 5.
+		 * Quick-Fix visual effects + knock back/movement immunity (no healing). Drops under the same conditions as [Invulnerable].
 		 */
 		@JvmField val Megaheal = TFCondition("TF_COND_MEGAHEAL", 28)
 		
 		/**
 		 * Concheror effect.
 		 */
-		@JvmField val Regenondamagebuff = TFCondition("TF_COND_REGENONDAMAGEBUFF", 29)
+		@JvmField val RegenOnDamageBuff = TFCondition("TF_COND_REGENONDAMAGEBUFF", 29)
 		
 		/**
 		 * Fan o' War effect (marked for death).
 		 */
-		@JvmField val Markedfordeath = TFCondition("TF_COND_MARKEDFORDEATH", 30)
+		@JvmField val MarkedForDeath = TFCondition("TF_COND_MARKEDFORDEATH", 30)
 		
 		/**
 		 * All attacks are mini-crits (no mini-crit glow occurs, but mini-crit hit sounds and effects occur). Player cannot be healed in any way.
@@ -192,7 +192,7 @@ class TFCondition(
 		@JvmField val CritBoosted_UserBuff = TFCondition("TF_COND_CRITBOOSTED_USER_BUFF", 34)
 		
 		/**
-		 * Player's weapon gains crit glow and emits crit sound cues as if charging (but does not gain a crit boost). Automatically added by condition 17 when the player's charge meter drops below 75%.
+		 * Player's weapon gains crit glow and emits crit sound cues as if charging (but does not gain a crit boost). Automatically added by condition [ShieldCharge] when the player's charge meter drops below 75%.
 		 */
 		@JvmField val CritBoosted_DemoCharge = TFCondition("TF_COND_CRITBOOSTED_DEMO_CHARGE", 35)
 		
@@ -227,12 +227,12 @@ class TFCondition(
 		@JvmField val CannotSwitchFromMelee = TFCondition("TF_COND_CANNOT_SWITCH_FROM_MELEE", 41)
 		
 		/**
-		 * Player takes 35% less damage (50% less from Sentry Guns), gains team-colored buff rings. This is used for the Mann vs. Machine bomb carrier defensive buff. This is similar to condition 26, though without the icon above the health bar in the HUD.
+		 * Player takes 35% less damage (50% less from Sentry Guns), gains team-colored buff rings. This is used for the Mann vs. Machine bomb carrier defensive buff. This is similar to [DefenseBuff], though without the icon above the health bar in the HUD.
 		 */
 		@JvmField val DefenseBuff_NoCritBlock = TFCondition("TF_COND_DEFENSEBUFF_NO_CRIT_BLOCK", 42)
 		
 		/**
-		 * "Reprogrammed". This condition no longer functions. Previous behavior: swaps the player from BLU to RED for the duration of the condition. Removal of this condition causes the player to swap from RED to BLU. Adds sparks to player's head. Automatically adds condition 15 and slows the player for 5 seconds.
+		 * "Reprogrammed". This condition no longer functions. Previous behavior: swaps the player from BLU to RED for the duration of the condition. Removal of this condition causes the player to swap from RED to BLU. Adds sparks to player's head. Automatically adds [Stunned] and slows the player for 5 seconds.
 		 */
 		@JvmField val Reprogrammed = TFCondition("TF_COND_REPROGRAMMED", 43)
 		
@@ -292,9 +292,9 @@ class TFCondition(
 		@JvmField val HalloweenThriller = TFCondition("TF_COND_HALLOWEEN_THRILLER", 54)
 		
 		/**
-		 * Automatically adds condition 20 and 21 and causes the player and every nearby teammate to begin gaining health as if being healed by the Amputator. The player gets the credit for any healing that occurs.
+		 * Automatically adds [RadiusHeal] and [HealthBuff] and causes the player and every nearby teammate to begin gaining health as if being healed by the Amputator. The player gets the credit for any healing that occurs.
 		 *
-		 * Conditions 20 and 21 are automatically removed when the player ends any taunt, but condition 55 remains active (though it does nothing after this point).
+		 * Conditions [RadiusHeal] and [HealthBuff] are automatically removed when the player ends any taunt, but this condition remains active (though it does nothing after this point).
 		 */
 		@JvmField val RadiusHealOnDamage = TFCondition("TF_COND_RADIUSHEAL_ON_DAMAGE", 55)
 		
@@ -384,7 +384,7 @@ class TFCondition(
 		@JvmField val HalloweenSpeedBoost = TFCondition("TF_COND_HALLOWEEN_SPEED_BOOST", 72)
 		
 		/**
-		 * Quick-Fix-like healing effect. Automatically adds condition 21 for the duration of the effect, as well as condition 28 for a brief period. Used for the Healing Aura Magic spell.
+		 * Quick-Fix-like healing effect. Automatically adds [HealthBuff] for the duration of the effect, as well as [Megaheal] for a brief period. Used for the Healing Aura Magic spell.
 		 */
 		@JvmField val HalloweenQuickHeal = TFCondition("TF_COND_HALLOWEEN_QUICK_HEAL", 73)
 		
@@ -399,7 +399,7 @@ class TFCondition(
 		@JvmField val HalloweenTiny = TFCondition("TF_COND_HALLOWEEN_TINY", 75)
 		
 		/**
-		 * Player gains condition 77 upon death, used for when the player is in Hell.
+		 * Player gains condition [HalloweenGhostMode] upon death, used for when the player is in Hell.
 		 */
 		@JvmField val HalloweenInHell = TFCondition("TF_COND_HALLOWEEN_IN_HELL", 76)
 		
@@ -414,7 +414,7 @@ class TFCondition(
 		@JvmField val MinicritboostedOnKill = TFCondition("TF_COND_MINICRITBOOSTED_ON_KILL", 78)
 		
 		/**
-		 * Player has a 75% chance to dodge every time damage is taken (dodged damage will cause the MISS! effect from condition 14 to appear).
+		 * Player has a 75% chance to dodge every time damage is taken (dodged damage will cause the MISS! effect from condition [Phase] to appear).
 		 */
 		@JvmField val ObscuredSmoke = TFCondition("TF_COND_OBSCURED_SMOKE", 79)
 		
@@ -434,7 +434,7 @@ class TFCondition(
 		@JvmField val HalloweenKart = TFCondition("TF_COND_HALLOWEEN_KART", 82)
 		
 		/**
-		 * Player's Field of View increases, with their world model playing the Bumper Car boosting animation, and if the player has condition 82, the player is forced to move forwards at a boosted speed until the condition is removed or upon collision with a wall or an enemy player.
+		 * Player's Field of View increases, with their world model playing the Bumper Car boosting animation, and if the player has condition [HalloweenKart], the player is forced to move forwards at a boosted speed until the condition is removed or upon collision with a wall or an enemy player.
 		 */
 		@JvmField val HalloweenKartDash = TFCondition("TF_COND_HALLOWEEN_KART_DASH", 83)
 		
@@ -444,7 +444,7 @@ class TFCondition(
 		@JvmField val BalloonHead = TFCondition("TF_COND_BALLOON_HEAD", 84)
 		
 		/**
-		 * Player is forced to use melee weapons. Automatically adds conditions 32 and 75 when added.
+		 * Player is forced to use melee weapons. Automatically adds conditions [SpeedBoost] and [HalloweenTiny] when added.
 		 */
 		@JvmField val MeleeOnly = TFCondition("TF_COND_MELEE_ONLY", 85)
 		
@@ -459,7 +459,7 @@ class TFCondition(
 		@JvmField val FreezeInput = TFCondition("TF_COND_FREEZE_INPUT", 87)
 		
 		/**
-		 * Player gains a cage surrounding them. Automatically adds condition 87 when added. This is used for the Scream Fortress Halloween bumper car minigames. This will crash the game unless you are on a map that supports bumper cars (currently only Carnival of Carnage).
+		 * Player gains a cage surrounding them. Automatically adds condition [FreezeInput] when added. This is used for the Scream Fortress Halloween bumper car minigames. This will crash the game unless you are on a map that supports bumper cars (currently only Carnival of Carnage).
 		 */
 		@JvmField val HalloweenKartCage = TFCondition("TF_COND_HALLOWEEN_KART_CAGE", 88)
 		
@@ -554,7 +554,7 @@ class TFCondition(
 		@JvmField val PasstimeInterception = TFCondition("TF_COND_PASSTIME_INTERCEPTION", 106)
 		
 		/**
-		 * Player can swim in air, similar to condition 86, but without swimming animations, forced third-person perspective, and underwater overlay.
+		 * Player can swim in air, similar to condition [SwimmingCurse], but without swimming animations, forced third-person perspective, and underwater overlay.
 		 */
 		@JvmField val SwimmingNoEffects = TFCondition("TF_COND_SWIMMING_NO_EFFECTS", 107)
 		
