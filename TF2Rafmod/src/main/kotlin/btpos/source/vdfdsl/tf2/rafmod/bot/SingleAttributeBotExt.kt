@@ -10,21 +10,17 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.serialization.codecs.Codec
 import btpos.source.vdfdsl.tf2.items.TFItem
+import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.FIELD_ITEM
+import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.FIELD_NAME
+import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.FIELD_VALUE
+import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.VALUE_ACTIVE
+import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.VALUE_PLAYER
 import btpos.source.vdfdsl.utils.delegates.withSetter
 
 /**
  * Base class for Add/RemoveAttribute. Only has a single attribute and an item it's applied to.
  */
 abstract class SingleAttributeBotExt(subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : RafmodBotExtension(subtree), IKeyValueMap {
-	companion object {
-		val FIELD_ITEM = VDFPrimitive("Item")
-		val FIELD_NAME = VDFPrimitive("Name")
-		val FIELD_VALUE = VDFPrimitive("Value")
-		
-		val VALUE_PLAYER = VDFPrimitive("Player")
-		val VALUE_ACTIVE = VDFPrimitive("Active")
-	}
-	
 	abstract override fun copy(): SingleAttributeBotExt
 	
 	/**
