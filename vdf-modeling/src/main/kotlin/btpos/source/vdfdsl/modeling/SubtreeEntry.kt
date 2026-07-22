@@ -48,3 +48,8 @@ data class SelfNamedValueList<T : IVDFRepresentableKeyValue>(val innerList: List
 		innerList.forEach { transformer(it)._serializeInto(input) }
 	}
 }
+
+
+data class UnserializedValue<T : Any>(val value: T) : IVDFRepresentableKeyValue {
+	override fun _serializeInto(input: VDFSubtree) {}
+}

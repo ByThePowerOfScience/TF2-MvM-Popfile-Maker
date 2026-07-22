@@ -12,6 +12,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import kotlin.collections.forEach
 import kotlin.jvm.java
+import kotlin.properties.ReadOnlyProperty
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KCallable
 import kotlin.reflect.KProperty
@@ -258,6 +259,15 @@ interface IExtensibleSubtree {
 			}
 			
 			return RegularFieldProperty(key, initialValue, conditional, null)
+		}
+		
+		/**
+		 * Lazily-evaluated property stored in this struct that shouldn't be serialized to the final VDF.
+		 */
+		fun <OWNER : IExtensibleSubtree, T : Any> cacheData(initializer: (OWNER, KProperty<*>) -> T): ReadOnlyProperty<OWNER, T> {
+			return ReadOnlyProperty { thisRef, property ->
+				(thisRef._rawEntries.computeIfAbsent(property) { UnserializedValue(initializer(thisRef, property)) } as UnserializedValue<T>).value
+			}
 		}
 		
 		
