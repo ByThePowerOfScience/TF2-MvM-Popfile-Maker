@@ -5,6 +5,7 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 /**
  * Documentation sourced from [https://developer.valvesoftware.com/wiki/Condition_list]
  */
+@Suppress("CanBeParameter")
 class TFCondition(
 	/**
 	 * The full name of the condition, e.g. `"TF_COND_AIMING"`.
@@ -17,8 +18,23 @@ class TFCondition(
 ) {
 	val TF_COND_primitive = VDFPrimitive(TF_COND)
 	
+	init {
+		if (this.index !in byIndex.indices || byIndex[this.index] == null) {
+			if (index > byIndex.size)
+				byIndex.addAll((byIndex.size..index).map { null })
+			
+			byIndex.add(index, this)
+		}
+	}
+	
+	
+	
 	companion object {
-		private var currentIndex = 0
+		private val byIndex: MutableList<TFCondition?> = ArrayList(130)
+		
+		@JvmStatic fun valueOf(index: Int): TFCondition {
+			return byIndex.getOrNull(index) ?: throw IllegalArgumentException("Index $index does not refer to a real TFCondition")
+		}
 		
 		/**
 		 * Slowed (as in when revving Minigun or zooming in with Sniper Rifles). Places the player in their class's zoomed/revved pose (for classes without this animation, this uses the reference pose).

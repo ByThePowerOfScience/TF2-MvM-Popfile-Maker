@@ -16,7 +16,7 @@ interface Codec<FRONTEND, BACKEND> {
 		fun <FRONTEND, BACKEND> identity() = _identity as Codec<FRONTEND, BACKEND>
 	}
 	
-	fun read(data: BACKEND): FRONTEND
+	fun read(data: BACKEND): FRONTEND?
 	
 	fun write(input: FRONTEND): BACKEND
 }

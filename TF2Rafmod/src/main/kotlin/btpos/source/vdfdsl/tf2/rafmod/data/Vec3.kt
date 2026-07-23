@@ -12,13 +12,18 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
+import btpos.source.vdfdsl.serialization.codecs.Codec
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.types.specifics.OutputAction
 
 @JvmRecord
-data class Vec3(val x: Number, val y: Number, val z: Number)
+data class Vec3(val x: Number, val y: Number, val z: Number) : IVDFRepresentableValue_Trivial {
+	override val _vdfRepr: VDFPrimitive
+		get() = VDFPrimitive("$x $y $z")
+}
 
-@JvmInline value class Rot3(private val vec: Vec3) : IVDFRepresentableValue_Trivial {
+
+@JvmInline value class Rot3(val vec: Vec3) : IVDFRepresentableValue_Trivial by vec {
 	constructor(
 		/**
 		 * Degrees of rotation about the LEFT/RIGHT axis.
@@ -59,8 +64,7 @@ data class Vec3(val x: Number, val y: Number, val z: Number)
 	 */
 	val roll get() = vec.z
 	
-	override val _vdfRepr: VDFPrimitive
-		get() = VDFPrimitive("$pitch $yaw $roll")
+	
 }
 
 
