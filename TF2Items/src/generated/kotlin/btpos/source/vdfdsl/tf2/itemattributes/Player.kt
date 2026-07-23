@@ -10,6 +10,28 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	companion object : PlayerAttributes
 	
 	/**
+	 * In-Game: "Allows you to see enemy health"
+	 *
+	 * 
+	 */
+	context(attrs: IKeyValueMap)
+	var seeEnemyHealth: Boolean?
+		get() = attrs.getTyped("mod see enemy health", BinaryIntCodec)
+		set(value) = attrs.setNullable("mod see enemy health", value, BinaryIntCodec)
+	
+	/**
+	 * In-Game: "Unable to see enemy health"
+	 *
+	 * 
+	 *
+	 * Always true in MvM.
+	 */
+	context(attrs: IKeyValueMap)
+	var hideEnemyHealth: Boolean?
+		get() = attrs.getTyped("hide enemy health", BinaryIntCodec)
+		set(value) = attrs.setNullable("hide enemy health", value, BinaryIntCodec)
+	
+	/**
 	 * In-Game: "+N% greater jump height when active"
 	 *
 	 * 
@@ -300,30 +322,6 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 		set(value) = attrs.setNullable("SET BONUS: dmg from sentry reduced", value)
 	
 	/**
-	 * In-Game: "Generate Rage by dealing damage.  When fully charged, press the Special-Attack key to activate knockback"
-	 *
-	 * 
-	 *
-	 * Only procs on Heavies, multiplies damage by 50% while rage is draining.
-	 */
-	context(attrs: IKeyValueMap)
-	var generateRageOnDamage: Boolean?
-		get() = attrs.getTyped("generate rage on damage", BinaryIntCodec)
-		set(value) = attrs.setNullable("generate rage on damage", value, BinaryIntCodec)
-	
-	/**
-	 * In-Game: "Generate building rescue energy on damage"
-	 *
-	 * 
-	 *
-	 * Only procs on Heavies, multiplies damage by 50% while rage is draining.
-	 */
-	context(attrs: IKeyValueMap)
-	var engineerRageOnDmg: Boolean?
-		get() = attrs.getTyped("engineer rage on dmg", BinaryIntCodec)
-		set(value) = attrs.setNullable("engineer rage on dmg", value, BinaryIntCodec)
-	
-	/**
 	 * In-Game: "N% blast damage from rocket jumps"
 	 *
 	 * 
@@ -346,6 +344,52 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	var rocketJumpDamageReductionHidden: Number?
 		get() = attrs.getTyped("rocket jump damage reduction HIDDEN")
 		set(value) = attrs.setNullable("rocket jump damage reduction HIDDEN", value)
+	
+	/**
+	 * In-Game: "Wearer never takes falling damage"
+	 *
+	 * 
+	 */
+	context(attrs: IKeyValueMap)
+	var cancelFallingDamage: Boolean?
+		get() = attrs.getTyped("cancel falling damage", BinaryIntCodec)
+		set(value) = attrs.setNullable("cancel falling damage", value, BinaryIntCodec)
+	
+	/**
+	 * 
+	 *
+	 * Number of seconds the player who hit this entity should be marked for death.
+	 *
+	 * If attacker is affected by `TF_COND_ENERGY_BUFF` (Crit-a-Cola, Cleaner's Carbine, Buffalo Steak, etc.), the attacker receives `TF_COND_MARKEDFORDEATH_SILENT`.
+	 */
+	context(attrs: IKeyValueMap)
+	var markAttackerForDeath: Number?
+		get() = attrs.getTyped("mod_mark_attacker_for_death")
+		set(value) = attrs.setNullable("mod_mark_attacker_for_death", value)
+	
+	/**
+	 * In-Game: "Generate Rage by dealing damage.  When fully charged, press the Special-Attack key to activate knockback"
+	 *
+	 * 
+	 *
+	 * Only procs on Heavies, multiplies damage by 50% while rage is draining.
+	 */
+	context(attrs: IKeyValueMap)
+	var generateRageOnDamage: Boolean?
+		get() = attrs.getTyped("generate rage on damage", BinaryIntCodec)
+		set(value) = attrs.setNullable("generate rage on damage", value, BinaryIntCodec)
+	
+	/**
+	 * In-Game: "Generate building rescue energy on damage"
+	 *
+	 * 
+	 *
+	 * Only procs on Heavies, multiplies damage by 50% while rage is draining.
+	 */
+	context(attrs: IKeyValueMap)
+	var engineerRageOnDmg: Boolean?
+		get() = attrs.getTyped("engineer rage on dmg", BinaryIntCodec)
+		set(value) = attrs.setNullable("engineer rage on dmg", value, BinaryIntCodec)
 	
 	/**
 	 * In-Game: "On Hit: Builds Hype"
@@ -378,16 +422,6 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	var killstreakTier: Int?
 		get() = attrs.getTyped("killstreak tier")
 		set(value) = attrs.setNullable("killstreak tier", value)
-	
-	/**
-	 * In-Game: "Wearer never takes falling damage"
-	 *
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var cancelFallingDamage: Boolean?
-		get() = attrs.getTyped("cancel falling damage", BinaryIntCodec)
-		set(value) = attrs.setNullable("cancel falling damage", value, BinaryIntCodec)
 	
 	/**
 	 * In-Game: "+N capture rate on wearer"
@@ -439,24 +473,12 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * This attribute class is a multiplier to the amount of time, not a flat amount of time.
+	 * Multiplier.
 	 */
 	context(attrs: IKeyValueMap)
 	var setBonusCloakBlinkTimePenalty: Int?
 		get() = attrs.getTyped("SET BONUS: cloak blink time penalty")
 		set(value) = attrs.setNullable("SET BONUS: cloak blink time penalty", value)
-	
-	/**
-	 * 
-	 *
-	 * Number of seconds the player who hit this entity should be marked for death.
-	 *
-	 * If attacker is affected by `TF_COND_ENERGY_BUFF` (Crit-a-Cola, Cleaner's Carbine, Buffalo Steak, etc.), the attacker receives `TF_COND_MARKEDFORDEATH_SILENT`.
-	 */
-	context(attrs: IKeyValueMap)
-	var markAttackerForDeath: Number?
-		get() = attrs.getTyped("mod_mark_attacker_for_death")
-		set(value) = attrs.setNullable("mod_mark_attacker_for_death", value)
 	
 	/**
 	 * In-Game: "+N% increase in turning control while charging"
@@ -505,14 +527,6 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 		set(value) = attrs.setNullable("mult cloak rate", value)
 	
 	/**
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var multDecloakRate: Int?
-		get() = attrs.getTyped("mult decloak rate")
-		set(value) = attrs.setNullable("mult decloak rate", value)
-	
-	/**
 	 * In-Game: "Reduced decloak sound volume"
 	 *
 	 * 
@@ -535,6 +549,14 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	var bootsFallingStomp: Boolean?
 		get() = attrs.getTyped("boots falling stomp", BinaryIntCodec)
 		set(value) = attrs.setNullable("boots falling stomp", value, BinaryIntCodec)
+	
+	/**
+	 * 
+	 */
+	context(attrs: IKeyValueMap)
+	var multDecloakRate: Int?
+		get() = attrs.getTyped("mult decloak rate")
+		set(value) = attrs.setNullable("mult decloak rate", value)
 	
 	/**
 	 * In-Game: "Über duration increased N seconds"
@@ -595,20 +617,6 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	var moveSpeedBonusShieldRequired: Number?
 		get() = attrs.getTyped("move speed bonus shield required")
 		set(value) = attrs.setNullable("move speed bonus shield required", value)
-	
-	/**
-	 * 
-	 *
-	 * This part is only semi-implemented...
-	 *
-	 * Gives extra player movespeed the more heads you have.
-	 *
-	 * Will not work if the player is not a Medic wielding the VitaSaw.
-	 */
-	context(attrs: IKeyValueMap)
-	var addHeadOnHit: Boolean?
-		get() = attrs.getTyped("add head on hit", BinaryIntCodec)
-		set(value) = attrs.setNullable("add head on hit", value, BinaryIntCodec)
 	
 	/**
 	 * In-Game: "Wearer cannot carry the intelligence briefcase or PASS Time JACK"
@@ -741,16 +749,6 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	var disableWeaponSwitch: Boolean?
 		get() = attrs.getTyped("disable weapon switch", BinaryIntCodec)
 		set(value) = attrs.setNullable("disable weapon switch", value, BinaryIntCodec)
-	
-	/**
-	 * In-Game: "Disables double jump"
-	 *
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var noDoubleJump: Boolean?
-		get() = attrs.getTyped("no double jump", BinaryIntCodec)
-		set(value) = attrs.setNullable("no double jump", value, BinaryIntCodec)
 	
 	/**
 	 * In-Game: "Wearer cannot disguise"
@@ -1060,54 +1058,6 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 		set(value) = attrs.setNullable("bombinomicon effect on death", value, BinaryIntCodec)
 	
 	/**
-	 * In-Game: "On Kill: A small health pack is dropped"
-	 *
-	 * 
-	 *
-	 * Drop a small health pack when killing an enemy.
-	 */
-	context(attrs: IKeyValueMap)
-	var dropHealthPackOnKill: Boolean?
-		get() = attrs.getTyped("drop health pack on kill", BinaryIntCodec)
-		set(value) = attrs.setNullable("drop health pack on kill", value, BinaryIntCodec)
-	
-	/**
-	 * In-Game: "On Kill: Burst into joyous laughter"
-	 *
-	 * 
-	 *
-	 * On killing an enemy, schadenfreude.
-	 */
-	context(attrs: IKeyValueMap)
-	var killForcesAttackerToLaugh: Boolean?
-		get() = attrs.getTyped("kill forces attacker to laugh", BinaryIntCodec)
-		set(value) = attrs.setNullable("kill forces attacker to laugh", value, BinaryIntCodec)
-	
-	/**
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var grenades1ResupplyDenied: Boolean?
-		get() = attrs.getTyped("grenades1_resupply_denied", BinaryIntCodec)
-		set(value) = attrs.setNullable("grenades1_resupply_denied", value, BinaryIntCodec)
-	
-	/**
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var grenades2ResupplyDenied: Boolean?
-		get() = attrs.getTyped("grenades2_resupply_denied", BinaryIntCodec)
-		set(value) = attrs.setNullable("grenades2_resupply_denied", value, BinaryIntCodec)
-	
-	/**
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var grenades3ResupplyDenied: Boolean?
-		get() = attrs.getTyped("grenades3_resupply_denied", BinaryIntCodec)
-		set(value) = attrs.setNullable("grenades3_resupply_denied", value, BinaryIntCodec)
-	
-	/**
 	 * In-Game: "N% less metal from pickups and dispensers"
 	 *
 	 * 
@@ -1241,12 +1191,27 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	/**
 	 * 
 	 */
-	val demomanOnly get() = DemomanOnlyAttributes
+	val onDamageTaken get() = OnDamageTakenAttributes
+	
+	/**
+	 * 
+	 */
+	val onKill get() = OnKillAttributes
+	
+	/**
+	 * 
+	 */
+	val denyResupply get() = DenyResupplyAttributes
 	
 	/**
 	 * 
 	 */
 	val scoutOnly get() = ScoutOnlyAttributes
+	
+	/**
+	 * 
+	 */
+	val demomanOnly get() = DemomanOnlyAttributes
 	
 	/**
 	 * 
@@ -1257,6 +1222,11 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 * 
 	 */
 	val medicOnly get() = MedicOnlyAttributes
+	
+	/**
+	 * 
+	 */
+	val spyOnly get() = SpyOnlyAttributes
 }
 
 
@@ -1288,54 +1258,147 @@ object SecondaryMaxAmmoAttributes {
 }
 
 
-object DemomanOnlyAttributes {
-	inline operator fun invoke(scope: DemomanOnlyAttributes.() -> Unit) {
+object OnDamageTakenAttributes {
+	inline operator fun invoke(scope: OnDamageTakenAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	/**
 	 * Bonus:
 	 *
-	 * 	- In-Game: "N sec increase in charge duration"
+	 * 	- In-Game: "+N% critical hit damage resistance on wearer"
 	 *
 	 * 
 	 *
 	 * Penalty:
 	 *
-	 * 	- In-Game: "N sec decrease in charge duration"
+	 * 	- In-Game: "N% critical hit damage vulnerability on wearer"
 	 */
-	val chargeTime get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
+	val dmgTakenFromCrit get() = BonusPenalty<Number, Number>("dmg taken from crit reduced", "dmg taken from crit increased")
 	
 	/**
-	 * In-Game: "+N% increase in charge recharge rate"
+	 * Bonus:
+	 *
+	 * 	- In-Game: "+N% fire damage resistance on wearer"
+	 *
+	 * 
+	 *
+	 * Penalty:
+	 *
+	 * 	- In-Game: "N% fire damage vulnerability on wearer"
 	 */
-	context(attrs: IKeyValueMap)
-	var chargeRechargeRateIncreased: Number?
-		get() = attrs.getTyped("charge recharge rate increased")
-		set(value) = attrs.setNullable("charge recharge rate increased", value)
+	val dmgTakenFromFire get() = BonusPenalty<Number, Number>("dmg taken from fire reduced", "dmg taken from fire increased")
 	
 	/**
-	 * In-Game: "Taking damage while shield charging reduces remaining charging time"
+	 * Bonus:
+	 *
+	 * 	- In-Game: "+N% explosive damage resistance on wearer"
+	 *
+	 * 
+	 *
+	 * Penalty:
+	 *
+	 * 	- In-Game: "N% explosive damage vulnerability on wearer"
 	 */
-	context(attrs: IKeyValueMap)
-	var loseDemoChargeOnDamageWhenCharging: Boolean?
-		get() = attrs.getTyped("lose demo charge on damage when charging", BinaryIntCodec)
-		set(value) = attrs.setNullable("lose demo charge on damage when charging", value, BinaryIntCodec)
+	val dmgTakenFromBlast get() = BonusPenalty<Number, Number>("dmg taken from blast reduced", "dmg taken from blast increased")
 	
 	/**
-	 * In-Game: "Melee kills refill N% of your charge meter."
+	 * Bonus:
+	 *
+	 * 	- In-Game: "+N% bullet damage resistance on wearer"
+	 *
+	 * 
+	 *
+	 * Penalty:
+	 *
+	 * 	- In-Game: "N% bullet damage vulnerability on wearer"
 	 */
-	context(attrs: IKeyValueMap)
-	var killRefillsMeter: Number?
-		get() = attrs.getTyped("kill refills meter")
-		set(value) = attrs.setNullable("kill refills meter", value)
+	val dmgTakenFromBullets get() = BonusPenalty<Number, Number>("dmg taken from bullets reduced", "dmg taken from bullets increased")
 	
 	/**
-	 * In-Game: "N% damage penalty"
+	 * In-Game: "N% damage resistance when below 50% health and spun up"
 	 */
 	context(attrs: IKeyValueMap)
-	var decapitateType: Boolean?
-		get() = attrs.getTyped("decapitate type", BinaryIntCodec)
-		set(value) = attrs.setNullable("decapitate type", value, BinaryIntCodec)
+	var spunupDamageResistance: Number?
+		get() = attrs.getTyped("spunup_damage_resistance")
+		set(value) = attrs.setNullable("spunup_damage_resistance", value)
+	
+	/**
+	 * In-Game: "N% damage vulnerability on wearer"
+	 */
+	context(attrs: IKeyValueMap)
+	var dmgTakenIncreased: Number?
+		get() = attrs.getTyped("dmg taken increased")
+		set(value) = attrs.setNullable("dmg taken increased", value)
+	
+	/**
+	 * In-Game: "+N% sentry damage resistance on wearer"
+	 */
+	context(attrs: IKeyValueMap)
+	var setBonusDmgFromSentryReduced: Number?
+		get() = attrs.getTyped("SET BONUS: dmg from sentry reduced")
+		set(value) = attrs.setNullable("SET BONUS: dmg from sentry reduced", value)
+	
+	/**
+	 * In-Game: "N% blast damage from rocket jumps"
+	 */
+	context(attrs: IKeyValueMap)
+	var rocketJumpDamageReduction: Number?
+		get() = attrs.getTyped("rocket jump damage reduction")
+		set(value) = attrs.setNullable("rocket jump damage reduction", value)
+	
+	/**
+	 * In-Game: "N% blast damage from rocket jumps"
+	 */
+	context(attrs: IKeyValueMap)
+	var rocketJumpDamageReductionHidden: Number?
+		get() = attrs.getTyped("rocket jump damage reduction HIDDEN")
+		set(value) = attrs.setNullable("rocket jump damage reduction HIDDEN", value)
+}
+
+
+object OnKillAttributes {
+	inline operator fun invoke(scope: OnKillAttributes.() -> Unit) {
+		this.apply(scope)
+	}
+	/**
+	 * In-Game: "On Kill: A small health pack is dropped"
+	 */
+	context(attrs: IKeyValueMap)
+	var dropHealthPackOnKill: Boolean?
+		get() = attrs.getTyped("drop health pack on kill", BinaryIntCodec)
+		set(value) = attrs.setNullable("drop health pack on kill", value, BinaryIntCodec)
+	
+	/**
+	 * In-Game: "On Kill: Burst into joyous laughter"
+	 */
+	context(attrs: IKeyValueMap)
+	var killForcesAttackerToLaugh: Boolean?
+		get() = attrs.getTyped("kill forces attacker to laugh", BinaryIntCodec)
+		set(value) = attrs.setNullable("kill forces attacker to laugh", value, BinaryIntCodec)
+}
+
+
+object DenyResupplyAttributes {
+	inline operator fun invoke(scope: DenyResupplyAttributes.() -> Unit) {
+		this.apply(scope)
+	}
+	
+	context(attrs: IKeyValueMap)
+	var grenades1ResupplyDenied: Boolean?
+		get() = attrs.getTyped("grenades1_resupply_denied", BinaryIntCodec)
+		set(value) = attrs.setNullable("grenades1_resupply_denied", value, BinaryIntCodec)
+	
+	
+	context(attrs: IKeyValueMap)
+	var grenades2ResupplyDenied: Boolean?
+		get() = attrs.getTyped("grenades2_resupply_denied", BinaryIntCodec)
+		set(value) = attrs.setNullable("grenades2_resupply_denied", value, BinaryIntCodec)
+	
+	
+	context(attrs: IKeyValueMap)
+	var grenades3ResupplyDenied: Boolean?
+		get() = attrs.getTyped("grenades3_resupply_denied", BinaryIntCodec)
+		set(value) = attrs.setNullable("grenades3_resupply_denied", value, BinaryIntCodec)
 }
 
 
@@ -1366,6 +1429,57 @@ object ScoutOnlyAttributes {
 	var loseHypeOnTakeDamage: Int?
 		get() = attrs.getTyped("lose hype on take damage")
 		set(value) = attrs.setNullable("lose hype on take damage", value)
+}
+
+
+object DemomanOnlyAttributes {
+	inline operator fun invoke(scope: DemomanOnlyAttributes.() -> Unit) {
+		this.apply(scope)
+	}
+	/**
+	 * In-Game: "Taking damage while shield charging reduces remaining charging time"
+	 */
+	context(attrs: IKeyValueMap)
+	var loseDemoChargeOnDamageWhenCharging: Boolean?
+		get() = attrs.getTyped("lose demo charge on damage when charging", BinaryIntCodec)
+		set(value) = attrs.setNullable("lose demo charge on damage when charging", value, BinaryIntCodec)
+	
+	/**
+	 * In-Game: "Melee kills refill N% of your charge meter."
+	 */
+	context(attrs: IKeyValueMap)
+	var killRefillsMeter: Number?
+		get() = attrs.getTyped("kill refills meter")
+		set(value) = attrs.setNullable("kill refills meter", value)
+	
+	/**
+	 * In-Game: "N% damage penalty"
+	 */
+	context(attrs: IKeyValueMap)
+	var decapitateType: Boolean?
+		get() = attrs.getTyped("decapitate type", BinaryIntCodec)
+		set(value) = attrs.setNullable("decapitate type", value, BinaryIntCodec)
+	
+	/**
+	 * Bonus:
+	 *
+	 * 	- In-Game: "N sec increase in charge duration"
+	 *
+	 * 
+	 *
+	 * Penalty:
+	 *
+	 * 	- In-Game: "N sec decrease in charge duration"
+	 */
+	val chargeTime get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
+	
+	/**
+	 * In-Game: "+N% increase in charge recharge rate"
+	 */
+	context(attrs: IKeyValueMap)
+	var chargeRechargeRateIncreased: Number?
+		get() = attrs.getTyped("charge recharge rate increased")
+		set(value) = attrs.setNullable("charge recharge rate increased", value)
 }
 
 
@@ -1412,7 +1526,10 @@ object MedicOnlyAttributes {
 		set(value) = attrs.setNullable("generate rage on heal", value, BinaryIntCodec)
 	
 	
-	val spyOnly get() = SpyOnlyAttributes
+	context(attrs: IKeyValueMap)
+	var addHeadOnHit: Boolean?
+		get() = attrs.getTyped("add head on hit", BinaryIntCodec)
+		set(value) = attrs.setNullable("add head on hit", value, BinaryIntCodec)
 }
 
 
@@ -1435,5 +1552,11 @@ object SpyOnlyAttributes {
 	var setBonusCustomTauntParticleAttr: Boolean?
 		get() = attrs.getTyped("SET BONUS: custom taunt particle attr", BinaryIntCodec)
 		set(value) = attrs.setNullable("SET BONUS: custom taunt particle attr", value, BinaryIntCodec)
+	
+	
+	context(attrs: IKeyValueMap)
+	var hasPipboyBuildInterface: Int?
+		get() = attrs.getTyped("has pipboy build interface")
+		set(value) = attrs.setNullable("has pipboy build interface", value)
 }
 

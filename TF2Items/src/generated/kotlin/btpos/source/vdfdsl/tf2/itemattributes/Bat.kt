@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: TF_WEAPON_BAT, Upgradeable TF_WEAPON_BAT, The Candy Cane, The Boston Basher, Sun-on-a-Stick, The Fan O'War, The Atomizer, Three-Rune Blade, Festive Bat 2011, Batsaber, The Sandman (tf_weapon_bat_wood), The Holy Mackerel, Unarmed Combat, Festive Holy Mackerel (tf_weapon_bat_fish)
+ * Items: TF_WEAPON_BAT, Upgradeable TF_WEAPON_BAT, The Candy Cane, The Boston Basher, Sun-on-a-Stick, The Fan O'War, The Atomizer, Three-Rune Blade, Festive Bat 2011, Batsaber
  */
 interface BatAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : BatAttributes

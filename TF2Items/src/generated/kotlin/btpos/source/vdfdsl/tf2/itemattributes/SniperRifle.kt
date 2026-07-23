@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: TF_WEAPON_SNIPERRIFLE, Upgradeable TF_WEAPON_SNIPERRIFLE, The Sydney Sleeper, The Machina, Festive Sniper Rifle 2011, The Hitman's Heatmaker, Silver Botkiller Sniper Rifle Mk.I, Gold Botkiller Sniper Rifle Mk.I, The AWPer Hand, Rust Botkiller Sniper Rifle Mk.I, Blood Botkiller Sniper Rifle Mk.I, Carbonado Botkiller Sniper Rifle Mk.I, Diamond Botkiller Sniper Rifle Mk.I, Silver Botkiller Sniper Rifle Mk.II, Gold Botkiller Sniper Rifle Mk.II, Shooting Star, The Bazaar Bargain, The Classic
+ * Items: Stock Sniper Rifle + Reskins, The Sydney Sleeper, The Machina, The Hitman's Heatmaker, Shooting Star, The Bazaar Bargain, The Classic
  */
 interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : SniperRifleAttributes
@@ -32,26 +32,22 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
-	 *
 	 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
 	 */
 	context(attrs: IKeyValueMap)
-	override var soldierBuffType: Int?
-		get() = super.soldierBuffType
-		set(value) { super.soldierBuffType = value }
+	var soldierBuffType: Int?
+		get() = attrs.getTyped("mod soldier buff type")
+		set(value) = attrs.setNullable("mod soldier buff type", value)
 	
 	/**
 	 * 
 	 *
-	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
-	 *
 	 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
 	 */
 	context(attrs: IKeyValueMap)
-	override var demoBuffType: Int?
-		get() = super.demoBuffType
-		set(value) { super.demoBuffType = value }
+	var demoBuffType: Int?
+		get() = attrs.getTyped("mod demo buff type")
+		set(value) = attrs.setNullable("mod demo buff type", value)
 	
 	/**
 	 * In-Game: "On Full Charge: +N% damage per shot"
@@ -70,7 +66,7 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle.
+	 * Used if the gun draws directly from the ammo supply without using a clip.
 	 *
 	 * Mult to zoom and unzoom delay on clipless weapons.
 	 *
@@ -147,9 +143,9 @@ interface SniperRifleAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Also applies to any hitscan weapon with a `jarate_time` attribute that hit the head.
 	 *
-	 * On attacker.
-	 *
 	 * Level of explosive headshot.
+	 *
+	 * Checked on attacker.
 	 */
 	context(attrs: IKeyValueMap)
 	override var explosiveHeadshotLevel: Int?

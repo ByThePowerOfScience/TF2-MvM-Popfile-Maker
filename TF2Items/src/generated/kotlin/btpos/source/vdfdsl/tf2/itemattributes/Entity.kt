@@ -147,6 +147,12 @@ object BuildingsAttributes {
 	
 	
 	val sentryGun get() = SentryGunAttributes
+	
+	
+	val dispenser get() = DispenserAttributes
+	
+	
+	val teleporter get() = TeleporterAttributes
 }
 
 
@@ -169,12 +175,6 @@ object SentryGunAttributes {
 	var engySentryFireRateIncreased: Number?
 		get() = attrs.getTyped("engy sentry fire rate increased")
 		set(value) = attrs.setNullable("engy sentry fire rate increased", value)
-	
-	
-	val dispenser get() = DispenserAttributes
-	
-	
-	val teleporter get() = TeleporterAttributes
 }
 
 

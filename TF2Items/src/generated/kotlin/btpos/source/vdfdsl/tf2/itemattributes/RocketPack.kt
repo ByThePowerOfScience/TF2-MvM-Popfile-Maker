@@ -16,7 +16,7 @@ interface RocketPackAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * The MvM upgrade that lets you launch while launching.
+	 * The MvM upgrade that lets you repeatedly launch without a cooldown.
 	 */
 	context(attrs: IKeyValueMap)
 	var thermalThrusterAirLaunch: Boolean?

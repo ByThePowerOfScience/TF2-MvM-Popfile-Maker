@@ -14,7 +14,7 @@ interface ScoutPistolAttributes : PistolAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * If true, can headshot.
+	 * If true, can headshot when behind an enemy.
 	 */
 	context(attrs: IKeyValueMap)
 	var backHeadshot: Boolean?

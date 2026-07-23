@@ -1,6 +1,6 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
-import btpos.source.vdfdsl.tf2.filegeneration.overrideScopeName
+import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideScopeName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute

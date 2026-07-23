@@ -70,9 +70,9 @@ interface BaseRocketAttributes : BaseProjectileAttributes, IBlockScoped {
 	 * Does pumpkin bombs particle effect.
 	 */
 	context(attrs: IKeyValueMap)
-	var spellHalloweenPumpkinExplosions: Boolean?
-		get() = attrs.getTyped("SPELL: Halloween pumpkin explosions", BinaryIntCodec)
-		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value, BinaryIntCodec)
+	var spellHalloweenPumpkinExplosions: Int?
+		get() = attrs.getTyped("SPELL: Halloween pumpkin explosions")
+		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value)
 	
 	/**
 	 * 

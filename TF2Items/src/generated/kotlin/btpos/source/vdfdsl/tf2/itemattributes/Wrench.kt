@@ -16,7 +16,7 @@ interface WrenchAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * If set, pressing reload shows the Eureka Effect menu.
+	 * If set, pressing reload shows the Eureka Effect teleport menu.
 	 */
 	context(attrs: IKeyValueMap)
 	var altFireTeleportToSpawn: Boolean?
@@ -27,6 +27,8 @@ interface WrenchAttributes : BaseMeleeAttributes, IBlockScoped {
 	 * In-Game: "Replaces the Sentry with a Mini-Sentry"
 	 *
 	 * 
+	 *
+	 * cast to an int, used as a boolean, so idk.
 	 *
 	 * Determines the hand used in the model.
 	 *
@@ -56,8 +58,25 @@ interface WrenchAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Passive build rate multiplier, same as the convar `tf_construction_build_rate_multiplier`.
+	 * Passive build-speed multiplier, same as the convar `tf_construction_build_rate_multiplier`.
 	 */
 	val constructionRate get() = BonusPenalty<Number, Number>("Construction rate increased", "Construction rate decreased")
+	
+	/**
+	 * Bonus:
+	 *
+	 * 	- In-Game: "N% faster repair rate"
+	 *
+	 * 
+	 *
+	 * Penalty:
+	 *
+	 * 	- In-Game: "N% slower repair rate"
+	 *
+	 * 
+	 *
+	 * Multiplier to how much health is given per wrench hit.
+	 */
+	val repairRate get() = BonusPenalty<Number, Number>("Repair rate increased", "Repair rate decreased")
 }
 

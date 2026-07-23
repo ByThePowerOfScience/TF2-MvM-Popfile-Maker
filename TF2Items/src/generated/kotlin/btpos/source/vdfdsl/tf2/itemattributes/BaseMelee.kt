@@ -5,7 +5,9 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
-
+/**
+ * Items: Frying Pan, Saxxy, The Conscientious Objector, The Freedom Staff, The Bat Outta Hell, Memory Maker, The Ham Shank, Gold Frying Pan, Necro Smasher, The Crossing Guard, Powerup Strength, Powerup Haste, Powerup Regen, Powerup Resist, Powerup Vampire, Powerup Reflect, Powerup Precision, Powerup Agility, Powerup Knockout, Powerup King, Powerup Plague, Powerup Supernova, Prinny Machete, The Hot Hand, Kukri, The Tribalman's Shiv, The Bushwacka, The Shahanshah
+ */
 interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : BaseMeleeAttributes
 	
@@ -28,7 +30,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * If true, make weapon deploy and holster 75% slower.
 	 *
-	 * If true, set swing range to 72, else 48.
+	 * If 1, set swing range to 72, else 48.
 	 */
 	context(attrs: IKeyValueMap)
 	override var isASword: Boolean?
@@ -40,7 +42,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to the bounding box of the swing to detect if a player is inside it.
 	 *
-	 * Yes, it DOES use a bounding box.
+	 * Yes, it DOES use a bounding box. I think. That's what this implies, I guess.
 	 */
 	context(attrs: IKeyValueMap)
 	var meleeBoundsMultiplier: Number?

@@ -5,7 +5,9 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
-
+/**
+ * Items: The Righteous Bison, The Pomson 6000
+ */
 interface ProjectileEnergyRingAttributes : BaseProjectileAttributes, IBlockScoped {
 	companion object : ProjectileEnergyRingAttributes
 	
@@ -14,7 +16,7 @@ interface ProjectileEnergyRingAttributes : BaseProjectileAttributes, IBlockScope
 	 *
 	 * 
 	 *
-	 * Checked on player.
+	 * Checked on owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var energyWeaponPenetration: Boolean?

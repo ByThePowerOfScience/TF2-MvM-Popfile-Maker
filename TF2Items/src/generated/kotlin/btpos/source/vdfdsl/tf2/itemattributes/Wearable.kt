@@ -5,9 +5,23 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
-
+/**
+ * Items: Cosmetics, The Manntreads, The Gunboats, The Razorback, Darwin's Danger Shield, The Cozy Camper, Ali Baba's Wee Booties, The Bootlegger
+ */
 interface WearableAttributes : BaseEntityAttributes, IBlockScoped {
 	companion object : WearableAttributes
+	
+	/**
+	 * In-Game: "Immune to the effects of afterburn."
+	 *
+	 * 
+	 *
+	 * For the base "`Wearable`", only checked on Sniper.
+	 */
+	context(attrs: IKeyValueMap)
+	var afterburnImmunity: Boolean?
+		get() = attrs.getTyped("afterburn immunity", BinaryIntCodec)
+		set(value) = attrs.setNullable("afterburn immunity", value, BinaryIntCodec)
 	
 	/**
 	 * In-Game: "Duck Power : N / 5"
@@ -24,7 +38,7 @@ interface WearableAttributes : BaseEntityAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * Overrides the skin used when disguising as this player.
+	 * Overrides the skin used for the player. (e.g. Zombie).
 	 */
 	context(attrs: IKeyValueMap)
 	var playerSkinOverride: Int?

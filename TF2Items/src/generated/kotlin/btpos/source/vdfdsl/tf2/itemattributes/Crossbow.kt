@@ -41,7 +41,7 @@ interface CrossbowAttributes : RocketLauncherAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle.
+	 * Used if the gun draws directly from the ammo supply without using a clip.
 	 */
 	context(attrs: IKeyValueMap)
 	override var fasterReloadRate: Number?

@@ -5,8 +5,10 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
-
-interface ProjectileArrowAttributes : BaseRocketAttributes, IBlockScoped {
+/**
+ * Items: The Huntsman, The Crusader's Crossbow, The Rescue Ranger
+ */
+interface ProjectileArrowAttributes : BaseProjectileAttributes, IBlockScoped {
 	companion object : ProjectileArrowAttributes
 	
 	/**

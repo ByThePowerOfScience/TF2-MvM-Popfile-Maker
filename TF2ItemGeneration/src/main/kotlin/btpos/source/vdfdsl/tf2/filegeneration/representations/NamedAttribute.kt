@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.tf2.filegeneration.representations
 
 import btpos.source.vdfdsl.tf2.filegeneration.ArmoryDesc
 import btpos.source.vdfdsl.tf2.filegeneration.camelCase
-import btpos.source.vdfdsl.tf2.filegeneration.overrideVarName
 
 /**
  * This should correspond to a raw row from the wiki table, or a raw scope from the attributes schema.

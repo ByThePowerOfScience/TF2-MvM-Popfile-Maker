@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: Stock Shotgun, Reserve Shooter, The Frontier Justice, Festive Frontier Justice, The Widowmaker, The Rescue Ranger
+ * Items: Stock Shotgun + Reskins, Reserve Shooter, The Widowmaker, The Rescue Ranger
  */
 interface ShotgunAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : ShotgunAttributes

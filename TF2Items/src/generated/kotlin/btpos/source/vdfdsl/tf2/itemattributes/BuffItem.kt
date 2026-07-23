@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: The Buff Banner, The Battalion's Backup, The Concheror, Festive Buff Banner
+ * Items: The Buff Banner, The Battalion's Backup, The Concheror, Festive Buff Banner, The B.A.S.E Jumper
  */
 interface BuffItemAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : BuffItemAttributes
@@ -14,7 +14,21 @@ interface BuffItemAttributes : BaseMeleeAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
+	 * Sets which banner is used.
+	 *
+	 * 0 = Buff Banner.
+	 *
+	 * 1 = Battalion's Backup.
+	 *
+	 * 2 = Concheror.
+	 */
+	context(attrs: IKeyValueMap)
+	var soldierBuffType: Int?
+		get() = attrs.getTyped("mod soldier buff type")
+		set(value) = attrs.setNullable("mod soldier buff type", value)
+	
+	/**
+	 * 
 	 *
 	 * Sets which banner is used.
 	 *
@@ -23,68 +37,34 @@ interface BuffItemAttributes : BaseMeleeAttributes, IBlockScoped {
 	 * 1 = Battalion's Backup.
 	 *
 	 * 2 = Concheror.
-	 *
-	 * 3 = Parachute.
-	 *
-	 * Note that the Base Jumper specifically checks the buff type of the user, and if it is not 'parachute', cancels its animation.
 	 */
 	context(attrs: IKeyValueMap)
-	override var soldierBuffType: Int?
-		get() = super.soldierBuffType
-		set(value) { super.soldierBuffType = value }
-	
-	/**
-	 * 
-	 *
-	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
-	 *
-	 * Sets which banner is used.
-	 *
-	 * 0 = Buff Banner.
-	 *
-	 * 1 = Battalion's Backup.
-	 *
-	 * 2 = Concheror.
-	 *
-	 * 3 = Parachute.
-	 *
-	 * Note that the Base Jumper specifically checks the buff type of the user, and if it is not 'parachute', cancels its animation.
-	 */
-	context(attrs: IKeyValueMap)
-	override var demoBuffType: Int?
-		get() = super.demoBuffType
-		set(value) { super.demoBuffType = value }
+	var demoBuffType: Int?
+		get() = attrs.getTyped("mod demo buff type")
+		set(value) = attrs.setNullable("mod demo buff type", value)
 	
 	/**
 	 * In-Game: "+N% buff duration"
 	 *
 	 * 
 	 *
-	 * Multiplier applied to buff duration.
-	 *
 	 * Multiplier to buff duration.
-	 *
-	 * Actually just read by the "BuffBanner _Flag_" (the prop) for when it should detach from the player, and it's actually the _flag_ that does the buffing.
 	 */
 	context(attrs: IKeyValueMap)
-	override var increaseBuffDuration: Number?
-		get() = super.increaseBuffDuration
-		set(value) { super.increaseBuffDuration = value }
+	var increaseBuffDuration: Number?
+		get() = attrs.getTyped("increase buff duration")
+		set(value) = attrs.setNullable("increase buff duration", value)
 	
 	/**
 	 * In-Game: "+N% buff duration"
 	 *
 	 * 
 	 *
-	 * Multiplier applied to buff duration.
-	 *
 	 * Multiplier to buff duration.
-	 *
-	 * Actually just read by the "BuffBanner _Flag_" (the prop) for when it should detach from the player, and it's actually the _flag_ that does the buffing.
 	 */
 	context(attrs: IKeyValueMap)
-	override var increaseBuffDurationHidden: Number?
-		get() = super.increaseBuffDurationHidden
-		set(value) { super.increaseBuffDurationHidden = value }
+	var increaseBuffDurationHidden: Number?
+		get() = attrs.getTyped("increase buff duration HIDDEN")
+		set(value) = attrs.setNullable("increase buff duration HIDDEN", value)
 }
 

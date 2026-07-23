@@ -3,6 +3,7 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import java.util.*
 
 /**
  * Items: The Wrangler, Festive Wrangler, The Giger Counter
@@ -11,13 +12,61 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : BaseGunAttributes
 	
 	/**
+	 * 
+	 *
+	 * Multiplier applied to base fire delay.
+	 *
+	 * Checked on player.
+	 */
+	context(attrs: IKeyValueMap)
+	var halloweenFireRateBonus: Number?
+		get() = attrs.getTyped("halloween fire rate bonus")
+		set(value) = attrs.setNullable("halloween fire rate bonus", value)
+	
+	/**
+	 * In-Game: "Fire rate increases as health decreases"
+	 *
+	 * 
+	 *
+	 * Used with the _old_ Panic Attack.
+	 */
+	context(attrs: IKeyValueMap)
+	var fireRateBonusWithReducedHealth: Number?
+		get() = attrs.getTyped("fire rate bonus with reduced health")
+		set(value) = attrs.setNullable("fire rate bonus with reduced health", value)
+	
+	/**
+	 * In-Game: "Increased attack speed and smaller blast radius while blast jumping"
+	 *
+	 * 
+	 *
+	 * Multiplier to fire delay while player is blast-jumping.
+	 */
+	context(attrs: IKeyValueMap)
+	var rocketjumpAttackrateBonus: Number?
+		get() = attrs.getTyped("rocketjump attackrate bonus")
+		set(value) = attrs.setNullable("rocketjump attackrate bonus", value)
+	
+	/**
+	 * In-Game: "+N% faster reload time"
+	 *
+	 * 
+	 *
+	 * This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle.
+	 *
+	 * Used if the gun draws directly from the ammo supply without using a clip.
+	 */
+	context(attrs: IKeyValueMap)
+	override var fasterReloadRate: Number?
+		get() = super.fasterReloadRate
+		set(value) { super.fasterReloadRate = value }
+	
+	/**
 	 * In-Game: "Overrides the projectile fired from the weapon. Takes values from 1 to 26, each representing a different projectile, and not all projectiles work on all weapons"
 	 *
 	 * 
 	 *
 	 * If unset, uses the weapon's default projectile type.
-	 *
-	 * Else use a numbered [btpos.source.vdfdsl.tf2.tftypes.ProjectileType].
 	 */
 	context(attrs: IKeyValueMap)
 	var overrideProjectileType: Int?
@@ -35,6 +84,20 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	var ammoPerShot: Int?
 		get() = attrs.getTyped("mod ammo per shot")
 		set(value) = attrs.setNullable("mod ammo per shot", value)
+	
+	/**
+	 * In-Game: "+N degrees random projectile deviation"
+	 *
+	 * 
+	 *
+	 * Does not include bullets.
+	 *
+	 * Used when firing pipe bombs.
+	 */
+	context(attrs: IKeyValueMap)
+	override var projectileSpreadAnglePenalty: Int?
+		get() = super.projectileSpreadAnglePenalty
+		set(value) { super.projectileSpreadAnglePenalty = value }
 	
 	/**
 	 * Bonus:
@@ -70,10 +133,10 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * How many players your "projectile" (*including bullets*) should penetrate.
 	 *
-	 * Also on WeaponBase, but noted here because it's specifically used in gun's "fire arrow" logic.
+	 * Also on WeaponBase, but noted here because it's specifically used in Gun's "fire arrow" logic.
 	 */
 	context(attrs: IKeyValueMap)
-	override var projectilePenetration: Int?
+	override var projectilePenetration: Boolean?
 		get() = super.projectilePenetration
 		set(value) { super.projectilePenetration = value }
 	
@@ -84,10 +147,10 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * How many players your "projectile" (*including bullets*) should penetrate.
 	 *
-	 * Also on WeaponBase, but noted here because it's specifically used in gun's "fire arrow" logic.
+	 * Also on WeaponBase, but noted here because it's specifically used in Gun's "fire arrow" logic.
 	 */
 	context(attrs: IKeyValueMap)
-	override var projectilePenetrationHeavy: Int?
+	override var projectilePenetrationHeavy: Boolean?
 		get() = super.projectilePenetrationHeavy
 		set(value) { super.projectilePenetrationHeavy = value }
 	
@@ -145,6 +208,30 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 		set(value) = attrs.setNullable("damage bonus while disguised", value)
 	
 	/**
+	 * In-Game: "Gains a damage bonus as rage increases, up to N%"
+	 *
+	 * 
+	 *
+	 * If you're a Soldier or Pyro, increases damage by `(n - 1) * (rage gauge proportion)`.
+	 */
+	context(attrs: IKeyValueMap)
+	var rageDamageBoost: Number?
+		get() = attrs.getTyped("mod rage damage boost")
+		set(value) = attrs.setNullable("mod rage damage boost", value)
+	
+	/**
+	 * In-Game: "While a medic is healing you, this weapon's damage is increased by N%"
+	 *
+	 * 
+	 *
+	 * Multiply damage by this value once for each healer you have. (with 2 healers, that's `bonus * bonus`, exponential).
+	 */
+	context(attrs: IKeyValueMap)
+	var medicHealedDamageBonus: Number?
+		get() = attrs.getTyped("mod medic healed damage bonus")
+		set(value) = attrs.setNullable("mod medic healed damage bonus", value)
+	
+	/**
 	 * In-Game: "Accuracy scales damage"
 	 *
 	 * 
@@ -155,6 +242,16 @@ interface BaseGunAttributes : WeaponBaseAttributes, IBlockScoped {
 	var accuracyScalesDamage: Number?
 		get() = attrs.getTyped("accuracy scales damage")
 		set(value) = attrs.setNullable("accuracy scales damage", value)
+	
+	/**
+	 * 
+	 *
+	 * By default, all guns have perfect accuracy on the first shot, unless this is set.
+	 */
+	context(attrs: IKeyValueMap)
+	var multSpreadScaleFirstShot: Int?
+		get() = attrs.getTyped("mult_spread_scale_first_shot")
+		set(value) = attrs.setNullable("mult_spread_scale_first_shot", value)
 	
 	/**
 	 * In-Game: "Fires a wide, fixed shot pattern"
