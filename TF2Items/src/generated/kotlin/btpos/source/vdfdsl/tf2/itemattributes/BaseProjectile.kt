@@ -14,7 +14,7 @@ interface BaseProjectileAttributes : IBlockScoped {
 	 *
 	 * 
 	 *
-	 * If true, applies mad milk on hit. Yes, this is in the base projectile.
+	 * If true, applies mad milk to hit target for 4 seconds, with successive hits adding 0.5 seconds to the effect time per shot.
 	 */
 	context(attrs: IKeyValueMap)
 	var madMilkSyringes: Boolean?

@@ -9,8 +9,8 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyBonus
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Vis
+import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromPBName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
-import btpos.source.vdfdsl.vdfparser.ParseVDF
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter

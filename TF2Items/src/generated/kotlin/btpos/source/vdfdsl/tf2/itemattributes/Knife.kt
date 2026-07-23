@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: TF_WEAPON_KNIFE, Upgradeable TF_WEAPON_KNIFE, Your Eternal Reward, Conniver's Kunai, The Big Earner, The Wanga Prick, The Sharp Dresser, The Spy-cicle, Festive Knife 2011, The Black Rose, Stock Botkiller Knives
+ * Items: Stock Knife + Reskins, Your Eternal Reward, Conniver's Kunai, The Big Earner, The Wanga Prick, The Sharp Dresser, The Spy-cicle
  */
 interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	companion object : KnifeAttributes
@@ -18,11 +18,9 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 1: Your Eternal Reward.
 	 *
-	 * 2: Cloak and Dagger (UNCHECKED).
+	 * 2: Cloak and Dagger (idk why).
 	 *
 	 * 3: Spycicle.
-	 *
-	 * The 'Your Eternal Reward' setting is used by sentries to not target spies after a stab, and the 'Spycicle' setting is used to display the recharge meter.
 	 */
 	context(attrs: IKeyValueMap)
 	var setIcicleKnifeMode: Boolean?
@@ -68,7 +66,7 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Base backstab damage against minibosses is `250 * <this proportion>`.
+	 * Base backstab damage against minibosses is 250 * this proportion.
 	 */
 	override val damage get() = super.damage
 	
@@ -77,13 +75,13 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On player.
-	 *
 	 * Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%.
 	 *
 	 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.
 	 *
 	 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
+	 *
+	 * Checked on player.
 	 */
 	context(attrs: IKeyValueMap)
 	var armorPiercing: Int?
@@ -95,7 +93,7 @@ interface KnifeAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Gain health on backstab. (Kunai).
+	 * Gain health on backstab. (Conniver's Kunai).
 	 */
 	context(attrs: IKeyValueMap)
 	var gainHealthOnBackstab: Boolean?

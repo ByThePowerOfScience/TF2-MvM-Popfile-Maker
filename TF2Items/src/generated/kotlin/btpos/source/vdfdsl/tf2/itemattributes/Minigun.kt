@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: All Stock Minigun skins, Natascha, The Brass Beast, Tomislav
+ * Items: Stock Minigun + Reskins, Natascha, The Brass Beast, Tomislav
  */
 interface MinigunAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : MinigunAttributes
@@ -40,6 +40,8 @@ interface MinigunAttributes : BaseGunAttributes, IBlockScoped {
 	 * In-Game: "Bullets destroy rockets and grenades in-flight.  Increased accuracy and frequency per-level."
 	 *
 	 * 
+	 *
+	 * Overridden by "raid gamemode" to 1.
 	 */
 	context(attrs: IKeyValueMap)
 	var attackProjectiles: Boolean?

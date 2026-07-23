@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 
-interface MvMBotAttributes : EntityAttributes, IBlockScoped {
+interface MvMBotAttributes : PlayerAttributes, IBlockScoped {
 	companion object : MvMBotAttributes
 	
 	/**

@@ -6,8 +6,8 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 
-interface ProjectilePipebombAttributes : ProjectileGrenadeAttributes, IBlockScoped {
-	companion object : ProjectilePipebombAttributes
+interface ProjectileStickybombAttributes : BaseProjectileAttributes, IBlockScoped {
+	companion object : ProjectileStickybombAttributes
 	
 	/**
 	 * In-Game: "Stickybombs fizzle N seconds after landing"

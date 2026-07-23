@@ -32,9 +32,9 @@ interface WearableDemoShieldAttributes : WearableAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On player.
-	 *
 	 * Charge time mult.
+	 *
+	 * Checked on player.
 	 */
 	val chargeTime get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
 	
@@ -51,9 +51,9 @@ interface WearableDemoShieldAttributes : WearableAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On player.
-	 *
 	 * Impact damage mult.
+	 *
+	 * Checked on player.
 	 */
 	val chargeImpactDamage get() = BonusPenalty<Number, Number>("charge impact damage increased", "charge impact damage decreased")
 	
@@ -61,10 +61,12 @@ interface WearableDemoShieldAttributes : WearableAttributes, IBlockScoped {
 	 * In-Game: "Immune to the effects of afterburn."
 	 *
 	 * 
+	 *
+	 * For the base "`Wearable`", only checked on Sniper.
 	 */
 	context(attrs: IKeyValueMap)
-	var afterburnImmunity: Boolean?
-		get() = attrs.getTyped("afterburn immunity", BinaryIntCodec)
-		set(value) = attrs.setNullable("afterburn immunity", value, BinaryIntCodec)
+	override var afterburnImmunity: Boolean?
+		get() = super.afterburnImmunity
+		set(value) { super.afterburnImmunity = value }
 }
 

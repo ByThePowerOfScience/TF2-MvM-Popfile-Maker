@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: TF_WEAPON_MEDIGUN, The Kritzkrieg, Upgradeable TF_WEAPON_MEDIGUN, The Quick-Fix, Festive Medigun 2011, Silver Botkiller Medi Gun Mk.I, Gold Botkiller Medi Gun Mk.I, Rust Botkiller Medi Gun Mk.I, Blood Botkiller Medi Gun Mk.I, Carbonado Botkiller Medi Gun Mk.I, Diamond Botkiller Medi Gun Mk.I, Silver Botkiller Medi Gun Mk.II, Gold Botkiller Medi Gun Mk.II, The Vaccinator
+ * Items: Stock Medigun + Reskins, The Kritzkrieg, The Quick-Fix, The Vaccinator
  */
 interface MedigunAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : MedigunAttributes
@@ -31,9 +31,9 @@ interface MedigunAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On player.
-	 *
 	 * Percentage saved on death or dropping weapon (e.g. `25` = 25% uber).
+	 *
+	 * Checked on player.
 	 */
 	context(attrs: IKeyValueMap)
 	var preserveUbercharge: Int?
@@ -94,11 +94,11 @@ interface MedigunAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On owner.
-	 *
 	 * Overheal bonus = overheal bonus + overhealexpert/4 or just overheal bonus, whichever is higher.
 	 *
 	 * decay mult is same but divided by 2.
+	 *
+	 * Checked on owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var overhealExpert: Int?
@@ -110,7 +110,7 @@ interface MedigunAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On owner.
+	 * Checked on owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var uberchargeOverhealRatePenalty: Number?
@@ -130,7 +130,7 @@ interface MedigunAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On owner.
+	 * Checked on owner.
 	 */
 	val uberchargeRate get() = BonusPenalty<Number, Number>("ubercharge rate bonus", "ubercharge rate penalty")
 	
@@ -139,23 +139,21 @@ interface MedigunAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Duration in seconds.
-	 *
-	 * On owner.
+	 * Checked on owner.
 	 */
 	context(attrs: IKeyValueMap)
-	override var uberDurationBonus: Int?
-		get() = super.uberDurationBonus
-		set(value) { super.uberDurationBonus = value }
+	var uberDurationBonus: Int?
+		get() = attrs.getTyped("uber duration bonus")
+		set(value) = attrs.setNullable("uber duration bonus", value)
 	
 	/**
 	 * In-Game: "Build energy by healing teammates.  When fully charged, press the Special-Attack key to deploy a frontal projectile shield."
 	 *
 	 * 
 	 *
-	 * On owner.
-	 *
 	 * This is your shield level.
+	 *
+	 * Checked on owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var generateRageOnHeal: Int?

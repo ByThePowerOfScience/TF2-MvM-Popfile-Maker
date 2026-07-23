@@ -18,19 +18,9 @@ interface LunchboxAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 0 = LUNCHBOX_STANDARD.
 	 *
-	 * 1 = LUNCHBOX_ADDS_MAXHEALTH.
+	 * Used for both the bonk atomic punch or the sandvich.
 	 *
-	 * 2 = LUNCHBOX_ADDS_MINICRITS.
-	 *
-	 * 3 = LUNCHBOX_STANDARD_ROBO.
-	 *
-	 * 4 = LUNCHBOX_STANDARD_FESTIVE.
-	 *
-	 * 5 = LUNCHBOX_ADDS_AMMO (fully implemented).
-	 *
-	 * 6 = LUNCHBOX_BANANA.
-	 *
-	 * 7 = LUNCHBOX_FISHCAKE.
+	 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
 	 */
 	context(attrs: IKeyValueMap)
 	var lunchboxAddsMaxhealthBonus: Boolean?
@@ -44,19 +34,9 @@ interface LunchboxAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 0 = LUNCHBOX_STANDARD.
 	 *
-	 * 1 = LUNCHBOX_ADDS_MAXHEALTH.
+	 * Used for both the bonk atomic punch or the sandvich.
 	 *
-	 * 2 = LUNCHBOX_ADDS_MINICRITS.
-	 *
-	 * 3 = LUNCHBOX_STANDARD_ROBO.
-	 *
-	 * 4 = LUNCHBOX_STANDARD_FESTIVE.
-	 *
-	 * 5 = LUNCHBOX_ADDS_AMMO (fully implemented).
-	 *
-	 * 6 = LUNCHBOX_BANANA.
-	 *
-	 * 7 = LUNCHBOX_FISHCAKE.
+	 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
 	 */
 	context(attrs: IKeyValueMap)
 	var lunchboxAddsMinicrits: Boolean?

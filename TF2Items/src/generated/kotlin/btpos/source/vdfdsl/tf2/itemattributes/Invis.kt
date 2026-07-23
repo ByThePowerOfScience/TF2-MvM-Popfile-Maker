@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: TF_WEAPON_INVIS, The Dead Ringer, The Cloak and Dagger, Upgradeable TF_WEAPON_INVIS, The Quackenbirdt
+ * Items: TF_WEAPON_INVIS, The Dead Ringer, The Cloak and Dagger, Upgradeable TF_WEAPON_INVIS, The Quackenbirdt, The Enthusiast's Timepiece
  */
 interface InvisAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : InvisAttributes
@@ -15,6 +15,8 @@ interface InvisAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * In-Game: "Cloak Type: Feign Death. Leave a fake corpse on taking damage and temporarily gain invisibility, speed, and damage resistance."
 	 *
 	 * 
+	 *
+	 * Used to specify "invis type".
 	 */
 	context(attrs: IKeyValueMap)
 	var setCloakIsFeignDeath: Boolean?
@@ -25,6 +27,8 @@ interface InvisAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * In-Game: "Cloak Type: Motion Sensitive. Alt-fire: Turn invisible. Cannot attack while invisible. Bumping in to enemies will make you slightly visible to enemies. Cloak drain rate based on movement speed."
 	 *
 	 * 
+	 *
+	 * Used to specify "invis type".
 	 */
 	context(attrs: IKeyValueMap)
 	var setCloakIsMovementBased: Boolean?
@@ -34,14 +38,14 @@ interface InvisAttributes : WeaponBaseAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * How many seconds it takes to decloak (or a multiplier).
+	 * How many seconds it takes to decloak.
 	 *
 	 * Note that values less than or equal to `0.0` become `1.0`.
 	 */
 	context(attrs: IKeyValueMap)
-	override var multDecloakRate: Int?
-		get() = super.multDecloakRate
-		set(value) { super.multDecloakRate = value }
+	var multDecloakRate: Int?
+		get() = attrs.getTyped("mult decloak rate")
+		set(value) = attrs.setNullable("mult decloak rate", value)
 	
 	/**
 	 * Bonus:
@@ -56,11 +60,26 @@ interface InvisAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On player.
-	 *
 	 * Multiply cloak consumption rate by this value.
+	 *
+	 * Checked on player.
 	 */
 	val multCloakMeterConsumeRate get() = BonusPenalty<Number, Number>("cloak consume rate decreased", "mult cloak meter consume rate")
+	
+	/**
+	 * Bonus:
+	 *
+	 * 	- In-Game: "+N% cloak regen rate"
+	 *
+	 * 
+	 *
+	 * Penalty:
+	 *
+	 * 	- In-Game: "N% cloak regeneration rate"
+	 *
+	 * 
+	 */
+	val cloakRegenRate get() = BonusPenalty<Number, Number>("mult cloak meter regen rate", "cloak regen rate decreased")
 	
 	/**
 	 * 
@@ -95,20 +114,5 @@ interface InvisAttributes : WeaponBaseAttributes, IBlockScoped {
 	var reducedCloakFromAmmo: Number?
 		get() = attrs.getTyped("ReducedCloakFromAmmo")
 		set(value) = attrs.setNullable("ReducedCloakFromAmmo", value)
-	
-	/**
-	 * Bonus:
-	 *
-	 * 	- In-Game: "+N% cloak regen rate"
-	 *
-	 * 
-	 *
-	 * Penalty:
-	 *
-	 * 	- In-Game: "N% cloak regeneration rate"
-	 *
-	 * 
-	 */
-	val cloakRegenRate get() = BonusPenalty<Number, Number>("mult cloak meter regen rate", "cloak regen rate decreased")
 }
 

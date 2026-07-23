@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: TF_WEAPON_GRENADELAUNCHER, Upgradeable TF_WEAPON_GRENADELAUNCHER, The Loch-n-Load, Festive Grenade Launcher, The Iron Bomber, The Loose Cannon
+ * Items: Stock Grenade Launcher + Reskins, The Loch-n-Load, The Iron Bomber, The Loose Cannon
  */
 interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	companion object : GrenadeLauncherAttributes
@@ -48,8 +48,6 @@ interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
 	 *
 	 * 
-	 *
-	 * "Mortar" (loose cannon) detonation time length.
 	 */
 	context(attrs: IKeyValueMap)
 	var grenadeLauncherMortarMode: Int?

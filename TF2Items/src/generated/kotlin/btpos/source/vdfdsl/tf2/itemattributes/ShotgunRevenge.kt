@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: Frontier Justice
+ * Items: The Frontier Justice
  */
 interface ShotgunRevengeAttributes : ShotgunAttributes, IBlockScoped {
 	companion object : ShotgunRevengeAttributes
@@ -16,15 +16,11 @@ interface ShotgunRevengeAttributes : ShotgunAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * The weapon supports revenge crits if this, `extinguish_revenge`, or `sapper_kills_collect_crits` are set.
-	 *
-	 * Note that the logic for _gaining_ said crits depends on the weapon. Having one of these set just says it _can_ have them.
-	 *
 	 * Specifically checked here when it tries to gain revenge crits, which means removing this attribute from the Frontier Justice will remove its ability to gain revenge crits.
 	 */
 	context(attrs: IKeyValueMap)
-	override var canGainRevengeCrits: Boolean?
-		get() = super.canGainRevengeCrits
-		set(value) { super.canGainRevengeCrits = value }
+	var canGainRevengeCrits: Boolean?
+		get() = attrs.getTyped("mod sentry killed revenge", BinaryIntCodec)
+		set(value) = attrs.setNullable("mod sentry killed revenge", value, BinaryIntCodec)
 }
 

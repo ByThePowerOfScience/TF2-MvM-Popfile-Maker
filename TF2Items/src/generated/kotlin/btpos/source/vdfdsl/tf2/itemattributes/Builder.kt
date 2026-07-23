@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: Engineer PDA, Sapper
+ * Items: Construction PDA, Unimplemented Spy PDA
  */
 interface BuilderAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : BuilderAttributes
@@ -16,7 +16,7 @@ interface BuilderAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On owner.
+	 * Checked on owner.
 	 */
 	context(attrs: IKeyValueMap)
 	var markForDeathOnBuildingPickup: Boolean?
@@ -26,7 +26,7 @@ interface BuilderAttributes : WeaponBaseAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * If true.0, it's a wheatley sapper.
+	 * If 1.0, it's a wheatley sapper.
 	 */
 	context(attrs: IKeyValueMap)
 	var sapperVoicePak: Int?
@@ -38,13 +38,11 @@ interface BuilderAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot):.
-	 *
-	 * Gives the sapper a radius instead of being single-target.
+	 * On base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
 	 */
 	context(attrs: IKeyValueMap)
-	var roboSapper: Int?
-		get() = attrs.getTyped("robo sapper")
-		set(value) = attrs.setNullable("robo sapper", value)
+	var roboSapper: Boolean?
+		get() = attrs.getTyped("robo sapper", BinaryIntCodec)
+		set(value) = attrs.setNullable("robo sapper", value, BinaryIntCodec)
 }
 

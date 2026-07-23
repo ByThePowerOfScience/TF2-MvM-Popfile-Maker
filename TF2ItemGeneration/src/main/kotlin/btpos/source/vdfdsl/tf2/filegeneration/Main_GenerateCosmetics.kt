@@ -10,9 +10,9 @@ import btpos.source.vdfdsl.backing.getSubtree
 import btpos.source.vdfdsl.backing.toMap
 import btpos.source.vdfdsl.backing.toMultiMap
 import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
+import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.HierarchyAttrClassScope
 import btpos.source.vdfdsl.vdfparser.ParseVDF
 import java.io.File
-import java.io.InputStream
 import java.nio.file.Path
 import java.util.LinkedList
 import java.util.Queue
@@ -196,7 +196,7 @@ fun getItemSchema(): VDFSubtree {
 }
 
 fun main() {
-	generateCosmetics(getItemSchema())
+	generateAttributesNotes(getItemSchema(), Path(BuildConfig.OUT_DIR).resolve("outfile.md"))
 }
 
 
@@ -206,13 +206,13 @@ fun generateAttributesNotes(parsedItemSchema: VDFSubtree, outputFile: Path) {
 	val hierarchy = MyNotesFormatted.hierarchy
 	val attrsByClass = MyNotesFormatted.attrsByClass
 	
-	fun getParentOfTFClass(tfclass: String): MyNotesFormatted.HierarchyAttrClassScope? {
+	fun getParentOfTFClass(tfclass: String): HierarchyAttrClassScope? {
 		val parentName = hierarchy.entries.firstOrNull { (_, v) -> tfclass in v }?.key ?: return null;
 		
-		return attrsByClass.first { it.name == parentName } as MyNotesFormatted.HierarchyAttrClassScope
+		return attrsByClass.first { it.name == parentName } as HierarchyAttrClassScope
 	}
 	
-	fun getParentSequence(tfclass: String): Sequence<MyNotesFormatted.HierarchyAttrClassScope> {
+	fun getParentSequence(tfclass: String): Sequence<HierarchyAttrClassScope> {
 		return generateSequence(getParentOfTFClass(tfclass)) { getParentOfTFClass(it.name) }
 	}
 	

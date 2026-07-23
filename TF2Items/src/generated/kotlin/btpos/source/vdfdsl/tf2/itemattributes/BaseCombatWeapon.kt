@@ -36,7 +36,7 @@ interface BaseCombatWeaponAttributes : BaseEntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * In the `DoesReloadSingly` check, this _is_ actually checked, so it's actually _not_ "display-only".
+	 * In the "DoesReloadSingly" check, this _is_ actually checked, so it's actually _not_ "display-only".
 	 *
 	 * If != 1.0 (if present), says the weapon "does not reload one shot at a time".
 	 */
@@ -48,7 +48,7 @@ interface BaseCombatWeaponAttributes : BaseEntityAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * Checked in `DoesReloadSingly`.  If true, weapon does not reload one shot at a time. (e.g. FaN).
+	 * Checked in the same place.  If true, weapon does not reload one shot at a time. (e.g. FaN).
 	 *
 	 * Note that for the most part, this logic is set inside the weapon itself. The scattergun thing is weirdly the only way to control this with attributes.
 	 */

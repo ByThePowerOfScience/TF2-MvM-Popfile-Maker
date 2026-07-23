@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 /**
- * Items: TF_WEAPON_FLAMETHROWER, The Backburner, Upgradeable TF_WEAPON_FLAMETHROWER, The Degreaser, The Phlogistinator, Festive Flamethrower 2011, The Rainblower, Silver Botkiller Flame Thrower Mk.I, Gold Botkiller Flame Thrower Mk.I, Rust Botkiller Flame Thrower Mk.I, Blood Botkiller Flame Thrower Mk.I, Carbonado Botkiller Flame Thrower Mk.I, Diamond Botkiller Flame Thrower Mk.I, Silver Botkiller Flame Thrower Mk.II, Gold Botkiller Flame Thrower Mk.II, Festive Backburner 2014, The Nostromo Napalmer
+ * Items: Stock Flamethrower + Reskins, The Backburner, The Degreaser, The Phlogistinator, The Rainblower, The Dragon's Fury
  */
 interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : FlamethrowerAttributes
@@ -14,26 +14,22 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
-	 *
 	 * If greater than 0, enables Phlog crits on having full rage.
 	 */
 	context(attrs: IKeyValueMap)
-	override var soldierBuffType: Int?
-		get() = super.soldierBuffType
-		set(value) { super.soldierBuffType = value }
+	var soldierBuffType: Int?
+		get() = attrs.getTyped("mod soldier buff type")
+		set(value) = attrs.setNullable("mod soldier buff type", value)
 	
 	/**
 	 * 
 	 *
-	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
-	 *
 	 * If greater than 0, enables Phlog crits on having full rage.
 	 */
 	context(attrs: IKeyValueMap)
-	override var demoBuffType: Int?
-		get() = super.demoBuffType
-		set(value) { super.demoBuffType = value }
+	var demoBuffType: Int?
+		get() = attrs.getTyped("mod demo buff type")
+		set(value) = attrs.setNullable("mod demo buff type", value)
 	
 	/**
 	 * In-Game: "No airblast"
@@ -51,6 +47,8 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	 * 
 	 *
 	 * Enables charging an airblast for longer for higher push.
+	 *
+	 * Fun fact: apparently this was going to be a FLAME ROCKET, but got changed later to be an airblast.
 	 */
 	context(attrs: IKeyValueMap)
 	var chargedAirblast: Boolean?
@@ -90,7 +88,9 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * How long after airblasting until you can fire a primary OR secondary attack.
+	 * Multiplier for how long after airblasting until you can fire a primary OR secondary attack.
+	 *
+	 * Secondary attack delay = 0.75 * this.
 	 */
 	context(attrs: IKeyValueMap)
 	var multAirblastRefireTime: Number?
@@ -202,7 +202,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	/**
 	 * 
 	 */
-	val flame get() = FlameAttributes
+	val flames get() = FlamesAttributes
 }
 
 
@@ -234,8 +234,8 @@ object AirblastCostAttributes {
 }
 
 
-object FlameAttributes {
-	inline operator fun invoke(scope: FlameAttributes.() -> Unit) {
+object FlamesAttributes {
+	inline operator fun invoke(scope: FlamesAttributes.() -> Unit) {
 		this.apply(scope)
 	}
 	

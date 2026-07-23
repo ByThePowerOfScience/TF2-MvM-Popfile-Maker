@@ -16,7 +16,15 @@ interface ShovelAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Solely determines the "damage type" of the weapon, with any custom values setting it to "pickaxe" and the default being determined by the weapon itself.
+	 * Used to specify "shovel type".
+	 *
+	 * 0 = Standard.
+	 *
+	 * 1 = Equalizer.
+	 *
+	 * 2 = Escape Plan.
+	 *
+	 * If not 0, DMG_TYPE is "Pickaxe", else "Shovel".
 	 */
 	context(attrs: IKeyValueMap)
 	var isEqualizer: Boolean?
@@ -28,7 +36,15 @@ interface ShovelAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Solely determines the "damage type" of the weapon, with any custom values setting it to "pickaxe" and the default being determined by the weapon itself.
+	 * Used to specify "shovel type".
+	 *
+	 * 0 = Standard.
+	 *
+	 * 1 = Equalizer.
+	 *
+	 * 2 = Escape Plan.
+	 *
+	 * If not 0, DMG_TYPE is "Pickaxe", else "Shovel".
 	 */
 	context(attrs: IKeyValueMap)
 	var isEscapePlan: Boolean?

@@ -5,8 +5,10 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
-
-interface ProjectileFlareAttributes : BaseRocketAttributes, IBlockScoped {
+/**
+ * Items: The Flare Gun, The Detonator, The Manmelter, The Scorch Shot
+ */
+interface ProjectileFlareAttributes : BaseProjectileAttributes, IBlockScoped {
 	companion object : ProjectileFlareAttributes
 	
 	/**
@@ -30,7 +32,7 @@ interface ProjectileFlareAttributes : BaseRocketAttributes, IBlockScoped {
 	 *
 	 * Checked on launcher.
 	 */
-	override val projectileSpeed get() = super.projectileSpeed
+	val projectileSpeed get() = BonusPenalty_BonusNested<VisHidden<Number, Number>, Number>(VisHidden<Number, Number>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
 	
 	/**
 	 * Bonus:
@@ -47,6 +49,6 @@ interface ProjectileFlareAttributes : BaseRocketAttributes, IBlockScoped {
 	 *
 	 * Checked on launcher.
 	 */
-	override val blastRadius get() = super.blastRadius
+	val blastRadius get() = BonusPenalty<Number, Number>("Blast radius increased", "Blast radius decreased")
 }
 

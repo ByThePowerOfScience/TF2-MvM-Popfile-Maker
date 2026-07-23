@@ -81,8 +81,6 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 * In-Game: "+N% clip size"
 	 *
 	 * 
-	 *
-	 * Stacks with [clipSize].
 	 */
 	context(attrs: IKeyValueMap)
 	var clipSizeBonusUpgrade: Number?
@@ -96,7 +94,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * MVM attribute that specifically handles rocket and grenade launchers.
 	 *
-	 * Note that [clipSize], [clipSizeBonusUpgrade], and [clipSizeUpgradeAtomic] all stack with one another.
+	 * Note that all three of these are different classes, which means they stack.
 	 */
 	context(attrs: IKeyValueMap)
 	var clipSizeUpgradeAtomic: Int?
@@ -118,12 +116,14 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
+	 * cast to an int, used as a boolean, so idk.
+	 *
 	 * Determines the hand used in the model.
 	 */
 	context(attrs: IKeyValueMap)
-	var wrenchBuildsMinisentry: Boolean?
-		get() = attrs.getTyped("mod wrench builds minisentry", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod wrench builds minisentry", value, BinaryIntCodec)
+	var wrenchBuildsMinisentry: Int?
+		get() = attrs.getTyped("mod wrench builds minisentry")
+		set(value) = attrs.setNullable("mod wrench builds minisentry", value)
 	
 	/**
 	 * Bonus:
@@ -189,9 +189,9 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On player.
-	 *
 	 * Multiplier applied if NOT being healed by a medic.
+	 *
+	 * Checked on player.
 	 */
 	context(attrs: IKeyValueMap)
 	var medicHealedDeployTimePenalty: Number?
@@ -201,7 +201,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * Should force switch to this item on some condition.
+	 * Should force switch to this item when... something happens.  Probably when your current weapon is unavailable?.
 	 */
 	context(attrs: IKeyValueMap)
 	var forceWeaponSwitch: Boolean?
@@ -215,7 +215,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * If true, only applies attributes when weapon is active, and unapplies them when switching off.
 	 *
-	 * This also means you can't have "only active when holding weapon" and "always active" attributes on the same weapon (excluding the specific attributes that are _always_ "only when active"), since the order you specify attributes in doesn't matter.
+	 * I think this also means you can't have "only active when holding weapon" and "always active" attributes on the same weapon, since the order you specify attributes in doesn't matter.
 	 */
 	context(attrs: IKeyValueMap)
 	var provideOnActive: Boolean?
@@ -281,11 +281,9 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 * In-Game: "No random critical hits"
 	 *
 	 * 
-	 *
-	 * "No random crits" sets this to `0.0`.
 	 */
 	context(attrs: IKeyValueMap)
-	var critModDisabled: Number?
+	var critChance: Number?
 		get() = attrs.getTyped("crit mod disabled")
 		set(value) = attrs.setNullable("crit mod disabled", value)
 	
@@ -293,8 +291,6 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 * In-Game: "No random critical hits"
 	 *
 	 * 
-	 *
-	 * "No random crits" sets this to `0.0`.
 	 */
 	context(attrs: IKeyValueMap)
 	var critModDisabledHidden: Number?
@@ -409,9 +405,9 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * On player.
-	 *
 	 * Halloween reload time multiplier.
+	 *
+	 * Checked on player.
 	 */
 	context(attrs: IKeyValueMap)
 	var halloweenReloadTimeDecreased: Number?
@@ -455,8 +451,6 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	
 	/**
 	 * 
-	 *
-	 * Again, "projectile" includes bullets.
 	 */
 	context(attrs: IKeyValueMap)
 	var centerfireProjectile: Boolean?
@@ -468,7 +462,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Ok this time it _doesn't_ include bullets. I think.
+	 * Does not include bullets.
 	 */
 	context(attrs: IKeyValueMap)
 	var projectileSpreadAnglePenalty: Int?
@@ -494,6 +488,8 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	
 	/**
 	 * 
+	 *
+	 * Strange part kills with this weapon should contribute to.
 	 */
 	context(attrs: IKeyValueMap)
 	var killEaterKillType: Int?
@@ -504,6 +500,8 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 * In-Game: "Silent Killer: No attack noise from backstabs"
 	 *
 	 * 
+	 *
+	 * Kills will not show up in the killfeed.
 	 */
 	context(attrs: IKeyValueMap)
 	var silentKiller: Boolean?
@@ -523,46 +521,9 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 		set(value) = attrs.setNullable("no crit boost", value, BinaryIntCodec)
 	
 	/**
-	 * In-Game: "Gives one guaranteed critical hit for each building destroyed with your sapper attached or backstab kill"
-	 *
 	 * 
-	 *
-	 * The weapon supports revenge crits if this, `extinguish_revenge`, or `sentry_killed_revenge` are set.
-	 *
-	 * Note that the logic for _gaining_ said crits depends on the weapon. Having one of these set just says it _can_ have them.
 	 */
-	context(attrs: IKeyValueMap)
-	var sapperKillsCollectCrits: Boolean?
-		get() = attrs.getTyped("sapper kills collect crits", BinaryIntCodec)
-		set(value) = attrs.setNullable("sapper kills collect crits", value, BinaryIntCodec)
-	
-	/**
-	 * In-Game: "Alt-Fire: Extinguish teammates to gain guaranteed critical hits"
-	 *
-	 * 
-	 *
-	 * The weapon supports revenge crits if this, `sapper_kills_collect_crits`, or `sentry_killed_revenge` are set.
-	 *
-	 * Note that the logic for _gaining_ said crits depends on the weapon. Having one of these set just says it _can_ have them.
-	 */
-	context(attrs: IKeyValueMap)
-	var extinguishEarnsRevengeCrits: Boolean?
-		get() = attrs.getTyped("extinguish earns revenge crits", BinaryIntCodec)
-		set(value) = attrs.setNullable("extinguish earns revenge crits", value, BinaryIntCodec)
-	
-	/**
-	 * In-Game: "Gain 2 revenge crits for each sentry kill and 1 for each sentry assist when your sentry is destroyed."
-	 *
-	 * 
-	 *
-	 * The weapon supports revenge crits if this, `extinguish_revenge`, or `sapper_kills_collect_crits` are set.
-	 *
-	 * Note that the logic for _gaining_ said crits depends on the weapon. Having one of these set just says it _can_ have them.
-	 */
-	context(attrs: IKeyValueMap)
-	var canGainRevengeCrits: Boolean?
-		get() = attrs.getTyped("mod sentry killed revenge", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod sentry killed revenge", value, BinaryIntCodec)
+	val revengeCrits get() = RevengeCritsAttributes
 	
 	/**
 	 * In-Game: "Honorbound: Once drawn sheathing deals 50 damage to yourself unless it kills."
@@ -612,9 +573,9 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 * Prevents mediguns from latching onto you.
 	 */
 	context(attrs: IKeyValueMap)
-	override var weaponBlocksHealing: Boolean?
-		get() = super.weaponBlocksHealing
-		set(value) { super.weaponBlocksHealing = value }
+	var weaponBlocksHealing: Boolean?
+		get() = attrs.getTyped("mod weapon blocks healing", BinaryIntCodec)
+		set(value) = attrs.setNullable("mod weapon blocks healing", value, BinaryIntCodec)
 	
 	/**
 	 * In-Game: "+N% ÜberCharge rate for the medic healing you This effect does not work in the respawn room"
@@ -660,16 +621,16 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 * 
 	 */
 	context(attrs: IKeyValueMap)
-	var dmgPiercesResistsAbsorbs: Boolean?
-		get() = attrs.getTyped("dmg pierces resists absorbs", BinaryIntCodec)
-		set(value) = attrs.setNullable("dmg pierces resists absorbs", value, BinaryIntCodec)
+	var dmgPiercesResistsAbsorbs: Int?
+		get() = attrs.getTyped("dmg pierces resists absorbs")
+		set(value) = attrs.setNullable("dmg pierces resists absorbs", value)
 	
 	/**
 	 * In-Game: "100% critical hit vs burning players"
 	 *
 	 * 
 	 *
-	 * The weapon's "crit players with X condition" stat.  Each bit of this number specifies a condition that'll cause a forced crit, from [CritConditions][#CritConditions].
+	 * The weapon's "crit players with X condition" stat.
 	 */
 	context(attrs: IKeyValueMap)
 	var critVsBurningPlayers: EnumSet<TFCritCondition>?
@@ -681,7 +642,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * The weapon's "crit players with X condition" stat.  Each bit of this number specifies a condition that'll cause a forced crit, from [CritConditions][#CritConditions].
+	 * The weapon's "crit players with X condition" stat.
 	 */
 	context(attrs: IKeyValueMap)
 	var critVsDisguisedPlayers: EnumSet<TFCritCondition>?
@@ -693,7 +654,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * The weapon's "crit players with X condition" stat.  Each bit of this number specifies a condition that'll cause a forced crit, from [CritConditions][#CritConditions].
+	 * The weapon's "crit players with X condition" stat.
 	 */
 	context(attrs: IKeyValueMap)
 	var critVsStunnedPlayers: EnumSet<TFCritCondition>?
@@ -716,8 +677,6 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 * 
 	 *
 	 * Crit against players that DON'T have these conditions.
-	 *
-	 * Uses same values as above list.
 	 */
 	context(attrs: IKeyValueMap)
 	var critVsNonBurningPlayers: EnumSet<TFCritCondition>?
@@ -781,7 +740,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Only procs if the damage dealt is NOT `DMG_BURN`.
+	 * Minicrits if the damage dealt is NOT `DMG_BURN`.
 	 */
 	context(attrs: IKeyValueMap)
 	var minicritVsBurningPlayer: Boolean?
@@ -839,7 +798,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Note: prevents criticals even when crit-boosted.
+	 * Note: Even prevents criticals when crit-boosted.
 	 */
 	context(attrs: IKeyValueMap)
 	var noCritVsNonburning: Boolean?
@@ -1053,14 +1012,12 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Specifically checked on Crossbow Bolt impacts.
-	 *
-	 * Applies to all non-dispenser forms of healing that apply the TF_COND_HEAL_BUFF status.
+	 * Applies to all non-dispenser forms of healing that apply the `TF_COND_HEAL_BUFF` status.
 	 */
 	context(attrs: IKeyValueMap)
-	override var reducedHealingFromMedics: Number?
-		get() = super.reducedHealingFromMedics
-		set(value) { super.reducedHealingFromMedics = value }
+	var reducedHealingFromMedics: Number?
+		get() = attrs.getTyped("reduced_healing_from_medics")
+		set(value) = attrs.setNullable("reduced_healing_from_medics", value)
 	
 	/**
 	 * Bonus:
@@ -1407,9 +1364,9 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 * Also applies to any hitscan weapon with a `jarate_time` attribute that hit the head.
 	 */
 	context(attrs: IKeyValueMap)
-	var explosiveHeadshotLevel: Int?
-		get() = attrs.getTyped("explosive sniper shot")
-		set(value) = attrs.setNullable("explosive sniper shot", value)
+	var explosiveHeadshotLevel: Boolean?
+		get() = attrs.getTyped("explosive sniper shot", BinaryIntCodec)
+		set(value) = attrs.setNullable("explosive sniper shot", value, BinaryIntCodec)
 	
 	/**
 	 * In-Game: "Killing an enemy with a critical hit will dismember your victim. Painfully."
@@ -1516,7 +1473,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * Maximum health decrease per tick while weapon is active. (Gloves of Running Urgently).
+	 * Maximum health decrease per tick while weapon is active. (Gloves of Running Urgently/Eviction Notice).
 	 */
 	context(attrs: IKeyValueMap)
 	var maxhealthDrainRate: Int?
@@ -1689,6 +1646,36 @@ object OnHitAttributes {
 	var subtractVictimCloakOnHit: Int?
 		get() = attrs.getTyped("subtract victim cloak on hit")
 		set(value) = attrs.setNullable("subtract victim cloak on hit", value)
+}
+
+
+object RevengeCritsAttributes {
+	inline operator fun invoke(scope: RevengeCritsAttributes.() -> Unit) {
+		this.apply(scope)
+	}
+	/**
+	 * In-Game: "Gives one guaranteed critical hit for each building destroyed with your sapper attached or backstab kill"
+	 */
+	context(attrs: IKeyValueMap)
+	var sapperKillsCollectCrits: Boolean?
+		get() = attrs.getTyped("sapper kills collect crits", BinaryIntCodec)
+		set(value) = attrs.setNullable("sapper kills collect crits", value, BinaryIntCodec)
+	
+	/**
+	 * In-Game: "Alt-Fire: Extinguish teammates to gain guaranteed critical hits"
+	 */
+	context(attrs: IKeyValueMap)
+	var extinguishEarnsRevengeCrits: Boolean?
+		get() = attrs.getTyped("extinguish earns revenge crits", BinaryIntCodec)
+		set(value) = attrs.setNullable("extinguish earns revenge crits", value, BinaryIntCodec)
+	
+	/**
+	 * In-Game: "Gain 2 revenge crits for each sentry kill and 1 for each sentry assist when your sentry is destroyed."
+	 */
+	context(attrs: IKeyValueMap)
+	var canGainRevengeCrits: Boolean?
+		get() = attrs.getTyped("mod sentry killed revenge", BinaryIntCodec)
+		set(value) = attrs.setNullable("mod sentry killed revenge", value, BinaryIntCodec)
 }
 
 

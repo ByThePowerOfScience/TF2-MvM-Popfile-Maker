@@ -16,9 +16,9 @@ interface SapperAttributes : BuilderAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * On player.
-	 *
 	 * How fast the building should reverse construction.
+	 *
+	 * Checked on player.
 	 */
 	context(attrs: IKeyValueMap)
 	var sapperDegeneratesBuildings: Int?
@@ -30,9 +30,7 @@ interface SapperAttributes : BuilderAttributes, IBlockScoped {
 	 *
 	 * 
 	 *
-	 * If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot):.
-	 *
-	 * Gives the sapper a radius instead of being single-target.
+	 * On base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
 	 *
 	 * When the sapper is applied to a player (including MvM bots):.
 	 *

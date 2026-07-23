@@ -6,7 +6,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
 
-interface BaseEntityAttributes : PlayerAttributes, IBlockScoped {
+interface BaseEntityAttributes : IBlockScoped {
 	companion object : BaseEntityAttributes
 	
 	/**
@@ -47,16 +47,14 @@ interface BaseEntityAttributes : PlayerAttributes, IBlockScoped {
 	/**
 	 * 
 	 *
-	 * If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAME_BALL.
+	 * If `TIME` or `COMBO`, checks the `mult_item_meter_charge_rate` attribute for passive recharge rate mult.
 	 *
-	 * If [TIME][AttributeMeterType.TIME] or [AttributeMeterType.COMBO], checks the `mult_item_meter_charge_rate` attribute class for passive recharge rate mult.
-	 *
-	 * If [DAMAGE][AttributeMeterType.DAMAGE] or [COMBO][AttributeMeterType.COMBO], checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
+	 * If `DAMAGE` or `COMBO`, checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
 	 */
 	context(attrs: IKeyValueMap)
-	override var itemMeterChargeType: Int?
-		get() = super.itemMeterChargeType
-		set(value) { super.itemMeterChargeType = value }
+	var itemMeterChargeType: Int?
+		get() = attrs.getTyped("item_meter_charge_type")
+		set(value) = attrs.setNullable("item_meter_charge_type", value)
 	
 	/**
 	 * 
@@ -113,7 +111,7 @@ interface BaseEntityAttributes : PlayerAttributes, IBlockScoped {
 	 *
 	 * If on a Wearable: the item is "broken", it is given `nodraw`, and the player's secondary weapon's meter is reset.
 	 *
-	 * If on a weapon, reduces all backstab damage taken by the player for all backstabs without any cooldown.  Performs identically to the Mannpower "Resistance" powerup in this respect.
+	 * If on a weapon, reduces all backstab damage taken by the player for all backstabs without any cooldown. Performs identically to the Mannpower "Resistance" powerup in this respect.
 	 */
 	context(attrs: IKeyValueMap)
 	var backstabShield: Boolean?

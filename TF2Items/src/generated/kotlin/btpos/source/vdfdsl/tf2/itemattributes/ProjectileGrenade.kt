@@ -5,7 +5,9 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import java.util.*
 
-
+/**
+ * Items: Stock Grenade Launcher, The Iron Bomber, The Loose Cannon
+ */
 interface ProjectileGrenadeAttributes : WeaponBaseAttributes, IBlockScoped {
 	companion object : ProjectileGrenadeAttributes
 	
