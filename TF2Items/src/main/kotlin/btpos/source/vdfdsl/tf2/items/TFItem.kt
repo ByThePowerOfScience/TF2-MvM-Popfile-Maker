@@ -4,7 +4,7 @@ import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.modeling.KeyValueMapImpl
+import btpos.source.vdfdsl.modeling.AttributesContainer
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.tf2.items.weapons.Weapons
@@ -13,8 +13,8 @@ import btpos.source.vdfdsl.tf2.items.weapons.WeaponsMelee
 @PopFileDSL
 class TFItem<ATTR : Any>(
 	val name: String,
-	val attributes: KeyValueMapImpl? = null,
-	@PublishedApi internal val scopedAttributeFunctions: ATTR,
+	val attributes: AttributesContainer? = null,
+	val scopedAttributeFunctions: ATTR,
 	private val conditional: String? = null
 )
 	: IVDFRepresentableKeyValue
@@ -37,7 +37,7 @@ class TFItem<ATTR : Any>(
 	 * Create a new instance of this item with the provided attributes added.
 	 */
 	inline fun withAttributes(attributesScope: context(IKeyValueMap) ATTR.() -> Unit): TFItem<ATTR> {
-		val attrs = attributes?.copy() ?: KeyValueMapImpl()
+		val attrs = attributes?.copy() ?: AttributesContainer()
 		configureAttributes(attrs, attributesScope)
 		return this.copy(attributes=attrs)
 	}
@@ -68,11 +68,11 @@ class TFItem<ATTR : Any>(
 	 *
 	 * @param configurationScope A block scope to allow you to easily access the attributes that are valid for this item.
 	 */
-	inline fun configureAttributes(configurationScope: context(KeyValueMapImpl) ATTR.() -> Unit): KeyValueMapImpl {
-		return configureAttributes(KeyValueMapImpl(), configurationScope)
+	inline fun configureAttributes(configurationScope: context(AttributesContainer) ATTR.() -> Unit): AttributesContainer {
+		return configureAttributes(AttributesContainer(), configurationScope)
 	}
 	
-	fun copy(name: String = this.name, attributes: KeyValueMapImpl? = this.attributes?.copy(), conditional: String? = this.conditional): TFItem<ATTR> {
+	fun copy(name: String = this.name, attributes: AttributesContainer? = this.attributes?.copy(), conditional: String? = this.conditional): TFItem<ATTR> {
 		return TFItem(name, attributes, this.scopedAttributeFunctions, conditional)
 	}
 	

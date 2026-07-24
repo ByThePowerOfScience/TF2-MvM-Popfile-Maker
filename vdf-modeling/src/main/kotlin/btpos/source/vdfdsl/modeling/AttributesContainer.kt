@@ -6,6 +6,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.codecs.Codec
 import kotlin.collections.set
+import kotlin.collections.toMutableMap
 
 /**
  * Only allows a single instance of each key in the map.
@@ -29,38 +30,43 @@ interface IKeyValueMap {
 }
 
 
-open class KeyValueMapImpl(private val _attributes: MutableMap<Any, Any> = mutableMapOf())
+open class AttributesContainer(
+	/**
+	 * Map of attribute string to (value, value_serializer)
+	 */
+	private val _attributes: MutableMap<Any, Pair<Any, (Any) -> Any>> = mutableMapOf()
+)
 	: IVDFRepresentableValue_Subtree, IKeyValueMap
 {
 	override fun _vdfRepr(parent: VDFSubtree): VDFSubtree {
 		return VDFSubtree(parent).apply {
 			_attributes.forEach { (k, v) ->
-				IVDFRepresentableValue.serializeDynamic(VDFPrimitive(k), v)._serializeInto(this)
+				IVDFRepresentableValue.serializeDynamic(VDFPrimitive(k), v.second(v.first))._serializeInto(this)
 			}
 		}
 	}
 	
 	@Suppress("UNCHECKED_CAST")
 	override fun <T> getTyped(key: String): T? {
-		return _attributes[key] as T?
+		return _attributes[key]?.second as T?
 	}
 	
 	override fun setNullable(key: String, value: Any?) {
-		if (value == null)
-			_attributes.remove(key)
-		else
-			_attributes[key] = value
+		setNullable(key, value, Codec.identity())
 	}
 	
 	override fun <FRONTEND : Any> getTyped(key: String, codec: Codec<FRONTEND, Any>): FRONTEND? {
-		return getTyped<Any>(key)?.let { codec.read(it) }
+		return getTyped(key)
 	}
 	
 	override fun <FRONTEND : Any> setNullable(key: String, value: FRONTEND?, codec: Codec<FRONTEND, Any>) {
-		return setNullable(key, value?.let { codec.write(it) })
+		if (value == null)
+			_attributes.remove(key)
+		else
+			_attributes[key] = value to (codec::write as (Any) -> Any)
 	}
 	
-	fun copy(): KeyValueMapImpl {
-		return KeyValueMapImpl(_attributes.toMutableMap())
+	fun copy(): AttributesContainer {
+		return AttributesContainer(_attributes.toMutableMap())
 	}
 }

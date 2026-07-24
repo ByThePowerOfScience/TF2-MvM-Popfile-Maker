@@ -1,7 +1,6 @@
 @file:Suppress("UNUSED")
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
@@ -9,9 +8,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.modeling.KeyValueMapImpl
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
-import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
+import btpos.source.vdfdsl.modeling.AttributesContainer
 import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.types.bots.BehaviorModifiers
@@ -44,15 +41,15 @@ var ChangeableBotAttributes.maxVisionRange: Number? by addField("MaxVisionRange"
  *
  * @see addAttributesForExisting
  */
-var ChangeableBotAttributes.itemAttributes: List<KeyValueMapImpl> by addField("ItemAttributes", serializer=flatListWithKey()) { listOf() }
+var ChangeableBotAttributes.itemAttributes: List<AttributesContainer> by addField("ItemAttributes", serializer=flatListWithKey()) { listOf() }
 
 
 var ChangeableBotAttributes.attributes: List<TFBotAttributes> by addField("Attributes", serializer = flatListWithKey()) { listOf() }
 
-var ChangeableBotAttributes.characterAttributes: KeyValueMapImpl? by addField("CharacterAttributes")
+var ChangeableBotAttributes.characterAttributes: AttributesContainer? by addField("CharacterAttributes")
 
 inline fun ChangeableBotAttributes.characterAttributes(configure: IKeyValueMap.() -> Unit) {
-	characterAttributes = KeyValueMapImpl().apply(configure)
+	characterAttributes = AttributesContainer().apply(configure)
 }
 
 
@@ -65,7 +62,7 @@ var ChangeableBotAttributes.tags: List<String> by addField("Tag", serializer = f
  * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
  */
 inline fun <ATTR : Any> ChangeableBotAttributes.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(IKeyValueMap) ATTR.() -> Unit) {
-	itemAttributes += item.configureAttributes(KeyValueMapImpl(), attrScope)
+	itemAttributes += item.configureAttributes(AttributesContainer(), attrScope)
 }
 
 @Suppress("RedundantModalityModifier")
@@ -123,6 +120,6 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
  * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
  */
 inline fun <ATTR : Any> TFBotSpawner.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(IKeyValueMap) ATTR.() -> Unit) {
-	itemAttributes += item.configureAttributes(KeyValueMapImpl(), attrScope)
+	itemAttributes += item.configureAttributes(AttributesContainer(), attrScope)
 }
 
