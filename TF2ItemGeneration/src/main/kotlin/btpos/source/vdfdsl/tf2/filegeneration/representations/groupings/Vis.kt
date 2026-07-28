@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import btpos.source.vdfdsl.tf2.filegeneration.sanitize
+import btpos.source.vdfdsl.tf2.filegeneration.representations.sanitize
 
 class Vis(
 	val visible: ISortedNamedAttribute,

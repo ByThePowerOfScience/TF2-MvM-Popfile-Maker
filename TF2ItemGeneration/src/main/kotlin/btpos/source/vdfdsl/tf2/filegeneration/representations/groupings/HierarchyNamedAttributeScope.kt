@@ -4,7 +4,6 @@ import btpos.source.vdfdsl.tf2.filegeneration.hierarchiesByName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import java.util.stream.Collectors.toList
 import kotlin.collections.map
 
 class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, vararg attrs: ISortedNamedAttribute, notes: List<String> = emptyList())
@@ -53,29 +52,36 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 		
 		val interfaceBuilder = ClassBuilder(clsname, ClassBuilder.Type.INTERFACE)
 		
+		val directParent = getParent()
 		val allParents = getParentsRecursive().map { it.generateTopLevelType() }.toList()
 		
 		fun PropertyBuilder.isOverridden() = allParents.any { this in it }
 		
 		val attrProperties = attrs.map { it.propertyBuilder() }
 		
+		if (directParent == null) {
+			interfaceBuilder.parentInterfaces += "IBlockScoped"
+		} else {
+			interfaceBuilder.parentInterfaces += directParent.clsname
+		}
+		
 		interfaceBuilder.companionObject = ClassBuilder("", ClassBuilder.Type.COMPANION_OBJECT) {
 			addProperties(
-				if (allParents.isEmpty())
+				(if (allParents.isEmpty())
 					attrProperties
 				else
-					attrProperties.filterNot { it.isOverridden() }
+					attrProperties.filterNot { it.isOverridden() })
+					.map { it.copy() }
 			)
 		}
 		
 		interfaceBuilder.addProperties(
 			if (allParents.isEmpty()) {
-				attrProperties.onEach {
+				attrProperties.asSequence().map { it.copy() }.onEach {
 					it.modality = PropertyBuilder.Modality.OPEN
 				}
 			} else {
-				attrProperties.map { prop ->
-					
+				attrProperties.asSequence().map { prop ->
 					prop.copy().apply {
 						if (isOverridden()) {
 							modality = PropertyBuilder.Modality.OVERRIDE
@@ -85,7 +91,10 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 						}
 					}
 				}
-			}
+			}.onEach {
+				it.isGetter = true
+				it.initializer = interfaceBuilder.name + "." + it.name
+			}.asIterable()
 		)
 		
 		interfaceBuilder.addNestedClasses(attrs.asSequence().filterIsInstance<NamedAttributeScope>().flatMap {

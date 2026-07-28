@@ -170,7 +170,7 @@ fun generateItemAttributes(
 	val namedAttributeScopesByClassName: Map<String, List<ISortedNamedAttribute>> =
 			allNamedAttributes
 				.asSequence()
-			.filter { it.className != "set_detonate_mode" } // doing these by hand in additionalWeaponModes.kt
+			.filter { it.className.isNotBlank() && it.className != "set_detonate_mode" } // doing these by hand in additionalWeaponModes.kt
 			.onEach {
 				when (it.attrName) {
 					"medigun charge is crit boost" -> it.setCodec { selectorCodec(1) }
@@ -199,7 +199,7 @@ fun generateItemAttributes(
 				}
 				
 				// If we have multiple bonuses or multiple penalties and they're not just hidden, we should just assign a custom scope
-				if (groupedByPosNegNeutral.any { it.key != isHidden && it.value.size > 1 }) {
+				if (groupedByPosNegNeutral.size == 1 || groupedByPosNegNeutral.any { it.key != isHidden && it.value.size > 1 }) {
 					return@mapValues fabricateScope(clsName, attrsForThisAttrClass)
 				}
 				
@@ -208,6 +208,9 @@ fun generateItemAttributes(
 						1 -> allHidden.single()
 						// Make hidden items into a nested PenaltyBonus
 						else -> allHidden.groupBy { it.effectType }.let {
+							it.values.firstOrNull { it.size > 1 }?.let {
+								error("Too many values: $it")
+							}
 							PenaltyBonus(
 								penalty=it[EffectType.Negative]?.single(),
 								bonus=it[EffectType.Positive]?.single(),

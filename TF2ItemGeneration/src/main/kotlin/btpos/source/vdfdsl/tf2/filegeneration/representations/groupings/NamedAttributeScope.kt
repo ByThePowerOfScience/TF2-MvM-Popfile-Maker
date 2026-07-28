@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import btpos.source.vdfdsl.tf2.filegeneration.sanitize
+import btpos.source.vdfdsl.tf2.filegeneration.representations.sanitize
 import kotlin.properties.Delegates.notNull
 
 /**
@@ -32,7 +32,7 @@ open class NamedAttributeScope(
 	val attrs = attrs.distinct()
 	
 	override fun propertyBuilder(): PropertyBuilder {
-		return PropertyBuilder(clsname, getKotlinType()) {
+		return PropertyBuilder(varName, getKotlinType()) {
 			initializer = "$clsname()"
 		}
 	}
@@ -67,10 +67,6 @@ open class NamedAttributeScope(
 		val cb = ClassBuilder(this.clsname, Type.CLASS) {
 			isOpen = true
 		}
-		
-		
-		// TODO refactor this to use ClassBuilder so I can figure out
-		//  what nested scopes have or haven't already been predefined and override them if necessary
 		
 		cb.addProperties(attrs.asSequence().filter { it !is NamedAttributeScope }.map {
 			it.propertyBuilder().apply {
@@ -121,7 +117,7 @@ open class NamedAttributeScope(
 	}
 	
 	override fun getKotlinType(): String {
-		return scopeName
+		return clsname
 	}
 	
 	override var notes = listOf<String>()

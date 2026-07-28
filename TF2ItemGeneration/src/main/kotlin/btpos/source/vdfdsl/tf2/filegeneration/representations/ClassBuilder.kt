@@ -1,5 +1,7 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
+import btpos.source.vdfdsl.tf2.filegeneration.unaryPlus
+
 
 class ClassBuilder(var name: String, var type: Type) {
 	companion object {
@@ -73,20 +75,24 @@ class ClassBuilder(var name: String, var type: Type) {
 			"companion object"
 		else "$classType $name"
 		
-		return """
-			/**
-			${docComment.joinToString("\n\n").prependIndent(" * ")}
-			 */
-			$classTypeClassName $extends{
-			$companionObjectString
-				
-			${properties.values.joinToString("\n") { it.build() }.prependIndent("\t") }
-				
-				
-				
-			${nestedClasses.entries.joinToString("\n") { it.value.build() }.prependIndent("\t")}
-			}
-		""".trimIndent()
+		
+		val modalityString = if (isOpen) "open " else ""
+		
+		
+		val docCommentString = if (docComment.isNotEmpty()) "/**\n" +
+								docComment.joinToString("\n\n").prependIndent(" * ") +
+                               "\n*/" else ""
+		
+		return """$docCommentString
+$modalityString$classTypeClassName $extends{
+$companionObjectString
+
+${properties.values.joinToString("\n\n") { it.build(this.type) }.prependIndent("\t") }
+
+
+
+${nestedClasses.entries.joinToString("\n\n") { it.value.build() }.prependIndent("\t")}
+}"""
 	}
 	
 	
@@ -100,14 +106,16 @@ class ClassBuilder(var name: String, var type: Type) {
 	
 	
 	fun addProperty(property: PropertyBuilder) {
-		this.properties[property.name] = property
+		if (property.name !in this.properties)
+			this.properties[property.name] = property
 	}
 	
 	fun addProperties(properties: Iterable<PropertyBuilder>) {
 		properties.forEach(::addProperty)
 	}
 	fun addNestedClass(nestedClass: ClassBuilder) {
-		this.nestedClasses[nestedClass.name] = nestedClass
+		if (nestedClass.name !in this.nestedClasses)
+			this.nestedClasses[nestedClass.name] = nestedClass
 	}
 	
 	fun addNestedClasses(nestedClasses: Iterable<ClassBuilder>) {
@@ -128,60 +136,3 @@ class ClassBuilder(var name: String, var type: Type) {
 
 
 
-class PropertyBuilder(val name: String, val kType: String) {
-	companion object {
-	    inline operator fun invoke(name: String, kType: String, configure: PropertyBuilder.() -> Unit): PropertyBuilder {
-	        return PropertyBuilder(name, kType).apply(configure)
-	    }
-	}
-	
-	lateinit var initializer: String
-	
-	var extensionOf: String? = null
-	
-	var modality: Modality = Modality.FINAL
-	
-	var isGetter: Boolean = false
-	
-	var delegatesToSuper: Boolean = false
-	
-	val docComment = mutableListOf<String>()
-	
-	
-	fun copy() = PropertyBuilder(name, kType).apply {
-		initializer = this@PropertyBuilder.initializer
-		extensionOf = this@PropertyBuilder.extensionOf
-		modality = this@PropertyBuilder.modality
-		isGetter = this@PropertyBuilder.isGetter
-		delegatesToSuper = this@PropertyBuilder.delegatesToSuper
-		docComment += this@PropertyBuilder.docComment
-	}
-	
-	fun build(): String {
-		val body = when {
-			delegatesToSuper -> "get() = super.$name"
-			isGetter -> "get() = $initializer"
-			else -> "= $initializer"
-		}
-		
-		val overrideString = if (extensionOf != null) "" else when (modality) {
-			Modality.OPEN -> "open "
-			Modality.OVERRIDE -> "override "
-			Modality.FINAL -> ""
-		}
-		
-		val extString = extensionOf?.let { "$it." }.orEmpty()
-		
-		val docComment = "/**\n" + docComment.joinToString("\n\n").prependIndent(" * ") + "\n */"
-		
-		return docComment + "\n" +
-		       "${overrideString}val $extString$name: $kType " + body
-	}
-	
-	
-	enum class Modality {
-		OPEN,
-		OVERRIDE,
-		FINAL;
-	}
-}
