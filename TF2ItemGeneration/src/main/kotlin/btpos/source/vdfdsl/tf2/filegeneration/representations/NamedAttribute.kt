@@ -36,7 +36,7 @@ data class NamedAttribute(
 	
 	var codec: FakeCodec? = null
 	
-	override var varName: String = attrName.replace(Regex("^mod[ _]"), "").replace("SPELL", "spell").replace(":", " ").camelCase().overrideVarName()
+	override var varName: String = attrName.sanitizeNamedAttributeName().camelCase().overrideVarName()
 	
 	override val innateDescription: List<String> = listOfNotNull(inGameDesc).map { "In-Game: \"$it\"" }
 	
@@ -72,7 +72,7 @@ data class NamedAttribute(
 	
 	override fun propertyBuilder(): PropertyBuilder {
 		val codec = codec?.codecIdentifier?.let { ", $it" } ?: ""
-		return PropertyBuilder(varName, getKotlinType()) {
+		return PropertyBuilder(varName, "ItemAttributeNamed<${getKotlinType()}>") {
 			initializer = "ItemAttributeNamed<${getKotlinType()}>(\"${attrName}\"$codec)"
 			docComment += innateDescription
 			docComment += notes
@@ -80,7 +80,7 @@ data class NamedAttribute(
 	}
 	
 	override fun toString(): String {
-		return "NamedAttribute(attrName='$attrName', attrType='$attrType')"
+		return "NamedAttribute(attrName='$attrName', attrType='$attrType', clsName='$className')"
 	}
 	
 	

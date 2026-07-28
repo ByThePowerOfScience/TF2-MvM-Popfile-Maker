@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import btpos.source.vdfdsl.tf2.filegeneration.sanitize
+import btpos.source.vdfdsl.tf2.filegeneration.representations.sanitize
 
 /**
  * Different description variants of the same attribute class, all combined into a single little namespace
@@ -71,7 +71,7 @@ data class PenaltyBonus(
 		
 		PropertyBuilder(varName, "${classType.first}<${getKotlinType()}$hiddenTypeParam>") {
 			initializer = "${classType.first}(\n" +
-			                "\t" + classType.second.joinToString(",\n\t") + ",\n" +
+			                "\t" + classType.second.joinToString(",\n\t") { it.propertyBuilder().initializer } + ",\n" +
 			              ")"
 		}
 	}
