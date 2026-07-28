@@ -3,14 +3,35 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+
+
 
 /**
  * Items: TF_WEAPON_BAT, Upgradeable TF_WEAPON_BAT, The Candy Cane, The Boston Basher, Sun-on-a-Stick, The Fan O'War, The Atomizer, Three-Rune Blade, Festive Bat 2011, Batsaber
  */
-interface BatAttributes : BaseMeleeAttributes, IBlockScoped {
-	companion object : BatAttributes
-	
+interface BatAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * In-Game: "Alt-Fire: Launches a ball that slows opponents"
+		 *
+		 * 
+		 *
+		 * If 0, cannot create a ball.
+		 */
+		val batLaunchesBalls = ItemAttributeNamed<Boolean>("mod bat launches balls", NumberSelectorCodec(1))
+		
+		/**
+		 * In-Game: "Alt-Fire: Launches a festive ornament that shatters causing bleed"
+		 *
+		 * 
+		 *
+		 * If 0, cannot create a ball.
+		 */
+		val batLaunchesOrnaments = ItemAttributeNamed<Boolean>("mod bat launches ornaments", NumberSelectorCodec(2))
+	}
+
 	/**
 	 * In-Game: "Alt-Fire: Launches a ball that slows opponents"
 	 *
@@ -18,10 +39,7 @@ interface BatAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * If 0, cannot create a ball.
 	 */
-	context(attrs: IKeyValueMap)
-	var batLaunchesBalls: Boolean?
-		get() = attrs.getTyped("mod bat launches balls", NumberSelectorCodec(1))
-		set(value) = attrs.setNullable("mod bat launches balls", value, NumberSelectorCodec(1))
+	val batLaunchesBalls: ItemAttribute<Boolean> get() = BatAttributes.batLaunchesBalls
 	
 	/**
 	 * In-Game: "Alt-Fire: Launches a festive ornament that shatters causing bleed"
@@ -30,9 +48,8 @@ interface BatAttributes : BaseMeleeAttributes, IBlockScoped {
 	 *
 	 * If 0, cannot create a ball.
 	 */
-	context(attrs: IKeyValueMap)
-	var batLaunchesOrnaments: Boolean?
-		get() = attrs.getTyped("mod bat launches ornaments", NumberSelectorCodec(2))
-		set(value) = attrs.setNullable("mod bat launches ornaments", value, NumberSelectorCodec(2))
+	val batLaunchesOrnaments: ItemAttribute<Boolean> get() = BatAttributes.batLaunchesOrnaments
+
+   
 }
 

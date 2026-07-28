@@ -6,8 +6,9 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttrib
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.attrToSelector
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
+import kotlin.collections.flatten
 
-class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAttrThing> = listOf(), applicableWeapons: List<Any> = listOf()) : AttrClassScope(name, attrClassesOrNestedScopes, applicableWeapons) {
+class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAttrThing> = listOf(), applicableWeapons: List<Any> = listOf(), notes: List<String> = emptyList()) : IAttrClassScope(name, attrClassesOrNestedScopes, applicableWeapons, notes) {
 	constructor(name: String, vararg attrClassesOrNestedScopes: Any, applicableWeapons: List<Any> = listOf()) : this(
 		name,
 		attrClassesOrNestedScopes.fold(mutableListOf()) { list, it ->
@@ -20,7 +21,7 @@ class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAtt
 	}, applicableWeapons)
 	
 	init {
-		require(name in MyNotesFormatted.hierarchy || MyNotesFormatted.hierarchy.values.any { name in it }) { "Name $name not found in hierarchy" }
+		require(name in MyNotesFormatted.hierarchy) { "Name $name not found in hierarchy" }
 	}
 	
 	override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
@@ -38,10 +39,12 @@ class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAtt
 		val mapped = attrClassesOrNestedScopes.flatMap { it.absorb(classToNamed) }
 		return listOf(
 			HierarchyNamedAttributeScope(
-				this.name, MyNotesFormatted.getParent(this.name), *mapped.toTypedArray(), _note = applicableWeapons.takeIf { it.isNotEmpty() }
-					?.flatten()
+				this.name,
+				MyNotesFormatted.getParent(this.name),
+				*mapped.toTypedArray(),
+				notes=listOfNotNull(applicableWeapons.takeIf { it.isNotEmpty() }
 					?.joinToString(", ")
-					?.let { "Items: $it" })
+					?.let { "Items: $it" }) + extraNotes)
 		)
 	}
 	

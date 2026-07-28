@@ -1,121 +1,317 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
+import btpos.source.vdfdsl.tf2.filegeneration.MyNotesFormatted.hierarchy
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.AttrClassScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.AttrClassUsage
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.HierarchyAttrClassScope
+import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrThing
-import org.w3c.dom.Attr
 
 // TODO: change attribute interfaces to be specifically THEIR attributes, and then add an "inherited" variant that's used for the item scopes, that way people will only see the attributes for a specific type when they do for example BuffItemAttributes.XXX
 
 
-object MyNotesFormatted {
+
+class TFClassHierarchy(map: Map<String, List<String>>) {
+	val nodes = HashMap<String, TFClassHierarchyNode>()
 	
-	private fun String.comma() = this.split(", ")
-	
-	
-	fun getParent(weaponType: String): String? {
-		return hierarchy.entries.firstOrNull { weaponType in it.value }?.key
+	init {
+		for ((item, children) in map) {
+			val newNode = TFClassHierarchyNode(item)
+			nodes[item] = newNode
+			
+			newNode.children += children.map { child ->
+				nodes.computeIfAbsent(child) {
+					TFClassHierarchyNode(it)
+				}.also {
+					it.parents.add(newNode)
+				}
+			}
+		}
 	}
 	
-	val hierarchy = mapOf(
+	fun getNode(name: String): TFClassHierarchyNode? = nodes[name.lowercase()]
+	
+	class TFClassHierarchyNode {
+		val name: String
+		val parents: MutableSet<TFClassHierarchyNode>
+		val children: MutableSet<TFClassHierarchyNode>
+		
+		constructor(name: String, parents: MutableSet<TFClassHierarchyNode> = mutableSetOf(), children: MutableSet<TFClassHierarchyNode> = mutableSetOf()) {
+			this.name = name.lowercase()
+			this.parents = parents
+			this.children = children
+		}
+	}
+	
+	fun getAllParents(clsName: String): Sequence<String> {
+		val node = nodes[clsName]
+		requireNotNull(node) {
+			"No entry in hierarchy found for $clsName"
+		}
+		return generateSequence(sequenceOf(node)) { it.flatMap { it.parents } }
+			.flatten()
+			.map { it.name }
+	}
+	
+	fun getParent(weaponType: String): String? {
+		return hierarchy.getNode(weaponType)
+			?.parents
+			?.let { parents ->
+				parents.singleOrNull()
+					?: error("$weaponType has more than one parent: ${parents.map { it.name }}")
+			}?.name
+	}
+	
+	
+	operator fun contains(string: String): Boolean {
+		return string in nodes
+	}
+	
+	fun getDirectChildren(weaponType: String): Collection<String> {
+		return nodes[weaponType]?.children?.map { it.name }.orEmpty()
+	}
+	
+	companion object {
+	    operator fun invoke(vararg pairs: Pair<String, List<Any>>): TFClassHierarchy {
+		    fun List<Any>.recur(rootList: MutableMap<String, MutableList<String>>, outValues: MutableList<String>) {
+				for (el in this) {
+					if (el is String) {
+						outValues += el
+					} else if (el is Pair<*, *>) {
+						val (key, l) = el as Pair<String, List<Any>>
+						outValues += key
+						val values = rootList.computeIfAbsent(key) { mutableListOf() }
+						l.recur(rootList, values)
+					}
+				}
+			}
+		    
+		    val rootMap = mutableMapOf<String, MutableList<String>>()
+		    pairs.forEach { (key, values) ->
+				val x = mutableListOf<String>()
+				values.recur(rootMap, x)
+			    rootMap[key] = x
+		    }
+		    
+		    return TFClassHierarchy(rootMap)
+	    }
+	}
+}
+
+object MyNotesFormatted {
+	fun getParent(name: String): String? {
+		return hierarchy.getParent(name)
+	}
+	
+	val hierarchy = TFClassHierarchy(
 		"Entity" to listOf("Player"),
 		"Player" to listOf("BaseEntity"),
 		
-		"BaseEntity" to listOf("BaseCombatWeapon", "Wearable", "EconEntity"),
+		"BaseEntity" to listOf(
+			"BaseCombatWeapon",
+			"Wearable",
+			"EconEntity"
+		),
 		
 		"BaseCombatWeapon" to listOf("WeaponBase"),
 		
 		"WeaponBase" to listOf(
-			"BaseGun",
-			"BaseMelee",
-			"Flamethrower",
+			"WeaponBaseGrenade",
 			"Invis",
-			"Lunchbox",
-			"Builder",
+			"BaseMelee",
+			"BaseGun",
+			"Lunchbox" to listOf(
+				"LunchboxDrink"
+			),
+			"PDA" to listOf(
+				"PDAEngineerBuild",
+				"PDAEngineerDestroy",
+				"PDASpy",
+			),
+			"Builder" to listOf(
+				"Sapper"
+			),
+			
+			"PassTimeGun",
 			"ProjectileGrenade"
 		),
 		
-	    "BaseGun" to listOf(
-			"SMG",
-			"Minigun",
-			"Pistol",
-			"Revolver",
-			"SyringeGun",
-			"StickybombLauncher",
-			"RocketLauncher",
-			"GrenadeLauncher",
-			"Jar",
-			"MechanicalArm",
-			"Shotgun",
-			"FlareGun",
-			"SniperRifle",
-			"Medigun"
-		
+		// Unused
+		"WeaponBaseGrenade" to listOf(
+			"GrenadeEMP",
+			"GrenadeHeal",
+			"GrenadeNapalm",
+			"GrenadeNormal",
+			"GrenadeSmokeBomb",
+			"GrenadeCaltrop",
+			"GrenadeNail",
+			"GrenadeMirv",
+			"GrenadeGas",
 		),
 		
-		"SMG" to listOf("ChargedSMG"),
-		
-		"Pistol" to listOf("ScoutPistol"),
-		
-		"Shotgun" to listOf("Scattergun", "ShotgunRevenge"),
-		
-		"Bottle" to listOf("StickBomb"),
-		
-		"Jar" to listOf("Throwable"),
-		
-		"Builder" to listOf("Sapper"),
+	    "BaseGun" to listOf(
+		    "SMG" to listOf(
+			    "ChargedSMG"
+		    ),
+		    "Tranq",
+		    "SyringeGun",
+		    "Revolver" to listOf(
+			    "RevolverSecondary"
+			),
+		    "StickybombLauncher" to listOf(
+			    "CompoundBow"
+			),
+		    "LaserPointer",
+		    "Pistol" to listOf(
+			    "ScoutPistol" to listOf(
+				    "ScoutPistolPrimary",
+				    "ScoutPistolSecondary"
+			    )
+		    ),
+		    "MechanicalArm",
+		    "FlareGun" to listOf(
+			    "FlareGunRevenge"
+			),
+		    "Shotgun" to listOf(
+			    "Scattergun" to listOf(
+				    "SodaPopper",
+				    "PEPBrawlerBlaster"
+			    ),
+			    "ShotgunRevenge",
+			    "ShotgunBuildingRescue"
+		    ),
+		    "GrenadeLauncher" to listOf(
+				"Cannon"
+			),
+		    "Minigun",
+		    "Jar" to listOf(
+			    "Throwable" to listOf(
+				    "SpellBook",
+				    "ThrowablePrimary",
+				    "ThrowableSecondary",
+				    "ThrowableMelee",
+				    "ThrowableUtility"
+			    ),
+			    "Decoy",
+			    "JarMilk",
+			    "Cleaver",
+			    "JarGas",
+		    ),
+		    "Flamethrower" to listOf(
+			    "DragonsFury"
+		    ),
+		    "RocketLauncher" to listOf(
+			    "RocketLauncher_AirStrike",
+			    "RocketLauncher_DirectHit",
+			    "RocketLauncher_Mortar",
+			    "Crossbow",
+			    "RayGun" to listOf(
+				    "Raygun_Revenge",
+				    "DRGPomson"
+			    ),
+			    "ParticleCannon",
+			    "GrapplingHook",
+		    ),
+		    "SniperRifle" to listOf(
+			    "SniperRifleDecap",
+			    "SniperRifleClassic"
+		    ),
+		    "Medigun",
+			"Nailgun"
+		),
 		
 		"BaseMelee" to listOf(
-			"Fists",
-			"Shovel",
-			"Bottle",
-			"FireAxe",
-			"Bonesaw",
-			"RocketPack",
-			"BuffItem",
-			"Wrench",
-			"Knife",
+			"Flag",
+			"Slap",
 			"Sword",
-			"Bat"
-		
+			"Knife",
+			"Club",
+			"Bat" to listOf(
+				"BatFish",
+				"BatWood" to listOf("BatGiftwrap"),
+			),
+			"Boomerang",
+			"BuffItem" to listOf("Parachute"),
+			"FireAxe",
+			"Crowbar",
+			"Bonesaw",
+			"Shovel",
+			"Wrench" to listOf("RobotArm"),
+			"Fists",
+			"RocketPack",
+			"BreakableMelee" to listOf(
+				"Bottle",
+				"BreakableSign",
+				"StickBomb"
+			),
 		),
-		
-		"StickybombLauncher" to listOf("CompoundBow"),
-		
-		"RocketLauncher" to listOf(
-			"RocketLauncher_AirStrike",
-			"Crossbow",
-			"RayGun"
-		),
-		
-		"RayGun" to listOf("Raygun_Revenge"),
-		
-		"Wearable" to listOf("WearableDemoShield", "PowerUpBottle"),
-		
-		"Entity" to listOf("Player"),
-		
-		"Player" to listOf("MvMBot"),
 		
 		"BaseProjectile" to listOf(
-			"BaseRocket",
+			"BaseRocket" to listOf(
+				"ProjectileArrow" to listOf(
+					"ProjectileHealingBolt",
+					"ProjectileGrapplingHook"
+				),
+				"ProjectileRocket" to listOf(
+					"ProjectileMechanicalArmOrb",
+					"ProjectileSentryRocket",
+					"ProjectileSpellFireball" to listOf(
+						"ProjectileSpellLightningOrb",
+					)
+				),
+				"ProjectileEnergyBall"
+			),
 			"ProjectileEnergyRing",
 			"ProjectileFlare",
 			"ProjectileArrow",
 			"ProjectileStickybomb"
 		),
 		
-		"BaseRocket" to listOf("ProjectileRocket",),
+		"BaseGrenadeProjectile" to listOf(
+			"ProjectileStickybomb" to listOf(
+				"ProjectileJar" to listOf(
+					"ProjectileJarMilk",
+					"ProjectileCleaver",
+					"ProjectileSpellBats" to listOf(
+						"ProjectileSpellSpawnZombie",
+						"ProjectileSpellSpawnHorde",
+						"ProjectileSpellPumpkin" to listOf(
+							"ProjectileSpellKartBats"
+						),
+						"ProjectileSpellMirv" to listOf(
+							"ProjectileSpellKartMirv"
+						),
+						"ProjectileSpellSpawnBoss",
+						"ProjectileSpellMeteorShower",
+						"ProjectileSpellTransposeTeleport",
+						"ProjectileSpellKartBats",
+					),
+				)
+			)
+		),
 		
-		"ProjectileGrenade" to listOf("ProjectileStickybomb")
+		
+		
+		
+		"Wearable" to listOf(
+			"PDAExpansionDispenser",
+			"PDAExpansionTeleporter",
+			"WearableDemoShield",
+			"WearableRazorback",
+			"PowerUpBottle",
+			"WearableCampaignItem",
+			"WearableLevelableItem",
+			"WearableRobotArm",
+			"WearableVM",
+		),
+		
+		"Entity" to listOf(
+			"Player" to listOf("MvMBot")
+		),
 	)
 	
 	
-	
-	
-	
-	
-	val attrsByClass: List<AttrClassScope> get() = listOf(
+	val attrsByClass: List<IAttrClassScope> get() = listOf(
 		HierarchyAttrClassScope(
 			"BaseEntity", """
 - `counts_as_assister`: Boolean
@@ -123,7 +319,7 @@ object MyNotesFormatted {
 - `mult_dmg_falloff`: Float
 - `item_meter_resupply_denied`: Boolean
 	- If true, resupply cabinets and spawning do not fully recharge the meter for this item.  Instead, its "default charge meter value" is used.
-- `item_meter_charge_type`: [AttributeMeterType](#AttributeMeterType)
+- `item_meter_charge_type`: TFMeterRechargeType
 	- If `TIME` or `COMBO`, checks the `mult_item_meter_charge_rate` attribute for passive recharge rate mult.
 	- If `DAMAGE` or `COMBO`, checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
 - `item_meter_damage_for_full_charge`: Float
@@ -506,7 +702,7 @@ object MyNotesFormatted {
 					- Used if the gun draws directly from the ammo supply without using a clip.
 				- `keep_disguise_on_attack`: Boolean
 					- If true, spies will keep their disguise when attacking with this weapon.
-				- `override_projectile_type`: [ProjectileType](#ProjectileTypes)
+				- `override_projectile_type`: TFProjectileType
 					- If unset, uses the weapon's default projectile type.
 				- `mod_ammo_per_shot`: Int
 					- How much ammo is used per shot. If 0, uses default.
@@ -891,9 +1087,8 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"RocketLauncher",
 			"""
-			- `override_projectile_type`: [ProjectileType](#ProjectileTypes)
+			- `override_projectile_type`: TFProjectileType
 				- If unset, uses the weapon's default projectile type.
-				- Else it can be used with anything in `ProjectileType_t`, as seen in [BaseGun](#BaseGun)
 			- `mod_rocket_launch_impulse`: Boolean
 				- Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow :3)
 			""".trimIndent(),
@@ -1068,7 +1263,7 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"Jar",
 			"""
-			- `override_projectile_type`: [ProjectileType](#ProjectileTypes)
+			- `override_projectile_type`: TFProjectileType
 				- Used to select the model
 				- Select between `TF_PROJECTILE_FESTIVE_JAR`, `TF_PROJECTILE_BREADMONSTER_JARATE`, and `TF_PROJECTILE_BREADMONSTER_MADMILK`
 				- Otherwise uses default for its class
@@ -1294,6 +1489,23 @@ object MyNotesFormatted {
 		
 		HierarchyAttrClassScope(
 			"Player",
+			AttrClassScope(
+				"Vaccinator",
+				"""
+			- `medigun_bullet_resist_deployed`: Float
+				- Multiplier to damage taken if player has  TF_COND_MEDIGUN_UBER_BULLET_RESIST
+			-  `medigun_bullet_resist_passive`: Float
+				- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BULLET_RESIST
+			- `medigun_blast_resist_deployed`: Float
+				- Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_BLAST_RESIST
+			-  `medigun_blast_resist_passive`: Float
+				- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BLAST_RESIST
+			- `medigun_fire_resist_deployed`: Float
+				- Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_FIRE_RESIST
+			-  `medigun_fire_resist_passive`: Float
+				- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_FIRE_RESIST
+				""".trimIndent()
+			),
 			"""
 			- `see_enemy_health`: Boolean
 			- `hide_enemy_health`: Boolean
@@ -1320,18 +1532,6 @@ object MyNotesFormatted {
 			- `jarate_backstabber`: Boolean
 				- If true, jarates anyone who backstabs this player.
 				- Note: does not block backstabs on its own.
-			- `medigun_bullet_resist_deployed`: Float
-				- Multiplier to damage taken if player has  TF_COND_MEDIGUN_UBER_BULLET_RESIST
-			-  `medigun_bullet_resist_passive`: Float
-				- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BULLET_RESIST
-			- `medigun_blast_resist_deployed`: Float
-				- Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_BLAST_RESIST
-			-  `medigun_blast_resist_passive`: Float
-				- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BLAST_RESIST
-			- `medigun_fire_resist_deployed`: Float
-				- Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_FIRE_RESIST
-			-  `medigun_fire_resist_passive`: Float
-				- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_FIRE_RESIST
 			- `disguise_no_burn`: Boolean
 				- Prevent afterburn while disguised
 			- `uber_on_damage_taken`: Float
@@ -1419,7 +1619,7 @@ object MyNotesFormatted {
 			- `mult_maxammo_metal`: Int
 			- `mult_maxammo_grenades1`: Int
 				- Only used for bat balls
-			- `set_buff_type`: [BuffType](#BuffType)
+			- `set_buff_type`: TFBuffType
 				- Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
 			- `mod_buff_duration`: Float
 				- Multiplier applied to buff duration.

@@ -3,22 +3,31 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+
+
 
 /**
  * Items: The Ullapool Caber
  */
-interface StickBombAttributes : BottleAttributes, IBlockScoped {
-	companion object : StickBombAttributes
-	
+interface StickBombAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * In-Game: "Pumpkin Bombs"
+		 *
+		 * 
+		 */
+		val spellHalloweenPumpkinExplosions = ItemAttributeNamed<Boolean>("SPELL: Halloween pumpkin explosions")
+	}
+
 	/**
 	 * In-Game: "Pumpkin Bombs"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var spellHalloweenPumpkinExplosions: Boolean?
-		get() = attrs.getTyped("SPELL: Halloween pumpkin explosions", BinaryIntCodec)
-		set(value) = attrs.setNullable("SPELL: Halloween pumpkin explosions", value, BinaryIntCodec)
+	val spellHalloweenPumpkinExplosions: ItemAttribute<Boolean> get() = StickBombAttributes.spellHalloweenPumpkinExplosions
+
+   
 }
 

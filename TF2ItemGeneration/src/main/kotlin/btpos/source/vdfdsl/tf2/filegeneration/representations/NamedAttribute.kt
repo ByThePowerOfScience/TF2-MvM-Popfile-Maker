@@ -42,7 +42,7 @@ data class NamedAttribute(
 	}
 	
 	override fun getKotlinType(): String {
-		if (codec != null)
+		if (codec != null) // trust codecs over attribute class notes
 			return codec!!.visibleType
 		else if (forceType != null)
 			return forceType!!
@@ -65,29 +65,22 @@ data class NamedAttribute(
 		}
 	}
 	
-	
-	
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {
 		this.codec = codec(this)
 	}
 	
-	override fun propertyString(isOverridden: Boolean): String {
+	override fun propertyBuilder(): PropertyBuilder {
 		val codec = codec?.codecIdentifier?.let { ", $it" } ?: ""
-		val (getter, setter) = if (isOverridden) {
-			"get() = super.${varName}" to "set(value) { super.${varName} = value }"
-		} else {
-			"""get() = attrs.getTyped("$attrName"$codec)""" to """set(value) = attrs.setNullable("$attrName", value$codec)"""
+		return PropertyBuilder(varName, getKotlinType()) {
+			initializer = "ItemAttributeNamed<${getKotlinType()}>(\"${attrName}\"$codec)"
+			docComment += innateDescription
+			docComment += notes
 		}
-		return """
-			context(attrs: IKeyValueMap)
-			${if (isOverridden) "override " else ""}var $varName: ${getKotlinType()}?
-				$getter
-				$setter
-		""".trimIndent()
 	}
 	
-	override fun propertyValue(): String {
-		error("Shouldn't be called")
+	override fun toString(): String {
+		return "NamedAttribute(attrName='$attrName', attrType='$attrType')"
 	}
+	
 	
 }

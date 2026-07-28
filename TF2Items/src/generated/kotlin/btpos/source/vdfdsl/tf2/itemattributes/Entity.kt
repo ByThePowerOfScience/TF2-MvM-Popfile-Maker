@@ -3,47 +3,123 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 
 
+
+
 interface EntityAttributes : IBlockScoped {
-	companion object : EntityAttributes
-	
+	companion object {
+		/**
+		 * In-Game: "Cannot be backstabbed"
+		 *
+		 * 
+		 */
+		val cannotBeBackstabbed = ItemAttributeNamed<Boolean>("cannot be backstabbed")
+		
+		/**
+		 * In-Game: "+N% greater jump height when active"
+		 *
+		 * 
+		 */
+		val increasedJumpHeight = ItemAttributeNamed<Float>("increased jump height")
+		
+		/**
+		 * 
+		 */
+		val majorIncreasedJumpHeight = ItemAttributeNamed<Float>("major increased jump height")
+		
+		/**
+		 * 
+		 */
+		val halloweenIncreasedJumpHeight = ItemAttributeNamed<Float>("halloween increased jump height")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% health from packs on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% health from packs on wearer"
+		 *
+		 * 
+		 */
+		val healthFromPacks = BonusPenalty(
+			ItemAttributeNamed<Float>("health from packs increased"),
+			ItemAttributeNamed<Float>("health from packs decreased")
+		)
+		
+		/**
+		 * In-Game: "N% less healing from Medic sources"
+		 *
+		 * 
+		 *
+		 * Specifically checked on Crossbow Bolt impacts.
+		 */
+		val reducedHealingFromMedics = ItemAttributeNamed<Float>("reduced_healing_from_medics")
+		
+		/**
+		 * In-Game: "Boost reduced on air jumps"
+		 *
+		 * 
+		 *
+		 * Lose this amount of hype if you airdash.
+		 *
+		 * Note that this only applies to scout hype, not rage in general.
+		 */
+		val hypeResetsOnJump = ItemAttributeNamed<Int>("hype resets on jump")
+		
+		/**
+		 * 
+		 *
+		 * Allows parachute to be deployed.
+		 */
+		val parachuteAttribute = ItemAttributeNamed<Boolean>("parachute attribute")
+		
+		/**
+		 * 
+		 *
+		 * Only used if the build menu is actually shown.
+		 *
+		 * 0 = default.
+		 *
+		 * 1 = pipboy.
+		 */
+		val hasPipboyBuildInterface = ItemAttributeNamed<Int>("has pipboy build interface")
+		
+		/**
+		 * 
+		 */
+		val buildings = BuildingsAttributes()
+	}
+
 	/**
 	 * In-Game: "Cannot be backstabbed"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var cannotBeBackstabbed: Boolean?
-		get() = attrs.getTyped("cannot be backstabbed", BinaryIntCodec)
-		set(value) = attrs.setNullable("cannot be backstabbed", value, BinaryIntCodec)
+	val cannotBeBackstabbed: ItemAttribute<Boolean> get() = EntityAttributes.cannotBeBackstabbed
 	
 	/**
 	 * In-Game: "+N% greater jump height when active"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var increasedJumpHeight: Number?
-		get() = attrs.getTyped("increased jump height")
-		set(value) = attrs.setNullable("increased jump height", value)
+	val increasedJumpHeight: ItemAttribute<Float> get() = EntityAttributes.increasedJumpHeight
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var majorIncreasedJumpHeight: Number?
-		get() = attrs.getTyped("major increased jump height")
-		set(value) = attrs.setNullable("major increased jump height", value)
+	val majorIncreasedJumpHeight: ItemAttribute<Float> get() = EntityAttributes.majorIncreasedJumpHeight
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var halloweenIncreasedJumpHeight: Number?
-		get() = attrs.getTyped("halloween increased jump height")
-		set(value) = attrs.setNullable("halloween increased jump height", value)
+	val halloweenIncreasedJumpHeight: ItemAttribute<Float> get() = EntityAttributes.halloweenIncreasedJumpHeight
 	
 	/**
 	 * Bonus:
@@ -58,7 +134,7 @@ interface EntityAttributes : IBlockScoped {
 	 *
 	 * 
 	 */
-	val healthFromPacks get() = BonusPenalty<Number, Number>("health from packs increased", "health from packs decreased")
+	val healthFromPacks: ItemAttribute<Float> get() = EntityAttributes.healthFromPacks
 	
 	/**
 	 * In-Game: "N% less healing from Medic sources"
@@ -67,10 +143,7 @@ interface EntityAttributes : IBlockScoped {
 	 *
 	 * Specifically checked on Crossbow Bolt impacts.
 	 */
-	context(attrs: IKeyValueMap)
-	var reducedHealingFromMedics: Number?
-		get() = attrs.getTyped("reduced_healing_from_medics")
-		set(value) = attrs.setNullable("reduced_healing_from_medics", value)
+	val reducedHealingFromMedics: ItemAttribute<Float> get() = EntityAttributes.reducedHealingFromMedics
 	
 	/**
 	 * In-Game: "Boost reduced on air jumps"
@@ -81,20 +154,14 @@ interface EntityAttributes : IBlockScoped {
 	 *
 	 * Note that this only applies to scout hype, not rage in general.
 	 */
-	context(attrs: IKeyValueMap)
-	var hypeResetsOnJump: Int?
-		get() = attrs.getTyped("hype resets on jump")
-		set(value) = attrs.setNullable("hype resets on jump", value)
+	val hypeResetsOnJump: ItemAttribute<Int> get() = EntityAttributes.hypeResetsOnJump
 	
 	/**
 	 * 
 	 *
 	 * Allows parachute to be deployed.
 	 */
-	context(attrs: IKeyValueMap)
-	var parachuteAttribute: Boolean?
-		get() = attrs.getTyped("parachute attribute", BinaryIntCodec)
-		set(value) = attrs.setNullable("parachute attribute", value, BinaryIntCodec)
+	val parachuteAttribute: ItemAttribute<Boolean> get() = EntityAttributes.parachuteAttribute
 	
 	/**
 	 * 
@@ -105,111 +172,74 @@ interface EntityAttributes : IBlockScoped {
 	 *
 	 * 1 = pipboy.
 	 */
-	context(attrs: IKeyValueMap)
-	var hasPipboyBuildInterface: Int?
-		get() = attrs.getTyped("has pipboy build interface")
-		set(value) = attrs.setNullable("has pipboy build interface", value)
+	val hasPipboyBuildInterface: ItemAttribute<Int> get() = EntityAttributes.hasPipboyBuildInterface
 	
 	/**
 	 * 
 	 */
-	val buildings get() = BuildingsAttributes
-}
+	val buildings: ItemAttribute<Buildings> get() = EntityAttributes.buildings
 
-
-object BuildingsAttributes {
-	inline operator fun invoke(scope: BuildingsAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+   
+open class BuildingsAttributes : IBlockScoped {
 	/**
 	 * In-Game: "+N% faster build speed"
 	 */
-	context(attrs: IKeyValueMap)
-	var buildRateBonus: Number?
-		get() = attrs.getTyped("build rate bonus")
-		set(value) = attrs.setNullable("build rate bonus", value)
+	open val buildRateBonus = ItemAttributeNamed<Float>("build rate bonus")
 	
 	/**
 	 * In-Game: "N% slower upgrade rate"
 	 */
-	context(attrs: IKeyValueMap)
-	var upgradeRateDecrease: Number?
-		get() = attrs.getTyped("upgrade rate decrease")
-		set(value) = attrs.setNullable("upgrade rate decrease", value)
+	open val upgradeRateDecrease = ItemAttributeNamed<Int>("upgrade rate decrease")
 	
 	/**
 	 * In-Game: "+N% max building health"
 	 */
-	context(attrs: IKeyValueMap)
-	var engyBuildingHealthBonus: Number?
-		get() = attrs.getTyped("engy building health bonus")
-		set(value) = attrs.setNullable("engy building health bonus", value)
+	open val engyBuildingHealthBonus = ItemAttributeNamed<Int>("engy building health bonus")
 	
 	
-	val sentryGun get() = SentryGunAttributes
+	open val sentryGun = SentryGunAttributes()
 	
 	
-	val dispenser get() = DispenserAttributes
+	open val dispenser = DispenserAttributes()
 	
 	
-	val teleporter get() = TeleporterAttributes
-}
+	open val teleporter = TeleporterAttributes()
 
-
-object SentryGunAttributes {
-	inline operator fun invoke(scope: SentryGunAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+open class SentryGunAttributes : IBlockScoped {
 	/**
 	 * In-Game: "+N% sentry range"
 	 */
-	context(attrs: IKeyValueMap)
-	var engySentryRadiusIncreased: Number?
-		get() = attrs.getTyped("engy sentry radius increased")
-		set(value) = attrs.setNullable("engy sentry radius increased", value)
+	open val engySentryRadiusIncreased = ItemAttributeNamed<Float>("engy sentry radius increased")
 	
 	/**
 	 * In-Game: "+N% sentry firing speed"
 	 */
-	context(attrs: IKeyValueMap)
-	var engySentryFireRateIncreased: Number?
-		get() = attrs.getTyped("engy sentry fire rate increased")
-		set(value) = attrs.setNullable("engy sentry fire rate increased", value)
-}
+	open val engySentryFireRateIncreased = ItemAttributeNamed<Float>("engy sentry fire rate increased")
 
-
-object DispenserAttributes {
-	inline operator fun invoke(scope: DispenserAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+}	
+open class DispenserAttributes : IBlockScoped {
 	/**
 	 * In-Game: "+N% dispenser range"
 	 */
-	context(attrs: IKeyValueMap)
-	var engyDispenserRadiusIncreased: Number?
-		get() = attrs.getTyped("engy dispenser radius increased")
-		set(value) = attrs.setNullable("engy dispenser radius increased", value)
-}
+	open val engyDispenserRadiusIncreased = ItemAttributeNamed<Float>("engy dispenser radius increased")
 
-
-object TeleporterAttributes {
-	inline operator fun invoke(scope: TeleporterAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+}	
+open class TeleporterAttributes : IBlockScoped {
 	/**
 	 * In-Game: "N% metal cost when constructing or upgrading teleporters"
 	 */
-	context(attrs: IKeyValueMap)
-	var teleporterCost: Number?
-		get() = attrs.getTyped("mod teleporter cost")
-		set(value) = attrs.setNullable("mod teleporter cost", value)
+	open val teleporterCost = ItemAttributeNamed<Float>("mod teleporter cost")
 	
 	/**
 	 * In-Game: "Teleporters can be used in both directions"
 	 */
-	context(attrs: IKeyValueMap)
-	var bidirectionalTeleport: Boolean?
-		get() = attrs.getTyped("bidirectional teleport", BinaryIntCodec)
-		set(value) = attrs.setNullable("bidirectional teleport", value, BinaryIntCodec)
+	open val bidirectionalTeleport = ItemAttributeNamed<Boolean>("bidirectional teleport")
+
+	
+}
+}
 }
 

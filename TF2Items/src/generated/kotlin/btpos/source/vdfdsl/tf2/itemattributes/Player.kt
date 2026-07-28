@@ -3,21 +3,971 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 
 
-interface PlayerAttributes : EntityAttributes, IBlockScoped {
-	companion object : PlayerAttributes
+
+
+interface PlayerAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * 
+		 */
+		val vaccinator = VaccinatorAttributes()
+		
+		/**
+		 * In-Game: "Allows you to see enemy health"
+		 *
+		 * 
+		 */
+		val seeEnemyHealth = ItemAttributeNamed<Boolean>("mod see enemy health")
+		
+		/**
+		 * In-Game: "Unable to see enemy health"
+		 *
+		 * 
+		 *
+		 * Always true in MvM.
+		 */
+		val hideEnemyHealth = ItemAttributeNamed<Boolean>("hide enemy health")
+		
+		/**
+		 * In-Game: "+N% greater jump height when active"
+		 *
+		 * 
+		 */
+		val increasedJumpHeight = ItemAttributeNamed<Float>("increased jump height")
+		
+		/**
+		 * 
+		 */
+		val majorIncreasedJumpHeight = ItemAttributeNamed<Float>("major increased jump height")
+		
+		/**
+		 * 
+		 */
+		val halloweenIncreasedJumpHeight = ItemAttributeNamed<Float>("halloween increased jump height")
+		
+		/**
+		 * In-Game: "Boost reduced on air jumps"
+		 *
+		 * 
+		 *
+		 * The amount to be subtracted from the hype meter when the Scout double-jumps.
+		 */
+		val hypeResetsOnJump = ItemAttributeNamed<Int>("hype resets on jump")
+		
+		/**
+		 * 
+		 *
+		 * Allows the parachute to be deployed.
+		 */
+		val parachuteAttribute = ItemAttributeNamed<Boolean>("parachute attribute")
+		
+		/**
+		 * In-Game: "N% increased air control."
+		 *
+		 * 
+		 *
+		 * Sidenote: the jetpack always multiplies your air acceleration by 50%.
+		 */
+		val increasedAirControl = ItemAttributeNamed<Float>("increased air control")
+		
+		/**
+		 * In-Game: "N% increased air control when blast jumping."
+		 *
+		 * 
+		 *
+		 * Specifically while blast-jumping, as opposed to global.
+		 */
+		val airControlBlastJump = ItemAttributeNamed<Float>("mod_air_control_blast_jump")
+		
+		/**
+		 * In-Game: "Share Canteens with your heal target. +1 duration, -10 price per point (minimum cost: 5)"
+		 *
+		 * 
+		 *
+		 * Discounts canteens by 10 * level.
+		 */
+		val canteenSpecialist = ItemAttributeNamed<Int>("canteen specialist")
+		
+		/**
+		 * In-Game: "Increased Melee damage against Isolated Merc Set"
+		 *
+		 * 
+		 */
+		val setBonusAlienIsolationXenoBonusPos = ItemAttributeNamed<Boolean>("SET BONUS: alien isolation xeno bonus pos")
+		
+		/**
+		 * In-Game: "Increased Nostromo Napalmer damage against Isolationist Pack Set"
+		 *
+		 * 
+		 */
+		val setBonusAlienIsolationMercBonusPos = ItemAttributeNamed<Boolean>("SET BONUS: alien isolation merc bonus pos")
+		
+		/**
+		 * In-Game: "When backstabbed: Jarate attacker"
+		 *
+		 * 
+		 *
+		 * If true, jarates anyone who backstabs this player.
+		 *
+		 * Note: does not block backstabs on its own.
+		 */
+		val jarateBackstabber = ItemAttributeNamed<Boolean>("jarate backstabber")
+		
+		/**
+		 * In-Game: "Immune to fire damage while disguised"
+		 *
+		 * 
+		 *
+		 * Prevent afterburn while disguised.
+		 */
+		val disguiseNoBurn = ItemAttributeNamed<Boolean>("disguise no burn")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% critical hit damage resistance on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% critical hit damage vulnerability on wearer"
+		 *
+		 * 
+		 */
+		val dmgTakenFromCrit = BonusPenalty(
+			ItemAttributeNamed<Float>("dmg taken from crit reduced"),
+			ItemAttributeNamed<Float>("dmg taken from crit increased")
+		)
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% fire damage resistance on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% fire damage vulnerability on wearer"
+		 *
+		 * 
+		 */
+		val dmgTakenFromFire = BonusPenalty(
+			ItemAttributeNamed<Float>("dmg taken from fire reduced"),
+			ItemAttributeNamed<Float>("dmg taken from fire increased")
+		)
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% explosive damage resistance on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% explosive damage vulnerability on wearer"
+		 *
+		 * 
+		 */
+		val dmgTakenFromBlast = BonusPenalty(
+			ItemAttributeNamed<Float>("dmg taken from blast reduced"),
+			ItemAttributeNamed<Float>("dmg taken from blast increased")
+		)
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% bullet damage resistance on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% bullet damage vulnerability on wearer"
+		 *
+		 * 
+		 */
+		val dmgTakenFromBullets = BonusPenalty(
+			ItemAttributeNamed<Float>("dmg taken from bullets reduced"),
+			ItemAttributeNamed<Float>("dmg taken from bullets increased")
+		)
+		
+		/**
+		 * In-Game: "N% damage resistance when below 50% health and spun up"
+		 *
+		 * 
+		 *
+		 * Only procs on Heavies that are currently spun up on less than 50% HP.
+		 */
+		val spunupDamageResistance = ItemAttributeNamed<Float>("spunup_damage_resistance")
+		
+		/**
+		 * In-Game: "N% damage vulnerability on wearer"
+		 *
+		 * 
+		 *
+		 * Multiplier to damage taken from all sources.
+		 */
+		val dmgTakenIncreased = ItemAttributeNamed<Float>("dmg taken increased")
+		
+		/**
+		 * In-Game: "+N% sentry damage resistance on wearer"
+		 *
+		 * 
+		 */
+		val setBonusDmgFromSentryReduced = ItemAttributeNamed<Float>("SET BONUS: dmg from sentry reduced")
+		
+		/**
+		 * In-Game: "N% blast damage from rocket jumps"
+		 *
+		 * 
+		 *
+		 * Multiplier applied to damage taken IF: it's blast damage or a flare explosion, the damage was caused by the user (self-damage), the user did not damage other players, and it is not a taunt-kill grenade (Escape Plan, Equalizer).
+		 */
+		val rocketJumpDamageReduction = ItemAttributeNamed<Float>("rocket jump damage reduction")
+		
+		/**
+		 * In-Game: "N% blast damage from rocket jumps"
+		 *
+		 * 
+		 *
+		 * Multiplier applied to damage taken IF: it's blast damage or a flare explosion, the damage was caused by the user (self-damage), the user did not damage other players, and it is not a taunt-kill grenade (Escape Plan, Equalizer).
+		 */
+		val rocketJumpDamageReductionHidden = ItemAttributeNamed<Float>("rocket jump damage reduction HIDDEN")
+		
+		/**
+		 * In-Game: "Wearer never takes falling damage"
+		 *
+		 * 
+		 */
+		val cancelFallingDamage = ItemAttributeNamed<Boolean>("cancel falling damage")
+		
+		/**
+		 * 
+		 *
+		 * Number of seconds the player who hit this entity should be marked for death.
+		 *
+		 * If attacker is affected by `TF_COND_ENERGY_BUFF` (Crit-a-Cola, Cleaner's Carbine, Buffalo Steak, etc.), the attacker receives `TF_COND_MARKEDFORDEATH_SILENT`.
+		 */
+		val markAttackerForDeath = ItemAttributeNamed<Float>("mod_mark_attacker_for_death")
+		
+		/**
+		 * In-Game: "Generate Rage by dealing damage.  When fully charged, press the Special-Attack key to activate knockback"
+		 *
+		 * 
+		 *
+		 * Only procs on Heavies, multiplies damage by 50% while rage is draining.
+		 */
+		val generateRageOnDamage = ItemAttributeNamed<Boolean>("generate rage on damage")
+		
+		/**
+		 * In-Game: "Generate building rescue energy on damage"
+		 *
+		 * 
+		 *
+		 * Only procs on Heavies, multiplies damage by 50% while rage is draining.
+		 */
+		val engineerRageOnDmg = ItemAttributeNamed<Boolean>("engineer rage on dmg")
+		
+		/**
+		 * In-Game: "On Hit: Builds Hype"
+		 *
+		 * 
+		 *
+		 * Adds the amount of damage dealt to the Scout hype meter, to a maximum of 200 damage which adds 50% meter.
+		 */
+		val hypeOnDamage = ItemAttributeNamed<Boolean>("hype on damage")
+		
+		/**
+		 * 
+		 *
+		 * Only procs on Sniper. Gain this amount of rage meter on assists.
+		 */
+		val rageOnAssists = ItemAttributeNamed<Float>("rage on assists")
+		
+		/**
+		 * In-Game: "Killstreaks Active"
+		 *
+		 * 
+		 */
+		val killstreakTier = ItemAttributeNamed<Int>("killstreak tier")
+		
+		/**
+		 * In-Game: "+N capture rate on wearer"
+		 *
+		 * 
+		 */
+		val increasePlayerCaptureValue = ItemAttributeNamed<Int>("increase player capture value")
+		
+		/**
+		 * 
+		 *
+		 * If 1, create a soccer ball on the ground when the player spawns.
+		 */
+		val spawnWithPhysicsToy = ItemAttributeNamed<Int>("spawn with physics toy")
+		
+		/**
+		 * 
+		 *
+		 * If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAME_BALL.
+		 */
+		val itemMeterChargeType = ItemAttributeNamed<Int>("item_meter_charge_type")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% health from healers on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% health from healers on wearer"
+		 *
+		 * 
+		 */
+		val healthFromHealersReduced = BonusPenalty(
+			ItemAttributeNamed<Float>("health from healers increased"),
+			ItemAttributeNamed<Float>("health from healers reduced")
+		)
+		
+		/**
+		 * In-Game: "N sec longer cloak blink time"
+		 *
+		 * 
+		 *
+		 * Multiplier.
+		 */
+		val setBonusCloakBlinkTimePenalty = ItemAttributeNamed<Float>("SET BONUS: cloak blink time penalty")
+		
+		/**
+		 * In-Game: "+N% increase in turning control while charging"
+		 *
+		 * 
+		 *
+		 * Default is 0.45f, and this class is a multiplier applied to it.
+		 */
+		val multChargeTurnControl = ItemAttributeNamed<Float>("mult charge turn control")
+		
+		/**
+		 * In-Game: "Full turning control while charging"
+		 *
+		 * 
+		 *
+		 * Default is 0.45f, and this class is a multiplier applied to it.
+		 */
+		val fullChargeTurnControl = ItemAttributeNamed<Float>("full charge turn control")
+		
+		/**
+		 * In-Game: "Taking damage while shield charging reduces remaining charging time"
+		 *
+		 * 
+		 *
+		 * Used to detect the Tide Turner when deciding whether to give you minicrits or crits.
+		 */
+		val loseDemoChargeOnDamageWhenCharging = ItemAttributeNamed<Boolean>("lose demo charge on damage when charging")
+		
+		/**
+		 * In-Game: "N sec increase in time to cloak"
+		 *
+		 * 
+		 */
+		val multCloakRate = ItemAttributeNamed<Float>("mult cloak rate")
+		
+		/**
+		 * In-Game: "Reduced decloak sound volume"
+		 *
+		 * 
+		 *
+		 * If true, plays `Player.Spy_UnCloakReduced` when decloaking.
+		 */
+		val setBonusQuietUnstealth = ItemAttributeNamed<Boolean>("SET BONUS: quiet unstealth")
+		
+		/**
+		 * In-Game: "Deals 3x falling damage to the player you land on"
+		 *
+		 * 
+		 *
+		 * Deal 3x falling damage to player you land on.
+		 */
+		val bootsFallingStomp = ItemAttributeNamed<Boolean>("boots falling stomp")
+		
+		/**
+		 * 
+		 */
+		val multDecloakRate = ItemAttributeNamed<Float>("mult decloak rate")
+		
+		/**
+		 * In-Game: "Über duration increased N seconds"
+		 *
+		 * 
+		 *
+		 * Duration in seconds.
+		 */
+		val uberDurationBonus = ItemAttributeNamed<Float>("uber duration bonus")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% faster move speed while deployed"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% slower move speed while deployed"
+		 *
+		 * 
+		 *
+		 * Only applies to players that have TF_COND_AIMING.
+		 *
+		 * If Heavy, default aiming movespeed is 110.
+		 *
+		 * Else if player is using a compound bow, 160.
+		 *
+		 * Else 80.
+		 */
+		val aimingMovespeed = BonusPenalty(
+			ItemAttributeNamed<Float>("aiming movespeed increased"),
+			ItemAttributeNamed<Float>("aiming movespeed decreased")
+		)
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% faster move speed on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% slower move speed on wearer"
+		 *
+		 * 
+		 */
+		val moveSpeed = BonusPenalty(
+			ItemAttributeNamed<Float>("move speed bonus"),
+			ItemAttributeNamed<Float>("move speed penalty")
+		)
+		
+		/**
+		 * In-Game: "+N% faster move speed on wearer (shield required)"
+		 *
+		 * 
+		 */
+		val moveSpeedBonusShieldRequired = ItemAttributeNamed<Float>("move speed bonus shield required")
+		
+		/**
+		 * In-Game: "Wearer cannot carry the intelligence briefcase or PASS Time JACK"
+		 *
+		 * 
+		 */
+		val cannotPickUpIntelligence = ItemAttributeNamed<Boolean>("cannot pick up intelligence")
+		
+		/**
+		 * In-Game: "Build +N additional disposable-sentry"
+		 *
+		 * 
+		 *
+		 * Number of disposable sentries you're allowed to build.
+		 *
+		 * Checked when checking if the player can build something.
+		 *
+		 * Only works if the "uses upgrades" gamerule is set.
+		 */
+		val engyDisposableSentries = ItemAttributeNamed<Int>("engy disposable sentries")
+		
+		/**
+		 * In-Game: "N% metal cost when constructing or upgrading teleporters"
+		 *
+		 * 
+		 *
+		 * Multiplier applied to teleporter build cost.
+		 */
+		val teleporterCost = ItemAttributeNamed<Float>("mod teleporter cost")
+		
+		/**
+		 * In-Game: "N metal reduction in building cost"
+		 *
+		 * 
+		 *
+		 * Overrides the building cost for all buildings.
+		 */
+		val buildingCostReduction = ItemAttributeNamed<Int>("building cost reduction")
+		
+		/**
+		 * 
+		 */
+		val overrideFootstepSoundSet = ItemAttributeNamed<FootstepOverride>("override footstep sound set")
+		
+		/**
+		 * In-Game: "Jingle all the way"
+		 *
+		 * 
+		 *
+		 * If 1, use xmas.jingle, if 2 or higher use xmas.jingle_higher.
+		 */
+		val addJingleToFootsteps = ItemAttributeNamed<Int>("add jingle to footsteps")
+		
+		/**
+		 * In-Game: "N"
+		 *
+		 * 
+		 *
+		 * Decimal version of the 4-byte hex code determining color of footsteps (e.g. `0xFFFFFFFF`, but in decimal).
+		 */
+		val spellSetHalloweenFootstepType = ItemAttributeNamed<Int>("SPELL: set Halloween footstep type")
+		
+		/**
+		 * 
+		 *
+		 * Prevents player from attacking.
+		 */
+		val noAttack = ItemAttributeNamed<Boolean>("no_attack")
+		
+		/**
+		 * 
+		 *
+		 * Prevents player from jumping.
+		 */
+		val noJump = ItemAttributeNamed<Boolean>("no_jump")
+		
+		/**
+		 * 
+		 *
+		 * Prevents player from crouching.
+		 */
+		val noDuck = ItemAttributeNamed<Boolean>("no_duck")
+		
+		/**
+		 * In-Game: "Cannot carry buildings"
+		 *
+		 * 
+		 *
+		 * Prevents player from picking up buildings.
+		 */
+		val cannotPickUpBuildings = ItemAttributeNamed<Boolean>("cannot pick up buildings")
+		
+		/**
+		 * 
+		 */
+		val disableWeaponSwitch = ItemAttributeNamed<Boolean>("disable weapon switch")
+		
+		/**
+		 * In-Game: "Wearer cannot disguise"
+		 *
+		 * 
+		 */
+		val cannotDisguise = ItemAttributeNamed<Boolean>("cannot disguise")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- Visible:
+		 *
+		 * 		- In-Game: "+N% max primary ammo on wearer"
+		 *
+		 * 	- Hidden:
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% max primary ammo on wearer"
+		 *
+		 * 
+		 */
+		val maxammoPrimaryReduced = BonusPenalty(
+			VisHidden("ItemAttributeNamed<Int>("maxammo primary increased")", "ItemAttributeNamed<Int>("hidden primary max ammo bonus")"),
+			ItemAttributeNamed<Int>("maxammo primary reduced")
+		)
+		
+		/**
+		 * 
+		 */
+		val secondaryMaxAmmo = SecondaryMaxAmmoAttributes()
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% max metal on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% max metal on wearer"
+		 *
+		 * 
+		 */
+		val maxammoMetalReduced = BonusPenalty(
+			ItemAttributeNamed<Int>("maxammo metal increased"),
+			ItemAttributeNamed<Int>("maxammo metal reduced")
+		)
+		
+		/**
+		 * In-Game: "+N% max misc ammo on wearer"
+		 *
+		 * 
+		 *
+		 * Only used for bat balls.
+		 */
+		val maxammoGrenades1Increased = ItemAttributeNamed<Int>("maxammo grenades1 increased")
+		
+		/**
+		 * 
+		 *
+		 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
+		 */
+		val soldierBuffType = ItemAttributeNamed<TFBuffType>("mod soldier buff type")
+		
+		/**
+		 * 
+		 *
+		 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
+		 */
+		val demoBuffType = ItemAttributeNamed<TFBuffType>("mod demo buff type")
+		
+		/**
+		 * In-Game: "+N% buff duration"
+		 *
+		 * 
+		 *
+		 * Multiplier applied to buff duration.
+		 */
+		val increaseBuffDuration = ItemAttributeNamed<Float>("increase buff duration")
+		
+		/**
+		 * In-Game: "+N% buff duration"
+		 *
+		 * 
+		 *
+		 * Multiplier applied to buff duration.
+		 */
+		val increaseBuffDurationHidden = ItemAttributeNamed<Float>("increase buff duration HIDDEN")
+		
+		/**
+		 * In-Game: "Blocks healing while in use"
+		 *
+		 * 
+		 */
+		val weaponBlocksHealing = ItemAttributeNamed<Boolean>("mod weapon blocks healing")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N health regenerated per second on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N health drained per second on wearer"
+		 *
+		 * 
+		 *
+		 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
+		 */
+		val healthDrain = BonusPenalty(
+			ItemAttributeNamed<Float>("health regen"),
+			ItemAttributeNamed<Float>("health drain")
+		)
+		
+		/**
+		 * In-Game: "+N% ammo regenerated every 5 seconds on wearer"
+		 *
+		 * 
+		 *
+		 * Percentage of ammo regenerated every 5 seconds.
+		 */
+		val ammoRegen = ItemAttributeNamed<Float>("ammo regen")
+		
+		/**
+		 * In-Game: "+N metal regenerated every 5 seconds on wearer"
+		 *
+		 * 
+		 *
+		 * Amount of metal regenerated every 5 seconds.
+		 */
+		val metalRegen = ItemAttributeNamed<Int>("metal regen")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "N% reduction in airblast vulnerability"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% reduction in airblast vulnerability"
+		 *
+		 * 
+		 */
+		val airblastVulnerabilityMultiplier = BonusPenalty(
+			ItemAttributeNamed<Float>("airblast vulnerability multiplier"),
+			ItemAttributeNamed<Float>("airblast vulnerability multiplier hidden")
+		)
+		
+		/**
+		 * 
+		 */
+		val airblastVerticalVulnerabilityMultiplier = ItemAttributeNamed<Float>("airblast vertical vulnerability multiplier")
+		
+		/**
+		 * In-Game: "Noise Maker"
+		 *
+		 * 
+		 *
+		 * Uses noise maker when pressing action slot key.
+		 */
+		val noiseMaker = ItemAttributeNamed<Boolean>("noise maker")
+		
+		/**
+		 * In-Game: "Leave a Calling Card on your victims."
+		 *
+		 * 
+		 *
+		 * Defines the calling card that should be dropped when this player kills another player.
+		 */
+		val setBonusCallingCardOnKill = ItemAttributeNamed<Int>("SET BONUS: calling card on kill")
+		
+		/**
+		 * In-Game: "Sentry build speed increased by N%"
+		 *
+		 * 
+		 */
+		val engineerSentryBuildRateMultiplier = ItemAttributeNamed<Float>("engineer sentry build rate multiplier")
+		
+		/**
+		 * In-Game: "Increases teleporter build speed by N%."
+		 *
+		 * 
+		 *
+		 * Also used for dispensers.
+		 */
+		val engineerTeleporterBuildRateMultiplier = ItemAttributeNamed<Float>("engineer teleporter build rate multiplier")
+		
+		/**
+		 * In-Game: "Headshots deal an extra +N% damage"
+		 *
+		 * 
+		 *
+		 * Multiplier applied to headshot damage.
+		 */
+		val headshotDamageIncrease = ItemAttributeNamed<Float>("headshot damage increase")
+		
+		/**
+		 * In-Game: "N% damage penalty"
+		 *
+		 * 
+		 *
+		 * More like a boolean.  Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
+		 *
+		 * Checked on all hitscan attacks.
+		 */
+		val decapitateType = ItemAttributeNamed<Int>("decapitate type")
+		
+		/**
+		 * In-Game: "Push enemies back when you land (force and radius based on velocity)"
+		 *
+		 * 
+		 *
+		 * Requires player to have the `TF_COND_ROCKETPACK` condition.
+		 *
+		 * Pushes back nearby players around the landing site.
+		 */
+		val fallingImpactRadiusPushback = ItemAttributeNamed<Boolean>("falling_impact_radius_pushback")
+		
+		/**
+		 * In-Game: "Stun enemies when you land"
+		 *
+		 * 
+		 *
+		 * If `falling_impact_radius_pushback` is set, this will also stun any enemies in the impact radius.
+		 */
+		val fallingImpactRadiusStun = ItemAttributeNamed<Boolean>("falling_impact_radius_stun")
+		
+		/**
+		 * 
+		 *
+		 * Multiplier applied to rage gained by dealing damage, taking damage, or dealing burn damage.
+		 */
+		val rageGivingScale = ItemAttributeNamed<Float>("rage giving scale")
+		
+		/**
+		 * 
+		 *
+		 * If the weapon is a Holy Mackerel reskin (AKA either the fish or the Unarmed Combat) and this is set, use the Unarmed Combat "arm hit" killfeed notice instead of the "fish hit" notice.
+		 */
+		val fishDamageOverride = ItemAttributeNamed<Boolean>("fish damage override")
+		
+		/**
+		 * In-Game: "Explode spectacularly on death"
+		 *
+		 * 
+		 */
+		val bombinomiconEffectOnDeath = ItemAttributeNamed<Boolean>("bombinomicon effect on death")
+		
+		/**
+		 * In-Game: "N% less metal from pickups and dispensers"
+		 *
+		 * 
+		 *
+		 * Multiplier applied to metal gained from ammo boxes.
+		 */
+		val metalPickupDecreased = ItemAttributeNamed<Float>("metal_pickup_decreased")
+		
+		/**
+		 * In-Game: "+N max health on wearer"
+		 *
+		 * 
+		 *
+		 * Additive base-health increase.
+		 */
+		val hiddenMaxhealthNonBuffed = ItemAttributeNamed<Int>("hidden maxhealth non buffed")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N max health on wearer"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N max health on wearer"
+		 *
+		 * 
+		 *
+		 * Additive maximum health increase only used when overhealing.
+		 */
+		val maxHealthAdditive = BonusPenalty(
+			ItemAttributeNamed<int>("max health additive bonus"),
+			ItemAttributeNamed<int>("max health additive penalty")
+		)
+		
+		/**
+		 * In-Game: "Unlimited use"
+		 *
+		 * 
+		 *
+		 * If true, noisemakers are unlimited usage.
+		 */
+		val unlimitedQuantity = ItemAttributeNamed<Boolean>("unlimited quantity")
+		
+		/**
+		 * 
+		 *
+		 * If true, noisemakers are unlimited usage.
+		 */
+		val unlimitedQuantityHidden = ItemAttributeNamed<Boolean>("unlimited quantity hidden")
+		
+		/**
+		 * 
+		 *
+		 * If true, the zombiezombiezombiezombie skin is equipped.
+		 */
+		val zombiezombiezombiezombie = ItemAttributeNamed<Boolean>("zombiezombiezombiezombie")
+		
+		/**
+		 * In-Game: "+N% faster taunt speed on wearer"
+		 *
+		 * 
+		 *
+		 * Multiplier applied to taunt speed.
+		 */
+		val gestureSpeedIncrease = ItemAttributeNamed<Float>("gesture speed increase")
+		
+		/**
+		 * 
+		 *
+		 * Sound to be played when performing a taunt.
+		 */
+		val cosmeticTauntSound = ItemAttributeNamed<String>("cosmetic taunt sound")
+		
+		/**
+		 * 
+		 *
+		 * DSP used when emitting sounds created by this player.
+		 */
+		val setBonusSpecialDsp = ItemAttributeNamed<Int>("SET BONUS: special dsp")
+		
+		/**
+		 * In-Game: "Disables double jump"
+		 *
+		 * 
+		 */
+		val headScale = ItemAttributeNamed<Float>("head scale")
+		
+		/**
+		 * 
+		 */
+		val torsoScale = ItemAttributeNamed<Float>("torso scale")
+		
+		/**
+		 * 
+		 */
+		val handScale = ItemAttributeNamed<Float>("hand scale")
+		
+		/**
+		 * 
+		 */
+		val onDamageTaken = OnDamageTakenAttributes()
+		
+		/**
+		 * 
+		 */
+		val onKill = OnKillAttributes()
+		
+		/**
+		 * 
+		 */
+		val denyResupply = DenyResupplyAttributes()
+		
+		/**
+		 * 
+		 */
+		val scoutOnly = ScoutOnlyAttributes()
+		
+		/**
+		 * 
+		 */
+		val demomanOnly = DemomanOnlyAttributes()
+		
+		/**
+		 * 
+		 */
+		val sniperOnly = SniperOnlyAttributes()
+		
+		/**
+		 * 
+		 */
+		val medicOnly = MedicOnlyAttributes()
+		
+		/**
+		 * 
+		 */
+		val spyOnly = SpyOnlyAttributes()
+	}
+
+	/**
+	 * 
+	 */
+	val vaccinator: ItemAttribute<Vaccinator> get() = PlayerAttributes.vaccinator
 	
 	/**
 	 * In-Game: "Allows you to see enemy health"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var seeEnemyHealth: Boolean?
-		get() = attrs.getTyped("mod see enemy health", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod see enemy health", value, BinaryIntCodec)
+	val seeEnemyHealth: ItemAttribute<Boolean> get() = PlayerAttributes.seeEnemyHealth
 	
 	/**
 	 * In-Game: "Unable to see enemy health"
@@ -26,64 +976,40 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Always true in MvM.
 	 */
-	context(attrs: IKeyValueMap)
-	var hideEnemyHealth: Boolean?
-		get() = attrs.getTyped("hide enemy health", BinaryIntCodec)
-		set(value) = attrs.setNullable("hide enemy health", value, BinaryIntCodec)
+	val hideEnemyHealth: ItemAttribute<Boolean> get() = PlayerAttributes.hideEnemyHealth
 	
 	/**
 	 * In-Game: "+N% greater jump height when active"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	override var increasedJumpHeight: Number?
-		get() = super.increasedJumpHeight
-		set(value) { super.increasedJumpHeight = value }
+	val increasedJumpHeight: ItemAttribute<Float> get() = PlayerAttributes.increasedJumpHeight
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	override var majorIncreasedJumpHeight: Number?
-		get() = super.majorIncreasedJumpHeight
-		set(value) { super.majorIncreasedJumpHeight = value }
+	val majorIncreasedJumpHeight: ItemAttribute<Float> get() = PlayerAttributes.majorIncreasedJumpHeight
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	override var halloweenIncreasedJumpHeight: Number?
-		get() = super.halloweenIncreasedJumpHeight
-		set(value) { super.halloweenIncreasedJumpHeight = value }
+	val halloweenIncreasedJumpHeight: ItemAttribute<Float> get() = PlayerAttributes.halloweenIncreasedJumpHeight
 	
 	/**
 	 * In-Game: "Boost reduced on air jumps"
 	 *
 	 * 
 	 *
-	 * Lose this amount of hype if you airdash.
-	 *
-	 * Note that this only applies to scout hype, not rage in general.
-	 *
 	 * The amount to be subtracted from the hype meter when the Scout double-jumps.
 	 */
-	context(attrs: IKeyValueMap)
-	override var hypeResetsOnJump: Int?
-		get() = super.hypeResetsOnJump
-		set(value) { super.hypeResetsOnJump = value }
+	val hypeResetsOnJump: ItemAttribute<Int> get() = PlayerAttributes.hypeResetsOnJump
 	
 	/**
 	 * 
 	 *
-	 * Allows parachute to be deployed.
-	 *
 	 * Allows the parachute to be deployed.
 	 */
-	context(attrs: IKeyValueMap)
-	override var parachuteAttribute: Boolean?
-		get() = super.parachuteAttribute
-		set(value) { super.parachuteAttribute = value }
+	val parachuteAttribute: ItemAttribute<Boolean> get() = PlayerAttributes.parachuteAttribute
 	
 	/**
 	 * In-Game: "N% increased air control."
@@ -92,10 +1018,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Sidenote: the jetpack always multiplies your air acceleration by 50%.
 	 */
-	context(attrs: IKeyValueMap)
-	var increasedAirControl: Number?
-		get() = attrs.getTyped("increased air control")
-		set(value) = attrs.setNullable("increased air control", value)
+	val increasedAirControl: ItemAttribute<Float> get() = PlayerAttributes.increasedAirControl
 	
 	/**
 	 * In-Game: "N% increased air control when blast jumping."
@@ -104,10 +1027,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Specifically while blast-jumping, as opposed to global.
 	 */
-	context(attrs: IKeyValueMap)
-	var airControlBlastJump: Number?
-		get() = attrs.getTyped("mod_air_control_blast_jump")
-		set(value) = attrs.setNullable("mod_air_control_blast_jump", value)
+	val airControlBlastJump: ItemAttribute<Float> get() = PlayerAttributes.airControlBlastJump
 	
 	/**
 	 * In-Game: "Share Canteens with your heal target. +1 duration, -10 price per point (minimum cost: 5)"
@@ -116,30 +1036,21 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Discounts canteens by 10 * level.
 	 */
-	context(attrs: IKeyValueMap)
-	var canteenSpecialist: Int?
-		get() = attrs.getTyped("canteen specialist")
-		set(value) = attrs.setNullable("canteen specialist", value)
+	val canteenSpecialist: ItemAttribute<Int> get() = PlayerAttributes.canteenSpecialist
 	
 	/**
 	 * In-Game: "Increased Melee damage against Isolated Merc Set"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusAlienIsolationXenoBonusPos: Boolean?
-		get() = attrs.getTyped("SET BONUS: alien isolation xeno bonus pos", BinaryIntCodec)
-		set(value) = attrs.setNullable("SET BONUS: alien isolation xeno bonus pos", value, BinaryIntCodec)
+	val setBonusAlienIsolationXenoBonusPos: ItemAttribute<Boolean> get() = PlayerAttributes.setBonusAlienIsolationXenoBonusPos
 	
 	/**
 	 * In-Game: "Increased Nostromo Napalmer damage against Isolationist Pack Set"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusAlienIsolationMercBonusPos: Boolean?
-		get() = attrs.getTyped("SET BONUS: alien isolation merc bonus pos", BinaryIntCodec)
-		set(value) = attrs.setNullable("SET BONUS: alien isolation merc bonus pos", value, BinaryIntCodec)
+	val setBonusAlienIsolationMercBonusPos: ItemAttribute<Boolean> get() = PlayerAttributes.setBonusAlienIsolationMercBonusPos
 	
 	/**
 	 * In-Game: "When backstabbed: Jarate attacker"
@@ -150,70 +1061,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Note: does not block backstabs on its own.
 	 */
-	context(attrs: IKeyValueMap)
-	var jarateBackstabber: Boolean?
-		get() = attrs.getTyped("jarate backstabber", BinaryIntCodec)
-		set(value) = attrs.setNullable("jarate backstabber", value, BinaryIntCodec)
-	
-	/**
-	 * 
-	 *
-	 * Multiplier to damage taken if player has  TF_COND_MEDIGUN_UBER_BULLET_RESIST.
-	 */
-	context(attrs: IKeyValueMap)
-	var medigunBulletResistDeployed: Int?
-		get() = attrs.getTyped("medigun bullet resist deployed")
-		set(value) = attrs.setNullable("medigun bullet resist deployed", value)
-	
-	/**
-	 * 
-	 *
-	 * Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BULLET_RESIST.
-	 */
-	context(attrs: IKeyValueMap)
-	var medigunBulletResistPassive: Int?
-		get() = attrs.getTyped("medigun bullet resist passive")
-		set(value) = attrs.setNullable("medigun bullet resist passive", value)
-	
-	/**
-	 * 
-	 *
-	 * Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_BLAST_RESIST.
-	 */
-	context(attrs: IKeyValueMap)
-	var medigunBlastResistDeployed: Int?
-		get() = attrs.getTyped("medigun blast resist deployed")
-		set(value) = attrs.setNullable("medigun blast resist deployed", value)
-	
-	/**
-	 * 
-	 *
-	 * Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BLAST_RESIST.
-	 */
-	context(attrs: IKeyValueMap)
-	var medigunBlastResistPassive: Int?
-		get() = attrs.getTyped("medigun blast resist passive")
-		set(value) = attrs.setNullable("medigun blast resist passive", value)
-	
-	/**
-	 * 
-	 *
-	 * Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_FIRE_RESIST.
-	 */
-	context(attrs: IKeyValueMap)
-	var medigunFireResistDeployed: Int?
-		get() = attrs.getTyped("medigun fire resist deployed")
-		set(value) = attrs.setNullable("medigun fire resist deployed", value)
-	
-	/**
-	 * 
-	 *
-	 * Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_FIRE_RESIST.
-	 */
-	context(attrs: IKeyValueMap)
-	var medigunFireResistPassive: Int?
-		get() = attrs.getTyped("medigun fire resist passive")
-		set(value) = attrs.setNullable("medigun fire resist passive", value)
+	val jarateBackstabber: ItemAttribute<Boolean> get() = PlayerAttributes.jarateBackstabber
 	
 	/**
 	 * In-Game: "Immune to fire damage while disguised"
@@ -222,10 +1070,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Prevent afterburn while disguised.
 	 */
-	context(attrs: IKeyValueMap)
-	var disguiseNoBurn: Boolean?
-		get() = attrs.getTyped("disguise no burn", BinaryIntCodec)
-		set(value) = attrs.setNullable("disguise no burn", value, BinaryIntCodec)
+	val disguiseNoBurn: ItemAttribute<Boolean> get() = PlayerAttributes.disguiseNoBurn
 	
 	/**
 	 * Bonus:
@@ -240,7 +1085,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val dmgTakenFromCrit get() = BonusPenalty<Number, Number>("dmg taken from crit reduced", "dmg taken from crit increased")
+	val dmgTakenFromCrit: ItemAttribute<Float> get() = PlayerAttributes.dmgTakenFromCrit
 	
 	/**
 	 * Bonus:
@@ -255,7 +1100,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val dmgTakenFromFire get() = BonusPenalty<Number, Number>("dmg taken from fire reduced", "dmg taken from fire increased")
+	val dmgTakenFromFire: ItemAttribute<Float> get() = PlayerAttributes.dmgTakenFromFire
 	
 	/**
 	 * Bonus:
@@ -270,7 +1115,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val dmgTakenFromBlast get() = BonusPenalty<Number, Number>("dmg taken from blast reduced", "dmg taken from blast increased")
+	val dmgTakenFromBlast: ItemAttribute<Float> get() = PlayerAttributes.dmgTakenFromBlast
 	
 	/**
 	 * Bonus:
@@ -285,7 +1130,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val dmgTakenFromBullets get() = BonusPenalty<Number, Number>("dmg taken from bullets reduced", "dmg taken from bullets increased")
+	val dmgTakenFromBullets: ItemAttribute<Float> get() = PlayerAttributes.dmgTakenFromBullets
 	
 	/**
 	 * In-Game: "N% damage resistance when below 50% health and spun up"
@@ -294,10 +1139,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Only procs on Heavies that are currently spun up on less than 50% HP.
 	 */
-	context(attrs: IKeyValueMap)
-	var spunupDamageResistance: Number?
-		get() = attrs.getTyped("spunup_damage_resistance")
-		set(value) = attrs.setNullable("spunup_damage_resistance", value)
+	val spunupDamageResistance: ItemAttribute<Float> get() = PlayerAttributes.spunupDamageResistance
 	
 	/**
 	 * In-Game: "N% damage vulnerability on wearer"
@@ -306,20 +1148,14 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier to damage taken from all sources.
 	 */
-	context(attrs: IKeyValueMap)
-	var dmgTakenIncreased: Number?
-		get() = attrs.getTyped("dmg taken increased")
-		set(value) = attrs.setNullable("dmg taken increased", value)
+	val dmgTakenIncreased: ItemAttribute<Float> get() = PlayerAttributes.dmgTakenIncreased
 	
 	/**
 	 * In-Game: "+N% sentry damage resistance on wearer"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusDmgFromSentryReduced: Number?
-		get() = attrs.getTyped("SET BONUS: dmg from sentry reduced")
-		set(value) = attrs.setNullable("SET BONUS: dmg from sentry reduced", value)
+	val setBonusDmgFromSentryReduced: ItemAttribute<Float> get() = PlayerAttributes.setBonusDmgFromSentryReduced
 	
 	/**
 	 * In-Game: "N% blast damage from rocket jumps"
@@ -328,10 +1164,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to damage taken IF: it's blast damage or a flare explosion, the damage was caused by the user (self-damage), the user did not damage other players, and it is not a taunt-kill grenade (Escape Plan, Equalizer).
 	 */
-	context(attrs: IKeyValueMap)
-	var rocketJumpDamageReduction: Number?
-		get() = attrs.getTyped("rocket jump damage reduction")
-		set(value) = attrs.setNullable("rocket jump damage reduction", value)
+	val rocketJumpDamageReduction: ItemAttribute<Float> get() = PlayerAttributes.rocketJumpDamageReduction
 	
 	/**
 	 * In-Game: "N% blast damage from rocket jumps"
@@ -340,20 +1173,14 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to damage taken IF: it's blast damage or a flare explosion, the damage was caused by the user (self-damage), the user did not damage other players, and it is not a taunt-kill grenade (Escape Plan, Equalizer).
 	 */
-	context(attrs: IKeyValueMap)
-	var rocketJumpDamageReductionHidden: Number?
-		get() = attrs.getTyped("rocket jump damage reduction HIDDEN")
-		set(value) = attrs.setNullable("rocket jump damage reduction HIDDEN", value)
+	val rocketJumpDamageReductionHidden: ItemAttribute<Float> get() = PlayerAttributes.rocketJumpDamageReductionHidden
 	
 	/**
 	 * In-Game: "Wearer never takes falling damage"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var cancelFallingDamage: Boolean?
-		get() = attrs.getTyped("cancel falling damage", BinaryIntCodec)
-		set(value) = attrs.setNullable("cancel falling damage", value, BinaryIntCodec)
+	val cancelFallingDamage: ItemAttribute<Boolean> get() = PlayerAttributes.cancelFallingDamage
 	
 	/**
 	 * 
@@ -362,10 +1189,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * If attacker is affected by `TF_COND_ENERGY_BUFF` (Crit-a-Cola, Cleaner's Carbine, Buffalo Steak, etc.), the attacker receives `TF_COND_MARKEDFORDEATH_SILENT`.
 	 */
-	context(attrs: IKeyValueMap)
-	var markAttackerForDeath: Number?
-		get() = attrs.getTyped("mod_mark_attacker_for_death")
-		set(value) = attrs.setNullable("mod_mark_attacker_for_death", value)
+	val markAttackerForDeath: ItemAttribute<Float> get() = PlayerAttributes.markAttackerForDeath
 	
 	/**
 	 * In-Game: "Generate Rage by dealing damage.  When fully charged, press the Special-Attack key to activate knockback"
@@ -374,10 +1198,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Only procs on Heavies, multiplies damage by 50% while rage is draining.
 	 */
-	context(attrs: IKeyValueMap)
-	var generateRageOnDamage: Boolean?
-		get() = attrs.getTyped("generate rage on damage", BinaryIntCodec)
-		set(value) = attrs.setNullable("generate rage on damage", value, BinaryIntCodec)
+	val generateRageOnDamage: ItemAttribute<Boolean> get() = PlayerAttributes.generateRageOnDamage
 	
 	/**
 	 * In-Game: "Generate building rescue energy on damage"
@@ -386,10 +1207,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Only procs on Heavies, multiplies damage by 50% while rage is draining.
 	 */
-	context(attrs: IKeyValueMap)
-	var engineerRageOnDmg: Boolean?
-		get() = attrs.getTyped("engineer rage on dmg", BinaryIntCodec)
-		set(value) = attrs.setNullable("engineer rage on dmg", value, BinaryIntCodec)
+	val engineerRageOnDmg: ItemAttribute<Boolean> get() = PlayerAttributes.engineerRageOnDmg
 	
 	/**
 	 * In-Game: "On Hit: Builds Hype"
@@ -398,60 +1216,42 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Adds the amount of damage dealt to the Scout hype meter, to a maximum of 200 damage which adds 50% meter.
 	 */
-	context(attrs: IKeyValueMap)
-	var hypeOnDamage: Boolean?
-		get() = attrs.getTyped("hype on damage", BinaryIntCodec)
-		set(value) = attrs.setNullable("hype on damage", value, BinaryIntCodec)
+	val hypeOnDamage: ItemAttribute<Boolean> get() = PlayerAttributes.hypeOnDamage
 	
 	/**
 	 * 
 	 *
 	 * Only procs on Sniper. Gain this amount of rage meter on assists.
 	 */
-	context(attrs: IKeyValueMap)
-	var rageOnAssists: Int?
-		get() = attrs.getTyped("rage on assists")
-		set(value) = attrs.setNullable("rage on assists", value)
+	val rageOnAssists: ItemAttribute<Float> get() = PlayerAttributes.rageOnAssists
 	
 	/**
 	 * In-Game: "Killstreaks Active"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var killstreakTier: Int?
-		get() = attrs.getTyped("killstreak tier")
-		set(value) = attrs.setNullable("killstreak tier", value)
+	val killstreakTier: ItemAttribute<Int> get() = PlayerAttributes.killstreakTier
 	
 	/**
 	 * In-Game: "+N capture rate on wearer"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var increasePlayerCaptureValue: Int?
-		get() = attrs.getTyped("increase player capture value")
-		set(value) = attrs.setNullable("increase player capture value", value)
+	val increasePlayerCaptureValue: ItemAttribute<Int> get() = PlayerAttributes.increasePlayerCaptureValue
 	
 	/**
 	 * 
 	 *
 	 * If 1, create a soccer ball on the ground when the player spawns.
 	 */
-	context(attrs: IKeyValueMap)
-	var spawnWithPhysicsToy: Int?
-		get() = attrs.getTyped("spawn with physics toy")
-		set(value) = attrs.setNullable("spawn with physics toy", value)
+	val spawnWithPhysicsToy: ItemAttribute<Int> get() = PlayerAttributes.spawnWithPhysicsToy
 	
 	/**
 	 * 
 	 *
 	 * If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAME_BALL.
 	 */
-	context(attrs: IKeyValueMap)
-	var itemMeterChargeType: Int?
-		get() = attrs.getTyped("item_meter_charge_type")
-		set(value) = attrs.setNullable("item_meter_charge_type", value)
+	val itemMeterChargeType: ItemAttribute<Int> get() = PlayerAttributes.itemMeterChargeType
 	
 	/**
 	 * Bonus:
@@ -466,7 +1266,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val healthFromHealersReduced get() = BonusPenalty<Number, Number>("health from healers increased", "health from healers reduced")
+	val healthFromHealersReduced: ItemAttribute<Float> get() = PlayerAttributes.healthFromHealersReduced
 	
 	/**
 	 * In-Game: "N sec longer cloak blink time"
@@ -475,10 +1275,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier.
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusCloakBlinkTimePenalty: Int?
-		get() = attrs.getTyped("SET BONUS: cloak blink time penalty")
-		set(value) = attrs.setNullable("SET BONUS: cloak blink time penalty", value)
+	val setBonusCloakBlinkTimePenalty: ItemAttribute<Float> get() = PlayerAttributes.setBonusCloakBlinkTimePenalty
 	
 	/**
 	 * In-Game: "+N% increase in turning control while charging"
@@ -487,10 +1284,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Default is 0.45f, and this class is a multiplier applied to it.
 	 */
-	context(attrs: IKeyValueMap)
-	var multChargeTurnControl: Number?
-		get() = attrs.getTyped("mult charge turn control")
-		set(value) = attrs.setNullable("mult charge turn control", value)
+	val multChargeTurnControl: ItemAttribute<Float> get() = PlayerAttributes.multChargeTurnControl
 	
 	/**
 	 * In-Game: "Full turning control while charging"
@@ -499,10 +1293,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Default is 0.45f, and this class is a multiplier applied to it.
 	 */
-	context(attrs: IKeyValueMap)
-	var fullChargeTurnControl: Int?
-		get() = attrs.getTyped("full charge turn control")
-		set(value) = attrs.setNullable("full charge turn control", value)
+	val fullChargeTurnControl: ItemAttribute<Float> get() = PlayerAttributes.fullChargeTurnControl
 	
 	/**
 	 * In-Game: "Taking damage while shield charging reduces remaining charging time"
@@ -511,20 +1302,14 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Used to detect the Tide Turner when deciding whether to give you minicrits or crits.
 	 */
-	context(attrs: IKeyValueMap)
-	var loseDemoChargeOnDamageWhenCharging: Boolean?
-		get() = attrs.getTyped("lose demo charge on damage when charging", BinaryIntCodec)
-		set(value) = attrs.setNullable("lose demo charge on damage when charging", value, BinaryIntCodec)
+	val loseDemoChargeOnDamageWhenCharging: ItemAttribute<Boolean> get() = PlayerAttributes.loseDemoChargeOnDamageWhenCharging
 	
 	/**
 	 * In-Game: "N sec increase in time to cloak"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var multCloakRate: Int?
-		get() = attrs.getTyped("mult cloak rate")
-		set(value) = attrs.setNullable("mult cloak rate", value)
+	val multCloakRate: ItemAttribute<Float> get() = PlayerAttributes.multCloakRate
 	
 	/**
 	 * In-Game: "Reduced decloak sound volume"
@@ -533,10 +1318,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * If true, plays `Player.Spy_UnCloakReduced` when decloaking.
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusQuietUnstealth: Boolean?
-		get() = attrs.getTyped("SET BONUS: quiet unstealth", BinaryIntCodec)
-		set(value) = attrs.setNullable("SET BONUS: quiet unstealth", value, BinaryIntCodec)
+	val setBonusQuietUnstealth: ItemAttribute<Boolean> get() = PlayerAttributes.setBonusQuietUnstealth
 	
 	/**
 	 * In-Game: "Deals 3x falling damage to the player you land on"
@@ -545,18 +1327,12 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Deal 3x falling damage to player you land on.
 	 */
-	context(attrs: IKeyValueMap)
-	var bootsFallingStomp: Boolean?
-		get() = attrs.getTyped("boots falling stomp", BinaryIntCodec)
-		set(value) = attrs.setNullable("boots falling stomp", value, BinaryIntCodec)
+	val bootsFallingStomp: ItemAttribute<Boolean> get() = PlayerAttributes.bootsFallingStomp
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var multDecloakRate: Int?
-		get() = attrs.getTyped("mult decloak rate")
-		set(value) = attrs.setNullable("mult decloak rate", value)
+	val multDecloakRate: ItemAttribute<Float> get() = PlayerAttributes.multDecloakRate
 	
 	/**
 	 * In-Game: "Über duration increased N seconds"
@@ -565,10 +1341,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Duration in seconds.
 	 */
-	context(attrs: IKeyValueMap)
-	var uberDurationBonus: Int?
-		get() = attrs.getTyped("uber duration bonus")
-		set(value) = attrs.setNullable("uber duration bonus", value)
+	val uberDurationBonus: ItemAttribute<Float> get() = PlayerAttributes.uberDurationBonus
 	
 	/**
 	 * Bonus:
@@ -591,7 +1364,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Else 80.
 	 */
-	val aimingMovespeed get() = BonusPenalty<Number, Number>("aiming movespeed increased", "aiming movespeed decreased")
+	val aimingMovespeed: ItemAttribute<Float> get() = PlayerAttributes.aimingMovespeed
 	
 	/**
 	 * Bonus:
@@ -606,27 +1379,21 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val moveSpeed get() = BonusPenalty<Number, Number>("move speed bonus", "move speed penalty")
+	val moveSpeed: ItemAttribute<Float> get() = PlayerAttributes.moveSpeed
 	
 	/**
 	 * In-Game: "+N% faster move speed on wearer (shield required)"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var moveSpeedBonusShieldRequired: Number?
-		get() = attrs.getTyped("move speed bonus shield required")
-		set(value) = attrs.setNullable("move speed bonus shield required", value)
+	val moveSpeedBonusShieldRequired: ItemAttribute<Float> get() = PlayerAttributes.moveSpeedBonusShieldRequired
 	
 	/**
 	 * In-Game: "Wearer cannot carry the intelligence briefcase or PASS Time JACK"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var cannotPickUpIntelligence: Boolean?
-		get() = attrs.getTyped("cannot pick up intelligence", BinaryIntCodec)
-		set(value) = attrs.setNullable("cannot pick up intelligence", value, BinaryIntCodec)
+	val cannotPickUpIntelligence: ItemAttribute<Boolean> get() = PlayerAttributes.cannotPickUpIntelligence
 	
 	/**
 	 * In-Game: "Build +N additional disposable-sentry"
@@ -639,10 +1406,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Only works if the "uses upgrades" gamerule is set.
 	 */
-	context(attrs: IKeyValueMap)
-	var engyDisposableSentries: Int?
-		get() = attrs.getTyped("engy disposable sentries")
-		set(value) = attrs.setNullable("engy disposable sentries", value)
+	val engyDisposableSentries: ItemAttribute<Int> get() = PlayerAttributes.engyDisposableSentries
 	
 	/**
 	 * In-Game: "N% metal cost when constructing or upgrading teleporters"
@@ -651,10 +1415,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to teleporter build cost.
 	 */
-	context(attrs: IKeyValueMap)
-	var teleporterCost: Number?
-		get() = attrs.getTyped("mod teleporter cost")
-		set(value) = attrs.setNullable("mod teleporter cost", value)
+	val teleporterCost: ItemAttribute<Float> get() = PlayerAttributes.teleporterCost
 	
 	/**
 	 * In-Game: "N metal reduction in building cost"
@@ -663,18 +1424,12 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Overrides the building cost for all buildings.
 	 */
-	context(attrs: IKeyValueMap)
-	var buildingCostReduction: Number?
-		get() = attrs.getTyped("building cost reduction")
-		set(value) = attrs.setNullable("building cost reduction", value)
+	val buildingCostReduction: ItemAttribute<Int> get() = PlayerAttributes.buildingCostReduction
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var overrideFootstepSoundSet: Int?
-		get() = attrs.getTyped("override footstep sound set")
-		set(value) = attrs.setNullable("override footstep sound set", value)
+	val overrideFootstepSoundSet: ItemAttribute<FootstepOverride> get() = PlayerAttributes.overrideFootstepSoundSet
 	
 	/**
 	 * In-Game: "Jingle all the way"
@@ -683,10 +1438,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * If 1, use xmas.jingle, if 2 or higher use xmas.jingle_higher.
 	 */
-	context(attrs: IKeyValueMap)
-	var addJingleToFootsteps: Int?
-		get() = attrs.getTyped("add jingle to footsteps")
-		set(value) = attrs.setNullable("add jingle to footsteps", value)
+	val addJingleToFootsteps: ItemAttribute<Int> get() = PlayerAttributes.addJingleToFootsteps
 	
 	/**
 	 * In-Game: "N"
@@ -695,40 +1447,28 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Decimal version of the 4-byte hex code determining color of footsteps (e.g. `0xFFFFFFFF`, but in decimal).
 	 */
-	context(attrs: IKeyValueMap)
-	var spellSetHalloweenFootstepType: Int?
-		get() = attrs.getTyped("SPELL: set Halloween footstep type")
-		set(value) = attrs.setNullable("SPELL: set Halloween footstep type", value)
+	val spellSetHalloweenFootstepType: ItemAttribute<Int> get() = PlayerAttributes.spellSetHalloweenFootstepType
 	
 	/**
 	 * 
 	 *
 	 * Prevents player from attacking.
 	 */
-	context(attrs: IKeyValueMap)
-	var noAttack: Boolean?
-		get() = attrs.getTyped("no_attack", BinaryIntCodec)
-		set(value) = attrs.setNullable("no_attack", value, BinaryIntCodec)
+	val noAttack: ItemAttribute<Boolean> get() = PlayerAttributes.noAttack
 	
 	/**
 	 * 
 	 *
 	 * Prevents player from jumping.
 	 */
-	context(attrs: IKeyValueMap)
-	var noJump: Boolean?
-		get() = attrs.getTyped("no_jump", BinaryIntCodec)
-		set(value) = attrs.setNullable("no_jump", value, BinaryIntCodec)
+	val noJump: ItemAttribute<Boolean> get() = PlayerAttributes.noJump
 	
 	/**
 	 * 
 	 *
 	 * Prevents player from crouching.
 	 */
-	context(attrs: IKeyValueMap)
-	var noDuck: Boolean?
-		get() = attrs.getTyped("no_duck", BinaryIntCodec)
-		set(value) = attrs.setNullable("no_duck", value, BinaryIntCodec)
+	val noDuck: ItemAttribute<Boolean> get() = PlayerAttributes.noDuck
 	
 	/**
 	 * In-Game: "Cannot carry buildings"
@@ -737,28 +1477,19 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Prevents player from picking up buildings.
 	 */
-	context(attrs: IKeyValueMap)
-	var cannotPickUpBuildings: Boolean?
-		get() = attrs.getTyped("cannot pick up buildings", BinaryIntCodec)
-		set(value) = attrs.setNullable("cannot pick up buildings", value, BinaryIntCodec)
+	val cannotPickUpBuildings: ItemAttribute<Boolean> get() = PlayerAttributes.cannotPickUpBuildings
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var disableWeaponSwitch: Boolean?
-		get() = attrs.getTyped("disable weapon switch", BinaryIntCodec)
-		set(value) = attrs.setNullable("disable weapon switch", value, BinaryIntCodec)
+	val disableWeaponSwitch: ItemAttribute<Boolean> get() = PlayerAttributes.disableWeaponSwitch
 	
 	/**
 	 * In-Game: "Wearer cannot disguise"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var cannotDisguise: Boolean?
-		get() = attrs.getTyped("cannot disguise", BinaryIntCodec)
-		set(value) = attrs.setNullable("cannot disguise", value, BinaryIntCodec)
+	val cannotDisguise: ItemAttribute<Boolean> get() = PlayerAttributes.cannotDisguise
 	
 	/**
 	 * Bonus:
@@ -777,12 +1508,12 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val maxammoPrimaryReduced get() = BonusPenalty_BonusNested<VisHidden<Number, Number>, Number>(VisHidden<Number, Number>("maxammo primary increased", "hidden primary max ammo bonus"), "maxammo primary reduced")
+	val maxammoPrimaryReduced: ItemAttribute<Int> get() = PlayerAttributes.maxammoPrimaryReduced
 	
 	/**
 	 * 
 	 */
-	val secondaryMaxAmmo get() = SecondaryMaxAmmoAttributes
+	val secondaryMaxAmmo: ItemAttribute<SecondaryMaxAmmo> get() = PlayerAttributes.secondaryMaxAmmo
 	
 	/**
 	 * Bonus:
@@ -797,7 +1528,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val maxammoMetalReduced get() = BonusPenalty<Number, Number>("maxammo metal increased", "maxammo metal reduced")
+	val maxammoMetalReduced: ItemAttribute<Int> get() = PlayerAttributes.maxammoMetalReduced
 	
 	/**
 	 * In-Game: "+N% max misc ammo on wearer"
@@ -806,30 +1537,21 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Only used for bat balls.
 	 */
-	context(attrs: IKeyValueMap)
-	var maxammoGrenades1Increased: Number?
-		get() = attrs.getTyped("maxammo grenades1 increased")
-		set(value) = attrs.setNullable("maxammo grenades1 increased", value)
+	val maxammoGrenades1Increased: ItemAttribute<Int> get() = PlayerAttributes.maxammoGrenades1Increased
 	
 	/**
 	 * 
 	 *
 	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
 	 */
-	context(attrs: IKeyValueMap)
-	var soldierBuffType: Int?
-		get() = attrs.getTyped("mod soldier buff type")
-		set(value) = attrs.setNullable("mod soldier buff type", value)
+	val soldierBuffType: ItemAttribute<TFBuffType> get() = PlayerAttributes.soldierBuffType
 	
 	/**
 	 * 
 	 *
 	 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
 	 */
-	context(attrs: IKeyValueMap)
-	var demoBuffType: Int?
-		get() = attrs.getTyped("mod demo buff type")
-		set(value) = attrs.setNullable("mod demo buff type", value)
+	val demoBuffType: ItemAttribute<TFBuffType> get() = PlayerAttributes.demoBuffType
 	
 	/**
 	 * In-Game: "+N% buff duration"
@@ -838,10 +1560,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to buff duration.
 	 */
-	context(attrs: IKeyValueMap)
-	var increaseBuffDuration: Number?
-		get() = attrs.getTyped("increase buff duration")
-		set(value) = attrs.setNullable("increase buff duration", value)
+	val increaseBuffDuration: ItemAttribute<Float> get() = PlayerAttributes.increaseBuffDuration
 	
 	/**
 	 * In-Game: "+N% buff duration"
@@ -850,20 +1569,14 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to buff duration.
 	 */
-	context(attrs: IKeyValueMap)
-	var increaseBuffDurationHidden: Number?
-		get() = attrs.getTyped("increase buff duration HIDDEN")
-		set(value) = attrs.setNullable("increase buff duration HIDDEN", value)
+	val increaseBuffDurationHidden: ItemAttribute<Float> get() = PlayerAttributes.increaseBuffDurationHidden
 	
 	/**
 	 * In-Game: "Blocks healing while in use"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var weaponBlocksHealing: Boolean?
-		get() = attrs.getTyped("mod weapon blocks healing", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod weapon blocks healing", value, BinaryIntCodec)
+	val weaponBlocksHealing: ItemAttribute<Boolean> get() = PlayerAttributes.weaponBlocksHealing
 	
 	/**
 	 * Bonus:
@@ -880,7 +1593,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
 	 */
-	val healthDrain get() = BonusPenalty<Int, Int>("health regen", "health drain")
+	val healthDrain: ItemAttribute<Float> get() = PlayerAttributes.healthDrain
 	
 	/**
 	 * In-Game: "+N% ammo regenerated every 5 seconds on wearer"
@@ -889,10 +1602,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Percentage of ammo regenerated every 5 seconds.
 	 */
-	context(attrs: IKeyValueMap)
-	var ammoRegen: Number?
-		get() = attrs.getTyped("ammo regen")
-		set(value) = attrs.setNullable("ammo regen", value)
+	val ammoRegen: ItemAttribute<Float> get() = PlayerAttributes.ammoRegen
 	
 	/**
 	 * In-Game: "+N metal regenerated every 5 seconds on wearer"
@@ -901,10 +1611,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Amount of metal regenerated every 5 seconds.
 	 */
-	context(attrs: IKeyValueMap)
-	var metalRegen: Int?
-		get() = attrs.getTyped("metal regen")
-		set(value) = attrs.setNullable("metal regen", value)
+	val metalRegen: ItemAttribute<Int> get() = PlayerAttributes.metalRegen
 	
 	/**
 	 * Bonus:
@@ -919,15 +1626,12 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val airblastVulnerabilityMultiplier get() = BonusPenalty<Number, Number>("airblast vulnerability multiplier", "airblast vulnerability multiplier hidden")
+	val airblastVulnerabilityMultiplier: ItemAttribute<Float> get() = PlayerAttributes.airblastVulnerabilityMultiplier
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var airblastVerticalVulnerabilityMultiplier: Number?
-		get() = attrs.getTyped("airblast vertical vulnerability multiplier")
-		set(value) = attrs.setNullable("airblast vertical vulnerability multiplier", value)
+	val airblastVerticalVulnerabilityMultiplier: ItemAttribute<Float> get() = PlayerAttributes.airblastVerticalVulnerabilityMultiplier
 	
 	/**
 	 * In-Game: "Noise Maker"
@@ -936,10 +1640,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Uses noise maker when pressing action slot key.
 	 */
-	context(attrs: IKeyValueMap)
-	var noiseMaker: Boolean?
-		get() = attrs.getTyped("noise maker", BinaryIntCodec)
-		set(value) = attrs.setNullable("noise maker", value, BinaryIntCodec)
+	val noiseMaker: ItemAttribute<Boolean> get() = PlayerAttributes.noiseMaker
 	
 	/**
 	 * In-Game: "Leave a Calling Card on your victims."
@@ -948,20 +1649,14 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Defines the calling card that should be dropped when this player kills another player.
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusCallingCardOnKill: Int?
-		get() = attrs.getTyped("SET BONUS: calling card on kill")
-		set(value) = attrs.setNullable("SET BONUS: calling card on kill", value)
+	val setBonusCallingCardOnKill: ItemAttribute<Int> get() = PlayerAttributes.setBonusCallingCardOnKill
 	
 	/**
 	 * In-Game: "Sentry build speed increased by N%"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var engineerSentryBuildRateMultiplier: Number?
-		get() = attrs.getTyped("engineer sentry build rate multiplier")
-		set(value) = attrs.setNullable("engineer sentry build rate multiplier", value)
+	val engineerSentryBuildRateMultiplier: ItemAttribute<Float> get() = PlayerAttributes.engineerSentryBuildRateMultiplier
 	
 	/**
 	 * In-Game: "Increases teleporter build speed by N%."
@@ -970,10 +1665,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Also used for dispensers.
 	 */
-	context(attrs: IKeyValueMap)
-	var engineerTeleporterBuildRateMultiplier: Number?
-		get() = attrs.getTyped("engineer teleporter build rate multiplier")
-		set(value) = attrs.setNullable("engineer teleporter build rate multiplier", value)
+	val engineerTeleporterBuildRateMultiplier: ItemAttribute<Float> get() = PlayerAttributes.engineerTeleporterBuildRateMultiplier
 	
 	/**
 	 * In-Game: "Headshots deal an extra +N% damage"
@@ -982,10 +1674,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to headshot damage.
 	 */
-	context(attrs: IKeyValueMap)
-	var headshotDamageIncrease: Number?
-		get() = attrs.getTyped("headshot damage increase")
-		set(value) = attrs.setNullable("headshot damage increase", value)
+	val headshotDamageIncrease: ItemAttribute<Float> get() = PlayerAttributes.headshotDamageIncrease
 	
 	/**
 	 * In-Game: "N% damage penalty"
@@ -996,10 +1685,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Checked on all hitscan attacks.
 	 */
-	context(attrs: IKeyValueMap)
-	var decapitateType: Int?
-		get() = attrs.getTyped("decapitate type")
-		set(value) = attrs.setNullable("decapitate type", value)
+	val decapitateType: ItemAttribute<Int> get() = PlayerAttributes.decapitateType
 	
 	/**
 	 * In-Game: "Push enemies back when you land (force and radius based on velocity)"
@@ -1010,10 +1696,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Pushes back nearby players around the landing site.
 	 */
-	context(attrs: IKeyValueMap)
-	var fallingImpactRadiusPushback: Boolean?
-		get() = attrs.getTyped("falling_impact_radius_pushback", BinaryIntCodec)
-		set(value) = attrs.setNullable("falling_impact_radius_pushback", value, BinaryIntCodec)
+	val fallingImpactRadiusPushback: ItemAttribute<Boolean> get() = PlayerAttributes.fallingImpactRadiusPushback
 	
 	/**
 	 * In-Game: "Stun enemies when you land"
@@ -1022,40 +1705,28 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * If `falling_impact_radius_pushback` is set, this will also stun any enemies in the impact radius.
 	 */
-	context(attrs: IKeyValueMap)
-	var fallingImpactRadiusStun: Boolean?
-		get() = attrs.getTyped("falling_impact_radius_stun", BinaryIntCodec)
-		set(value) = attrs.setNullable("falling_impact_radius_stun", value, BinaryIntCodec)
+	val fallingImpactRadiusStun: ItemAttribute<Boolean> get() = PlayerAttributes.fallingImpactRadiusStun
 	
 	/**
 	 * 
 	 *
 	 * Multiplier applied to rage gained by dealing damage, taking damage, or dealing burn damage.
 	 */
-	context(attrs: IKeyValueMap)
-	var rageGivingScale: Number?
-		get() = attrs.getTyped("rage giving scale")
-		set(value) = attrs.setNullable("rage giving scale", value)
+	val rageGivingScale: ItemAttribute<Float> get() = PlayerAttributes.rageGivingScale
 	
 	/**
 	 * 
 	 *
 	 * If the weapon is a Holy Mackerel reskin (AKA either the fish or the Unarmed Combat) and this is set, use the Unarmed Combat "arm hit" killfeed notice instead of the "fish hit" notice.
 	 */
-	context(attrs: IKeyValueMap)
-	var fishDamageOverride: Boolean?
-		get() = attrs.getTyped("fish damage override", BinaryIntCodec)
-		set(value) = attrs.setNullable("fish damage override", value, BinaryIntCodec)
+	val fishDamageOverride: ItemAttribute<Boolean> get() = PlayerAttributes.fishDamageOverride
 	
 	/**
 	 * In-Game: "Explode spectacularly on death"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var bombinomiconEffectOnDeath: Boolean?
-		get() = attrs.getTyped("bombinomicon effect on death", BinaryIntCodec)
-		set(value) = attrs.setNullable("bombinomicon effect on death", value, BinaryIntCodec)
+	val bombinomiconEffectOnDeath: ItemAttribute<Boolean> get() = PlayerAttributes.bombinomiconEffectOnDeath
 	
 	/**
 	 * In-Game: "N% less metal from pickups and dispensers"
@@ -1064,10 +1735,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to metal gained from ammo boxes.
 	 */
-	context(attrs: IKeyValueMap)
-	var metalPickupDecreased: Number?
-		get() = attrs.getTyped("metal_pickup_decreased")
-		set(value) = attrs.setNullable("metal_pickup_decreased", value)
+	val metalPickupDecreased: ItemAttribute<Float> get() = PlayerAttributes.metalPickupDecreased
 	
 	/**
 	 * In-Game: "+N max health on wearer"
@@ -1076,10 +1744,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Additive base-health increase.
 	 */
-	context(attrs: IKeyValueMap)
-	var hiddenMaxhealthNonBuffed: Int?
-		get() = attrs.getTyped("hidden maxhealth non buffed")
-		set(value) = attrs.setNullable("hidden maxhealth non buffed", value)
+	val hiddenMaxhealthNonBuffed: ItemAttribute<Int> get() = PlayerAttributes.hiddenMaxhealthNonBuffed
 	
 	/**
 	 * Bonus:
@@ -1096,7 +1761,7 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Additive maximum health increase only used when overhealing.
 	 */
-	val maxHealthAdditive get() = BonusPenalty<Int, Int>("max health additive bonus", "max health additive penalty")
+	val maxHealthAdditive: ItemAttribute<int> get() = PlayerAttributes.maxHealthAdditive
 	
 	/**
 	 * In-Game: "Unlimited use"
@@ -1105,30 +1770,21 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * If true, noisemakers are unlimited usage.
 	 */
-	context(attrs: IKeyValueMap)
-	var unlimitedQuantity: Boolean?
-		get() = attrs.getTyped("unlimited quantity", BinaryIntCodec)
-		set(value) = attrs.setNullable("unlimited quantity", value, BinaryIntCodec)
+	val unlimitedQuantity: ItemAttribute<Boolean> get() = PlayerAttributes.unlimitedQuantity
 	
 	/**
 	 * 
 	 *
 	 * If true, noisemakers are unlimited usage.
 	 */
-	context(attrs: IKeyValueMap)
-	var unlimitedQuantityHidden: Boolean?
-		get() = attrs.getTyped("unlimited quantity hidden", BinaryIntCodec)
-		set(value) = attrs.setNullable("unlimited quantity hidden", value, BinaryIntCodec)
+	val unlimitedQuantityHidden: ItemAttribute<Boolean> get() = PlayerAttributes.unlimitedQuantityHidden
 	
 	/**
 	 * 
 	 *
 	 * If true, the zombiezombiezombiezombie skin is equipped.
 	 */
-	context(attrs: IKeyValueMap)
-	var zombiezombiezombiezombie: Boolean?
-		get() = attrs.getTyped("zombiezombiezombiezombie", BinaryIntCodec)
-		set(value) = attrs.setNullable("zombiezombiezombiezombie", value, BinaryIntCodec)
+	val zombiezombiezombiezombie: ItemAttribute<Boolean> get() = PlayerAttributes.zombiezombiezombiezombie
 	
 	/**
 	 * In-Game: "+N% faster taunt speed on wearer"
@@ -1137,131 +1793,122 @@ interface PlayerAttributes : EntityAttributes, IBlockScoped {
 	 *
 	 * Multiplier applied to taunt speed.
 	 */
-	context(attrs: IKeyValueMap)
-	var gestureSpeedIncrease: Number?
-		get() = attrs.getTyped("gesture speed increase")
-		set(value) = attrs.setNullable("gesture speed increase", value)
+	val gestureSpeedIncrease: ItemAttribute<Float> get() = PlayerAttributes.gestureSpeedIncrease
 	
 	/**
 	 * 
 	 *
 	 * Sound to be played when performing a taunt.
 	 */
-	context(attrs: IKeyValueMap)
-	var cosmeticTauntSound: Int?
-		get() = attrs.getTyped("cosmetic taunt sound")
-		set(value) = attrs.setNullable("cosmetic taunt sound", value)
+	val cosmeticTauntSound: ItemAttribute<String> get() = PlayerAttributes.cosmeticTauntSound
 	
 	/**
 	 * 
 	 *
 	 * DSP used when emitting sounds created by this player.
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusSpecialDsp: Int?
-		get() = attrs.getTyped("SET BONUS: special dsp")
-		set(value) = attrs.setNullable("SET BONUS: special dsp", value)
+	val setBonusSpecialDsp: ItemAttribute<Int> get() = PlayerAttributes.setBonusSpecialDsp
 	
 	/**
 	 * In-Game: "Disables double jump"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var headScale: Int?
-		get() = attrs.getTyped("head scale")
-		set(value) = attrs.setNullable("head scale", value)
+	val headScale: ItemAttribute<Float> get() = PlayerAttributes.headScale
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var torsoScale: Int?
-		get() = attrs.getTyped("torso scale")
-		set(value) = attrs.setNullable("torso scale", value)
+	val torsoScale: ItemAttribute<Float> get() = PlayerAttributes.torsoScale
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var handScale: Int?
-		get() = attrs.getTyped("hand scale")
-		set(value) = attrs.setNullable("hand scale", value)
+	val handScale: ItemAttribute<Float> get() = PlayerAttributes.handScale
 	
 	/**
 	 * 
 	 */
-	val onDamageTaken get() = OnDamageTakenAttributes
+	val onDamageTaken: ItemAttribute<OnDamageTaken> get() = PlayerAttributes.onDamageTaken
 	
 	/**
 	 * 
 	 */
-	val onKill get() = OnKillAttributes
+	val onKill: ItemAttribute<OnKill> get() = PlayerAttributes.onKill
 	
 	/**
 	 * 
 	 */
-	val denyResupply get() = DenyResupplyAttributes
+	val denyResupply: ItemAttribute<DenyResupply> get() = PlayerAttributes.denyResupply
 	
 	/**
 	 * 
 	 */
-	val scoutOnly get() = ScoutOnlyAttributes
+	val scoutOnly: ItemAttribute<ScoutOnly> get() = PlayerAttributes.scoutOnly
 	
 	/**
 	 * 
 	 */
-	val demomanOnly get() = DemomanOnlyAttributes
+	val demomanOnly: ItemAttribute<DemomanOnly> get() = PlayerAttributes.demomanOnly
 	
 	/**
 	 * 
 	 */
-	val sniperOnly get() = SniperOnlyAttributes
+	val sniperOnly: ItemAttribute<SniperOnly> get() = PlayerAttributes.sniperOnly
 	
 	/**
 	 * 
 	 */
-	val medicOnly get() = MedicOnlyAttributes
+	val medicOnly: ItemAttribute<MedicOnly> get() = PlayerAttributes.medicOnly
 	
 	/**
 	 * 
 	 */
-	val spyOnly get() = SpyOnlyAttributes
+	val spyOnly: ItemAttribute<SpyOnly> get() = PlayerAttributes.spyOnly
+
+   
+open class VaccinatorAttributes : IBlockScoped {
+	
+	open val medigunBulletResistDeployed = ItemAttributeNamed<Float>("medigun bullet resist deployed")
+	
+	
+	open val medigunBulletResistPassive = ItemAttributeNamed<Float>("medigun bullet resist passive")
+	
+	
+	open val medigunBlastResistDeployed = ItemAttributeNamed<Float>("medigun blast resist deployed")
+	
+	
+	open val medigunBlastResistPassive = ItemAttributeNamed<Float>("medigun blast resist passive")
+	
+	
+	open val medigunFireResistDeployed = ItemAttributeNamed<Float>("medigun fire resist deployed")
+	
+	
+	open val medigunFireResistPassive = ItemAttributeNamed<Float>("medigun fire resist passive")
+
+	
 }
 
-
-object SecondaryMaxAmmoAttributes {
-	inline operator fun invoke(scope: SecondaryMaxAmmoAttributes.() -> Unit) {
-		this.apply(scope)
-	}
 	
-	context(attrs: IKeyValueMap)
-	var hiddenSecondaryMaxAmmoPenalty: Number?
-		get() = attrs.getTyped("hidden secondary max ammo penalty")
-		set(value) = attrs.setNullable("hidden secondary max ammo penalty", value)
+open class SecondaryMaxAmmoAttributes : IBlockScoped {
+	
+	open val hiddenSecondaryMaxAmmoPenalty = ItemAttributeNamed<Int>("hidden secondary max ammo penalty")
 	
 	/**
 	 * In-Game: "+N% max secondary ammo on wearer"
 	 */
-	context(attrs: IKeyValueMap)
-	var maxammoSecondaryIncreased: Number?
-		get() = attrs.getTyped("maxammo secondary increased")
-		set(value) = attrs.setNullable("maxammo secondary increased", value)
+	open val maxammoSecondaryIncreased = ItemAttributeNamed<Int>("maxammo secondary increased")
 	
 	/**
 	 * In-Game: "N% max secondary ammo on wearer"
 	 */
-	context(attrs: IKeyValueMap)
-	var maxammoSecondaryReduced: Number?
-		get() = attrs.getTyped("maxammo secondary reduced")
-		set(value) = attrs.setNullable("maxammo secondary reduced", value)
+	open val maxammoSecondaryReduced = ItemAttributeNamed<Int>("maxammo secondary reduced")
+
+	
 }
 
-
-object OnDamageTakenAttributes {
-	inline operator fun invoke(scope: OnDamageTakenAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+open class OnDamageTakenAttributes : IBlockScoped {
 	/**
 	 * Bonus:
 	 *
@@ -1273,7 +1920,10 @@ object OnDamageTakenAttributes {
 	 *
 	 * 	- In-Game: "N% critical hit damage vulnerability on wearer"
 	 */
-	val dmgTakenFromCrit get() = BonusPenalty<Number, Number>("dmg taken from crit reduced", "dmg taken from crit increased")
+	open val dmgTakenFromCrit = BonusPenalty(
+		ItemAttributeNamed<Float>("dmg taken from crit reduced"),
+		ItemAttributeNamed<Float>("dmg taken from crit increased")
+	)
 	
 	/**
 	 * Bonus:
@@ -1286,7 +1936,10 @@ object OnDamageTakenAttributes {
 	 *
 	 * 	- In-Game: "N% fire damage vulnerability on wearer"
 	 */
-	val dmgTakenFromFire get() = BonusPenalty<Number, Number>("dmg taken from fire reduced", "dmg taken from fire increased")
+	open val dmgTakenFromFire = BonusPenalty(
+		ItemAttributeNamed<Float>("dmg taken from fire reduced"),
+		ItemAttributeNamed<Float>("dmg taken from fire increased")
+	)
 	
 	/**
 	 * Bonus:
@@ -1299,7 +1952,10 @@ object OnDamageTakenAttributes {
 	 *
 	 * 	- In-Game: "N% explosive damage vulnerability on wearer"
 	 */
-	val dmgTakenFromBlast get() = BonusPenalty<Number, Number>("dmg taken from blast reduced", "dmg taken from blast increased")
+	open val dmgTakenFromBlast = BonusPenalty(
+		ItemAttributeNamed<Float>("dmg taken from blast reduced"),
+		ItemAttributeNamed<Float>("dmg taken from blast increased")
+	)
 	
 	/**
 	 * Bonus:
@@ -1312,153 +1968,104 @@ object OnDamageTakenAttributes {
 	 *
 	 * 	- In-Game: "N% bullet damage vulnerability on wearer"
 	 */
-	val dmgTakenFromBullets get() = BonusPenalty<Number, Number>("dmg taken from bullets reduced", "dmg taken from bullets increased")
+	open val dmgTakenFromBullets = BonusPenalty(
+		ItemAttributeNamed<Float>("dmg taken from bullets reduced"),
+		ItemAttributeNamed<Float>("dmg taken from bullets increased")
+	)
 	
 	/**
 	 * In-Game: "N% damage resistance when below 50% health and spun up"
 	 */
-	context(attrs: IKeyValueMap)
-	var spunupDamageResistance: Number?
-		get() = attrs.getTyped("spunup_damage_resistance")
-		set(value) = attrs.setNullable("spunup_damage_resistance", value)
+	open val spunupDamageResistance = ItemAttributeNamed<Float>("spunup_damage_resistance")
 	
 	/**
 	 * In-Game: "N% damage vulnerability on wearer"
 	 */
-	context(attrs: IKeyValueMap)
-	var dmgTakenIncreased: Number?
-		get() = attrs.getTyped("dmg taken increased")
-		set(value) = attrs.setNullable("dmg taken increased", value)
+	open val dmgTakenIncreased = ItemAttributeNamed<Float>("dmg taken increased")
 	
 	/**
 	 * In-Game: "+N% sentry damage resistance on wearer"
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusDmgFromSentryReduced: Number?
-		get() = attrs.getTyped("SET BONUS: dmg from sentry reduced")
-		set(value) = attrs.setNullable("SET BONUS: dmg from sentry reduced", value)
+	open val setBonusDmgFromSentryReduced = ItemAttributeNamed<Float>("SET BONUS: dmg from sentry reduced")
 	
 	/**
 	 * In-Game: "N% blast damage from rocket jumps"
 	 */
-	context(attrs: IKeyValueMap)
-	var rocketJumpDamageReduction: Number?
-		get() = attrs.getTyped("rocket jump damage reduction")
-		set(value) = attrs.setNullable("rocket jump damage reduction", value)
+	open val rocketJumpDamageReduction = ItemAttributeNamed<Float>("rocket jump damage reduction")
 	
 	/**
 	 * In-Game: "N% blast damage from rocket jumps"
 	 */
-	context(attrs: IKeyValueMap)
-	var rocketJumpDamageReductionHidden: Number?
-		get() = attrs.getTyped("rocket jump damage reduction HIDDEN")
-		set(value) = attrs.setNullable("rocket jump damage reduction HIDDEN", value)
+	open val rocketJumpDamageReductionHidden = ItemAttributeNamed<Float>("rocket jump damage reduction HIDDEN")
+
+	
 }
 
-
-object OnKillAttributes {
-	inline operator fun invoke(scope: OnKillAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+open class OnKillAttributes : IBlockScoped {
 	/**
 	 * In-Game: "On Kill: A small health pack is dropped"
 	 */
-	context(attrs: IKeyValueMap)
-	var dropHealthPackOnKill: Boolean?
-		get() = attrs.getTyped("drop health pack on kill", BinaryIntCodec)
-		set(value) = attrs.setNullable("drop health pack on kill", value, BinaryIntCodec)
+	open val dropHealthPackOnKill = ItemAttributeNamed<Boolean>("drop health pack on kill")
 	
 	/**
 	 * In-Game: "On Kill: Burst into joyous laughter"
 	 */
-	context(attrs: IKeyValueMap)
-	var killForcesAttackerToLaugh: Boolean?
-		get() = attrs.getTyped("kill forces attacker to laugh", BinaryIntCodec)
-		set(value) = attrs.setNullable("kill forces attacker to laugh", value, BinaryIntCodec)
+	open val killForcesAttackerToLaugh = ItemAttributeNamed<Boolean>("kill forces attacker to laugh")
+
+	
 }
 
+	
+open class DenyResupplyAttributes : IBlockScoped {
+	
+	open val grenades1ResupplyDenied = ItemAttributeNamed<Boolean>("grenades1_resupply_denied")
+	
+	
+	open val grenades2ResupplyDenied = ItemAttributeNamed<Boolean>("grenades2_resupply_denied")
+	
+	
+	open val grenades3ResupplyDenied = ItemAttributeNamed<Boolean>("grenades3_resupply_denied")
 
-object DenyResupplyAttributes {
-	inline operator fun invoke(scope: DenyResupplyAttributes.() -> Unit) {
-		this.apply(scope)
-	}
 	
-	context(attrs: IKeyValueMap)
-	var grenades1ResupplyDenied: Boolean?
-		get() = attrs.getTyped("grenades1_resupply_denied", BinaryIntCodec)
-		set(value) = attrs.setNullable("grenades1_resupply_denied", value, BinaryIntCodec)
-	
-	
-	context(attrs: IKeyValueMap)
-	var grenades2ResupplyDenied: Boolean?
-		get() = attrs.getTyped("grenades2_resupply_denied", BinaryIntCodec)
-		set(value) = attrs.setNullable("grenades2_resupply_denied", value, BinaryIntCodec)
-	
-	
-	context(attrs: IKeyValueMap)
-	var grenades3ResupplyDenied: Boolean?
-		get() = attrs.getTyped("grenades3_resupply_denied", BinaryIntCodec)
-		set(value) = attrs.setNullable("grenades3_resupply_denied", value, BinaryIntCodec)
 }
 
-
-object ScoutOnlyAttributes {
-	inline operator fun invoke(scope: ScoutOnlyAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+open class ScoutOnlyAttributes : IBlockScoped {
 	/**
 	 * In-Game: "Disables double jump"
 	 */
-	context(attrs: IKeyValueMap)
-	var noDoubleJump: Boolean?
-		get() = attrs.getTyped("no double jump", BinaryIntCodec)
-		set(value) = attrs.setNullable("no double jump", value, BinaryIntCodec)
+	open val noDoubleJump = ItemAttributeNamed<Boolean>("no double jump")
 	
 	/**
 	 * In-Game: "Hype Decays Over Time."
 	 */
-	context(attrs: IKeyValueMap)
-	var hypeDecaysOverTime: Int?
-		get() = attrs.getTyped("hype decays over time")
-		set(value) = attrs.setNullable("hype decays over time", value)
+	open val hypeDecaysOverTime = ItemAttributeNamed<Float>("hype decays over time")
 	
 	/**
 	 * In-Game: "Boost reduced when hit"
 	 */
-	context(attrs: IKeyValueMap)
-	var loseHypeOnTakeDamage: Int?
-		get() = attrs.getTyped("lose hype on take damage")
-		set(value) = attrs.setNullable("lose hype on take damage", value)
+	open val loseHypeOnTakeDamage = ItemAttributeNamed<Int>("lose hype on take damage")
+
+	
 }
 
-
-object DemomanOnlyAttributes {
-	inline operator fun invoke(scope: DemomanOnlyAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+open class DemomanOnlyAttributes : IBlockScoped {
 	/**
 	 * In-Game: "Taking damage while shield charging reduces remaining charging time"
 	 */
-	context(attrs: IKeyValueMap)
-	var loseDemoChargeOnDamageWhenCharging: Boolean?
-		get() = attrs.getTyped("lose demo charge on damage when charging", BinaryIntCodec)
-		set(value) = attrs.setNullable("lose demo charge on damage when charging", value, BinaryIntCodec)
+	open val loseDemoChargeOnDamageWhenCharging = ItemAttributeNamed<Boolean>("lose demo charge on damage when charging")
 	
 	/**
 	 * In-Game: "Melee kills refill N% of your charge meter."
 	 */
-	context(attrs: IKeyValueMap)
-	var killRefillsMeter: Number?
-		get() = attrs.getTyped("kill refills meter")
-		set(value) = attrs.setNullable("kill refills meter", value)
+	open val killRefillsMeter = ItemAttributeNamed<Float>("kill refills meter")
 	
 	/**
 	 * In-Game: "N% damage penalty"
 	 */
-	context(attrs: IKeyValueMap)
-	var decapitateType: Boolean?
-		get() = attrs.getTyped("decapitate type", BinaryIntCodec)
-		set(value) = attrs.setNullable("decapitate type", value, BinaryIntCodec)
+	open val decapitateType = ItemAttributeNamed<Boolean>("decapitate type")
 	
 	/**
 	 * Bonus:
@@ -1471,92 +2078,68 @@ object DemomanOnlyAttributes {
 	 *
 	 * 	- In-Game: "N sec decrease in charge duration"
 	 */
-	val chargeTime get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
+	open val chargeTime = BonusPenalty(
+		ItemAttributeNamed<Float>("charge time increased"),
+		ItemAttributeNamed<Float>("charge time decreased")
+	)
 	
 	/**
 	 * In-Game: "+N% increase in charge recharge rate"
 	 */
-	context(attrs: IKeyValueMap)
-	var chargeRechargeRateIncreased: Number?
-		get() = attrs.getTyped("charge recharge rate increased")
-		set(value) = attrs.setNullable("charge recharge rate increased", value)
+	open val chargeRechargeRateIncreased = ItemAttributeNamed<Float>("charge recharge rate increased")
+
+	
 }
 
-
-object SniperOnlyAttributes {
-	inline operator fun invoke(scope: SniperOnlyAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+open class SniperOnlyAttributes : IBlockScoped {
 	/**
 	 * In-Game: "Knockback reduced by N% when aiming"
 	 */
-	context(attrs: IKeyValueMap)
-	var aimingKnockbackResistance: Number?
-		get() = attrs.getTyped("aiming knockback resistance")
-		set(value) = attrs.setNullable("aiming knockback resistance", value)
+	open val aimingKnockbackResistance = ItemAttributeNamed<Float>("aiming knockback resistance")
 	
 	/**
 	 * In-Game: "Gain Focus on kills and assists"
 	 */
-	context(attrs: IKeyValueMap)
-	var rageOnKill: Int?
-		get() = attrs.getTyped("rage on kill")
-		set(value) = attrs.setNullable("rage on kill", value)
+	open val rageOnKill = ItemAttributeNamed<Float>("rage on kill")
+
+	
 }
 
-
-object MedicOnlyAttributes {
-	inline operator fun invoke(scope: MedicOnlyAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+open class MedicOnlyAttributes : IBlockScoped {
 	/**
 	 * In-Game: "+25% heal rate for patient, +25% faster revive rate, and +25% self heal rate, per point"
 	 */
-	context(attrs: IKeyValueMap)
-	var healingMastery: Int?
-		get() = attrs.getTyped("healing mastery")
-		set(value) = attrs.setNullable("healing mastery", value)
+	open val healingMastery = ItemAttributeNamed<Int>("healing mastery")
 	
 	/**
 	 * In-Game: "Build energy by healing teammates.  When fully charged, press the Special-Attack key to deploy a frontal projectile shield."
 	 */
-	context(attrs: IKeyValueMap)
-	var generateRageOnHeal: Boolean?
-		get() = attrs.getTyped("generate rage on heal", BinaryIntCodec)
-		set(value) = attrs.setNullable("generate rage on heal", value, BinaryIntCodec)
+	open val generateRageOnHeal = ItemAttributeNamed<Boolean>("generate rage on heal")
 	
 	
-	context(attrs: IKeyValueMap)
-	var addHeadOnHit: Boolean?
-		get() = attrs.getTyped("add head on hit", BinaryIntCodec)
-		set(value) = attrs.setNullable("add head on hit", value, BinaryIntCodec)
+	open val addHeadOnHit = ItemAttributeNamed<Boolean>("add head on hit")
+
+	
 }
 
-
-object SpyOnlyAttributes {
-	inline operator fun invoke(scope: SpyOnlyAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+	
+open class SpyOnlyAttributes : IBlockScoped {
 	/**
 	 * In-Game: "+N% cloak on kill"
 	 */
-	context(attrs: IKeyValueMap)
-	var addCloakOnKill: Int?
-		get() = attrs.getTyped("add cloak on kill")
-		set(value) = attrs.setNullable("add cloak on kill", value)
+	open val addCloakOnKill = ItemAttributeNamed<Int>("add cloak on kill")
 	
 	/**
 	 * In-Game: "Extra effects when taunting."
 	 */
-	context(attrs: IKeyValueMap)
-	var setBonusCustomTauntParticleAttr: Boolean?
-		get() = attrs.getTyped("SET BONUS: custom taunt particle attr", BinaryIntCodec)
-		set(value) = attrs.setNullable("SET BONUS: custom taunt particle attr", value, BinaryIntCodec)
+	open val setBonusCustomTauntParticleAttr = ItemAttributeNamed<Boolean>("SET BONUS: custom taunt particle attr")
 	
 	
-	context(attrs: IKeyValueMap)
-	var hasPipboyBuildInterface: Int?
-		get() = attrs.getTyped("has pipboy build interface")
-		set(value) = attrs.setNullable("has pipboy build interface", value)
+	open val hasPipboyBuildInterface = ItemAttributeNamed<Int>("has pipboy build interface")
+
+	
+}
 }
 

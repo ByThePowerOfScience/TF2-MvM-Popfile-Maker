@@ -4,14 +4,21 @@ import btpos.source.vdfdsl.backing.asString
 import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.backing.getSubtree
 import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyBonus
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Vis
+import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromPBName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
 import java.io.File
+import java.nio.file.Path
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.mapNotNull
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
@@ -30,7 +37,22 @@ fun <T : Any, U : Any> Map<T?, U>.filterKeysNotNull(): Map<T, U> {
 }
 
 fun main() {
-	generateItemAttributes()
+	// get all attributes, but with the descriptions from the ones used in-game
+	val namedAttributesInGameDescriptions = UsefulWikiTableParser.parseWiki().associate { it.first.attrName to it.second }.filterValues { it != null && !it.startsWith("Attrib_") } as Map<String, String>
+	
+	val allNamedAttributes = convertAttributesFromSchema(namedAttributesInGameDescriptions)
+	
+	generateItemAttributes(
+		Path(BuildConfig.OUT_DIR),
+		BuildConfig.ATTRIBUTES_TARGET_PACKAGE,
+		"import btpos.source.vdfdsl.modeling.*\n" +
+		"import btpos.source.vdfdsl.serialization.codecs.*\n" +
+		"import ${BuildConfig.ATTRIBUTES_TARGET_PACKAGE}.impl.*\n" +
+		"import ${BuildConfig.BASE_PACKAGE}.tftypes.*\n" +
+		"import java.util.*\n\n",
+		allNamedAttributes,
+		MyNotesFormatted.attrsByClass
+	)
 }
 
 fun convertAttributesFromSchema(inGameDescriptionsByAttributeName: Map<String, String>): List<NamedAttribute> {
@@ -56,10 +78,68 @@ fun convertAttributesFromSchema(inGameDescriptionsByAttributeName: Map<String, S
 		}
 }
 
-
-fun generateItemAttributes() {
+/**
+ * Takes in a set of
+ */
+fun generateItemAttributes(
+	outBaseDir: Path,
+	targetPackage: String,
+	imports: String,
+	/**
+	 * A set of named attribute definitions from a schema.
+	 */
+	allNamedAttributes: List<NamedAttribute>,
+	/**
+	 * What weapon classes use each of these attributes.
+	 *
+	 * See [MyNotesFormatted] for an example, and make sure to use the names established there if you're generating attributes yourself.
+	 */
+	attrClassUsagesByBaseClass: List<IAttrClassScope>,
+	isExtension: Boolean = false,
+	/**
+	 * Make sure all scopes defined in a superclass are mirrored in all subclasses, and any properties referencing the superclass's version of a class are overridden to reference the new one.
+	 *
+	 * Example:
+	 * ```kotlin
+	 *
+	 * open class WeaponBase {
+	 *     open val projectileCategory = Projectiles()
+	 *
+	 *
+	 *     open class Projectiles {
+	 *         // ...
+	 *     }
+	 * }
+	 *
+	 *
+	 * class BaseGun : WeaponBase() {
+	 *     override val projectileCategory = Projectiles()
+	 *
+	 *
+	 *     open class Projectiles : WeaponBase.Projectiles() {
+	 *         // ...
+	 *     }
+	 * }
+	 * ```
+	 *
+	 *
+	 * This may seem odd, but it's specifically to categorize attributes while _still allowing those categories to be given extension properties that are only usable on subclasses_.
+	 *
+	 * ```kotlin
+	 * // Adding an attribute in the "Projectiles" category that only works (and is visible on) guns or subclasses of BaseGun:
+	 * val BaseGun.Projectiles.customAttribute = ...
+	 *
+	 * ```
+	 * If we did it "normally", with objects instead of this jank as hell category inheritance, we'd instead have to do:
+	 *
+	 * ```kotlin
+	 * // HEY GUYS, YOU CAN'T USE THIS ON ANYTHING BUT BaseGun BTW
+	 * val WeaponBase.Projectiles.customAttribute = ...
+	 * ```
+	 */
+	patchParentScopes: Boolean = false,
+) {
 	/*
-	
 	- From the wiki:
 		- Named attributes with in-game description, attr class,
 	- From the notes:
@@ -72,14 +152,6 @@ fun generateItemAttributes() {
 	- We don't care about the attrclasses for anything except matching the named attributes against the scope they're supposed to go into, which is done based on attr class
 	 */
 	
-	
-	
-	val attrClassesByBaseClassFromNotes = MyNotesFormatted.attrsByClass
-	
-	// get all attributes, but with the descriptions from the ones used in-game
-	val allAlreadyFoundAttributeNames = UsefulWikiTableParser.parseWiki().associate { it.first.attrName to it.second }.filterValues { it != null && !it.startsWith("Attrib_") } as Map<String, String>
-	
-	val allNamedAttributes = convertAttributesFromSchema(allAlreadyFoundAttributeNames)
 	
 	/**
 	 * Sort all named attributes by their class, group them up into scopes
@@ -137,15 +209,57 @@ fun generateItemAttributes() {
 					})
 			}
 	
-	
-	
 
-	val scopes = attrClassesByBaseClassFromNotes.mapNotNull { baseClassScope ->
-		baseClassScope.absorb(namedAttributeScopesByClassName).singleOrNull() as NamedAttributeScope?
+	val scopes = attrClassUsagesByBaseClass.mapNotNull { baseClassScope ->
+		baseClassScope.absorb(namedAttributeScopesByClassName)
+			.singleOrNull() as NamedAttributeScope?
 	}
 	
 	
-	val outDir = Path(BuildConfig.OUT_DIR).resolve(BuildConfig.ATTRIBUTES_TARGET_PACKAGE.replace('.', File.separatorChar)).also {
+	// now go through them recursively to find if they each have all things from their parent
+	
+	/**
+	 * Params: two "identical" classbuilders, one from this hierarchy's parent, and one from this hierarchy.
+	 *
+	 * Purpose: make sure [fromThis] has versions of every single class nested in [fromParent].
+	 */
+	fun patchWithParentOverridesRecursive(fromParent: ClassBuilder, fromThis: ClassBuilder, currentPath: List<String>) {
+		fromParent.nestedClasses.entries.forEach { (name, parentNested) ->
+			val ourVersion = fromThis.nestedClasses[name]
+			                 ?: parentNested.copy().apply {
+				                 baseClass = currentPath.joinToString(".")
+			                 }
+			
+			patchWithParentOverridesRecursive(parentNested, ourVersion, currentPath + name)
+			
+			// force any props that construct the newly-overridden object to instantiate this one instead
+			val findInstantiation = Regex("$name\\s*\\(")
+			parentNested.properties.values.forEach { parentProp ->
+				if (parentProp.initializer.contains(findInstantiation)) {
+					ourVersion.properties.computeIfAbsent(parentProp.name) {
+						parentProp.copy()
+					}.apply {
+						delegatesToSuper = false
+					}
+				}
+			}
+			
+			if (name !in fromThis.nestedClasses) {
+				fromThis.addNestedClass(ourVersion)
+			}
+		}
+	}
+	
+	fun ClassBuilder.withParentScopes(itsParent: ClassBuilder): ClassBuilder = apply {
+		patchWithParentOverridesRecursive(
+			itsParent,
+			this,
+			listOf(this.name)
+		)
+	}
+	
+	
+	val outDir = outBaseDir.resolve(targetPackage.replace('.', File.separatorChar)).also {
 		if (it.exists())
 			it.useDirectoryEntries("*.kt") { it.forEach { it.deleteExisting() } }
 		else
@@ -156,13 +270,17 @@ fun generateItemAttributes() {
 		outDir.resolve(scope.scopeName + ".kt")
 			.bufferedWriter()
 			.use { writer ->
-				writer.write(
-					"package ${BuildConfig.ATTRIBUTES_TARGET_PACKAGE}\n\n" +
-					"import btpos.source.vdfdsl.modeling.*\n" +
-					"import btpos.source.vdfdsl.serialization.codecs.*\n" +
-					"import ${BuildConfig.ATTRIBUTES_TARGET_PACKAGE}.impl.*\n" +
-					"import java.util.*\n\n"
-				)
+				writer.write("package ${targetPackage}\n\n")
+				writer.append(imports).append("\n\n")
+				
+				scope.generateTopLevelType()?.also {
+					if (scope is HierarchyNamedAttributeScope) {
+						it.withParentScopes(scope.getParent()?.generateTopLevelType() ?: return@also)
+					}
+				}?.let {
+					writer.write(it.build())
+				}
+				
 				scope.generateTopLevelMembers()
 					.forEach { topLevel ->
 						writer.write(topLevel)

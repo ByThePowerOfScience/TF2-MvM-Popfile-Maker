@@ -3,14 +3,128 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+
+
 
 /**
  * Items: Frying Pan, Saxxy, The Conscientious Objector, The Freedom Staff, The Bat Outta Hell, Memory Maker, The Ham Shank, Gold Frying Pan, Necro Smasher, The Crossing Guard, Powerup Strength, Powerup Haste, Powerup Regen, Powerup Resist, Powerup Vampire, Powerup Reflect, Powerup Precision, Powerup Agility, Powerup Knockout, Powerup King, Powerup Plague, Powerup Supernova, Prinny Machete, The Hot Hand, Kukri, The Tribalman's Shiv, The Bushwacka, The Shahanshah
  */
-interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
-	companion object : BaseMeleeAttributes
-	
+interface BaseMeleeAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * In-Game: "You are Marked-For-Death while active, and for short period after switching weapons"
+		 *
+		 * 
+		 *
+		 * Marked for death when switching to weapon.
+		 */
+		val selfMarkForDeath = ItemAttributeNamed<Boolean>("self mark for death")
+		
+		/**
+		 * In-Game: "This Weapon has a large melee range and deploys and holsters slower"
+		 *
+		 * 
+		 *
+		 * If 1, set swing range to 72, else 48.
+		 */
+		val isASword = ItemAttributeNamed<Boolean>("is_a_sword")
+		
+		/**
+		 * 
+		 *
+		 * Multiplier applied to the bounding box of the swing to detect if a player is inside it.
+		 *
+		 * Yes, it DOES use a bounding box. I think. That's what this implies, I guess.
+		 */
+		val meleeBoundsMultiplier = ItemAttributeNamed<Float>("melee bounds multiplier")
+		
+		/**
+		 * In-Game: "Damage removes Sappers"
+		 *
+		 * 
+		 *
+		 * Damage sappers with swing.
+		 */
+		val damageAppliesToSappers = ItemAttributeNamed<Int>("damage applies to sappers")
+		
+		/**
+		 * In-Game: "On Hit Teammate: Boosts both players' speed for several seconds"
+		 *
+		 * 
+		 *
+		 * Applies speed boost cond to yourself and the teammate you hit.
+		 */
+		val speedBuffAlly = ItemAttributeNamed<Boolean>("speed buff ally")
+		
+		/**
+		 * In-Game: "On Miss: Hit yourself. Idiot."
+		 *
+		 * 
+		 *
+		 * Idiot.
+		 */
+		val hitSelfOnMiss = ItemAttributeNamed<Boolean>("hit self on miss")
+		
+		/**
+		 * In-Game: "Gain a speed boost when you hit an enemy player"
+		 *
+		 * 
+		 *
+		 * Used as arg to addcond speedboost.
+		 */
+		val speedBoostOnHitEnemy = ItemAttributeNamed<Float>("speed_boost_on_hit_enemy")
+		
+		/**
+		 * In-Game: "Always critical hit from behind"
+		 *
+		 * 
+		 */
+		val critFromBehind = ItemAttributeNamed<Boolean>("crit from behind")
+		
+		/**
+		 * In-Game: "Critical hit forces victim to laugh"
+		 *
+		 * 
+		 */
+		val critForcesVictimToLaugh = ItemAttributeNamed<Boolean>("crit forces victim to laugh")
+		
+		/**
+		 * In-Game: "On Hit: Force enemies to laugh who are also wearing this item"
+		 *
+		 * 
+		 *
+		 * Force enemies to laugh if they're also wielding this weapon.
+		 */
+		val tickleEnemiesWieldingSameWeapon = ItemAttributeNamed<Boolean>("tickle enemies wielding same weapon")
+		
+		/**
+		 * In-Game: "Critical hits do no damage"
+		 *
+		 * 
+		 */
+		val critDoesNoDamage = ItemAttributeNamed<Boolean>("crit does no damage")
+		
+		/**
+		 * In-Game: "N% increase in damage when health <50% of max"
+		 *
+		 * 
+		 *
+		 * If health < 50%, apply mult.
+		 */
+		val dmgBonusWhileHalfDead = ItemAttributeNamed<Float>("dmg bonus while half dead")
+		
+		/**
+		 * In-Game: "N% decrease in damage when health >50% of max"
+		 *
+		 * 
+		 *
+		 * If health >= 50%, apply mult.
+		 */
+		val dmgPenaltyWhileHalfAlive = ItemAttributeNamed<Float>("dmg penalty while half alive")
+	}
+
 	/**
 	 * In-Game: "You are Marked-For-Death while active, and for short period after switching weapons"
 	 *
@@ -18,24 +132,16 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Marked for death when switching to weapon.
 	 */
-	context(attrs: IKeyValueMap)
-	var selfMarkForDeath: Boolean?
-		get() = attrs.getTyped("self mark for death", BinaryIntCodec)
-		set(value) = attrs.setNullable("self mark for death", value, BinaryIntCodec)
+	val selfMarkForDeath: ItemAttribute<Boolean> get() = BaseMeleeAttributes.selfMarkForDeath
 	
 	/**
 	 * In-Game: "This Weapon has a large melee range and deploys and holsters slower"
 	 *
 	 * 
 	 *
-	 * If true, make weapon deploy and holster 75% slower.
-	 *
 	 * If 1, set swing range to 72, else 48.
 	 */
-	context(attrs: IKeyValueMap)
-	override var isASword: Boolean?
-		get() = super.isASword
-		set(value) { super.isASword = value }
+	val isASword: ItemAttribute<Boolean> get() = BaseMeleeAttributes.isASword
 	
 	/**
 	 * 
@@ -44,10 +150,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Yes, it DOES use a bounding box. I think. That's what this implies, I guess.
 	 */
-	context(attrs: IKeyValueMap)
-	var meleeBoundsMultiplier: Number?
-		get() = attrs.getTyped("melee bounds multiplier")
-		set(value) = attrs.setNullable("melee bounds multiplier", value)
+	val meleeBoundsMultiplier: ItemAttribute<Float> get() = BaseMeleeAttributes.meleeBoundsMultiplier
 	
 	/**
 	 * In-Game: "Damage removes Sappers"
@@ -56,10 +159,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Damage sappers with swing.
 	 */
-	context(attrs: IKeyValueMap)
-	var damageAppliesToSappers: Int?
-		get() = attrs.getTyped("damage applies to sappers")
-		set(value) = attrs.setNullable("damage applies to sappers", value)
+	val damageAppliesToSappers: ItemAttribute<Int> get() = BaseMeleeAttributes.damageAppliesToSappers
 	
 	/**
 	 * In-Game: "On Hit Teammate: Boosts both players' speed for several seconds"
@@ -68,10 +168,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Applies speed boost cond to yourself and the teammate you hit.
 	 */
-	context(attrs: IKeyValueMap)
-	var speedBuffAlly: Boolean?
-		get() = attrs.getTyped("speed buff ally", BinaryIntCodec)
-		set(value) = attrs.setNullable("speed buff ally", value, BinaryIntCodec)
+	val speedBuffAlly: ItemAttribute<Boolean> get() = BaseMeleeAttributes.speedBuffAlly
 	
 	/**
 	 * In-Game: "On Miss: Hit yourself. Idiot."
@@ -80,10 +177,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Idiot.
 	 */
-	context(attrs: IKeyValueMap)
-	var hitSelfOnMiss: Boolean?
-		get() = attrs.getTyped("hit self on miss", BinaryIntCodec)
-		set(value) = attrs.setNullable("hit self on miss", value, BinaryIntCodec)
+	val hitSelfOnMiss: ItemAttribute<Boolean> get() = BaseMeleeAttributes.hitSelfOnMiss
 	
 	/**
 	 * In-Game: "Gain a speed boost when you hit an enemy player"
@@ -92,30 +186,21 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Used as arg to addcond speedboost.
 	 */
-	context(attrs: IKeyValueMap)
-	var speedBoostOnHitEnemy: Int?
-		get() = attrs.getTyped("speed_boost_on_hit_enemy")
-		set(value) = attrs.setNullable("speed_boost_on_hit_enemy", value)
+	val speedBoostOnHitEnemy: ItemAttribute<Float> get() = BaseMeleeAttributes.speedBoostOnHitEnemy
 	
 	/**
 	 * In-Game: "Always critical hit from behind"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var critFromBehind: Boolean?
-		get() = attrs.getTyped("crit from behind", BinaryIntCodec)
-		set(value) = attrs.setNullable("crit from behind", value, BinaryIntCodec)
+	val critFromBehind: ItemAttribute<Boolean> get() = BaseMeleeAttributes.critFromBehind
 	
 	/**
 	 * In-Game: "Critical hit forces victim to laugh"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var critForcesVictimToLaugh: Boolean?
-		get() = attrs.getTyped("crit forces victim to laugh", BinaryIntCodec)
-		set(value) = attrs.setNullable("crit forces victim to laugh", value, BinaryIntCodec)
+	val critForcesVictimToLaugh: ItemAttribute<Boolean> get() = BaseMeleeAttributes.critForcesVictimToLaugh
 	
 	/**
 	 * In-Game: "On Hit: Force enemies to laugh who are also wearing this item"
@@ -124,20 +209,14 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Force enemies to laugh if they're also wielding this weapon.
 	 */
-	context(attrs: IKeyValueMap)
-	var tickleEnemiesWieldingSameWeapon: Boolean?
-		get() = attrs.getTyped("tickle enemies wielding same weapon", BinaryIntCodec)
-		set(value) = attrs.setNullable("tickle enemies wielding same weapon", value, BinaryIntCodec)
+	val tickleEnemiesWieldingSameWeapon: ItemAttribute<Boolean> get() = BaseMeleeAttributes.tickleEnemiesWieldingSameWeapon
 	
 	/**
 	 * In-Game: "Critical hits do no damage"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var critDoesNoDamage: Boolean?
-		get() = attrs.getTyped("crit does no damage", BinaryIntCodec)
-		set(value) = attrs.setNullable("crit does no damage", value, BinaryIntCodec)
+	val critDoesNoDamage: ItemAttribute<Boolean> get() = BaseMeleeAttributes.critDoesNoDamage
 	
 	/**
 	 * In-Game: "N% increase in damage when health <50% of max"
@@ -146,10 +225,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * If health < 50%, apply mult.
 	 */
-	context(attrs: IKeyValueMap)
-	var dmgBonusWhileHalfDead: Number?
-		get() = attrs.getTyped("dmg bonus while half dead")
-		set(value) = attrs.setNullable("dmg bonus while half dead", value)
+	val dmgBonusWhileHalfDead: ItemAttribute<Float> get() = BaseMeleeAttributes.dmgBonusWhileHalfDead
 	
 	/**
 	 * In-Game: "N% decrease in damage when health >50% of max"
@@ -158,9 +234,8 @@ interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * If health >= 50%, apply mult.
 	 */
-	context(attrs: IKeyValueMap)
-	var dmgPenaltyWhileHalfAlive: Number?
-		get() = attrs.getTyped("dmg penalty while half alive")
-		set(value) = attrs.setNullable("dmg penalty while half alive", value)
+	val dmgPenaltyWhileHalfAlive: ItemAttribute<Float> get() = BaseMeleeAttributes.dmgPenaltyWhileHalfAlive
+
+   
 }
 

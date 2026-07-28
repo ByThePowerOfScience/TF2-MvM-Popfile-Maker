@@ -3,14 +3,62 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+
+
 
 /**
  * Items: Stickybomb Launcher + Reskins, The Scottish Resistance, Sticky Jumper, The Quickiebomb Launcher
  */
-interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
-	companion object : StickybombLauncherAttributes
-	
+interface StickybombLauncherAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * In-Game: "Max charge time decreased by N%"
+		 *
+		 * 
+		 *
+		 * Not actually the "rate", rather the time it takes to fully charge a stickybomb launch when holding MOUSE1.
+		 */
+		val stickybombChargeRate = ItemAttributeNamed<Float>("stickybomb charge rate")
+		
+		/**
+		 * In-Game: "Able to destroy enemy stickybomb"
+		 *
+		 * 
+		 *
+		 * If 1, stickies destroy other stickies.
+		 */
+		val stickiesDetonateStickies = ItemAttributeNamed<Boolean>("stickies detonate stickies")
+		
+		/**
+		 * In-Game: "Up to +N% damage based on charge"
+		 *
+		 * 
+		 *
+		 * damage = `2*basedamage * (this - 1.0) * currentChargeProportion`.
+		 */
+		val stickybombChargeDamageIncrease = ItemAttributeNamed<Float>("stickybomb_charge_damage_increase")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N max stickybombs out"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N max stickybombs out"
+		 *
+		 * 
+		 */
+		val maxStickies = BonusPenalty(
+			ItemAttributeNamed<Int>("max pipebombs increased"),
+			ItemAttributeNamed<Int>("max pipebombs decreased")
+		)
+	}
+
 	/**
 	 * In-Game: "Max charge time decreased by N%"
 	 *
@@ -18,10 +66,7 @@ interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Not actually the "rate", rather the time it takes to fully charge a stickybomb launch when holding MOUSE1.
 	 */
-	context(attrs: IKeyValueMap)
-	var stickybombChargeRate: Number?
-		get() = attrs.getTyped("stickybomb charge rate")
-		set(value) = attrs.setNullable("stickybomb charge rate", value)
+	val stickybombChargeRate: ItemAttribute<Float> get() = StickybombLauncherAttributes.stickybombChargeRate
 	
 	/**
 	 * In-Game: "Able to destroy enemy stickybomb"
@@ -30,10 +75,7 @@ interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * If 1, stickies destroy other stickies.
 	 */
-	context(attrs: IKeyValueMap)
-	var stickiesDetonateStickies: Boolean?
-		get() = attrs.getTyped("stickies detonate stickies", BinaryIntCodec)
-		set(value) = attrs.setNullable("stickies detonate stickies", value, BinaryIntCodec)
+	val stickiesDetonateStickies: ItemAttribute<Boolean> get() = StickybombLauncherAttributes.stickiesDetonateStickies
 	
 	/**
 	 * In-Game: "Up to +N% damage based on charge"
@@ -42,10 +84,7 @@ interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * damage = `2*basedamage * (this - 1.0) * currentChargeProportion`.
 	 */
-	context(attrs: IKeyValueMap)
-	var stickybombChargeDamageIncrease: Number?
-		get() = attrs.getTyped("stickybomb_charge_damage_increase")
-		set(value) = attrs.setNullable("stickybomb_charge_damage_increase", value)
+	val stickybombChargeDamageIncrease: ItemAttribute<Float> get() = StickybombLauncherAttributes.stickybombChargeDamageIncrease
 	
 	/**
 	 * Bonus:
@@ -60,6 +99,8 @@ interface StickybombLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val maxStickies get() = BonusPenalty<Int, Int>("max pipebombs increased", "max pipebombs decreased")
+	val maxStickies: ItemAttribute<Int> get() = StickybombLauncherAttributes.maxStickies
+
+   
 }
 
