@@ -1,9 +1,11 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.sanitize
 
 /**
@@ -12,52 +14,40 @@ import btpos.source.vdfdsl.tf2.filegeneration.sanitize
 data class PenaltyBonus(
 	val penalty: ISortedNamedAttribute,
 	val bonus: ISortedNamedAttribute,
+	val hidden: ISortedNamedAttribute?,
 	val desc: String? = null
 ) : ISortedNamedAttribute {
 	override val varName: String
 		get() = penalty.varName.sanitize().overrideVarName()
 	
+	init {
+		require(bonus.getKotlinType() == penalty.getKotlinType()) {
+			"Bonus and penalty types do not match, needs an override in btpos/source/vdfdsl/tf2/filegeneration/representations/Overrides.kt\n" +
+			"Bonus (${bonus.getKotlinType()}): $bonus\n" +
+			"Penalty (${penalty.getKotlinType()}): $penalty"
+		}
+	}
+	
+	
+	
 	companion object {
 		const val NEITHER_NESTED = "BonusPenalty"
-		const val BOTH_NESTED = "BonusPenalty_BothNested"
-		const val BONUS_IS_NESTED = "BonusPenalty_BonusNested"
-		const val PENALTY_IS_NESTED = "BonusPenalty_PenaltyNested"
-		
 	}
 	
 	override fun clone(): ISortedNamedAttribute {
 		return PenaltyBonus(penalty.clone(), bonus.clone(), desc)
 	}
 	
-	private val whenThing
-		get() = when {
-			penalty is NamedAttribute && bonus is NamedAttribute -> 0
-			penalty !is NamedAttribute && bonus !is NamedAttribute -> 1
-			bonus is NamedAttribute -> 2
-			else -> 3
-		}
-	
-	override fun propertyValue(): String {
-		val typeParamsString = "<${bonus.getKotlinType()}, ${penalty.getKotlinType()}>"
-		
-		return if (penalty is NamedAttribute && bonus is NamedAttribute) {
-			"$NEITHER_NESTED$typeParamsString(\"${bonus.attrName}\", \"${penalty.attrName}\")"
-		} else if (penalty !is NamedAttribute && bonus !is NamedAttribute) {
-			"$BOTH_NESTED$typeParamsString(${bonus.propertyValue()}, ${penalty.propertyValue()})"
-		} else if (bonus is NamedAttribute) {
-			"$PENALTY_IS_NESTED$typeParamsString(\"${bonus.attrName}\", ${penalty.propertyValue()})"
-		} else if (penalty is NamedAttribute) {
-			"$BONUS_IS_NESTED$typeParamsString(${bonus.propertyValue()}, \"${penalty.attrName}\")"
-		} else {
-			error("no this won't happen")
+	val propertyBuilder by lazy {
+		PropertyBuilder(varName, "$NEITHER_NESTED<${getKotlinType()}>") {
+			initializer = "$NEITHER_NESTED(\n" +
+			              "\t${bonus.propertyBuilder().initializer},\n" +
+			              "\t${penalty.propertyBuilder().initializer}\n" +
+			              ")"
 		}
 	}
-	
-	
-	override fun propertyString(isOverridden: Boolean): String {
-		if (isOverridden)
-			return "override val $varName get() = super.$varName"
-		return "val $varName get() = ${propertyValue()}"
+	override fun propertyBuilder(): PropertyBuilder {
+		return propertyBuilder
 	}
 	
 	
@@ -85,13 +75,7 @@ data class PenaltyBonus(
 	
 	
 	override fun getKotlinType(): String {
-		return when (whenThing) {
-			0 -> NEITHER_NESTED
-			1 -> BOTH_NESTED
-			2 -> BONUS_IS_NESTED
-			3 -> PENALTY_IS_NESTED
-			else -> error("fuck")
-		}
+		return bonus.getKotlinType()
 	}
 	
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {

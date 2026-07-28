@@ -3,12 +3,62 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 
 
-interface ProjectileStickybombAttributes : BaseProjectileAttributes, IBlockScoped {
-	companion object : ProjectileStickybombAttributes
-	
+
+
+interface ProjectileStickybombAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * In-Game: "Stickybombs fizzle N seconds after landing"
+		 *
+		 * 
+		 *
+		 * Checked on launcher.
+		 */
+		val stickybombFizzleTime = ItemAttributeNamed<Float>("stickybomb fizzle time")
+		
+		/**
+		 * In-Game: "Grenades have very little bounce and roll"
+		 *
+		 * 
+		 *
+		 * Checked on launcher.
+		 */
+		val grenadeNoBounce = ItemAttributeNamed<Boolean>("grenade no bounce")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "N sec faster bomb arm time"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N sec slower bomb arm time"
+		 *
+		 * 
+		 *
+		 * Checked on launcher.
+		 */
+		val stickyArmTime = BonusPenalty(
+			ItemAttributeNamed<Float>("sticky arm time bonus"),
+			ItemAttributeNamed<Float>("sticky arm time penalty")
+		)
+		
+		/**
+		 * In-Game: "N% damage on contact with surfaces"
+		 *
+		 * 
+		 *
+		 * Checked on launcher.
+		 */
+		val grenadeDamageReductionOnWorldContact = ItemAttributeNamed<Float>("grenade damage reduction on world contact")
+	}
+
 	/**
 	 * In-Game: "Stickybombs fizzle N seconds after landing"
 	 *
@@ -16,10 +66,7 @@ interface ProjectileStickybombAttributes : BaseProjectileAttributes, IBlockScope
 	 *
 	 * Checked on launcher.
 	 */
-	context(attrs: IKeyValueMap)
-	var stickybombFizzleTime: Int?
-		get() = attrs.getTyped("stickybomb fizzle time")
-		set(value) = attrs.setNullable("stickybomb fizzle time", value)
+	val stickybombFizzleTime: ItemAttribute<Float> get() = ProjectileStickybombAttributes.stickybombFizzleTime
 	
 	/**
 	 * In-Game: "Grenades have very little bounce and roll"
@@ -28,10 +75,7 @@ interface ProjectileStickybombAttributes : BaseProjectileAttributes, IBlockScope
 	 *
 	 * Checked on launcher.
 	 */
-	context(attrs: IKeyValueMap)
-	var grenadeNoBounce: Boolean?
-		get() = attrs.getTyped("grenade no bounce", BinaryIntCodec)
-		set(value) = attrs.setNullable("grenade no bounce", value, BinaryIntCodec)
+	val grenadeNoBounce: ItemAttribute<Boolean> get() = ProjectileStickybombAttributes.grenadeNoBounce
 	
 	/**
 	 * Bonus:
@@ -48,7 +92,7 @@ interface ProjectileStickybombAttributes : BaseProjectileAttributes, IBlockScope
 	 *
 	 * Checked on launcher.
 	 */
-	val stickyArmTime get() = BonusPenalty<Int, Int>("sticky arm time bonus", "sticky arm time penalty")
+	val stickyArmTime: ItemAttribute<Float> get() = ProjectileStickybombAttributes.stickyArmTime
 	
 	/**
 	 * In-Game: "N% damage on contact with surfaces"
@@ -57,9 +101,8 @@ interface ProjectileStickybombAttributes : BaseProjectileAttributes, IBlockScope
 	 *
 	 * Checked on launcher.
 	 */
-	context(attrs: IKeyValueMap)
-	var grenadeDamageReductionOnWorldContact: Number?
-		get() = attrs.getTyped("grenade damage reduction on world contact")
-		set(value) = attrs.setNullable("grenade damage reduction on world contact", value)
+	val grenadeDamageReductionOnWorldContact: ItemAttribute<Float> get() = ProjectileStickybombAttributes.grenadeDamageReductionOnWorldContact
+
+   
 }
 

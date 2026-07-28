@@ -3,14 +3,57 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+
+
 
 /**
  * Items: Stock Grenade Launcher + Reskins, The Loch-n-Load, The Iron Bomber, The Loose Cannon
  */
-interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
-	companion object : GrenadeLauncherAttributes
-	
+interface GrenadeLauncherAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * In-Game: "N% damage on grenades that explode on timer"
+		 *
+		 * 
+		 *
+		 * Flat multiplier applied to initial damage.
+		 */
+		val grenadeDetonationDamagePenalty = ItemAttributeNamed<Float>("grenade detonation damage penalty")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- Visible:
+		 *
+		 * 		- In-Game: "+N% projectile speed"
+		 *
+		 * 	- Hidden:
+		 *
+		 * 		- In-Game: "+N% projectile speed"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% projectile speed"
+		 *
+		 * 
+		 */
+		val projectileSpeed = BonusPenalty(
+			VisHidden("ItemAttributeNamed<Float>("Projectile speed increased")", "ItemAttributeNamed<Float>("Projectile speed increased HIDDEN")"),
+			ItemAttributeNamed<Float>("Projectile speed decreased")
+		)
+		
+		/**
+		 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
+		 *
+		 * 
+		 */
+		val grenadeLauncherMortarMode = ItemAttributeNamed<Float>("grenade launcher mortar mode")
+	}
+
 	/**
 	 * In-Game: "N% damage on grenades that explode on timer"
 	 *
@@ -18,10 +61,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * Flat multiplier applied to initial damage.
 	 */
-	context(attrs: IKeyValueMap)
-	var grenadeDetonationDamagePenalty: Number?
-		get() = attrs.getTyped("grenade detonation damage penalty")
-		set(value) = attrs.setNullable("grenade detonation damage penalty", value)
+	val grenadeDetonationDamagePenalty: ItemAttribute<Float> get() = GrenadeLauncherAttributes.grenadeDetonationDamagePenalty
 	
 	/**
 	 * Bonus:
@@ -42,16 +82,15 @@ interface GrenadeLauncherAttributes : BaseGunAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val projectileSpeed get() = BonusPenalty_BonusNested<VisHidden<Number, Number>, Number>(VisHidden<Number, Number>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
+	val projectileSpeed: ItemAttribute<Float> get() = GrenadeLauncherAttributes.projectileSpeed
 	
 	/**
 	 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var grenadeLauncherMortarMode: Int?
-		get() = attrs.getTyped("grenade launcher mortar mode")
-		set(value) = attrs.setNullable("grenade launcher mortar mode", value)
+	val grenadeLauncherMortarMode: ItemAttribute<Float> get() = GrenadeLauncherAttributes.grenadeLauncherMortarMode
+
+   
 }
 

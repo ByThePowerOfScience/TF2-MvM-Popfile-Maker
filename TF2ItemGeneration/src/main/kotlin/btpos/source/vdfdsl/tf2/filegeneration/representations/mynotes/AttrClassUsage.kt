@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes
 
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.attrToSelector
-import btpos.source.vdfdsl.tf2.filegeneration.representations.bool
 import btpos.source.vdfdsl.tf2.filegeneration.representations.customCodecs
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
 
@@ -67,10 +66,12 @@ class AttrClassUsage(val attr_class: String, val kType: String, notes: List<Stri
 									.find { (k, v) -> k == it.attrName }?.value
 								?: error("no selector found for ${it.attrName}")
 							)
-						} else if (kType == "Boolean") {
-							bool
 						} else {
-							customCodecs[it.className] ?: it.codec
+							
+							customCodecs[it.className] ?: run {
+								it.forceType = kType
+								it.codec
+							}
 						}
 					}
 					notes = this@AttrClassUsage.notes

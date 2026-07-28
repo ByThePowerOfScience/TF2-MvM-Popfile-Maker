@@ -3,21 +3,77 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+
+
 
 /**
  * Items: The Chargin' Targe, The Splendid Screen, The Tide Turner, Festive Targe 2014
  */
-interface WearableDemoShieldAttributes : WearableAttributes, IBlockScoped {
-	companion object : WearableDemoShieldAttributes
-	
+interface WearableDemoShieldAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * 
+		 */
+		val attackNotCancelCharge = ItemAttributeNamed<Boolean>("Attack not cancel charge")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "N sec increase in charge duration"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N sec decrease in charge duration"
+		 *
+		 * 
+		 *
+		 * Charge time mult.
+		 *
+		 * Checked on player.
+		 */
+		val chargeTime = BonusPenalty(
+			ItemAttributeNamed<Float>("charge time increased"),
+			ItemAttributeNamed<Float>("charge time decreased")
+		)
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% increase in charge impact damage"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% decrease in charge impact damage"
+		 *
+		 * 
+		 *
+		 * Impact damage mult.
+		 *
+		 * Checked on player.
+		 */
+		val chargeImpactDamage = BonusPenalty(
+			ItemAttributeNamed<Float>("charge impact damage increased"),
+			ItemAttributeNamed<Float>("charge impact damage decreased")
+		)
+		
+		/**
+		 * In-Game: "Immune to the effects of afterburn."
+		 *
+		 * 
+		 */
+		val afterburnImmunity = ItemAttributeNamed<Boolean>("afterburn immunity")
+	}
+
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var attackNotCancelCharge: Boolean?
-		get() = attrs.getTyped("Attack not cancel charge", BinaryIntCodec)
-		set(value) = attrs.setNullable("Attack not cancel charge", value, BinaryIntCodec)
+	val attackNotCancelCharge: ItemAttribute<Boolean> get() = WearableDemoShieldAttributes.attackNotCancelCharge
 	
 	/**
 	 * Bonus:
@@ -36,7 +92,7 @@ interface WearableDemoShieldAttributes : WearableAttributes, IBlockScoped {
 	 *
 	 * Checked on player.
 	 */
-	val chargeTime get() = BonusPenalty<Int, Int>("charge time increased", "charge time decreased")
+	val chargeTime: ItemAttribute<Float> get() = WearableDemoShieldAttributes.chargeTime
 	
 	/**
 	 * Bonus:
@@ -55,18 +111,15 @@ interface WearableDemoShieldAttributes : WearableAttributes, IBlockScoped {
 	 *
 	 * Checked on player.
 	 */
-	val chargeImpactDamage get() = BonusPenalty<Number, Number>("charge impact damage increased", "charge impact damage decreased")
+	val chargeImpactDamage: ItemAttribute<Float> get() = WearableDemoShieldAttributes.chargeImpactDamage
 	
 	/**
 	 * In-Game: "Immune to the effects of afterburn."
 	 *
 	 * 
-	 *
-	 * For the base "`Wearable`", only checked on Sniper.
 	 */
-	context(attrs: IKeyValueMap)
-	override var afterburnImmunity: Boolean?
-		get() = super.afterburnImmunity
-		set(value) { super.afterburnImmunity = value }
+	val afterburnImmunity: ItemAttribute<Boolean> get() = WearableDemoShieldAttributes.afterburnImmunity
+
+   
 }
 

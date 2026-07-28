@@ -4,6 +4,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.sanitize
 
 class Vis(
@@ -12,6 +13,14 @@ class Vis(
 	val additionalItems: List<NamedAttribute>,
 	val _varName: String
 ) : ISortedNamedAttribute {
+	init {
+		require(visible.getKotlinType() == hidden.getKotlinType()) {
+			"Visible and hidden don't share a type\n" +
+			"Visible (${visible.getKotlinType()}): $visible\n" +
+			"Hidden (${hidden.getKotlinType()}): $hidden"
+		}
+	}
+	
 	override fun toString(): String {
 		return """Vis($visible, $hidden, listOf(${additionalItems.joinToString(", ")}), "$varName")"""
 	}
@@ -54,23 +63,23 @@ class Vis(
 	
 	fun inheritedTemplate(): String {
 		val attrsInBody = additionalItems.joinToString("\n\n") {
-			ISortedNamedAttribute.buildComment(it.innateDescription) + "\n" + it.propertyString(false)
+			it.propertyBuilder().build()
 		}
 		
-		return """class $customClassName<VIS : Any, HIDDEN : Any>(vis_attrName: String, hidden_attrName: String) : VisHidden<VIS, HIDDEN>(vis_attrName, hidden_attrName) {
+		return """class $customClassName<VIS : Any>(vis_attrName: String, hidden_attrName: String) : VisHidden<VIS, HIDDEN>(vis_attrName, hidden_attrName) {
 ${attrsInBody.prependIndent("\t")}
 }"""
 	}
 	
+	// TODO I think all of this - going from the attr classes to the attributes, using groupings of the attr classes - might have been wrong.
+	//  maybe this should have generated named attribute entries that I could then edit by hand...
+	//  idk maybe not actually ifkdnlaknkldmfkjwerqnf alkdsbdsnfalkjdnkmJF,;LASKBjlqewn.nSLM/FKD,bn;ajidWKLS;filgYSDAK
 	
-	override fun propertyString(isOverridden: Boolean): String {
-		if (isOverridden)
-			return "override val $varName get() = super.$varName"
-		return "val $varName get() = ${propertyValue()}"
-	}
 	
-	override fun propertyValue(): String {
-		return "${getKotlinType()}(\"${visible.attrName}\", \"${hidden.attrName}\")"
+	override fun propertyBuilder(): PropertyBuilder {
+		return PropertyBuilder(varName, getKotlinType()) {
+			initializer = "VisHidden(${visible.propertyBuilder().initializer}, ${hidden.propertyBuilder().initializer})"
+		}
 	}
 	
 	override fun generateTopLevelMembers(): List<String> {
@@ -83,7 +92,7 @@ ${attrsInBody.prependIndent("\t")}
 	}
 	
 	override fun getKotlinType(): String {
-		return "${customClassName ?: "VisHidden"}<${visible.getKotlinType()}, ${hidden.getKotlinType()}>"
+		return visible.getKotlinType()
 	}
 	
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {

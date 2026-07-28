@@ -1,5 +1,7 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
+import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
+
 interface ISortedNamedAttribute {
 	val varName: String
 	
@@ -16,39 +18,27 @@ interface ISortedNamedAttribute {
 	fun clone(): ISortedNamedAttribute
 	
 	/**
-	 * Some property reference to this object, assuming it's given the opportunity to name its own property.
-	 *
-	 * Should include the comment. Use [buildComment] to convert a list of strings into
+	 * Create a basic property builder with the varname, type, doc comment, and initializer,
+	 * that can be modified later to add modality, overriding, etc.
 	 */
-	fun propertyString(isOverridden: Boolean): String
+	fun propertyBuilder(): PropertyBuilder
 	
 	/**
-	 * If this value is not an [NamedAttribute], it'll be some kind of object. This is a reference to that object.
-	 */
-	fun propertyValue(): String
-	
-	/**
-	 * will be called before [propertyString]
+	 * Generate types or functions that should be at the root of the given file.
 	 */
 	fun generateTopLevelMembers(): List<String> = emptyList()
 	
+	fun generateTopLevelType(): ClassBuilder? = null
+	
 	/**
-	 * Get the type of the resulting object
+	 * For nested-scope inheritance: returns whether this attribute already has a nested scope by that name
+	 */
+	fun getNestedScope(scopePath: List<String>): NamedAttributeScope? = null
+	
+	/**
+	 * Get the type of the attribute
 	 */
 	fun getKotlinType(): String
 	
 	fun setCodec(codec: (NamedAttribute) -> FakeCodec?)
-	
-	companion object {
-		/**
-		 * Formats a list of strings into a single block comment, prepending `\n<indent> * ` to each line
-		 */
-		fun buildComment(comments: List<String>): String {
-			return comments.takeIf { it.isNotEmpty() }
-				       ?.run {
-					       "/**${joinToString("\n *") { "\n * $it" }}\n */"
-				       } ?: ""
-		}
-	}
-	
 }

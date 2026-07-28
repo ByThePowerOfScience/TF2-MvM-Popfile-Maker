@@ -3,43 +3,198 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+
+
 
 /**
  * Items: Stock Flamethrower + Reskins, The Backburner, The Degreaser, The Phlogistinator, The Rainblower, The Dragon's Fury
  */
-interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
-	companion object : FlamethrowerAttributes
+interface FlamethrowerAttributes : IBlockScoped {
+	companion object {
+		/**
+		 * 
+		 *
+		 * If greater than 0, enables Phlog crits on having full rage.
+		 */
+		val soldierBuffType = ItemAttributeNamed<Int>("mod soldier buff type")
+		
+		/**
+		 * 
+		 *
+		 * If greater than 0, enables Phlog crits on having full rage.
+		 */
+		val demoBuffType = ItemAttributeNamed<Int>("mod demo buff type")
+		
+		/**
+		 * In-Game: "No airblast"
+		 *
+		 * 
+		 */
+		val airblastDisabled = ItemAttributeNamed<Boolean>("airblast disabled")
+		
+		/**
+		 * In-Game: "Airblast can now be charged, which will push enemies further"
+		 *
+		 * 
+		 *
+		 * Enables charging an airblast for longer for higher push.
+		 *
+		 * Fun fact: apparently this was going to be a FLAME ROCKET, but got changed later to be an airblast.
+		 */
+		val chargedAirblast = ItemAttributeNamed<Boolean>("charged airblast")
+		
+		/**
+		 * 
+		 */
+		val airblastCost = AirblastCostAttributes()
+		
+		/**
+		 * In-Game: "100% critical hits from behind"
+		 *
+		 * 
+		 */
+		val flamethrowerBackCrit = ItemAttributeNamed<Boolean>("mod flamethrower back crit")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "N% flamethrower ammo consumed per second"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "+N% flamethrower ammo consumed per second"
+		 *
+		 * 
+		 */
+		val flameAmmopersec = BonusPenalty(
+			ItemAttributeNamed<Float>("flame ammopersec decreased"),
+			ItemAttributeNamed<Float>("flame ammopersec increased")
+		)
+		
+		/**
+		 * 
+		 *
+		 * Multiplier for how long after airblasting until you can fire a primary OR secondary attack.
+		 *
+		 * Secondary attack delay = 0.75 * this.
+		 */
+		val multAirblastRefireTime = ItemAttributeNamed<Float>("mult airblast refire time")
+		
+		/**
+		 * 
+		 *
+		 * Scales the reflect hitbox for your airblast.
+		 */
+		val deflectionSizeMultiplier = ItemAttributeNamed<Float>("deflection size multiplier")
+		
+		/**
+		 * In-Game: "Extinguishing teammates restores N health"
+		 *
+		 * 
+		 *
+		 * How much health your extinguish restores.
+		 */
+		val extinguishRestoresHealth = ItemAttributeNamed<Int>("extinguish restores health")
+		
+		/**
+		 * In-Game: "+N% airblast push force"
+		 *
+		 * 
+		 */
+		val airblastPushbackScale = ItemAttributeNamed<Float>("airblast pushback scale")
+		
+		/**
+		 * 
+		 */
+		val airblastVerticalPushbackScale = ItemAttributeNamed<Float>("airblast vertical pushback scale")
+		
+		/**
+		 * In-Game: "Halloween Fire"
+		 *
+		 * 
+		 */
+		val spellHalloweenGreenFlames = ItemAttributeNamed<Boolean>("SPELL: Halloween green flames")
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% more flame spread area"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% less flame spread area"
+		 *
+		 * 
+		 *
+		 * Checked on owner.
+		 */
+		val flameSize = BonusPenalty(
+			ItemAttributeNamed<Float>("flame size bonus"),
+			ItemAttributeNamed<Float>("flame size penalty")
+		)
+		
+		/**
+		 * Bonus:
+		 *
+		 * 	- In-Game: "+N% more flame distance"
+		 *
+		 * 
+		 *
+		 * Penalty:
+		 *
+		 * 	- In-Game: "N% less flame distance"
+		 *
+		 * 
+		 *
+		 * Checked on owner.
+		 */
+		val flameLife = BonusPenalty(
+			ItemAttributeNamed<Float>("flame life bonus"),
+			ItemAttributeNamed<Float>("flame life penalty")
+		)
+		
+		/**
+		 * 
+		 */
+		val airblastDestroyProjectile = ItemAttributeNamed<Boolean>("airblast_destroy_projectile")
+		
+		/**
+		 * 
+		 */
+		val airblastPushbackDisabled = ItemAttributeNamed<Boolean>("airblast_pushback_disabled")
+		
+		/**
+		 * 
+		 */
+		val flames = FlamesAttributes()
+	}
+
+	/**
+	 * 
+	 *
+	 * If greater than 0, enables Phlog crits on having full rage.
+	 */
+	val soldierBuffType: ItemAttribute<Int> get() = FlamethrowerAttributes.soldierBuffType
 	
 	/**
 	 * 
 	 *
 	 * If greater than 0, enables Phlog crits on having full rage.
 	 */
-	context(attrs: IKeyValueMap)
-	var soldierBuffType: Int?
-		get() = attrs.getTyped("mod soldier buff type")
-		set(value) = attrs.setNullable("mod soldier buff type", value)
-	
-	/**
-	 * 
-	 *
-	 * If greater than 0, enables Phlog crits on having full rage.
-	 */
-	context(attrs: IKeyValueMap)
-	var demoBuffType: Int?
-		get() = attrs.getTyped("mod demo buff type")
-		set(value) = attrs.setNullable("mod demo buff type", value)
+	val demoBuffType: ItemAttribute<Int> get() = FlamethrowerAttributes.demoBuffType
 	
 	/**
 	 * In-Game: "No airblast"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var airblastDisabled: Boolean?
-		get() = attrs.getTyped("airblast disabled", BinaryIntCodec)
-		set(value) = attrs.setNullable("airblast disabled", value, BinaryIntCodec)
+	val airblastDisabled: ItemAttribute<Boolean> get() = FlamethrowerAttributes.airblastDisabled
 	
 	/**
 	 * In-Game: "Airblast can now be charged, which will push enemies further"
@@ -50,25 +205,19 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Fun fact: apparently this was going to be a FLAME ROCKET, but got changed later to be an airblast.
 	 */
-	context(attrs: IKeyValueMap)
-	var chargedAirblast: Boolean?
-		get() = attrs.getTyped("charged airblast", BinaryIntCodec)
-		set(value) = attrs.setNullable("charged airblast", value, BinaryIntCodec)
+	val chargedAirblast: ItemAttribute<Boolean> get() = FlamethrowerAttributes.chargedAirblast
 	
 	/**
 	 * 
 	 */
-	val airblastCost get() = AirblastCostAttributes
+	val airblastCost: ItemAttribute<AirblastCost> get() = FlamethrowerAttributes.airblastCost
 	
 	/**
 	 * In-Game: "100% critical hits from behind"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var flamethrowerBackCrit: Boolean?
-		get() = attrs.getTyped("mod flamethrower back crit", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod flamethrower back crit", value, BinaryIntCodec)
+	val flamethrowerBackCrit: ItemAttribute<Boolean> get() = FlamethrowerAttributes.flamethrowerBackCrit
 	
 	/**
 	 * Bonus:
@@ -83,7 +232,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * 
 	 */
-	val flameAmmopersec get() = BonusPenalty<Number, Number>("flame ammopersec decreased", "flame ammopersec increased")
+	val flameAmmopersec: ItemAttribute<Float> get() = FlamethrowerAttributes.flameAmmopersec
 	
 	/**
 	 * 
@@ -92,20 +241,14 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Secondary attack delay = 0.75 * this.
 	 */
-	context(attrs: IKeyValueMap)
-	var multAirblastRefireTime: Number?
-		get() = attrs.getTyped("mult airblast refire time")
-		set(value) = attrs.setNullable("mult airblast refire time", value)
+	val multAirblastRefireTime: ItemAttribute<Float> get() = FlamethrowerAttributes.multAirblastRefireTime
 	
 	/**
 	 * 
 	 *
 	 * Scales the reflect hitbox for your airblast.
 	 */
-	context(attrs: IKeyValueMap)
-	var deflectionSizeMultiplier: Int?
-		get() = attrs.getTyped("deflection size multiplier")
-		set(value) = attrs.setNullable("deflection size multiplier", value)
+	val deflectionSizeMultiplier: ItemAttribute<Float> get() = FlamethrowerAttributes.deflectionSizeMultiplier
 	
 	/**
 	 * In-Game: "Extinguishing teammates restores N health"
@@ -114,40 +257,26 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * How much health your extinguish restores.
 	 */
-	context(attrs: IKeyValueMap)
-	var extinguishRestoresHealth: Int?
-		get() = attrs.getTyped("extinguish restores health")
-		set(value) = attrs.setNullable("extinguish restores health", value)
+	val extinguishRestoresHealth: ItemAttribute<Int> get() = FlamethrowerAttributes.extinguishRestoresHealth
 	
 	/**
 	 * In-Game: "+N% airblast push force"
 	 *
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var airblastPushbackScale: Number?
-		get() = attrs.getTyped("airblast pushback scale")
-		set(value) = attrs.setNullable("airblast pushback scale", value)
+	val airblastPushbackScale: ItemAttribute<Float> get() = FlamethrowerAttributes.airblastPushbackScale
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var airblastVerticalPushbackScale: Number?
-		get() = attrs.getTyped("airblast vertical pushback scale")
-		set(value) = attrs.setNullable("airblast vertical pushback scale", value)
+	val airblastVerticalPushbackScale: ItemAttribute<Float> get() = FlamethrowerAttributes.airblastVerticalPushbackScale
 	
 	/**
 	 * In-Game: "Halloween Fire"
 	 *
 	 * 
-	 *
-	 * Makes afterburn green.
 	 */
-	context(attrs: IKeyValueMap)
-	override var spellHalloweenGreenFlames: Boolean?
-		get() = super.spellHalloweenGreenFlames
-		set(value) { super.spellHalloweenGreenFlames = value }
+	val spellHalloweenGreenFlames: ItemAttribute<Boolean> get() = FlamethrowerAttributes.spellHalloweenGreenFlames
 	
 	/**
 	 * Bonus:
@@ -164,7 +293,7 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Checked on owner.
 	 */
-	val flameSize get() = BonusPenalty<Number, Number>("flame size bonus", "flame size penalty")
+	val flameSize: ItemAttribute<Float> get() = FlamethrowerAttributes.flameSize
 	
 	/**
 	 * Bonus:
@@ -181,74 +310,48 @@ interface FlamethrowerAttributes : WeaponBaseAttributes, IBlockScoped {
 	 *
 	 * Checked on owner.
 	 */
-	val flameLife get() = BonusPenalty<Number, Number>("flame life bonus", "flame life penalty")
+	val flameLife: ItemAttribute<Float> get() = FlamethrowerAttributes.flameLife
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var airblastDestroyProjectile: Boolean?
-		get() = attrs.getTyped("airblast_destroy_projectile", BinaryIntCodec)
-		set(value) = attrs.setNullable("airblast_destroy_projectile", value, BinaryIntCodec)
+	val airblastDestroyProjectile: ItemAttribute<Boolean> get() = FlamethrowerAttributes.airblastDestroyProjectile
 	
 	/**
 	 * 
 	 */
-	context(attrs: IKeyValueMap)
-	var airblastPushbackDisabled: Boolean?
-		get() = attrs.getTyped("airblast_pushback_disabled", BinaryIntCodec)
-		set(value) = attrs.setNullable("airblast_pushback_disabled", value, BinaryIntCodec)
+	val airblastPushbackDisabled: ItemAttribute<Boolean> get() = FlamethrowerAttributes.airblastPushbackDisabled
 	
 	/**
 	 * 
 	 */
-	val flames get() = FlamesAttributes
-}
+	val flames: ItemAttribute<Flames> get() = FlamethrowerAttributes.flames
 
-
-object AirblastCostAttributes {
-	inline operator fun invoke(scope: AirblastCostAttributes.() -> Unit) {
-		this.apply(scope)
-	}
+   
+open class AirblastCostAttributes : IBlockScoped {
 	/**
 	 * In-Game: "+N% airblast cost"
 	 */
-	context(attrs: IKeyValueMap)
-	var airblastCostIncreased: Number?
-		get() = attrs.getTyped("airblast cost increased")
-		set(value) = attrs.setNullable("airblast cost increased", value)
+	open val airblastCostIncreased = ItemAttributeNamed<Float>("airblast cost increased")
 	
 	/**
 	 * In-Game: "N% airblast cost"
 	 */
-	context(attrs: IKeyValueMap)
-	var airblastCostDecreased: Number?
-		get() = attrs.getTyped("airblast cost decreased")
-		set(value) = attrs.setNullable("airblast cost decreased", value)
+	open val airblastCostDecreased = ItemAttributeNamed<Float>("airblast cost decreased")
 	
 	
-	context(attrs: IKeyValueMap)
-	var airblastCostScaleHidden: Number?
-		get() = attrs.getTyped("airblast cost scale hidden")
-		set(value) = attrs.setNullable("airblast cost scale hidden", value)
+	open val airblastCostScaleHidden = ItemAttributeNamed<Float>("airblast cost scale hidden")
+
+	
 }
 
-
-object FlamesAttributes {
-	inline operator fun invoke(scope: FlamesAttributes.() -> Unit) {
-		this.apply(scope)
-	}
 	
-	context(attrs: IKeyValueMap)
-	var flameSpreadDegree: Int?
-		get() = attrs.getTyped("flame_spread_degree")
-		set(value) = attrs.setNullable("flame_spread_degree", value)
+open class FlamesAttributes : IBlockScoped {
+	
+	open val flameSpreadDegree = ItemAttributeNamed<Float>("flame_spread_degree")
 	
 	
-	context(attrs: IKeyValueMap)
-	var redirectedFlameSizeMult: Number?
-		get() = attrs.getTyped("redirected_flame_size_mult")
-		set(value) = attrs.setNullable("redirected_flame_size_mult", value)
+	open val redirectedFlameSizeMult = ItemAttributeNamed<Float>("redirected_flame_size_mult")
 	
 	/**
 	 * Bonus:
@@ -261,78 +364,48 @@ object FlamesAttributes {
 	 *
 	 * 	- In-Game: "N% less flame spread area"
 	 */
-	val flameSize get() = BonusPenalty<Number, Number>("flame size bonus", "flame size penalty")
+	open val flameSize = BonusPenalty(
+		ItemAttributeNamed<Float>("flame size bonus"),
+		ItemAttributeNamed<Float>("flame size penalty")
+	)
 	
 	
-	context(attrs: IKeyValueMap)
-	var multEndFlameSize: Number?
-		get() = attrs.getTyped("mult_end_flame_size")
-		set(value) = attrs.setNullable("mult_end_flame_size", value)
+	open val multEndFlameSize = ItemAttributeNamed<Float>("mult_end_flame_size")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameIgnorePlayerVelocity: Int?
-		get() = attrs.getTyped("flame_ignore_player_velocity")
-		set(value) = attrs.setNullable("flame_ignore_player_velocity", value)
+	open val flameIgnorePlayerVelocity = ItemAttributeNamed<Float>("flame_ignore_player_velocity")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameReflectionAddLifeTime: Int?
-		get() = attrs.getTyped("flame_reflection_add_life_time")
-		set(value) = attrs.setNullable("flame_reflection_add_life_time", value)
+	open val flameReflectionAddLifeTime = ItemAttributeNamed<Float>("flame_reflection_add_life_time")
 	
 	
-	context(attrs: IKeyValueMap)
-	var reflectedFlameDmgReduction: Number?
-		get() = attrs.getTyped("reflected_flame_dmg_reduction")
-		set(value) = attrs.setNullable("reflected_flame_dmg_reduction", value)
+	open val reflectedFlameDmgReduction = ItemAttributeNamed<Float>("reflected_flame_dmg_reduction")
 	
 	
-	context(attrs: IKeyValueMap)
-	var maxFlameReflectionCount: Int?
-		get() = attrs.getTyped("max_flame_reflection_count")
-		set(value) = attrs.setNullable("max_flame_reflection_count", value)
+	open val maxFlameReflectionCount = ItemAttributeNamed<Int>("max_flame_reflection_count")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameReflectOnCollision: Boolean?
-		get() = attrs.getTyped("flame_reflect_on_collision", BinaryIntCodec)
-		set(value) = attrs.setNullable("flame_reflect_on_collision", value, BinaryIntCodec)
+	open val flameReflectOnCollision = ItemAttributeNamed<Boolean>("flame_reflect_on_collision")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameSpeed: Int?
-		get() = attrs.getTyped("flame_speed")
-		set(value) = attrs.setNullable("flame_speed", value)
+	open val flameSpeed = ItemAttributeNamed<Float>("flame_speed")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameLifetime: Int?
-		get() = attrs.getTyped("flame_lifetime")
-		set(value) = attrs.setNullable("flame_lifetime", value)
+	open val flameLifetime = ItemAttributeNamed<Float>("flame_lifetime")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameRandomLifeTimeOffset: Int?
-		get() = attrs.getTyped("flame_random_life_time_offset")
-		set(value) = attrs.setNullable("flame_random_life_time_offset", value)
+	open val flameRandomLifeTimeOffset = ItemAttributeNamed<Float>("flame_random_life_time_offset")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameGravity: Int?
-		get() = attrs.getTyped("flame_gravity")
-		set(value) = attrs.setNullable("flame_gravity", value)
+	open val flameGravity = ItemAttributeNamed<Float>("flame_gravity")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameDrag: Int?
-		get() = attrs.getTyped("flame_drag")
-		set(value) = attrs.setNullable("flame_drag", value)
+	open val flameDrag = ItemAttributeNamed<Float>("flame_drag")
 	
 	
-	context(attrs: IKeyValueMap)
-	var flameUpSpeed: Int?
-		get() = attrs.getTyped("flame_up_speed")
-		set(value) = attrs.setNullable("flame_up_speed", value)
+	open val flameUpSpeed = ItemAttributeNamed<Float>("flame_up_speed")
+
+	
+}
 }
 

@@ -1,13 +1,21 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
 import btpos.source.vdfdsl.tf2.filegeneration.hierarchiesByName
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
+import java.util.stream.Collectors.toList
+import kotlin.collections.map
 
-class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, vararg attrs: ISortedNamedAttribute, val _note: String? = null)
-	: NamedAttributeScope(scopeName, attrs = attrs, mutableListOf<String>().apply { _note?.let { add(it) } })
+class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, vararg attrs: ISortedNamedAttribute, notes: List<String> = emptyList())
+	: NamedAttributeScope(scopeName, attrs = attrs, notes)
 {
 	fun getParentsRecursive(): Sequence<HierarchyNamedAttributeScope> {
-		return generateSequence(this.extendsFrom?.let { hierarchiesByName[it] }) { it.extendsFrom?.let { that -> hierarchiesByName[that] } }
+		return generateSequence(getParent()) { it.getParent() }
+	}
+	
+	fun getParent(): HierarchyNamedAttributeScope? {
+		return this.extendsFrom?.let { hierarchiesByName[it] }
 	}
 	
 	init {
@@ -15,31 +23,82 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 	}
 	
 	override fun clone(): ISortedNamedAttribute {
-		return HierarchyNamedAttributeScope(_scopeName, extendsFrom, attrs=attrs.map { it.clone() }.toTypedArray(), _note)
+		return HierarchyNamedAttributeScope(_scopeName, extendsFrom, attrs=attrs.map { it.clone() }.toTypedArray(), notes)
 	}
 	
-	override fun generateTopLevelMembers(): List<String> {
-		val inherited = getParentsRecursive().flatMap { it.attrs }.toList()
-		
-		fun getOverriddenAttribute(attr: ISortedNamedAttribute): ISortedNamedAttribute? {
-			return inherited.firstOrNull { it.varName == attr.varName }
-		}
-		
-		// For the comments: if it extends a property, tack on the parent's entire comment and don't use any innate description, and also tack on its notes.
-		val attrsInBody = attrs.joinToString("\n\n") { attr ->
-			val overridesAttr = getOverriddenAttribute(attr)
-			val comment = ISortedNamedAttribute.buildComment(overridesAttr?.let { overridden -> overridden.innateDescription + "" + overridden.notes + attr.notes }
-			                                                 ?: (attr.innateDescription + "" + attr.notes))
-			
-			comment + "\n" + attr.propertyString(overridesAttr != null)
-		}
-		
-		return listOf(
-			ISortedNamedAttribute.buildComment(this.innateDescription) + "\n" +
-			"""interface $clsname : ${extendsFrom?.let { "${it}Attributes, " } ?: ""}IBlockScoped {
-	companion object : $clsname
-	
-${attrsInBody.prependIndent("\t")}
-}""") + attrs.filter { getOverriddenAttribute(it) == null }.flatMap { it.generateTopLevelMembers() }
+	override fun generateNestedTypes(baseHierarchyItem: HierarchyNamedAttributeScope, currentPath: List<String>): List<ClassBuilder> {
+		return emptyList()
 	}
+	
+	private var cacheTopLevelMember: ClassBuilder? = null
+	
+	override fun generateTopLevelType(): ClassBuilder {
+		cacheTopLevelMember?.let {
+			return it;
+		}
+		
+		// what do I need to do here?
+		
+		/*
+		1. Make sure any attributes that are base-level are JUST overridden with additional documentation
+			and NOT actually given new items
+		2. Store all custom attributes in the companion object
+		3. Make the interface extend its parent, and include getters that wire to the items in the companion
+		4. Put any nested types in here
+		5. For the entire tree of nested classes coming from here, make sure that any type that exists in
+			the parent version of this is extended by this subclass's nested version
+		 */
+		
+		
+		
+		val interfaceBuilder = ClassBuilder(clsname, ClassBuilder.Type.INTERFACE)
+		
+		val directParent = getParent()?.generateTopLevelType()
+		val allParents = getParentsRecursive().map { it.generateTopLevelType() }.toList()
+		
+		
+		fun PropertyBuilder.isOverridden() = allParents.any { this in it }
+		
+		
+		val attrProperties = attrs.map { it.propertyBuilder() }
+		
+		interfaceBuilder.companionObject = ClassBuilder("", ClassBuilder.Type.COMPANION_OBJECT) {
+			addProperties(
+				if (allParents.isEmpty())
+					attrProperties
+				else
+					attrProperties.filterNot { it.isOverridden() }
+			)
+		}
+		
+		interfaceBuilder.addProperties(
+			if (allParents.isEmpty()) {
+				attrProperties.onEach {
+					it.modality = PropertyBuilder.Modality.OPEN
+				}
+			} else {
+				attrProperties.map { prop ->
+					
+					prop.copy().apply {
+						if (isOverridden()) {
+							modality = PropertyBuilder.Modality.OVERRIDE
+							delegatesToSuper = true
+						} else {
+							modality = PropertyBuilder.Modality.OPEN
+						}
+					}
+				}
+			}
+		)
+		
+		interfaceBuilder.addNestedClasses(attrs.asSequence().filterIsInstance<NamedAttributeScope>().flatMap {
+			it.generateNestedTypes(this, emptyList())
+		}.map { it.copy() }.asIterable())
+		
+		return interfaceBuilder.also {
+			cacheTopLevelMember = it
+		}
+	}
+	
+	
 }

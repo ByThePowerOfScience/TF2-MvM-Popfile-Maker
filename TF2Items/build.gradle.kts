@@ -1,5 +1,6 @@
 plugins {
 	id("general-convention")
+	kotlin("plugin.assignment") version libs.versions.kotlin
 }
 
 group = Constants.Groups.TF2
@@ -19,6 +20,10 @@ dependencies {
 	testImplementation(platform("org.junit:junit-bom:6.0.0"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+assignment {
+	annotations("btpos.source.vdfdsl.tf2.itemattributes.SupportsCustomAssignment")
 }
 
 sourceSets.main {

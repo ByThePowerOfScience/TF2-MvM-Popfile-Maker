@@ -1,49 +1,42 @@
 package btpos.source.vdfdsl.tf2.itemattributes.impl
 
-import btpos.source.vdfdsl.modeling.IKeyValueMap
+import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
+import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
+import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 
-class BonusPenalty<I, D>(private val increase_attrName: String, private val decrease_attrName: String) {
-	context(attrs: IKeyValueMap)
-	var bonus: I?
-		get() = attrs.getTyped(increase_attrName)
-		set(value) = attrs.setNullable(increase_attrName, value)
+open class BonusPenalty<T : Any>(
+	/**
+	 * The version of this attribute that's called a positive effect in the description.  Does not change the calculation.
+	 *
+	 * e.g. `fireDelay.bonus = 0.6` is called "+40% firing speed", but it's still a 0.6x multiplier to fire delay.
+	 */
+	val bonus: ItemAttributeNamed<T>,
+	/**
+	 * The version of this attribute that's called a negative effect in the description.  Does not change the calculation.
+	 *
+	 * e.g. `fireDelay.penalty = 1.6` is called "-60% firing speed", but it's still a 1.6x multiplier to fire delay.
+	 */
+	val penalty: ItemAttributeNamed<T>,
+) : ItemAttribute<T> {
+	context(attrs: IAttributeContainer)
+	override fun assign(value: T?) {
+		bonus.assign(value)
+	}
 	
-	context(attrs: IKeyValueMap)
-	var penalty: D?
-		get() = attrs.getTyped(decrease_attrName)
-		set(value) = attrs.setNullable(decrease_attrName, value)
+	context(attrs: IAttributeContainer)
+	override fun get(): T? {
+		return bonus.get()
+	}
 }
 
-inline fun <I, D> BonusPenalty<I, D>.invoke(configure: BonusPenalty<I, D>.() -> Unit) {
-    apply(configure)
-}
-
-class BonusPenalty_BonusNested<I, D>(val bonus: I, private val decrease_attrName: String) {
-	context(attrs: IKeyValueMap)
-	var penalty: D?
-		get() = attrs.getTyped(decrease_attrName)
-		set(value) = attrs.setNullable(decrease_attrName, value)
-}
-
-inline fun <I, D> BonusPenalty_BonusNested<I, D>.invoke(configure: BonusPenalty_BonusNested<I, D>.() -> Unit) {
-	apply(configure)
-}
-
-
-class BonusPenalty_PenaltyNested<I, D>(private val increase_attrName: String, val penalty: D) {
-	context(attrs: IKeyValueMap)
-	var bonus: I?
-		get() = attrs.getTyped(increase_attrName)
-		set(value) = attrs.setNullable(increase_attrName, value)
-}
-
-inline fun <I, D> BonusPenalty_PenaltyNested<I, D>.invoke(configure: BonusPenalty_PenaltyNested<I, D>.() -> Unit) {
-	apply(configure)
-}
-
-
-class BonusPenalty_BothNested<I, D>(val bonus: I, val penalty: D)
-
-inline fun <I, D> BonusPenalty_BothNested<I, D>.invoke(configure: BonusPenalty_BothNested<I, D>.() -> Unit) {
-	apply(configure)
-}
+class BonusPenaltyHidden<T : Any, HIDDEN : ItemAttribute<T>>(
+	bonus: ItemAttributeNamed<T>,
+	penalty: ItemAttributeNamed<T>,
+	
+	/**
+	 * The version of this attribute that's is not displayed in the description.
+	 *
+	 * e.g. `fireRate.hidden = 1.6` is a 1.6x multiplier to fire delay, just like `fireRate.bonus` and `fireRate.penalty`.
+	 */
+	val hidden: HIDDEN
+) : BonusPenalty<T>(bonus, penalty)

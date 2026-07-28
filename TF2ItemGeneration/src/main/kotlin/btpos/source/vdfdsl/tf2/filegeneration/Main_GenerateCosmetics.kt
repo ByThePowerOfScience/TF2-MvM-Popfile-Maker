@@ -207,7 +207,8 @@ fun generateAttributesNotes(parsedItemSchema: VDFSubtree, outputFile: Path) {
 	val attrsByClass = MyNotesFormatted.attrsByClass
 	
 	fun getParentOfTFClass(tfclass: String): HierarchyAttrClassScope? {
-		val parentName = hierarchy.entries.firstOrNull { (_, v) -> tfclass in v }?.key ?: return null;
+		val parentName = hierarchy.getParent(tfclass)
+		                 ?: return null;
 		
 		return attrsByClass.first { it.name == parentName } as HierarchyAttrClassScope
 	}
