@@ -53,12 +53,9 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 		
 		val interfaceBuilder = ClassBuilder(clsname, ClassBuilder.Type.INTERFACE)
 		
-		val directParent = getParent()?.generateTopLevelType()
 		val allParents = getParentsRecursive().map { it.generateTopLevelType() }.toList()
 		
-		
 		fun PropertyBuilder.isOverridden() = allParents.any { this in it }
-		
 		
 		val attrProperties = attrs.map { it.propertyBuilder() }
 		
