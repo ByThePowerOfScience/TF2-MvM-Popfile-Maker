@@ -103,9 +103,15 @@ object UsefulWikiTableParser {
 				val desc = englishInGameDesc.find(it)?.groupValues?.get(1)
 				val cls = attrClass.find(it)?.groupValues?.get(1) ?: return@mapNotNull null
 				val valuetype = valueType.find(it)?.groupValues?.get(1) ?: return@mapNotNull null
-				val effecttype = effectType.find(it)?.groupValues?.get(1)
+				val effecttype = effectType.find(it)?.groupValues?.get(1).let {
+					when (it?.lowercase()) {
+						"positive" -> NamedAttribute.EffectType.Positive
+						"negative" -> NamedAttribute.EffectType.Negative
+						else -> NamedAttribute.EffectType.Neutral
+					}
+				}
 				
-				NamedAttribute(attrName = name, inGameDesc = desc, attrType = valuetype, className = cls, effectType = effecttype.orEmpty()) to desc?.takeIf { !it.startsWith("Attrib_") }?.replace("'''%s1'''", "N")
+				NamedAttribute(attrName = name, inGameDesc = desc, attrType = valuetype, className = cls, effectType = effecttype, isHidden = null) to desc?.takeIf { !it.startsWith("Attrib_") }?.replace("'''%s1'''", "N")
 			}
 	}
 }

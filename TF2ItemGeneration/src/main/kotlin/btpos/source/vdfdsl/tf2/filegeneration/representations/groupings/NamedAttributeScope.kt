@@ -21,6 +21,8 @@ open class NamedAttributeScope(
 ) : ISortedNamedAttribute {
 	val scopeName = _scopeName.sanitize().overrideScopeName()
 	
+	
+	
 	override val varName: String = (_varName?.overrideScopeName() ?: this.scopeName).decapitalize()
 	
 	override fun clone(): ISortedNamedAttribute {

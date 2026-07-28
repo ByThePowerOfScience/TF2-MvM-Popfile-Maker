@@ -1,5 +1,7 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
+import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
+
 object Overrides {
 	/**
 	 * Attribute name to additional comment
@@ -47,6 +49,32 @@ val overrideVarNames: Map<String, String> = mapOf(
 val overrideScopeNames = mapOf(
 	"MedigunChargeIsCritBoost" to "UberchargeType"
 )
+
+
+private val attrClass_to_createScopeForItsItems = mapOf(
+	"set_buff_type" to { it: List<NamedAttribute> ->
+		listOf(NamedAttributeScope(
+			"BuffType",
+			*it.toTypedArray()
+		))
+	}
+).withDefault {
+	{ listOf(NamedAttributeScope(it.first().varName.capitalize(), *it.toTypedArray())) }
+}
+
+private val attrClassesThatShouldBeSeparate = setOf<String>(
+
+)
+
+/**
+ * Create some combined representation for these attributes in the same attribute class.
+ *
+ * This is here because we need to override the name with something hand-picked for the scope in [attrClass_to_createScopeForItsItems]
+ */
+fun fabricateScope(attrClass: String, attrsOfSameClass: List<NamedAttribute>): List<ISortedNamedAttribute> {
+	val scopeCtor = attrClass_to_createScopeForItsItems.getValue(attrClass)
+	return scopeCtor(attrsOfSameClass)
+}
 
 fun String.overrideScopeName() = (overrideScopeNames[this] ?: this)
 

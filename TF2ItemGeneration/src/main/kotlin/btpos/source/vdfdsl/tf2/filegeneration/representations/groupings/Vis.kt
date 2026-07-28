@@ -8,9 +8,8 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.sanitize
 
 class Vis(
-	val visible: NamedAttribute,
-	val hidden: NamedAttribute,
-	val additionalItems: List<NamedAttribute>,
+	val visible: ISortedNamedAttribute,
+	val hidden: ISortedNamedAttribute,
 	val _varName: String
 ) : ISortedNamedAttribute {
 	init {
@@ -22,17 +21,14 @@ class Vis(
 	}
 	
 	override fun toString(): String {
-		return """Vis($visible, $hidden, listOf(${additionalItems.joinToString(", ")}), "$varName")"""
+		return """Vis($visible, $hidden, "$varName")"""
 	}
 	
 	override fun clone(): ISortedNamedAttribute {
-		return Vis(visible.clone() as NamedAttribute, hidden.clone() as NamedAttribute, additionalItems.map { it.clone() } as List<NamedAttribute>, _varName)
+		return Vis(visible.clone(), hidden.clone(), _varName)
 	}
 	
 	override val varName: String =  visible.varName.sanitize().overrideVarName()
-	
-	
-	constructor(visible: NamedAttribute, hidden: NamedAttribute, vararg additionalItems: NamedAttribute, varName: String = visible.varName) : this(visible, hidden, additionalItems.asList(), varName)
 	
 	override val innateDescription: List<String> = buildList {
 		add("Visible:")
@@ -40,11 +36,6 @@ class Vis(
 		add("")
 		add("Hidden:")
 		addAll(hidden.innateDescription.filter { it.isNotBlank() }.map { "\t- $it" })
-		for (item in additionalItems) {
-			add("")
-			add(item.varName.capitalize() + ":")
-			addAll(item.innateDescription.filter { it.isNotBlank() }.map { "\t- $it" })
-		}
 	}
 	
 	
@@ -53,27 +44,13 @@ class Vis(
 			field = value
 			visible.notes = value
 			hidden.notes = value
-			additionalItems.forEach { it.notes = value }
 		}
 	
-	val customClassName = if (additionalItems.isNotEmpty()) {
-		varName.capitalize() + "Attributes"
-	} else null
-	
-	
-	fun inheritedTemplate(): String {
-		val attrsInBody = additionalItems.joinToString("\n\n") {
-			it.propertyBuilder().build()
-		}
-		
-		return """class $customClassName<VIS : Any>(vis_attrName: String, hidden_attrName: String) : VisHidden<VIS, HIDDEN>(vis_attrName, hidden_attrName) {
-${attrsInBody.prependIndent("\t")}
-}"""
-	}
 	
 	// TODO I think all of this - going from the attr classes to the attributes, using groupings of the attr classes - might have been wrong.
 	//  maybe this should have generated named attribute entries that I could then edit by hand...
 	//  idk maybe not actually ifkdnlaknkldmfkjwerqnf alkdsbdsnfalkjdnkmJF,;LASKBjlqewn.nSLM/FKD,bn;ajidWKLS;filgYSDAK
+	
 	
 	
 	override fun propertyBuilder(): PropertyBuilder {
@@ -83,12 +60,7 @@ ${attrsInBody.prependIndent("\t")}
 	}
 	
 	override fun generateTopLevelMembers(): List<String> {
-		return (visible.generateTopLevelMembers() + hidden.generateTopLevelMembers() + additionalItems.flatMap { it.generateTopLevelMembers() }).let {
-			if (customClassName != null)
-				it + inheritedTemplate()
-			else
-				it
-		}
+		return (visible.generateTopLevelMembers() + hidden.generateTopLevelMembers())
 	}
 	
 	override fun getKotlinType(): String {
@@ -98,7 +70,5 @@ ${attrsInBody.prependIndent("\t")}
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {
 		hidden.setCodec(codec)
 		visible.setCodec(codec)
-		additionalItems.forEach { it.setCodec(codec) }
 	}
-	
 }

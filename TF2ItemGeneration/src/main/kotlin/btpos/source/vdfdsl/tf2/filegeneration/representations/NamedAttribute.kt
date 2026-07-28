@@ -12,10 +12,18 @@ data class NamedAttribute(
 	val attrType: String,
 	val className: String,
 	val inGameDesc: String?,
+	val isHidden: Boolean?,
 	/** positive, negative, or null */
-	val effectType: String? = null,
+	val effectType: EffectType = EffectType.Neutral,
 	val armory_desc: ArmoryDesc? = null
 ) : ISortedNamedAttribute {
+	enum class EffectType {
+		Positive,
+		Negative,
+		Neutral;
+	}
+	
+	
 	override fun clone(): ISortedNamedAttribute {
 		return this.copy().also {
 			it.forceType = forceType
@@ -33,13 +41,6 @@ data class NamedAttribute(
 	override val innateDescription: List<String> = listOfNotNull(inGameDesc).map { "In-Game: \"$it\"" }
 	
 	override var notes: List<String> = listOf()
-	
-	
-	val positiveOrNegative get() = when (effectType) {
-		"positive" -> true
-		"negative" -> false
-		else -> null
-	}
 	
 	override fun getKotlinType(): String {
 		if (codec != null) // trust codecs over attribute class notes

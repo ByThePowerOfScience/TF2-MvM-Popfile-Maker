@@ -1,6 +1,5 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
-import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
@@ -9,40 +8,70 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.sanitize
 
 /**
- * Penalty and bonus combined into a single little namespace
+ * Different description variants of the same attribute class, all combined into a single little namespace
  */
 data class PenaltyBonus(
-	val penalty: ISortedNamedAttribute,
-	val bonus: ISortedNamedAttribute,
-	val hidden: ISortedNamedAttribute?,
+	val penalty: ISortedNamedAttribute? = null,
+	val bonus: ISortedNamedAttribute? = null,
+	val neutral: ISortedNamedAttribute? = null,
+	val hidden: ISortedNamedAttribute? = null,
 	val desc: String? = null
 ) : ISortedNamedAttribute {
-	override val varName: String
-		get() = penalty.varName.sanitize().overrideVarName()
+	private val list = listOfNotNull(penalty, bonus, neutral, hidden)
+	
+	override val varName: String = list.first().varName.sanitize().overrideVarName()
 	
 	init {
-		require(bonus.getKotlinType() == penalty.getKotlinType()) {
+		require(list.size > 1) {
+			"PenaltyBonus constructed with only a single element: ${list.first()}"
+		}
+		
+		require(list.zipWithNext { a, b -> a.getKotlinType() == b.getKotlinType() }.all { it }) {
 			"Bonus and penalty types do not match, needs an override in btpos/source/vdfdsl/tf2/filegeneration/representations/Overrides.kt\n" +
-			"Bonus (${bonus.getKotlinType()}): $bonus\n" +
-			"Penalty (${penalty.getKotlinType()}): $penalty"
+			"Bonus (${bonus?.getKotlinType()}): $bonus\n" +
+			"Penalty (${penalty?.getKotlinType()}): $penalty\n" +
+			"Neutral (${neutral?.getKotlinType()}): $neutral\n" +
+			"Hidden (${hidden?.getKotlinType()}): $hidden"
 		}
 	}
 	
 	
 	
 	companion object {
-		const val NEITHER_NESTED = "BonusPenalty"
+		const val BONUSPENALTY = "BonusPenalty"
+		const val BONUSNEUTRAL = "BonusNeutral"
+		const val PENALTYNEUTRAL = "PenaltyNeutral"
+		const val BONUSPENALTYNEUTRAL = "BonusPenaltyNeutral"
+		const val BONUSPENALTYHIDDEN = "BonusPenaltyHidden"
+		const val BONUSNEUTRALHIDDEN = "BonusNeutralHidden"
+		const val PENALTYNEUTRALHIDDEN = "PenaltyNeutralHidden"
+		const val BONUSPENALTYNEUTRALHIDDEN = "BonusPenaltyNeutralHidden"
 	}
 	
 	override fun clone(): ISortedNamedAttribute {
-		return PenaltyBonus(penalty.clone(), bonus.clone(), desc)
+		return copy()
+	}
+	
+	val classType by lazy {
+		return@lazy when {
+			bonus != null && penalty != null && neutral != null && hidden != null -> BONUSPENALTYNEUTRALHIDDEN to listOf(bonus, penalty, neutral, hidden)
+			bonus != null && penalty != null && neutral != null -> BONUSPENALTYNEUTRAL to listOf(bonus, penalty, neutral)
+			penalty != null && neutral != null && hidden != null -> PENALTYNEUTRALHIDDEN to listOf(penalty, neutral, hidden)
+			bonus != null && penalty != null && hidden != null -> BONUSPENALTYHIDDEN to listOf(bonus, penalty, hidden)
+			bonus != null && neutral != null && hidden != null -> BONUSNEUTRALHIDDEN to listOf(bonus, neutral, hidden)
+			bonus != null && penalty != null -> BONUSPENALTY to listOf(bonus, penalty)
+			bonus != null && neutral != null -> BONUSNEUTRAL to listOf(bonus, neutral)
+			penalty != null && neutral != null -> PENALTYNEUTRAL to listOf(penalty, neutral)
+			else -> error("Not enough things: $this")
+		}
 	}
 	
 	val propertyBuilder by lazy {
-		PropertyBuilder(varName, "$NEITHER_NESTED<${getKotlinType()}>") {
-			initializer = "$NEITHER_NESTED(\n" +
-			              "\t${bonus.propertyBuilder().initializer},\n" +
-			              "\t${penalty.propertyBuilder().initializer}\n" +
+		val hiddenTypeParam = if (hidden == null) "" else ", ${hidden.propertyBuilder().kType}"
+		
+		PropertyBuilder(varName, "${classType.first}<${getKotlinType()}$hiddenTypeParam>") {
+			initializer = "${classType.first}(\n" +
+			                "\t" + classType.second.joinToString(",\n\t") + ",\n" +
 			              ")"
 		}
 	}
@@ -52,34 +81,35 @@ data class PenaltyBonus(
 	
 	
 	override fun generateTopLevelMembers(): List<String> {
-		return penalty.generateTopLevelMembers() + bonus.generateTopLevelMembers()
+		return classType.second.flatMap { it.generateTopLevelMembers() }
 	}
 	
 	override val innateDescription: List<String>
 		get() = buildList {
-			add("Bonus:")
-			addAll(bonus.innateDescription.filter { it.isNotBlank() }.map { if (!it.trimStart().startsWith("- ")) "- $it" else it  }.map { "\t" + it })
-			add("")
-			add("Penalty:")
-			addAll(penalty.innateDescription.filter { it.isNotBlank() }.map { if (!it.trimStart().startsWith("- ")) "- $it" else it  }.map { "\t" + it })
+			fun doThing(name: String, it: ISortedNamedAttribute?) {
+				if (it != null) {
+					add(name + ":")
+					addAll(it.innateDescription.filter { it.isNotBlank() }.map { if (!it.trimStart().startsWith("- ")) "- $it" else it  }.map { "\t" + it })
+				}
+			}
+			
+			doThing("Bonus", bonus)
+			doThing("Penalty", penalty)
+			doThing("Neutral", neutral)
+			doThing("Hidden", hidden)
 		}
 	
 	override var notes: List<String> = listOf()
 		set(value) {
 			field = value
-			penalty.notes = value
-			bonus.notes =value
+			list.forEach { it.notes = value }
 		}
 	
-	
-	
-	
 	override fun getKotlinType(): String {
-		return bonus.getKotlinType()
+		return list.first().getKotlinType()
 	}
 	
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {
-		bonus.setCodec(codec)
-		penalty.setCodec(codec)
+		list.forEach { it.setCodec(codec) }
 	}
 }

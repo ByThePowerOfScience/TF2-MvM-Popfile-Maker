@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
+import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.asString
 import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.backing.getSubtree
@@ -7,6 +8,8 @@ import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute.EffectType
+import btpos.source.vdfdsl.tf2.filegeneration.representations.fabricateScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyBonus
@@ -19,6 +22,7 @@ import java.nio.file.Path
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.mapNotNull
+import kotlin.contracts.Effect
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
@@ -40,7 +44,7 @@ fun main() {
 	// get all attributes, but with the descriptions from the ones used in-game
 	val namedAttributesInGameDescriptions = UsefulWikiTableParser.parseWiki().associate { it.first.attrName to it.second }.filterValues { it != null && !it.startsWith("Attrib_") } as Map<String, String>
 	
-	val allNamedAttributes = convertAttributesFromSchema(namedAttributesInGameDescriptions)
+	val allNamedAttributes = convertAttributesFromSchema(namedAttributesInGameDescriptions, getItemSchema().getSubtree("attributes")!!)
 	
 	generateItemAttributes(
 		Path(BuildConfig.OUT_DIR),
@@ -55,8 +59,11 @@ fun main() {
 	)
 }
 
-fun convertAttributesFromSchema(inGameDescriptionsByAttributeName: Map<String, String>): List<NamedAttribute> {
-	return getItemSchema().getSubtree("attributes")!!.map { (_id, schema) ->
+/**
+ * @param schema The "attributes" subtree (without that key) from either the item schema or some other "item schema"-like definition for attributes.
+ */
+fun convertAttributesFromSchema(inGameDescriptionsByAttributeName: Map<String, String>, schema: VDFSubtree): List<NamedAttribute> {
+	return schema.map { (_id, schema) ->
 			val schema: Map<String, String?> = schema.asSubtree!!.associate { it.key.stringValue to it.value.asString }.withDefault { "" }
 			val name: String by schema
 			val attribute_class: String by schema
@@ -72,8 +79,13 @@ fun convertAttributesFromSchema(inGameDescriptionsByAttributeName: Map<String, S
 				inGameDesc = description_string,
 				attrType = description_format.removePrefix("value_is_"),
 				className = attribute_class,
-				effectType = effect_type,
-				armory_desc = ArmoryDesc(armory_desc)
+				effectType = when (effect_type?.lowercase()) {
+					"positive" -> EffectType.Positive
+					"negative" -> EffectType.Negative
+					else -> EffectType.Neutral
+				},
+				armory_desc = ArmoryDesc(armory_desc),
+				isHidden = hidden?.let { it != "0" }
 			)
 		}
 }
@@ -95,7 +107,6 @@ fun generateItemAttributes(
 	 * See [MyNotesFormatted] for an example, and make sure to use the names established there if you're generating attributes yourself.
 	 */
 	attrClassUsagesByBaseClass: List<IAttrClassScope>,
-	isExtension: Boolean = false,
 	/**
 	 * Make sure all scopes defined in a superclass are mirrored in all subclasses, and any properties referencing the superclass's version of a class are overridden to reference the new one.
 	 *
@@ -158,6 +169,7 @@ fun generateItemAttributes(
 	 */
 	val namedAttributeScopesByClassName: Map<String, List<ISortedNamedAttribute>> =
 			allNamedAttributes
+				.asSequence()
 			.filter { it.className != "set_detonate_mode" } // doing these by hand in additionalWeaponModes.kt
 			.onEach {
 				when (it.attrName) {
@@ -166,47 +178,82 @@ fun generateItemAttributes(
 				}
 			}
 			.groupBy { it.className }
-			.mapValues<_, _, List<ISortedNamedAttribute>> { (clsName, attrsForAClass) ->
+			.mapValues<_, _, List<ISortedNamedAttribute>> { (clsName, attrsForThisAttrClass) ->
 				if (clsName == "set_weapon_mode")
-					return@mapValues attrsForAClass
+					return@mapValues attrsForThisAttrClass // dump them all separately
 				
-				if (attrsForAClass.size == 1)
-					return@mapValues attrsForAClass
-				
-				
-				val groupedByPositiveOrNegative = attrsForAClass.groupBy { it.positiveOrNegative }
-				if (groupedByPositiveOrNegative.size == 1) {
-					return@mapValues groupedByPositiveOrNegative.values.single()
+				if (attrsForThisAttrClass.size == 1) {
+					return@mapValues attrsForThisAttrClass // just the one
 				}
-				return@mapValues listOf(groupedByPositiveOrNegative.mapValues { (isPos, posOrNegItems) ->
-					if (posOrNegItems.isEmpty())
-						error("I don't think this should happen but posneg is empty list for $isPos for $attrsForAClass")
-					else if (posOrNegItems.size == 1) {
-						return@mapValues posOrNegItems.single()
-					}
-					
-					val isHidden = posOrNegItems.groupBy { "hidden" in it.attrName.lowercase() }
-					when (isHidden.size) {
-						1 -> isHidden.values.first()
-							.first()
-						2 -> Vis(isHidden[false]!!.first(), isHidden[true]!!.first())
-						else -> NamedAttributeScope(posOrNegItems.first().varName.let { removeFromPBName.fold(it) { it, re -> it.replace(re, "") } }, *posOrNegItems.toTypedArray())
-					}
-				}
-					.let { sortedByIsPositive ->
-						if (sortedByIsPositive.size == 1) {
-							return@let sortedByIsPositive.values.single()
+				
+				val isPos = 0; val isNeg = 1; val isNeu = 2; val isHidden = 3
+				val groupedByPosNegNeutral = attrsForThisAttrClass.groupBy {
+					when {
+						it.isHidden == true -> isHidden
+						else -> when (it.effectType) {
+							EffectType.Positive -> isPos
+							EffectType.Negative -> isNeg
+							EffectType.Neutral -> isNeu
 						}
-						// convert this into a PenaltyBonus
-						if (true in sortedByIsPositive && false in sortedByIsPositive && null !in sortedByIsPositive) {
+					}
+				}
+				
+				// If we have multiple bonuses or multiple penalties and they're not just hidden, we should just assign a custom scope
+				if (groupedByPosNegNeutral.any { it.key != isHidden && it.value.size > 1 }) {
+					return@mapValues fabricateScope(clsName, attrsForThisAttrClass)
+				}
+				
+				fun groupHiddenItemsIntoPenaltyBonus(allHidden: List<NamedAttribute>): ISortedNamedAttribute {
+					return when (allHidden.size) {
+						1 -> allHidden.single()
+						// Make hidden items into a nested PenaltyBonus
+						else -> allHidden.groupBy { it.effectType }.let {
 							PenaltyBonus(
-								sortedByIsPositive[false]!!,
-								sortedByIsPositive[true]!!
+								penalty=it[EffectType.Negative]?.single(),
+								bonus=it[EffectType.Positive]?.single(),
+								neutral=it[EffectType.Neutral]?.single(),
 							)
-						} else {
-							NamedAttributeScope(sortedByIsPositive.values.first().varName.capitalize(), *sortedByIsPositive.values.toTypedArray())
 						}
-					})
+					}
+				}
+				
+				
+				/*
+				Variants:
+				- If there's only 1 attribute in the class, just return that attribute
+				- If there's only 1 positive/negative/neutral + some hiddens -> Vis
+				- Else if there's some combination of positive, negative, neutral, hidden, make it a PenaltyBonus
+					- If there are multiple hidden, make the hidden ALSO a PenaltyBonus
+				 */
+				when (groupedByPosNegNeutral.size) {
+					1 -> attrsForThisAttrClass // if they're all one type, just do them separately
+					2 -> {
+						if (isHidden in groupedByPosNegNeutral) { // if there's just a hidden and a visible, do Vis
+							val notHidden = groupedByPosNegNeutral.entries.first { it.key != isHidden }.value.single()
+							val hidden = groupedByPosNegNeutral[isHidden]!!.let { allHidden ->
+								groupHiddenItemsIntoPenaltyBonus(allHidden)
+							}
+							
+							return@mapValues listOf(Vis(notHidden, hidden, clsName))
+						}
+						// Else it's a custom PenaltyBonus
+						return@mapValues listOf(PenaltyBonus(
+							groupedByPosNegNeutral[isNeg]?.single(),
+							groupedByPosNegNeutral[isPos]?.single(),
+							groupedByPosNegNeutral[isNeu]?.single(),
+						))
+					}
+					else -> {
+						listOf(
+							PenaltyBonus(
+								groupedByPosNegNeutral[isNeg]?.single(),
+								groupedByPosNegNeutral[isPos]?.single(),
+								groupedByPosNegNeutral[isNeu]?.single(),
+								groupedByPosNegNeutral[isHidden]?.let { groupHiddenItemsIntoPenaltyBonus(it) }
+							)
+						)
+					}
+				}
 			}
 	
 
