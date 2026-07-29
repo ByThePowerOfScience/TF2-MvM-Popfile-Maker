@@ -18,12 +18,11 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyB
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Vis
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
-import com.mojang.datafixers.functions.Functions.comp
 import java.io.File
 import java.nio.file.Path
+import java.util.PriorityQueue
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.mapNotNull
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
@@ -263,13 +262,21 @@ fun generateItemAttributes(
 			}
 	
 
-	val scopes = attrClassUsagesByBaseClass.mapNotNull { baseClassScope ->
-		baseClassScope.absorb(namedAttributeScopesByClassName)
-			.singleOrNull() as NamedAttributeScope?
+	
+	/** Use sorted set to ensure that root scopes are processed before their children for [patchWithParentOverridesRecursive] */
+	val hierarchyScopes = PriorityQueue<HierarchyNamedAttributeScope>(Comparator.comparingInt { it.depth })
+	
+	val nonHierarchyScopes = mutableListOf<NamedAttributeScope>()
+	
+	attrClassUsagesByBaseClass.forEach { baseClassScope ->
+		val absorbed = baseClassScope.absorb(namedAttributeScopesByClassName)
+			               .singleOrNull() as? NamedAttributeScope?
+		when (absorbed) {
+			null -> {}
+			is HierarchyNamedAttributeScope -> hierarchyScopes.add(absorbed)
+			else -> nonHierarchyScopes.add(absorbed)
+		}
 	}
-	
-	
-	// now go through them recursively to find if they each have all things from their parent
 	
 	
 	
@@ -280,7 +287,7 @@ fun generateItemAttributes(
 			it.createDirectories()
 	}
 	
-	scopes.forEach { scope ->
+	(hierarchyScopes.asSequence() + nonHierarchyScopes.asSequence()).forEach { scope ->
 		outDir.resolve(scope.scopeName + ".kt")
 			.bufferedWriter()
 			.use { writer ->
@@ -289,7 +296,7 @@ fun generateItemAttributes(
 				
 				scope.generateTopLevelType()?.also {
 					if (scope is HierarchyNamedAttributeScope) {
-						it.withParentScopes(scope.getParent()?.generateTopLevelType() ?: return@also)
+						it.withParentScopes(scope)
 					}
 				}?.let {
 					writer.write(it.build())
@@ -305,96 +312,248 @@ fun generateItemAttributes(
 	}
 }
 
-fun ClassBuilder.withParentScopes(itsParent: ClassBuilder): ClassBuilder = apply {
-	for ((name, parentNested) in itsParent.nestedClasses) {
-		val ourNested = this.nestedClasses.computeIfAbsent(name) {
-			parentNested.copy().also {
-				it.clearBody()
+fun ClassBuilder.withParentScopes(thisScope: HierarchyNamedAttributeScope): ClassBuilder = apply {
+	val parent = thisScope.getParent() ?: return@apply;
+	
+	val parentBuilder = parent.generateTopLevelType()
+	
+	patchWithParentOverridesRecursive(thisScope, this, parentBuilder, listOf())
+}
+
+
+//fun patchWithParentOverridesRecursive(
+//	ownerParent: ClassBuilder,
+//	owner: ClassBuilder,
+//	parentVersion: ClassBuilder,
+//	ourVersion: ClassBuilder,
+//	rootParentScope: HierarchyNamedAttributeScope,
+//	pathFromRoot: List<String>
+//) {
+//
+//
+//
+//	val currentScopePath = pathFromRoot + ourVersion.name
+//
+//	ourVersion.baseClass = rootParentScope.clsname + "." + currentScopePath.joinToString(".")
+//	ourVersion.isOpen = true
+//
+//	// make sure any of our overridden properties are marked as override
+//	ourVersion.properties.values.forEach { ourProp ->
+//		if (ourProp in parentVersion || (rootParentScope.getParentsRecursive() + rootParentScope).mapNotNull { it.getNestedScope(currentScopePath) }.any { it.containsAttribute(ourProp.name) }) {
+//			ourProp.modality = PropertyBuilder.Modality.OVERRIDE
+//		}
+//	}
+//
+//
+//	val patchOwnerPropertyToReturnOurs: (String) -> Unit = if (ownerParent.type == Type.INTERFACE) {
+//		val parentCompanion: ClassBuilder = ownerParent.companionObject
+//		                                    ?: error("Parent doesn't have a companion object: $ownerParent");
+//		val ownerCompanion by lazy {
+//			owner.companionObject
+//				?: ClassBuilder.newCompanionObject().also { owner.companionObject = it }
+//		};
+//
+//		{ name ->
+//			// get property with initializer from parent's companion
+//			// add that to our companion object
+//			// add reference to that to our property
+//
+//			ownerCompanion.properties.computeIfAbsent(name) {
+//				parentCompanion.properties[name]?.copy()
+//					?.also {
+//						// properties that aren't already in there should be private so all inherited stuff doesn't show to people checking XAttributes.y
+//						it.access = PropertyBuilder.AccessModifier.PRIVATE
+//					} ?: error("No parent property '$name' found in $parentCompanion")
+//			}.isGetter = false // use raw initializer which should be the same name as our new class
+//
+//			val fromParent = ownerParent.properties[name]!!
+//
+//			owner.properties.computeIfAbsent(name) {
+//				fromParent.copy()
+//					.apply {
+//						kType = ourVersion.name
+//					}
+//			}
+//				.also {
+//					it.delegatesToSuper = false
+//					it.initializer = owner.name + "." + name
+//					it.modality = PropertyBuilder.Modality.OVERRIDE
+//				}
+//		}
+//	} else {
+//		{ propName ->
+//			owner.properties.computeIfAbsent(propName) {
+//				ownerParent.properties[it]!!.copy().apply {
+//					delegatesToSuper = false
+//				}
+//			}.apply {
+//				modality = PropertyBuilder.Modality.OVERRIDE
+//				kType = ourVersion.name
+//
+//				if (!delegatesToSuper)
+//					isGetter = false
+//			}
+//		}
+//	}
+//
+//	// force any props in our outer that construct the newly-overridden object to instantiate this one instead
+//	ownerParent.properties.values.forEach { parentProp ->
+//		if (parentProp.kType == parentVersion.name) {
+//			patchOwnerPropertyToReturnOurs(parentProp.name)
+//		}
+//	}
+//
+//	// repeat for all nested classes
+//	for ((name, parentNested) in parentVersion.nestedClasses) {
+//		val ourNested = ourVersion.nestedClasses.computeIfAbsent(name) {
+//			parentNested.copy().also { it.clearBody() }
+//		}
+//
+//		patchWithParentOverridesRecursive(parentVersion, ourVersion, parentNested, ourNested, rootParentScope, currentScopePath)
+//	}
+//
+//}
+
+/**
+ * Params:
+ * - Two classbuilders that should mirror each other: [parentVersionOfOurClass] from this hierarchy's parent, and [ourClass] from this hierarchy.
+ * - The root hierarchy scope "[ourRootScope]" that started all of this inheritance stuff. Used to fetch the parent's metadata and for pathing.
+ * - [pathFromRootToHere]: A list of namespaces that we've traversed through thus far, SAVE FOR THE ROOT NAME.  Used to fetch metadata from the parent's nested version of a given class.
+ *
+ * Purpose: make sure [ourClass] has its own version of every single nested class of [parentVersionOfOurClass], with each one of our class's nesteds extending the corresponding parent class's nested.
+ *
+ * This makes it so we can sort attributes into "categories" (said nested classes), while still letting people tack on extension properties later to _specifically_ a subclass's version of a "category".
+ *
+ * Example:
+ * ```kotlin
+ * open class WeaponBaseAttributes {
+ *   open val projectiles = WeaponBaseAttributes.ProjectileAttributes()
+ *
+ *   open class ProjectileAttributes {
+ *      // ...
+ *   }
+ * }
+ *
+ * open class BaseGunAttributes : WeaponBaseAttributes() {
+ *   override val projectiles = BaseGunAttributes.ProjectileAttributes()
+ *
+ *   // Custom label for WeaponBase's "projectile attributes" category
+ *   open class ProjectileAttributes : WeaponBaseAttributes.ProjectileAttributes()
+ * }
+ *
+ * // Example extension property for specifically BaseGun's (and subclass') "projectiles" category
+ * val BaseGunAttributes.ProjectileAttributes.foo get() = bar
+ *
+ * BaseGunAttributes().projectiles.foo // Good!
+ * WeaponBaseAttributes().projectiles.foo // NOT FOUND, which is what we want!!!
+ * ```
+ */
+fun patchWithParentOverridesRecursive(
+	ourRootScope: HierarchyNamedAttributeScope,
+	ourClass: ClassBuilder,
+	parentVersionOfOurClass: ClassBuilder,
+	pathFromRootToHere: List<String>
+) {
+	// for each nested class in the parent, add a copy of it to ours if it isn't there already, but configure both
+	for ((nestedClassName, parentNestedClass) in parentVersionOfOurClass.nestedClasses) {
+		val ourNestedClass = ourClass.nestedClasses.computeIfAbsent(nestedClassName) {
+			parentNestedClass.copy().apply {
+				properties.clear()
+				nestedClasses.clear()
+				companionObject = null
 			}
 		}
-		patchWithParentOverridesRecursive(itsParent, this, parentNested, ourNested, itsParent.name, listOf())
+		
+		val pathOfCurrentScope = pathFromRootToHere + ourNestedClass.name
+		
+		
+        ourNestedClass.apply {
+			baseClass = ourRootScope.getParent()!!.clsname + "." + pathOfCurrentScope.joinToString(".")
+			parentInterfaces -= "IBlockScoped"
+			isOpen = true
+		}
+		
+		patchWithParentOverridesRecursive(ourRootScope, ourNestedClass, parentNestedClass, pathOfCurrentScope)
+		
+		ourNestedClass.ensureOverriddenPropertiesAreMarkedOverride(ourRootScope, pathOfCurrentScope)
+		
+		
+		ourClass.redirectPropertiesToNewType(ourNestedClass, parentVersionOfOurClass)
 	}
 }
 
-/**
- * Params: two "identical" classbuilders, one from this hierarchy's parent, and one from this hierarchy.
- *
- * Purpose: make sure [ourVersion] has versions of every single class nested in [parentVersion], overriding ones from its parent
- */
-fun patchWithParentOverridesRecursive(
-	ownerParent: ClassBuilder,
-	owner: ClassBuilder,
-	parentVersion: ClassBuilder,
-	ourVersion: ClassBuilder,
-	rootParentName: String,
-	pathFromRoot: List<String>
-) {
-	val currentScopePath = pathFromRoot + ourVersion.name
+private fun ClassBuilder.ensureOverriddenPropertiesAreMarkedOverride(ourRootScope: HierarchyNamedAttributeScope, pathOfCurrentScope: List<String>) {
+	val allInheritedProperties = ourRootScope.getParentsRecursive()
+		.mapNotNull { it.getNestedScope(pathOfCurrentScope) }
+		.flatMap { it.attrs }
+		.map { it.varName }
+		.distinct()
+		.toSet()
 	
-	ourVersion.baseClass = rootParentName + "." + currentScopePath.joinToString(".")
-	ourVersion.isOpen = true
-	
-	// make sure any of our overridden properties are marked as override
-	ourVersion.properties.values.forEach {
-		if (it in parentVersion) {
-			it.modality = PropertyBuilder.Modality.OVERRIDE
+	for (prop in this.properties.values) {
+		if (prop.name in allInheritedProperties) {
+			prop.modality = PropertyBuilder.Modality.OVERRIDE
+			if (prop.kType !in this.nestedClasses)
+				prop.delegatesToSuper = true
 		}
 	}
-	
-	
-	
-	
-	val redirectOldPropertyToRedirectToOurs: (String) -> Unit = if (ownerParent.type == Type.INTERFACE) {
-		val parentCompanion: ClassBuilder = ownerParent.companionObject ?: error("Parent doesn't have a companion object: $ownerParent");
-		val ownerCompanion by lazy {
-			owner.companionObject
-				?: ClassBuilder("", Type.COMPANION_OBJECT).also { owner.companionObject = it }
-		};
-		
-		{ name ->
-			// get property with initializer from parent's companion
-			// add that to our companion object
-			// add reference to that to our property
+}
+
+fun ClassBuilder.redirectPropertiesToNewType(newType: ClassBuilder, ourParent: ClassBuilder) {
+	if (this.type != Type.INTERFACE) {
+		// we might not have every property that should be overridden in us already, so add them if we don't have them
+		ourParent.properties.values.forEach { parentProp ->
+			if (parentProp.kType != newType.name)
+				return@forEach;
 			
-			ownerCompanion.properties.computeIfAbsent(name) {
-				parentCompanion.properties[name]?.copy() ?: error("No parent property '$name' found in $parentCompanion")
-			}.isGetter = false // use raw initializer which should be the same name as our new class
-			
-			val fromParent = ownerParent.properties[name]!!
-			
-			owner.properties.computeIfAbsent(name) {
-				fromParent.copy().apply {
-					kType = ourVersion.name
+			val ourVersionOfProp = this.properties.computeIfAbsent(parentProp.name) {
+				parentProp.copy().apply {
+					kType = newType.name
 				}
-			}.also {
-				it.delegatesToSuper = false
-				it.initializer = owner.name + "." + name
-				it.modality = PropertyBuilder.Modality.OVERRIDE
 			}
-		}
-	} else {
-		{
-			owner.properties.computeIfAbsent(it) {
-				ownerParent.properties[it]!!.copy()
-			}.apply {
-				modality = PropertyBuilder.Modality.OVERRIDE
-				kType = ourVersion.name
-				delegatesToSuper = false
-				isGetter = false
-			}
-		}
-	}
-	
-	// force any props in our outer that construct the newly-overridden object to instantiate this one instead
-	ownerParent.properties.values.forEach { parentProp ->
-		if (parentProp.kType == parentVersion.name) {
-			// Add the property to the companion object
 			
-			redirectOldPropertyToRedirectToOurs(parentProp.name)
+			// force it to create our version of the object
+			ourVersionOfProp.isGetter = false
+			ourVersionOfProp.delegatesToSuper = false // should never delegate to super, because we're forcing it to have a new type
+			ourVersionOfProp.initializer = newType.name + "()"
 		}
+		
+		return;
 	}
 	
-	// repeat for all nested classes
+	// if it's an interface, we need to make two new properties:
+	//   - companion object field to hold the instance
+	//   - interface getter that delegates to that companion object field
 	
-	ourVersion.withParentScopes(parentVersion)
+	val ourCompanion = getOrCreateCompanionObject()
+	
+	val parentCompanion = ourParent.companionObject ?: error("No companion object present on interface parent $ourParent")
+	
+	for (parentItfProperty in ourParent.properties.values) {
+		if (parentItfProperty.kType == newType.name) {
+			// we might not have every property in our interface that needs to be overridden in us already, so add them if we don't have them
+			
+			val ourInterfaceProp = this.properties.computeIfAbsent(parentItfProperty.name) {
+				parentItfProperty.copy()
+			}
+			
+			ourInterfaceProp.modality = PropertyBuilder.Modality.OVERRIDE
+			ourInterfaceProp.delegatesToSuper = false
+			ourInterfaceProp.isGetter = true
+			ourInterfaceProp.initializer = this.name + "." + ourInterfaceProp.name
+			
+			
+			// add the backing field to the companion object,
+			// but make it private if it isn't part of the initial interface so we don't clutter the namespace
+			val companionObjectProp = ourCompanion.properties.computeIfAbsent(ourInterfaceProp.name) {
+				parentCompanion.properties[it]?.copy() ?: PropertyBuilder(it, ourInterfaceProp.kType) {
+					docComment += parentItfProperty.docComment
+					access = PropertyBuilder.AccessModifier.PRIVATE
+				}
+			}
+			
+			companionObjectProp.initializer = newType.name + "()"
+			companionObjectProp.isGetter = false
+		}
+	}
 }

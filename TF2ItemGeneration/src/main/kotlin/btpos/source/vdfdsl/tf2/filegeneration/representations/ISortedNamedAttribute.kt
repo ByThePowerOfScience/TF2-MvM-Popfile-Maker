@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
+import org.jetbrains.annotations.Contract
 
 interface ISortedNamedAttribute {
 	val varName: String
@@ -21,6 +22,7 @@ interface ISortedNamedAttribute {
 	 * Create a basic property builder with the varname, type, doc comment, and initializer,
 	 * that can be modified later to add modality, overriding, etc.
 	 */
+	@Contract("_->new", pure = true)
 	fun propertyBuilder(): PropertyBuilder
 	
 	/**
