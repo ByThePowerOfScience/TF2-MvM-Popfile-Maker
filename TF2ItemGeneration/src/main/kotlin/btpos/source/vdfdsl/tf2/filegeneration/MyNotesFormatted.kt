@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
 import btpos.source.vdfdsl.tf2.filegeneration.MyNotesFormatted.hierarchy
+import btpos.source.vdfdsl.tf2.filegeneration.TFClassHierarchy.TFClassHierarchyNode
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.AttrClassScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.AttrClassUsage
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.HierarchyAttrClassScope
@@ -16,35 +17,29 @@ class TFClassHierarchy(map: Map<String, List<String>>) {
 	
 	init {
 		for ((item, children) in map) {
-			val newNode = TFClassHierarchyNode(item)
-			nodes[item] = newNode
+			val newNode = getOrCreateNode(item)
 			
-			newNode.children += children.map { child ->
-				nodes.computeIfAbsent(child) {
-					TFClassHierarchyNode(it)
-				}.also {
+			children.forEach { child ->
+				newNode.children += getOrCreateNode(child).also {
 					it.parents.add(newNode)
 				}
 			}
 		}
 	}
 	
+	
+	private fun getOrCreateNode(name: String) = nodes.computeIfAbsent(name.lowercase()) { TFClassHierarchyNode(name) }
+	
 	fun getNode(name: String): TFClassHierarchyNode? = nodes[name.lowercase()]
 	
-	class TFClassHierarchyNode {
-		val name: String
-		val parents: MutableSet<TFClassHierarchyNode>
-		val children: MutableSet<TFClassHierarchyNode>
-		
-		constructor(name: String, parents: MutableSet<TFClassHierarchyNode> = mutableSetOf(), children: MutableSet<TFClassHierarchyNode> = mutableSetOf()) {
-			this.name = name.lowercase()
-			this.parents = parents
-			this.children = children
-		}
-	}
+	class TFClassHierarchyNode(
+		val name: String,
+		val parents: MutableSet<TFClassHierarchyNode> = mutableSetOf(),
+		val children: MutableSet<TFClassHierarchyNode> = mutableSetOf()
+	)
 	
 	fun getAllParents(clsName: String): Sequence<String> {
-		val node = nodes[clsName]
+		val node = getNode(clsName)
 		requireNotNull(node) {
 			"No entry in hierarchy found for $clsName"
 		}
@@ -54,21 +49,24 @@ class TFClassHierarchy(map: Map<String, List<String>>) {
 	}
 	
 	fun getParent(weaponType: String): String? {
-		return hierarchy.getNode(weaponType)
+		return this.getNode(weaponType)
 			?.parents
 			?.let { parents ->
-				parents.singleOrNull()
-					?: error("$weaponType has more than one parent: ${parents.map { it.name }}")
+				if (parents.isEmpty())
+					null
+				else
+					parents.singleOrNull()
+						?: error("$weaponType has more than one parent: ${parents.map { it.name }}")
 			}?.name
 	}
 	
 	
 	operator fun contains(string: String): Boolean {
-		return string in nodes
+		return string.lowercase() in nodes
 	}
 	
 	fun getDirectChildren(weaponType: String): Collection<String> {
-		return nodes[weaponType]?.children?.map { it.name }.orEmpty()
+		return getNode(weaponType)?.children?.map { it.name }.orEmpty()
 	}
 	
 	companion object {
@@ -104,9 +102,6 @@ object MyNotesFormatted {
 	}
 	
 	val hierarchy = TFClassHierarchy(
-		"Entity" to listOf("Player"),
-		"Player" to listOf("BaseEntity"),
-		
 		"BaseEntity" to listOf(
 			"BaseCombatWeapon",
 			"Wearable",
@@ -263,8 +258,6 @@ object MyNotesFormatted {
 			),
 			"ProjectileEnergyRing",
 			"ProjectileFlare",
-			"ProjectileArrow",
-			"ProjectileStickybomb"
 		),
 		
 		"BaseGrenadeProjectile" to listOf(
