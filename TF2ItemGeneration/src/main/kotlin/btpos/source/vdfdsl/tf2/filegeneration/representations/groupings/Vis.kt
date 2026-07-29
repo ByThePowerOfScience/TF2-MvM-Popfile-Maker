@@ -54,7 +54,7 @@ class Vis(
 	
 	
 	override fun propertyBuilder(): PropertyBuilder {
-		return PropertyBuilder(varName, getKotlinType()) {
+		return PropertyBuilder(varName, "VisHidden<${getKotlinType()}>") {
 			initializer = "VisHidden(${visible.propertyBuilder().initializer}, ${hidden.propertyBuilder().initializer})"
 		}
 	}

@@ -5,15 +5,11 @@ package btpos.source.vdfdsl.serialization.codecs
  *
  * Specifically used for `set_weapon_mode` in vanilla.
  */
-class NumberSelectorCodec(val number: Int) : Codec<Boolean, Any> {
-	override fun read(data: Any): Boolean {
-		return data == number
-	}
-	
-	override fun write(input: Boolean): Int {
-		if (input)
-			return number
-		else
-			return 0
-	}
+
+
+fun NumberSelectorCodec(number: Int): (Boolean) -> Int = {
+	if (it)
+		number
+	else
+		0
 }

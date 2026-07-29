@@ -34,6 +34,12 @@ class ClassBuilder(var name: String, var type: Type) {
 		COMPANION_OBJECT;
 	}
 	
+	fun clearBody() {
+		properties.clear()
+		nestedClasses.clear()
+		companionObject = null
+	}
+	
 	fun copy(): ClassBuilder = ClassBuilder(name, type).apply {
 		baseClass = this@ClassBuilder.baseClass
 		parentInterfaces = this@ClassBuilder.parentInterfaces
@@ -41,8 +47,20 @@ class ClassBuilder(var name: String, var type: Type) {
 		nestedClasses += this@ClassBuilder.nestedClasses.mapValues { it.value.copy() }
 		docComment += this@ClassBuilder.docComment
 		companionObject = this@ClassBuilder.companionObject?.copy()
+		isOpen = this@ClassBuilder.isOpen
 	}
 	
+	/**
+	 * Get a nested class at `this.1.2.3.etc`
+	 */
+	fun getNestedClassFromPath(path: List<String>): ClassBuilder? {
+		if (path.isEmpty())
+			return this;
+		
+		return this.nestedClasses[path.first()]?.let {
+			it.getNestedClassFromPath(path.drop(1))
+		}
+	}
 	
 	fun build(): String {
 		val classType = when (type) {
@@ -69,7 +87,7 @@ class ClassBuilder(var name: String, var type: Type) {
 		
 		val companionObjectString = companionObject?.let {
 			it.build().prependIndent("\t")
-		}.orEmpty()
+		}
 		
 		val classTypeClassName = if (type == Type.COMPANION_OBJECT)
 			"companion object"
@@ -83,16 +101,20 @@ class ClassBuilder(var name: String, var type: Type) {
 								docComment.joinToString("\n\n").prependIndent(" * ") +
                                "\n*/" else ""
 		
+		val body = if (properties.isEmpty() && companionObject == null) {
+			""
+		} else {
+			"{\n" +
+			listOfNotNull(
+				companionObjectString,
+				properties.takeIf { it.isNotEmpty() }?.values?.joinToString("\n\n") { it.build(this.type) }?.prependIndent("\t"),
+				nestedClasses.takeIf { it.isNotEmpty() }?.entries?.joinToString("\n\n") { it.value.build() }?.prependIndent("\t")
+			).joinToString("\n\n\n") +
+			"\n}"
+		}
+		
 		return """$docCommentString
-$modalityString$classTypeClassName $extends{
-$companionObjectString
-
-${properties.values.joinToString("\n\n") { it.build(this.type) }.prependIndent("\t") }
-
-
-
-${nestedClasses.entries.joinToString("\n\n") { it.value.build() }.prependIndent("\t")}
-}"""
+$modalityString$classTypeClassName $extends$body"""
 	}
 	
 	
@@ -128,6 +150,10 @@ ${nestedClasses.entries.joinToString("\n\n") { it.value.build() }.prependIndent(
 	
 	operator fun plusAssign(nestedClasses: Iterable<ClassBuilder>) {
 		nestedClasses.forEach(::addNestedClass)
+	}
+	
+	override fun toString(): String {
+		return "ClassBuilder($name, $type)"
 	}
 }
 
