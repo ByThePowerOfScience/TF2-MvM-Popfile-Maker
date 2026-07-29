@@ -41,11 +41,13 @@ fun <T : Any, U : Any> Map<T?, U>.filterKeysNotNull(): Map<T, U> {
 }
 
 fun main() {
+	println("Running item attributes")
 	// get all attributes, but with the descriptions from the ones used in-game
 	val namedAttributesInGameDescriptions = UsefulWikiTableParser.parseWiki().associate { it.first.attrName to it.second }.filterValues { it != null && !it.startsWith("Attrib_") } as Map<String, String>
 	
 	val allNamedAttributes = convertAttributesFromSchema(namedAttributesInGameDescriptions, getItemSchema().getSubtree("attributes")!!)
 	
+	// TODO figure out why the debugger isn't working and then debug why getParent isn't returning anything
 	generateItemAttributes(
 		Path(BuildConfig.OUT_DIR),
 		BuildConfig.ATTRIBUTES_TARGET_PACKAGE,
