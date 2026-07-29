@@ -6,23 +6,24 @@ import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.backing.getSubtree
 import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder.Type
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute.EffectType
+import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.fabricateScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyBonus
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Vis
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
-import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromPBName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
+import com.mojang.datafixers.functions.Functions.comp
 import java.io.File
 import java.nio.file.Path
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.mapNotNull
-import kotlin.contracts.Effect
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
@@ -270,45 +271,6 @@ fun generateItemAttributes(
 	
 	// now go through them recursively to find if they each have all things from their parent
 	
-	/**
-	 * Params: two "identical" classbuilders, one from this hierarchy's parent, and one from this hierarchy.
-	 *
-	 * Purpose: make sure [fromThis] has versions of every single class nested in [fromParent].
-	 */
-	fun patchWithParentOverridesRecursive(fromParent: ClassBuilder, fromThis: ClassBuilder, currentPath: List<String>) {
-		fromParent.nestedClasses.entries.forEach { (name, parentNested) ->
-			val ourVersion = fromThis.nestedClasses[name]
-			                 ?: parentNested.copy().apply {
-				                 baseClass = currentPath.joinToString(".")
-			                 }
-			
-			patchWithParentOverridesRecursive(parentNested, ourVersion, currentPath + name)
-			
-			// force any props that construct the newly-overridden object to instantiate this one instead
-			val findInstantiation = Regex("$name\\s*\\(")
-			parentNested.properties.values.forEach { parentProp ->
-				if (parentProp.initializer.contains(findInstantiation)) {
-					ourVersion.properties.computeIfAbsent(parentProp.name) {
-						parentProp.copy()
-					}.apply {
-						delegatesToSuper = false
-					}
-				}
-			}
-			
-			if (name !in fromThis.nestedClasses) {
-				fromThis.addNestedClass(ourVersion)
-			}
-		}
-	}
-	
-	fun ClassBuilder.withParentScopes(itsParent: ClassBuilder): ClassBuilder = apply {
-		patchWithParentOverridesRecursive(
-			itsParent,
-			this,
-			listOf(this.name)
-		)
-	}
 	
 	
 	val outDir = outBaseDir.resolve(targetPackage.replace('.', File.separatorChar)).also {
@@ -341,4 +303,98 @@ fun generateItemAttributes(
 					}
 			}
 	}
+}
+
+fun ClassBuilder.withParentScopes(itsParent: ClassBuilder): ClassBuilder = apply {
+	for ((name, parentNested) in itsParent.nestedClasses) {
+		val ourNested = this.nestedClasses.computeIfAbsent(name) {
+			parentNested.copy().also {
+				it.clearBody()
+			}
+		}
+		patchWithParentOverridesRecursive(itsParent, this, parentNested, ourNested, itsParent.name, listOf())
+	}
+}
+
+/**
+ * Params: two "identical" classbuilders, one from this hierarchy's parent, and one from this hierarchy.
+ *
+ * Purpose: make sure [ourVersion] has versions of every single class nested in [parentVersion], overriding ones from its parent
+ */
+fun patchWithParentOverridesRecursive(
+	ownerParent: ClassBuilder,
+	owner: ClassBuilder,
+	parentVersion: ClassBuilder,
+	ourVersion: ClassBuilder,
+	rootParentName: String,
+	pathFromRoot: List<String>
+) {
+	val currentScopePath = pathFromRoot + ourVersion.name
+	
+	ourVersion.baseClass = rootParentName + "." + currentScopePath.joinToString(".")
+	ourVersion.isOpen = true
+	
+	// make sure any of our overridden properties are marked as override
+	ourVersion.properties.values.forEach {
+		if (it in parentVersion) {
+			it.modality = PropertyBuilder.Modality.OVERRIDE
+		}
+	}
+	
+	
+	
+	
+	val redirectOldPropertyToRedirectToOurs: (String) -> Unit = if (ownerParent.type == Type.INTERFACE) {
+		val parentCompanion: ClassBuilder = ownerParent.companionObject ?: error("Parent doesn't have a companion object: $ownerParent");
+		val ownerCompanion by lazy {
+			owner.companionObject
+				?: ClassBuilder("", Type.COMPANION_OBJECT).also { owner.companionObject = it }
+		};
+		
+		{ name ->
+			// get property with initializer from parent's companion
+			// add that to our companion object
+			// add reference to that to our property
+			
+			ownerCompanion.properties.computeIfAbsent(name) {
+				parentCompanion.properties[name]?.copy() ?: error("No parent property '$name' found in $parentCompanion")
+			}.isGetter = false // use raw initializer which should be the same name as our new class
+			
+			val fromParent = ownerParent.properties[name]!!
+			
+			owner.properties.computeIfAbsent(name) {
+				fromParent.copy().apply {
+					kType = ourVersion.name
+				}
+			}.also {
+				it.delegatesToSuper = false
+				it.initializer = owner.name + "." + name
+				it.modality = PropertyBuilder.Modality.OVERRIDE
+			}
+		}
+	} else {
+		{
+			owner.properties.computeIfAbsent(it) {
+				ownerParent.properties[it]!!.copy()
+			}.apply {
+				modality = PropertyBuilder.Modality.OVERRIDE
+				kType = ourVersion.name
+				delegatesToSuper = false
+				isGetter = false
+			}
+		}
+	}
+	
+	// force any props in our outer that construct the newly-overridden object to instantiate this one instead
+	ownerParent.properties.values.forEach { parentProp ->
+		if (parentProp.kType == parentVersion.name) {
+			// Add the property to the companion object
+			
+			redirectOldPropertyToRedirectToOurs(parentProp.name)
+		}
+	}
+	
+	// repeat for all nested classes
+	
+	ourVersion.withParentScopes(parentVersion)
 }

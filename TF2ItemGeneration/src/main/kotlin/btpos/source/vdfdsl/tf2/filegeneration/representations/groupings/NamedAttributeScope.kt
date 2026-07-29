@@ -87,12 +87,12 @@ open class NamedAttributeScope(
 		
 		attrs.asSequence()
 			.filterIsInstance<NamedAttributeScope>()
-			.forEach {
-				cb += it.generateNestedTypes(baseHierarchyItem, currentScopePath)
+			.forEach { attr ->
+				cb += attr.generateNestedTypes(baseHierarchyItem, currentScopePath)
 				
-				cb.addProperty(it.propertyBuilder().apply {
+				cb.addProperty(attr.propertyBuilder().apply {
 					modality = when {
-						parentVersionOfThisScope != null && parentVersionOfThisScope.containsAttribute(it.varName) ->
+						parentVersionOfThisScope != null && parentVersionOfThisScope.containsAttribute(attr.varName) ->
 							PropertyBuilder.Modality.OVERRIDE
 						else -> PropertyBuilder.Modality.OPEN
 					}

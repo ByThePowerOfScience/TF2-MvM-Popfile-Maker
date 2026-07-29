@@ -366,8 +366,7 @@ object MyNotesFormatted {
 				- MVM attribute that specifically handles rocket and grenade launchers
 				- Note that all three of these are different classes, which means they stack.
 			- `clipsize_increase_on_kill`: Int
-			- `wrench_builds_minisentry`: Float(?)
-				- cast to an int, used as a boolean, so idk
+			- `wrench_builds_minisentry`: Boolean
 				- Determines the hand used in the model
 			- On player: `mult_deploy_time`: Float
 			- `mult_single_wep_deploy_time`: Float
@@ -507,7 +506,7 @@ object MyNotesFormatted {
 					- One of the "only when weapon is active" kind of attributes.  These always only work if the weapon that provides them is active, while still allowing other attributes to be globally-applied.
 				- `add_health_on_radius_damage`: Int
 					- Maximum amount of health that can be gained from an AoE damage source.  Health received is multiplied by `damage dealt / base damage of the weapon`, to a max of 100% of the defined value.
-				- `mod_pierce_resists_absorbs`: Int
+				- `mod_pierce_resists_absorbs`: Boolean
 				- `or_crit_vs_playercond`: Int
 					- The weapon's "crit players with X condition" stat.
 				- `crit_vs_wet_players`: Boolean
@@ -705,8 +704,6 @@ object MyNotesFormatted {
 					- Used when firing any projectile, including pipe bombs
 				- `grenade_no_spin`: Boolean
 					- Don't spin loch n load pills
-				- `projectile_penetration`: Boolean
-					- Also on WeaponBase, but noted here because it's specifically used in Gun's "fire arrow" logic.
 				- `mult_spread_scale`: Float
 					- Modifies bullet spread.
 				- `panic_attack_negative`: Float
@@ -1612,7 +1609,7 @@ object MyNotesFormatted {
 			- `mult_maxammo_metal`: Int
 			- `mult_maxammo_grenades1`: Int
 				- Only used for bat balls
-			- `set_buff_type`: TFBuffType
+			- `set_buff_type`: Int
 				- Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
 			- `mod_buff_duration`: Float
 				- Multiplier applied to buff duration.
@@ -1661,7 +1658,7 @@ object MyNotesFormatted {
 				- Multiplier applied to metal gained from ammo boxes
 			- `add_maxhealth_nonbuffed`: Int
 				- Additive base-health increase.
-			- `add_maxhealth`: int
+			- `add_maxhealth`: Int
 				- Additive maximum health increase only used when overhealing.
 			- `unlimited_quantity`: Boolean
 				- If true, noisemakers are unlimited usage.

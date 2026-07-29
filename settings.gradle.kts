@@ -24,4 +24,3 @@ includeBuild("vdf-parser") {
 		substitute(module("btpos.source.vdfdsl.vdf:vdf-parser")).using(project(":"))
 	}
 }
-includeBuild("TF2ItemGeneration")
