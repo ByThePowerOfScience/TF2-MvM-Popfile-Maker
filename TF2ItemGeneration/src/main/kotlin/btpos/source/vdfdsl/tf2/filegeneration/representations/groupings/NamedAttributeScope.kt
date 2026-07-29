@@ -70,10 +70,12 @@ open class NamedAttributeScope(
 		
 		cb.addProperties(attrs.asSequence().filter { it !is NamedAttributeScope }.map {
 			it.propertyBuilder().apply {
-				modality = when {
-					parentVersionOfThisScope != null && parentVersionOfThisScope.containsAttribute(it.varName) ->
-						PropertyBuilder.Modality.OVERRIDE
-					else -> PropertyBuilder.Modality.OPEN
+				when {
+					parentVersionOfThisScope != null && parentVersionOfThisScope.containsAttribute(it.varName) -> {
+						modality = PropertyBuilder.Modality.OVERRIDE
+						delegatesToSuper = true
+					}
+					else -> modality = PropertyBuilder.Modality.OPEN
 				}
 			}
 		}.asIterable())
@@ -105,14 +107,16 @@ open class NamedAttributeScope(
 	}
 	
 	override fun getNestedScope(scopePath: List<String>): NamedAttributeScope? {
+		if (scopePath.isEmpty())
+			return null;
+		
 		val currItem = scopePath.first()
-		val found = attrs.firstOrNull { it is NamedAttributeScope && it.scopeName == currItem } as? NamedAttributeScope?
-		            ?: return null;
+		val found = attrs.firstOrNull { it is NamedAttributeScope && it.clsname == currItem } as NamedAttributeScope?
 		
 		if (scopePath.size == 1) { // this was the last unit of the path
 			return found
 		} else {
-			return found.getNestedScope(scopePath.drop(1))
+			return found?.getNestedScope(scopePath.drop(1))
 		}
 	}
 	

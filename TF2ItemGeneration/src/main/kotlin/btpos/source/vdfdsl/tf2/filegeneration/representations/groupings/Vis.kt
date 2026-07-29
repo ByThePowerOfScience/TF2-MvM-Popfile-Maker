@@ -47,12 +47,6 @@ class Vis(
 		}
 	
 	
-	// TODO I think all of this - going from the attr classes to the attributes, using groupings of the attr classes - might have been wrong.
-	//  maybe this should have generated named attribute entries that I could then edit by hand...
-	//  idk maybe not actually ifkdnlaknkldmfkjwerqnf alkdsbdsnfalkjdnkmJF,;LASKBjlqewn.nSLM/FKD,bn;ajidWKLS;filgYSDAK
-	
-	
-	
 	override fun propertyBuilder(): PropertyBuilder {
 		return PropertyBuilder(varName, "VisHidden<${getKotlinType()}>") {
 			initializer = "VisHidden(${visible.propertyBuilder().initializer}, ${hidden.propertyBuilder().initializer})"

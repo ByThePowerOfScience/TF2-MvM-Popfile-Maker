@@ -23,6 +23,10 @@ class PropertyBuilder(var name: String, var kType: String) {
 	
 	val docComment = mutableListOf<String>()
 	
+	var access: AccessModifier = AccessModifier.PUBLIC
+	
+	
+	
 	
 	fun copy() = PropertyBuilder(name, kType).apply {
 		initializer = this@PropertyBuilder.initializer
@@ -31,6 +35,7 @@ class PropertyBuilder(var name: String, var kType: String) {
 		isGetter = this@PropertyBuilder.isGetter
 		delegatesToSuper = this@PropertyBuilder.delegatesToSuper
 		docComment += this@PropertyBuilder.docComment
+		access = this@PropertyBuilder.access
 	}
 	
 	fun build(classType: ClassBuilder.Type? = null): String {
@@ -65,15 +70,29 @@ class PropertyBuilder(var name: String, var kType: String) {
 			else -> "= $newInitializer"
 		}
 		
+		val accessQualifier = when (access) {
+			AccessModifier.PUBLIC -> ""
+			AccessModifier.INTERNAL -> "internal "
+			AccessModifier.PRIVATE -> "private "
+			AccessModifier.PROTECTED -> "protected "
+		}
+		
 		return docComment +
-		       "${overrideString}val $extString$name: $kType " + body
+		       "${accessQualifier}${overrideString}val $extString$name: $kType " + body
 	}
 	
 	
 	enum class Modality {
+		FINAL,
 		OPEN,
-		OVERRIDE,
-		FINAL;
+		OVERRIDE;
+	}
+	
+	enum class AccessModifier {
+		PUBLIC,
+		PRIVATE,
+		INTERNAL,
+		PROTECTED
 	}
 	
 	override fun toString(): String {

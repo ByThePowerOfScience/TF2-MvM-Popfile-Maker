@@ -13,6 +13,10 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 		return generateSequence(getParent()) { it.getParent() }
 	}
 	
+	val depth by lazy {
+		getParentsRecursive().count()
+	}
+	
 	fun getParent(): HierarchyNamedAttributeScope? {
 		return this.extendsFrom?.let { hierarchiesByName[it] }
 	}

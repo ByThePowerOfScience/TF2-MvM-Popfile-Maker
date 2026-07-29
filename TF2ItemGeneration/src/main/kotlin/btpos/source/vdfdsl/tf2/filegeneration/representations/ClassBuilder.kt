@@ -1,13 +1,16 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
-import btpos.source.vdfdsl.tf2.filegeneration.unaryPlus
-
 
 class ClassBuilder(var name: String, var type: Type) {
 	companion object {
 		inline operator fun invoke(name: String, type: Type, configure: ClassBuilder.() -> Unit): ClassBuilder {
 			return ClassBuilder(name, type).apply(configure)
 		}
+		
+		/**
+		 * Factory preset to make a new "companion object" builder
+		 */
+		fun newCompanionObject() = ClassBuilder("", Type.COMPANION_OBJECT)
 	}
 	
 	val docComment = mutableListOf<String>()
@@ -17,7 +20,6 @@ class ClassBuilder(var name: String, var type: Type) {
 	var parentInterfaces = mutableSetOf<String>()
 	
 	val properties: MutableMap<String, PropertyBuilder> = mutableMapOf()
-	
 	
 	val nestedClasses = mutableMapOf<String, ClassBuilder>()
 	
@@ -71,11 +73,13 @@ class ClassBuilder(var name: String, var type: Type) {
 			Type.COMPANION_OBJECT -> "companion object"
 		}
 		
-		val extends = (listOfNotNull(baseClass?.let { "$it()" }) + parentInterfaces).joinToString(", ").let {
-			if (!it.isBlank())
-				": $it "
-			else ""
-		}
+		val extends = (listOfNotNull(baseClass?.let { "$it()" }) + parentInterfaces)
+			.joinToString(", ")
+			.let {
+				if (!it.isBlank())
+					": $it "
+				else ""
+			}
 		
 		if (this.type == Type.COMPANION_OBJECT && companionObject != null) {
 			error("Companion object cannot have a companion object.")
@@ -99,7 +103,7 @@ class ClassBuilder(var name: String, var type: Type) {
 		
 		val docCommentString = if (docComment.isNotEmpty()) "/**\n" +
 								docComment.joinToString("\n\n").prependIndent(" * ") +
-                               "\n*/" else ""
+                               "\n*/\n" else ""
 		
 		val body = if (properties.isEmpty() && companionObject == null) {
 			""
@@ -109,12 +113,11 @@ class ClassBuilder(var name: String, var type: Type) {
 				companionObjectString,
 				properties.takeIf { it.isNotEmpty() }?.values?.joinToString("\n\n") { it.build(this.type) }?.prependIndent("\t"),
 				nestedClasses.takeIf { it.isNotEmpty() }?.entries?.joinToString("\n\n") { it.value.build() }?.prependIndent("\t")
-			).joinToString("\n\n\n") +
+			).joinToString("\n\n") +
 			"\n}"
 		}
 		
-		return """$docCommentString
-$modalityString$classTypeClassName $extends$body"""
+		return """$docCommentString$modalityString$classTypeClassName $extends$body"""
 	}
 	
 	
@@ -150,6 +153,12 @@ $modalityString$classTypeClassName $extends$body"""
 	
 	operator fun plusAssign(nestedClasses: Iterable<ClassBuilder>) {
 		nestedClasses.forEach(::addNestedClass)
+	}
+	
+	fun getOrCreateCompanionObject(): ClassBuilder {
+		return companionObject ?: newCompanionObject().also {
+			this.companionObject = it
+		}
 	}
 	
 	override fun toString(): String {
