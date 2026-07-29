@@ -8,16 +8,8 @@ import java.util.*
 
 
 
-/**
- * Items: Stock Shotgun + Reskins, Reserve Shooter, The Widowmaker, The Rescue Ranger
- */
-interface ShotgunAttributes : IBlockScoped {
-	companion object {
-		
-	}
 
+interface ShotgunAttributes : BaseGunAttributes {
 	
-
-   
+	companion object 
 }
-

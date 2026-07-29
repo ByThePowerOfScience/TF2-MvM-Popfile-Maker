@@ -8,30 +8,22 @@ import java.util.*
 
 
 
-/**
- * Items: The Righteous Bison, The Pomson 6000
- */
-interface ProjectileEnergyRingAttributes : IBlockScoped {
+
+interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
+	
 	companion object {
 		/**
 		 * In-Game: "Projectile penetrates enemy targets"
-		 *
 		 * 
-		 *
 		 * Checked on owner.
 		 */
-		val energyWeaponPenetration = ItemAttributeNamed<Boolean>("energy weapon penetration")
+		val energyWeaponPenetration: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon penetration")
 	}
 
 	/**
 	 * In-Game: "Projectile penetrates enemy targets"
-	 *
 	 * 
-	 *
 	 * Checked on owner.
 	 */
-	val energyWeaponPenetration: ItemAttribute<Boolean> get() = ProjectileEnergyRingAttributes.energyWeaponPenetration
-
-   
+	val energyWeaponPenetration: ItemAttributeNamed<Boolean> get() = ProjectileEnergyRingAttributes.energyWeaponPenetration
 }
-

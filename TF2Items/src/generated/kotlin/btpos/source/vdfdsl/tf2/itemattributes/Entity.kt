@@ -10,236 +10,171 @@ import java.util.*
 
 
 interface EntityAttributes : IBlockScoped {
+	
 	companion object {
 		/**
 		 * In-Game: "Cannot be backstabbed"
-		 *
-		 * 
 		 */
-		val cannotBeBackstabbed = ItemAttributeNamed<Boolean>("cannot be backstabbed")
-		
-		/**
-		 * In-Game: "+N% greater jump height when active"
-		 *
-		 * 
-		 */
-		val increasedJumpHeight = ItemAttributeNamed<Float>("increased jump height")
-		
-		/**
-		 * 
-		 */
-		val majorIncreasedJumpHeight = ItemAttributeNamed<Float>("major increased jump height")
-		
-		/**
-		 * 
-		 */
-		val halloweenIncreasedJumpHeight = ItemAttributeNamed<Float>("halloween increased jump height")
-		
-		/**
-		 * Bonus:
-		 *
-		 * 	- In-Game: "+N% health from packs on wearer"
-		 *
-		 * 
-		 *
-		 * Penalty:
-		 *
-		 * 	- In-Game: "N% health from packs on wearer"
-		 *
-		 * 
-		 */
-		val healthFromPacks = BonusPenalty(
-			ItemAttributeNamed<Float>("health from packs increased"),
-			ItemAttributeNamed<Float>("health from packs decreased")
+		val cannotBeBackstabbed: ItemAttributeNamed<Boolean> = ItemAttributeNamed("cannot be backstabbed")
+	
+		val jumpHeight: JumpHeightAttributes = JumpHeightAttributes()
+	
+		val healthFromPacks: BonusPenalty<Float> = BonusPenalty(
+			ItemAttributeNamed("health from packs increased"),
+			ItemAttributeNamed("health from packs decreased"),
 		)
-		
+	
 		/**
 		 * In-Game: "N% less healing from Medic sources"
-		 *
 		 * 
-		 *
 		 * Specifically checked on Crossbow Bolt impacts.
 		 */
-		val reducedHealingFromMedics = ItemAttributeNamed<Float>("reduced_healing_from_medics")
-		
+		val reducedHealingFromMedics: ItemAttributeNamed<Float> = ItemAttributeNamed("reduced_healing_from_medics")
+	
 		/**
 		 * In-Game: "Boost reduced on air jumps"
-		 *
 		 * 
-		 *
 		 * Lose this amount of hype if you airdash.
-		 *
+		 * 
 		 * Note that this only applies to scout hype, not rage in general.
 		 */
-		val hypeResetsOnJump = ItemAttributeNamed<Int>("hype resets on jump")
-		
+		val hypeResetsOnJump: ItemAttributeNamed<Int> = ItemAttributeNamed("hype resets on jump")
+	
 		/**
-		 * 
-		 *
 		 * Allows parachute to be deployed.
 		 */
-		val parachuteAttribute = ItemAttributeNamed<Boolean>("parachute attribute")
-		
+		val parachuteAttribute: ItemAttributeNamed<Boolean> = ItemAttributeNamed("parachute attribute")
+	
 		/**
-		 * 
-		 *
 		 * Only used if the build menu is actually shown.
-		 *
+		 * 
 		 * 0 = default.
-		 *
+		 * 
 		 * 1 = pipboy.
 		 */
-		val hasPipboyBuildInterface = ItemAttributeNamed<Int>("has pipboy build interface")
-		
-		/**
-		 * 
-		 */
-		val buildings = BuildingsAttributes()
+		val hasPipboyBuildInterface: ItemAttributeNamed<Int> = ItemAttributeNamed("has pipboy build interface")
+	
+		val buildings: BuildingsAttributes = BuildingsAttributes()
 	}
 
 	/**
 	 * In-Game: "Cannot be backstabbed"
-	 *
-	 * 
 	 */
-	val cannotBeBackstabbed: ItemAttribute<Boolean> get() = EntityAttributes.cannotBeBackstabbed
+	val cannotBeBackstabbed: ItemAttributeNamed<Boolean> get() = EntityAttributes.cannotBeBackstabbed
 	
-	/**
-	 * In-Game: "+N% greater jump height when active"
-	 *
-	 * 
-	 */
-	val increasedJumpHeight: ItemAttribute<Float> get() = EntityAttributes.increasedJumpHeight
+	val jumpHeight: JumpHeightAttributes get() = EntityAttributes.jumpHeight
 	
-	/**
-	 * 
-	 */
-	val majorIncreasedJumpHeight: ItemAttribute<Float> get() = EntityAttributes.majorIncreasedJumpHeight
-	
-	/**
-	 * 
-	 */
-	val halloweenIncreasedJumpHeight: ItemAttribute<Float> get() = EntityAttributes.halloweenIncreasedJumpHeight
-	
-	/**
-	 * Bonus:
-	 *
-	 * 	- In-Game: "+N% health from packs on wearer"
-	 *
-	 * 
-	 *
-	 * Penalty:
-	 *
-	 * 	- In-Game: "N% health from packs on wearer"
-	 *
-	 * 
-	 */
-	val healthFromPacks: ItemAttribute<Float> get() = EntityAttributes.healthFromPacks
+	val healthFromPacks: BonusPenalty<Float> get() = EntityAttributes.healthFromPacks
 	
 	/**
 	 * In-Game: "N% less healing from Medic sources"
-	 *
 	 * 
-	 *
 	 * Specifically checked on Crossbow Bolt impacts.
 	 */
-	val reducedHealingFromMedics: ItemAttribute<Float> get() = EntityAttributes.reducedHealingFromMedics
+	val reducedHealingFromMedics: ItemAttributeNamed<Float> get() = EntityAttributes.reducedHealingFromMedics
 	
 	/**
 	 * In-Game: "Boost reduced on air jumps"
-	 *
 	 * 
-	 *
 	 * Lose this amount of hype if you airdash.
-	 *
+	 * 
 	 * Note that this only applies to scout hype, not rage in general.
 	 */
-	val hypeResetsOnJump: ItemAttribute<Int> get() = EntityAttributes.hypeResetsOnJump
+	val hypeResetsOnJump: ItemAttributeNamed<Int> get() = EntityAttributes.hypeResetsOnJump
 	
 	/**
-	 * 
-	 *
 	 * Allows parachute to be deployed.
 	 */
-	val parachuteAttribute: ItemAttribute<Boolean> get() = EntityAttributes.parachuteAttribute
+	val parachuteAttribute: ItemAttributeNamed<Boolean> get() = EntityAttributes.parachuteAttribute
 	
 	/**
-	 * 
-	 *
 	 * Only used if the build menu is actually shown.
-	 *
+	 * 
 	 * 0 = default.
-	 *
+	 * 
 	 * 1 = pipboy.
 	 */
-	val hasPipboyBuildInterface: ItemAttribute<Int> get() = EntityAttributes.hasPipboyBuildInterface
+	val hasPipboyBuildInterface: ItemAttributeNamed<Int> get() = EntityAttributes.hasPipboyBuildInterface
 	
-	/**
-	 * 
-	 */
-	val buildings: ItemAttribute<Buildings> get() = EntityAttributes.buildings
-
-   
-open class BuildingsAttributes : IBlockScoped {
-	/**
-	 * In-Game: "+N% faster build speed"
-	 */
-	open val buildRateBonus = ItemAttributeNamed<Float>("build rate bonus")
-	
-	/**
-	 * In-Game: "N% slower upgrade rate"
-	 */
-	open val upgradeRateDecrease = ItemAttributeNamed<Int>("upgrade rate decrease")
-	
-	/**
-	 * In-Game: "+N% max building health"
-	 */
-	open val engyBuildingHealthBonus = ItemAttributeNamed<Int>("engy building health bonus")
-	
-	
-	open val sentryGun = SentryGunAttributes()
-	
-	
-	open val dispenser = DispenserAttributes()
-	
-	
-	open val teleporter = TeleporterAttributes()
+	val buildings: BuildingsAttributes get() = EntityAttributes.buildings
 
 	
-open class SentryGunAttributes : IBlockScoped {
-	/**
-	 * In-Game: "+N% sentry range"
-	 */
-	open val engySentryRadiusIncreased = ItemAttributeNamed<Float>("engy sentry radius increased")
+	open class JumpHeightAttributes : IBlockScoped {
+		/**
+		 * In-Game: "+N% greater jump height when active"
+		 */
+		open val increasedJumpHeight: ItemAttributeNamed<Float> = ItemAttributeNamed("increased jump height")
 	
-	/**
-	 * In-Game: "+N% sentry firing speed"
-	 */
-	open val engySentryFireRateIncreased = ItemAttributeNamed<Float>("engy sentry fire rate increased")
-
+		open val majorIncreasedJumpHeight: ItemAttributeNamed<Float> = ItemAttributeNamed("major increased jump height")
 	
-}	
-open class DispenserAttributes : IBlockScoped {
-	/**
-	 * In-Game: "+N% dispenser range"
-	 */
-	open val engyDispenserRadiusIncreased = ItemAttributeNamed<Float>("engy dispenser radius increased")
-
+		open val halloweenIncreasedJumpHeight: ItemAttributeNamed<Float> = ItemAttributeNamed("halloween increased jump height")
+	}
 	
-}	
-open class TeleporterAttributes : IBlockScoped {
-	/**
-	 * In-Game: "N% metal cost when constructing or upgrading teleporters"
-	 */
-	open val teleporterCost = ItemAttributeNamed<Float>("mod teleporter cost")
 	
-	/**
-	 * In-Game: "Teleporters can be used in both directions"
-	 */
-	open val bidirectionalTeleport = ItemAttributeNamed<Boolean>("bidirectional teleport")
-
+	open class BuildingsAttributes : IBlockScoped {
+		/**
+		 * In-Game: "+N% faster build speed"
+		 * 
+		 * Multiplies building build time by this amount.
+		 */
+		open val buildRateBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("build rate bonus")
 	
+		/**
+		 * In-Game: "N% slower upgrade rate"
+		 * 
+		 * Add this amount of metal to any building hit by this player, using player's metal reserve.
+		 * 
+		 * Recall that all players have 100 hidden metal.
+		 */
+		open val upgradeRateDecrease: ItemAttributeNamed<Int> = ItemAttributeNamed("upgrade rate decrease")
+	
+		/**
+		 * In-Game: "+N% max building health"
+		 * 
+		 * Only applied if the building is NOT a disposable sentry.
+		 */
+		open val engyBuildingHealthBonus: ItemAttributeNamed<Int> = ItemAttributeNamed("engy building health bonus")
+	
+		open val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		open val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		open val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+	
+		open class SentryGunAttributes : IBlockScoped {
+			/**
+			 * In-Game: "+N% sentry range"
+			 */
+			open val engySentryRadiusIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("engy sentry radius increased")
+	
+			/**
+			 * In-Game: "+N% sentry firing speed"
+			 */
+			open val engySentryFireRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("engy sentry fire rate increased")
+		}
+	
+	
+		open class DispenserAttributes : IBlockScoped {
+			/**
+			 * In-Game: "+N% dispenser range"
+			 */
+			open val engyDispenserRadiusIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("engy dispenser radius increased")
+		}
+	
+	
+		open class TeleporterAttributes : IBlockScoped {
+			/**
+			 * In-Game: "N% metal cost when constructing or upgrading teleporters"
+			 * 
+			 * Flat mult to metal cost.
+			 */
+			open val teleporterCost: ItemAttributeNamed<Float> = ItemAttributeNamed("mod teleporter cost")
+	
+			/**
+			 * In-Game: "Teleporters can be used in both directions"
+			 */
+			open val bidirectionalTeleport: ItemAttributeNamed<Boolean> = ItemAttributeNamed("bidirectional teleport")
+		}
+	}
 }
-}
-}
-

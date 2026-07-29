@@ -8,26 +8,18 @@ import java.util.*
 
 
 
-/**
- * Items: The Shortstop, The Winger, Pretty Boy's Pocket Pistol
- */
-interface ScoutPistolAttributes : IBlockScoped {
+
+interface ScoutPistolAttributes : PistolAttributes {
+	
 	companion object {
 		/**
-		 * 
-		 *
 		 * If true, can headshot when behind an enemy.
 		 */
-		val backHeadshot = ItemAttributeNamed<Boolean>("back headshot")
+		val backHeadshot: ItemAttributeNamed<Boolean> = ItemAttributeNamed("back headshot")
 	}
 
 	/**
-	 * 
-	 *
 	 * If true, can headshot when behind an enemy.
 	 */
-	val backHeadshot: ItemAttribute<Boolean> get() = ScoutPistolAttributes.backHeadshot
-
-   
+	val backHeadshot: ItemAttributeNamed<Boolean> get() = ScoutPistolAttributes.backHeadshot
 }
-

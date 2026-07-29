@@ -8,16 +8,8 @@ import java.util.*
 
 
 
-/**
- * Items: Stock Bottle, The Scottish Handshake
- */
+
 interface BottleAttributes : IBlockScoped {
-	companion object {
-		
-	}
-
 	
-
-   
+	companion object 
 }
-

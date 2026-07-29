@@ -9,27 +9,14 @@ import java.util.*
 
 
 
-interface ProjectileRocketAttributes : IBlockScoped {
-	companion object {
-		/**
-		 * In-Game: "Pumpkin Bombs"
-		 *
-		 * 
-		 *
-		 * Checks on owner or sentry's owner.
-		 */
-		val spellHalloweenPumpkinExplosions = ItemAttributeNamed<Boolean>("SPELL: Halloween pumpkin explosions")
-	}
+interface ProjectileRocketAttributes : BaseRocketAttributes {
+	
+	companion object 
 
 	/**
 	 * In-Game: "Pumpkin Bombs"
-	 *
 	 * 
-	 *
 	 * Checks on owner or sentry's owner.
 	 */
-	val spellHalloweenPumpkinExplosions: ItemAttribute<Boolean> get() = ProjectileRocketAttributes.spellHalloweenPumpkinExplosions
-
-   
+	override val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = super.spellHalloweenPumpkinExplosions
 }
-

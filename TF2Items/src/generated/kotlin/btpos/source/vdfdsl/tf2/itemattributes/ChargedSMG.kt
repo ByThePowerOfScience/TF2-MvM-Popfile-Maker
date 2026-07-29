@@ -8,30 +8,22 @@ import java.util.*
 
 
 
-/**
- * Items: The Cleaner's Carbine
- */
-interface ChargedSMGAttributes : IBlockScoped {
+
+interface ChargedSMGAttributes : SMGAttributes {
+	
 	companion object {
 		/**
 		 * In-Game: "Secondary fire when charged grants mini-crits for N seconds."
-		 *
 		 * 
-		 *
 		 * Minicrit buff duration.
 		 */
-		val minicritBoostWhenCharged = ItemAttributeNamed<Float>("minicrit_boost_when_charged")
+		val minicritBoostWhenCharged: ItemAttributeNamed<Float> = ItemAttributeNamed("minicrit_boost_when_charged")
 	}
 
 	/**
 	 * In-Game: "Secondary fire when charged grants mini-crits for N seconds."
-	 *
 	 * 
-	 *
 	 * Minicrit buff duration.
 	 */
-	val minicritBoostWhenCharged: ItemAttribute<Float> get() = ChargedSMGAttributes.minicritBoostWhenCharged
-
-   
+	val minicritBoostWhenCharged: ItemAttributeNamed<Float> get() = ChargedSMGAttributes.minicritBoostWhenCharged
 }
-

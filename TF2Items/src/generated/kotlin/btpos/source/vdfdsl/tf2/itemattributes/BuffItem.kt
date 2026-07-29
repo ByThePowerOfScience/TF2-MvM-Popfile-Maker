@@ -8,100 +8,107 @@ import java.util.*
 
 
 
-/**
- * Items: The Buff Banner, The Battalion's Backup, The Concheror, Festive Buff Banner, The B.A.S.E Jumper
- */
-interface BuffItemAttributes : IBlockScoped {
+
+interface BuffItemAttributes : BaseMeleeAttributes {
+	
 	companion object {
-		/**
-		 * 
-		 *
-		 * Sets which banner is used.
-		 *
-		 * 0 = Buff Banner.
-		 *
-		 * 1 = Battalion's Backup.
-		 *
-		 * 2 = Concheror.
-		 */
-		val soldierBuffType = ItemAttributeNamed<Int>("mod soldier buff type")
-		
-		/**
-		 * 
-		 *
-		 * Sets which banner is used.
-		 *
-		 * 0 = Buff Banner.
-		 *
-		 * 1 = Battalion's Backup.
-		 *
-		 * 2 = Concheror.
-		 */
-		val demoBuffType = ItemAttributeNamed<Int>("mod demo buff type")
-		
-		/**
-		 * In-Game: "+N% buff duration"
-		 *
-		 * 
-		 *
-		 * Multiplier to buff duration.
-		 */
-		val increaseBuffDuration = ItemAttributeNamed<Float>("increase buff duration")
-		
-		/**
-		 * In-Game: "+N% buff duration"
-		 *
-		 * 
-		 *
-		 * Multiplier to buff duration.
-		 */
-		val increaseBuffDurationHidden = ItemAttributeNamed<Float>("increase buff duration HIDDEN")
+		val buffType: BuffTypeAttributes = BuffTypeAttributes()
+	
+		val BuffDuration: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("increase buff duration"), ItemAttributeNamed<Float>("increase buff duration HIDDEN"))
+	
+		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+	
+		val damage: DamageAttributes = DamageAttributes()
+	
+		val fireRate: FireRateAttributes = FireRateAttributes()
+	
+		val onHit: OnHitAttributes = OnHitAttributes()
+	
+		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	
+		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+	
+		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	}
 
-	/**
-	 * 
-	 *
-	 * Sets which banner is used.
-	 *
-	 * 0 = Buff Banner.
-	 *
-	 * 1 = Battalion's Backup.
-	 *
-	 * 2 = Concheror.
-	 */
-	val soldierBuffType: ItemAttribute<Int> get() = BuffItemAttributes.soldierBuffType
+	val buffType: BuffTypeAttributes get() = BuffItemAttributes.buffType
 	
-	/**
-	 * 
-	 *
-	 * Sets which banner is used.
-	 *
-	 * 0 = Buff Banner.
-	 *
-	 * 1 = Battalion's Backup.
-	 *
-	 * 2 = Concheror.
-	 */
-	val demoBuffType: ItemAttribute<Int> get() = BuffItemAttributes.demoBuffType
+	val BuffDuration: VisHidden<Float> get() = BuffItemAttributes.BuffDuration
 	
-	/**
-	 * In-Game: "+N% buff duration"
-	 *
-	 * 
-	 *
-	 * Multiplier to buff duration.
-	 */
-	val increaseBuffDuration: ItemAttribute<Float> get() = BuffItemAttributes.increaseBuffDuration
+	override val projectilePenetration: ProjectilePenetrationAttributes get() = BuffItemAttributes.projectilePenetration
 	
-	/**
-	 * In-Game: "+N% buff duration"
-	 *
-	 * 
-	 *
-	 * Multiplier to buff duration.
-	 */
-	val increaseBuffDurationHidden: ItemAttribute<Float> get() = BuffItemAttributes.increaseBuffDurationHidden
+	override val damage: DamageAttributes get() = BuffItemAttributes.damage
+	
+	override val fireRate: FireRateAttributes get() = BuffItemAttributes.fireRate
+	
+	override val onHit: OnHitAttributes get() = BuffItemAttributes.onHit
+	
+	override val revengeCrits: RevengeCritsAttributes get() = BuffItemAttributes.revengeCrits
+	
+	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = BuffItemAttributes.critVsBurningPlayers
+	
+	override val damageForceReduction: DamageForceReductionAttributes get() = BuffItemAttributes.damageForceReduction
+	
+	override val ragdolls: RagdollsAttributes get() = BuffItemAttributes.ragdolls
 
-   
+	
+	open class BuffTypeAttributes : IBlockScoped {
+		/**
+		 * Sets which banner is used.
+		 * 
+		 * 0 = Buff Banner.
+		 * 
+		 * 1 = Battalion's Backup.
+		 * 
+		 * 2 = Concheror.
+		 */
+		open val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
+	
+		/**
+		 * Sets which banner is used.
+		 * 
+		 * 0 = Buff Banner.
+		 * 
+		 * 1 = Battalion's Backup.
+		 * 
+		 * 2 = Concheror.
+		 */
+		open val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
+	}
+	
+	
+	open class ProjectilePenetrationAttributes : BaseMeleeAttributes.ProjectilePenetrationAttributes() 
+	
+	
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
+	
+	
+	open class FireRateAttributes : BaseMeleeAttributes.FireRateAttributes() 
+	
+	
+	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
+		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+	
+		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+	
+		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+	
+	
+		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	
+	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
+	
+	
+	open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritVsBurningPlayersAttributes() 
+	
+	
+	open class DamageForceReductionAttributes : BaseMeleeAttributes.DamageForceReductionAttributes() 
+	
+	
+	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
 }
-

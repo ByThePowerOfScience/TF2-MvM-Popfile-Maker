@@ -8,30 +8,22 @@ import java.util.*
 
 
 
-/**
- * Items: The Huntsman, The Crusader's Crossbow, The Rescue Ranger
- */
-interface ProjectileArrowAttributes : IBlockScoped {
+
+interface ProjectileArrowAttributes : BaseRocketAttributes {
+	
 	companion object {
 		/**
 		 * In-Game: "Fires a special bolt that can repair friendly buildings"
-		 *
 		 * 
-		 *
 		 * Checked on player.
 		 */
-		val arrowHealsBuildings = ItemAttributeNamed<Boolean>("arrow heals buildings")
+		val arrowHealsBuildings: ItemAttributeNamed<Boolean> = ItemAttributeNamed("arrow heals buildings")
 	}
 
 	/**
 	 * In-Game: "Fires a special bolt that can repair friendly buildings"
-	 *
 	 * 
-	 *
 	 * Checked on player.
 	 */
-	val arrowHealsBuildings: ItemAttribute<Boolean> get() = ProjectileArrowAttributes.arrowHealsBuildings
-
-   
+	val arrowHealsBuildings: ItemAttributeNamed<Boolean> get() = ProjectileArrowAttributes.arrowHealsBuildings
 }
-

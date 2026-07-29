@@ -8,30 +8,22 @@ import java.util.*
 
 
 
-/**
- * Items: The Frontier Justice
- */
-interface ShotgunRevengeAttributes : IBlockScoped {
+
+interface ShotgunRevengeAttributes : ShotgunAttributes {
+	
 	companion object {
 		/**
 		 * In-Game: "Gain 2 revenge crits for each sentry kill and 1 for each sentry assist when your sentry is destroyed."
-		 *
 		 * 
-		 *
 		 * Specifically checked here when it tries to gain revenge crits, which means removing this attribute from the Frontier Justice will remove its ability to gain revenge crits.
 		 */
-		val canGainRevengeCrits = ItemAttributeNamed<Boolean>("mod sentry killed revenge")
+		val canGainRevengeCrits: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod sentry killed revenge")
 	}
 
 	/**
 	 * In-Game: "Gain 2 revenge crits for each sentry kill and 1 for each sentry assist when your sentry is destroyed."
-	 *
 	 * 
-	 *
 	 * Specifically checked here when it tries to gain revenge crits, which means removing this attribute from the Frontier Justice will remove its ability to gain revenge crits.
 	 */
-	val canGainRevengeCrits: ItemAttribute<Boolean> get() = ShotgunRevengeAttributes.canGainRevengeCrits
-
-   
+	val canGainRevengeCrits: ItemAttributeNamed<Boolean> get() = ShotgunRevengeAttributes.canGainRevengeCrits
 }
-

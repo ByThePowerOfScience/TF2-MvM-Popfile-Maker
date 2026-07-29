@@ -8,98 +8,23 @@ import java.util.*
 
 
 
-/**
- * Items: The Flare Gun, The Detonator, The Manmelter, The Scorch Shot
- */
-interface ProjectileFlareAttributes : IBlockScoped {
+
+interface ProjectileFlareAttributes : BaseProjectileAttributes {
+	
 	companion object {
-		/**
-		 * Bonus:
-		 *
-		 * 	- Visible:
-		 *
-		 * 		- In-Game: "+N% projectile speed"
-		 *
-		 * 	- Hidden:
-		 *
-		 * 		- In-Game: "+N% projectile speed"
-		 *
-		 * 
-		 *
-		 * Penalty:
-		 *
-		 * 	- In-Game: "N% projectile speed"
-		 *
-		 * 
-		 *
-		 * Checked on launcher.
-		 */
-		val projectileSpeed = BonusPenalty(
-			VisHidden("ItemAttributeNamed<Float>("Projectile speed increased")", "ItemAttributeNamed<Float>("Projectile speed increased HIDDEN")"),
-			ItemAttributeNamed<Float>("Projectile speed decreased")
+		val projectileSpeed: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
+			ItemAttributeNamed<Float>("Projectile speed increased"),
+			ItemAttributeNamed<Float>("Projectile speed decreased"),
+			ItemAttributeNamed<Float>("Projectile speed increased HIDDEN"),
 		)
-		
-		/**
-		 * Bonus:
-		 *
-		 * 	- In-Game: "+N% explosion radius"
-		 *
-		 * 
-		 *
-		 * Penalty:
-		 *
-		 * 	- In-Game: "N% explosion radius"
-		 *
-		 * 
-		 *
-		 * Checked on launcher.
-		 */
-		val blastRadius = BonusPenalty(
-			ItemAttributeNamed<Float>("Blast radius increased"),
-			ItemAttributeNamed<Float>("Blast radius decreased")
+	
+		val blastRadius: BonusPenalty<Float> = BonusPenalty(
+			ItemAttributeNamed("Blast radius increased"),
+			ItemAttributeNamed("Blast radius decreased"),
 		)
 	}
 
-	/**
-	 * Bonus:
-	 *
-	 * 	- Visible:
-	 *
-	 * 		- In-Game: "+N% projectile speed"
-	 *
-	 * 	- Hidden:
-	 *
-	 * 		- In-Game: "+N% projectile speed"
-	 *
-	 * 
-	 *
-	 * Penalty:
-	 *
-	 * 	- In-Game: "N% projectile speed"
-	 *
-	 * 
-	 *
-	 * Checked on launcher.
-	 */
-	val projectileSpeed: ItemAttribute<Float> get() = ProjectileFlareAttributes.projectileSpeed
+	val projectileSpeed: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> get() = ProjectileFlareAttributes.projectileSpeed
 	
-	/**
-	 * Bonus:
-	 *
-	 * 	- In-Game: "+N% explosion radius"
-	 *
-	 * 
-	 *
-	 * Penalty:
-	 *
-	 * 	- In-Game: "N% explosion radius"
-	 *
-	 * 
-	 *
-	 * Checked on launcher.
-	 */
-	val blastRadius: ItemAttribute<Float> get() = ProjectileFlareAttributes.blastRadius
-
-   
+	val blastRadius: BonusPenalty<Float> get() = ProjectileFlareAttributes.blastRadius
 }
-

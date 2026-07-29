@@ -8,73 +8,86 @@ import java.util.*
 
 
 
-/**
- * Items: The Crusader's Crossbow, Festive Crusader's Crossbow
- */
-interface CrossbowAttributes : IBlockScoped {
+
+interface CrossbowAttributes : RocketLauncherAttributes {
+	
 	companion object {
-		/**
-		 * Bonus:
-		 *
-		 * 	- In-Game: "N% faster reload time"
-		 *
-		 * 
-		 *
-		 * Penalty:
-		 *
-		 * 	- In-Game: "N% slower reload time"
-		 *
-		 * 
-		 */
-		val reloadTime = BonusPenalty(
-			ItemAttributeNamed<Float>("Reload time decreased"),
-			ItemAttributeNamed<Float>("Reload time increased")
-		)
-		
-		/**
-		 * In-Game: "N% slower reload time"
-		 *
-		 * 
-		 */
-		val reloadTimeIncreasedHidden = ItemAttributeNamed<Float>("reload time increased hidden")
-		
-		/**
-		 * In-Game: "+N% faster reload time"
-		 *
-		 * 
-		 */
-		val fasterReloadRate = ItemAttributeNamed<Float>("faster reload rate")
+		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+	
+		val damage: DamageAttributes = DamageAttributes()
+	
+		val fireRate: FireRateAttributes = FireRateAttributes()
+	
+		val onHit: OnHitAttributes = OnHitAttributes()
+	
+		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	
+		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+	
+		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	}
 
-	/**
-	 * Bonus:
-	 *
-	 * 	- In-Game: "N% faster reload time"
-	 *
-	 * 
-	 *
-	 * Penalty:
-	 *
-	 * 	- In-Game: "N% slower reload time"
-	 *
-	 * 
-	 */
-	val reloadTime: ItemAttribute<Float> get() = CrossbowAttributes.reloadTime
+	override val reloadTime: BonusPenalty<Float> get() = super.reloadTime
 	
 	/**
 	 * In-Game: "N% slower reload time"
-	 *
-	 * 
 	 */
-	val reloadTimeIncreasedHidden: ItemAttribute<Float> get() = CrossbowAttributes.reloadTimeIncreasedHidden
+	override val reloadTimeIncreasedHidden: ItemAttributeNamed<Float> get() = super.reloadTimeIncreasedHidden
 	
 	/**
 	 * In-Game: "+N% faster reload time"
-	 *
-	 * 
 	 */
-	val fasterReloadRate: ItemAttribute<Float> get() = CrossbowAttributes.fasterReloadRate
+	override val fasterReloadRate: ItemAttributeNamed<Float> get() = super.fasterReloadRate
+	
+	override val projectilePenetration: ProjectilePenetrationAttributes get() = CrossbowAttributes.projectilePenetration
+	
+	override val damage: DamageAttributes get() = CrossbowAttributes.damage
+	
+	override val fireRate: FireRateAttributes get() = CrossbowAttributes.fireRate
+	
+	override val onHit: OnHitAttributes get() = CrossbowAttributes.onHit
+	
+	override val revengeCrits: RevengeCritsAttributes get() = CrossbowAttributes.revengeCrits
+	
+	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = CrossbowAttributes.critVsBurningPlayers
+	
+	override val damageForceReduction: DamageForceReductionAttributes get() = CrossbowAttributes.damageForceReduction
+	
+	override val ragdolls: RagdollsAttributes get() = CrossbowAttributes.ragdolls
 
-   
+	
+	open class ProjectilePenetrationAttributes : RocketLauncherAttributes.ProjectilePenetrationAttributes() 
+	
+	
+	open class DamageAttributes : RocketLauncherAttributes.DamageAttributes() 
+	
+	
+	open class FireRateAttributes : RocketLauncherAttributes.FireRateAttributes() 
+	
+	
+	open class OnHitAttributes : RocketLauncherAttributes.OnHitAttributes() {
+		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+	
+		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+	
+		open class HealOnHitForRapidfireAttributes : RocketLauncherAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+	
+	
+		open class GenerateRageOnDamageAttributes : RocketLauncherAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	
+	open class RevengeCritsAttributes : RocketLauncherAttributes.RevengeCritsAttributes() 
+	
+	
+	open class CritVsBurningPlayersAttributes : RocketLauncherAttributes.CritVsBurningPlayersAttributes() 
+	
+	
+	open class DamageForceReductionAttributes : RocketLauncherAttributes.DamageForceReductionAttributes() 
+	
+	
+	open class RagdollsAttributes : RocketLauncherAttributes.RagdollsAttributes() 
 }
-

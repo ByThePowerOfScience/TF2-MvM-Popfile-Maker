@@ -8,72 +8,113 @@ import java.util.*
 
 
 
-/**
- * Items: TF_WEAPON_BONESAW, The Ubersaw, The Vita-Saw, Upgradeable TF_WEAPON_BONESAW, The Amputator, The Solemn Vow, Festive Ubersaw, Festive Bonesaw 2014
- */
-interface BonesawAttributes : IBlockScoped {
+
+interface BonesawAttributes : BaseMeleeAttributes {
+	
 	companion object {
 		/**
-		 * 
-		 *
-		 * If the player should taunt on right click.
-		 */
-		val specialTaunt = ItemAttributeNamed<Boolean>("special taunt")
-		
-		/**
-		 * 
-		 *
 		 * If the player should take a "head" when dealing damage with a melee.
 		 */
-		val addHeadOnHit = ItemAttributeNamed<Boolean>("add head on hit")
-		
+		val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
+	
 		/**
 		 * In-Game: "Collect the organs of people you hit"
-		 *
-		 * 
 		 */
-		val uberchargePreservedOnSpawnMax = ItemAttributeNamed<Float>("ubercharge_preserved_on_spawn_max")
-		
+		val uberchargePreservedOnSpawnMax: ItemAttributeNamed<Float> = ItemAttributeNamed("ubercharge_preserved_on_spawn_max")
+	
 		/**
 		 * In-Game: "Collect the organs of your victims"
-		 *
 		 * 
-		 *
 		 * On kill, take an organ (uses "heads" field like usual).
 		 */
-		val addHeadOnKill = ItemAttributeNamed<Boolean>("add_head_on_kill")
+		val addHeadOnKill: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add_head_on_kill")
+	
+		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+	
+		val damage: DamageAttributes = DamageAttributes()
+	
+		val fireRate: FireRateAttributes = FireRateAttributes()
+	
+		val onHit: OnHitAttributes = OnHitAttributes()
+	
+		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	
+		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+	
+		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	}
 
 	/**
-	 * 
-	 *
 	 * If the player should taunt on right click.
 	 */
-	val specialTaunt: ItemAttribute<Boolean> get() = BonesawAttributes.specialTaunt
+	override val specialTaunt: ItemAttributeNamed<Boolean> get() = super.specialTaunt
 	
 	/**
-	 * 
-	 *
 	 * If the player should take a "head" when dealing damage with a melee.
 	 */
-	val addHeadOnHit: ItemAttribute<Boolean> get() = BonesawAttributes.addHeadOnHit
+	val addHeadOnHit: ItemAttributeNamed<Boolean> get() = BonesawAttributes.addHeadOnHit
 	
 	/**
 	 * In-Game: "Collect the organs of people you hit"
-	 *
-	 * 
 	 */
-	val uberchargePreservedOnSpawnMax: ItemAttribute<Float> get() = BonesawAttributes.uberchargePreservedOnSpawnMax
+	val uberchargePreservedOnSpawnMax: ItemAttributeNamed<Float> get() = BonesawAttributes.uberchargePreservedOnSpawnMax
 	
 	/**
 	 * In-Game: "Collect the organs of your victims"
-	 *
 	 * 
-	 *
 	 * On kill, take an organ (uses "heads" field like usual).
 	 */
-	val addHeadOnKill: ItemAttribute<Boolean> get() = BonesawAttributes.addHeadOnKill
+	val addHeadOnKill: ItemAttributeNamed<Boolean> get() = BonesawAttributes.addHeadOnKill
+	
+	override val projectilePenetration: ProjectilePenetrationAttributes get() = BonesawAttributes.projectilePenetration
+	
+	override val damage: DamageAttributes get() = BonesawAttributes.damage
+	
+	override val fireRate: FireRateAttributes get() = BonesawAttributes.fireRate
+	
+	override val onHit: OnHitAttributes get() = BonesawAttributes.onHit
+	
+	override val revengeCrits: RevengeCritsAttributes get() = BonesawAttributes.revengeCrits
+	
+	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = BonesawAttributes.critVsBurningPlayers
+	
+	override val damageForceReduction: DamageForceReductionAttributes get() = BonesawAttributes.damageForceReduction
+	
+	override val ragdolls: RagdollsAttributes get() = BonesawAttributes.ragdolls
 
-   
+	
+	open class ProjectilePenetrationAttributes : BaseMeleeAttributes.ProjectilePenetrationAttributes() 
+	
+	
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
+	
+	
+	open class FireRateAttributes : BaseMeleeAttributes.FireRateAttributes() 
+	
+	
+	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
+		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+	
+		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+	
+		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+	
+	
+		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	
+	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
+	
+	
+	open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritVsBurningPlayersAttributes() 
+	
+	
+	open class DamageForceReductionAttributes : BaseMeleeAttributes.DamageForceReductionAttributes() 
+	
+	
+	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
 }
-

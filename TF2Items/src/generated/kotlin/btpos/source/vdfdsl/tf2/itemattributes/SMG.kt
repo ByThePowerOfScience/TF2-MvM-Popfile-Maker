@@ -8,16 +8,8 @@ import java.util.*
 
 
 
-/**
- * Items: Stock SMG + Reskins
- */
-interface SMGAttributes : IBlockScoped {
-	companion object {
-		
-	}
 
+interface SMGAttributes : BaseGunAttributes {
 	
-
-   
+	companion object 
 }
-

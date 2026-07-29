@@ -8,54 +8,31 @@ import java.util.*
 
 
 
-/**
- * Items: Stock Scattergun + Reskins, The Force-a-Nature, The Back Scatter, The Soda Popper, The Baby Face's Blaster
- */
-interface ScattergunAttributes : IBlockScoped {
+
+interface ScattergunAttributes : ShotgunAttributes {
+	
 	companion object {
 		/**
 		 * In-Game: "Knockback on the target and shooter"
-		 *
 		 * 
-		 *
 		 * Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary.
 		 */
-		val scattergunHasKnockback = ItemAttributeNamed<Boolean>("scattergun has knockback")
-		
-		/**
-		 * 
-		 */
-		val scattergunKnockbackMult = ItemAttributeNamed<Float>("scattergun knockback mult")
-		
-		/**
-		 * 
-		 *
-		 * If 1, reloads entire clip at once.
-		 */
-		val scattergunNoReloadSingle = ItemAttributeNamed<Boolean>("scattergun no reload single")
+		val scattergunHasKnockback: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun has knockback")
+	
+		val scattergunKnockbackMult: ItemAttributeNamed<Float> = ItemAttributeNamed("scattergun knockback mult")
 	}
 
 	/**
 	 * In-Game: "Knockback on the target and shooter"
-	 *
 	 * 
-	 *
 	 * Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary.
 	 */
-	val scattergunHasKnockback: ItemAttribute<Boolean> get() = ScattergunAttributes.scattergunHasKnockback
+	val scattergunHasKnockback: ItemAttributeNamed<Boolean> get() = ScattergunAttributes.scattergunHasKnockback
+	
+	val scattergunKnockbackMult: ItemAttributeNamed<Float> get() = ScattergunAttributes.scattergunKnockbackMult
 	
 	/**
-	 * 
-	 */
-	val scattergunKnockbackMult: ItemAttribute<Float> get() = ScattergunAttributes.scattergunKnockbackMult
-	
-	/**
-	 * 
-	 *
 	 * If 1, reloads entire clip at once.
 	 */
-	val scattergunNoReloadSingle: ItemAttribute<Boolean> get() = ScattergunAttributes.scattergunNoReloadSingle
-
-   
+	override val scattergunNoReloadSingle: ItemAttributeNamed<Boolean> get() = super.scattergunNoReloadSingle
 }
-

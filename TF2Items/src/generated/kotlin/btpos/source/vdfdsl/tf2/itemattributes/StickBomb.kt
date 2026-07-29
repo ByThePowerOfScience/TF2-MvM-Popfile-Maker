@@ -8,26 +8,18 @@ import java.util.*
 
 
 
-/**
- * Items: The Ullapool Caber
- */
+
 interface StickBombAttributes : IBlockScoped {
+	
 	companion object {
 		/**
 		 * In-Game: "Pumpkin Bombs"
-		 *
-		 * 
 		 */
-		val spellHalloweenPumpkinExplosions = ItemAttributeNamed<Boolean>("SPELL: Halloween pumpkin explosions")
+		val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween pumpkin explosions")
 	}
 
 	/**
 	 * In-Game: "Pumpkin Bombs"
-	 *
-	 * 
 	 */
-	val spellHalloweenPumpkinExplosions: ItemAttribute<Boolean> get() = StickBombAttributes.spellHalloweenPumpkinExplosions
-
-   
+	val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = StickBombAttributes.spellHalloweenPumpkinExplosions
 }
-

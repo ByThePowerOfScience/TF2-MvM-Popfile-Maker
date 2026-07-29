@@ -8,26 +8,18 @@ import java.util.*
 
 
 
-/**
- * Items: The Righteous Bison, The Pomson 6000
- */
-interface RayGunAttributes : IBlockScoped {
+
+interface RayGunAttributes : RocketLauncherAttributes {
+	
 	companion object {
 		/**
-		 * 
-		 *
 		 * Removes ammo requirement to fire weapon.
 		 */
-		val energyWeaponNoDrain = ItemAttributeNamed<Boolean>("energy weapon no drain")
+		val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
 	}
 
 	/**
-	 * 
-	 *
 	 * Removes ammo requirement to fire weapon.
 	 */
-	val energyWeaponNoDrain: ItemAttribute<Boolean> get() = RayGunAttributes.energyWeaponNoDrain
-
-   
+	val energyWeaponNoDrain: ItemAttributeNamed<Boolean> get() = RayGunAttributes.energyWeaponNoDrain
 }
-

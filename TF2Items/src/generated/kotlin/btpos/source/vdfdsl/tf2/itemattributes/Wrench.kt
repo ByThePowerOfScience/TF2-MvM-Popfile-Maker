@@ -8,134 +8,115 @@ import java.util.*
 
 
 
-/**
- * Items: Stock Wrench + Reskins, Golden Wrench, The Southern Hospitality, The Jag, The Eureka Effect, The Gunslinger
- */
-interface WrenchAttributes : IBlockScoped {
+
+interface WrenchAttributes : BaseMeleeAttributes {
+	
 	companion object {
 		/**
 		 * In-Game: "Press your reload key to choose to teleport to spawn or your exit teleporter"
-		 *
 		 * 
-		 *
 		 * If set, pressing reload shows the Eureka Effect teleport menu.
 		 */
-		val altFireTeleportToSpawn = ItemAttributeNamed<Boolean>("alt fire teleport to spawn")
-		
-		/**
-		 * In-Game: "Replaces the Sentry with a Mini-Sentry"
-		 *
-		 * 
-		 *
-		 * Detonates leveled sentries when equipping a wrench with this attribute.
-		 *
-		 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute.
-		 *
-		 * Removes engineer's glove on his model.
-		 *
-		 * Also determines if it's a "PDQ", which obviously builds minisentries.
-		 */
-		val wrenchBuildsMinisentry = ItemAttributeNamed<Boolean>("mod wrench builds minisentry")
-		
-		/**
-		 * Bonus:
-		 *
-		 * 	- In-Game: "Construction hit speed boost increased by N%"
-		 *
-		 * 
-		 *
-		 * Penalty:
-		 *
-		 * 	- In-Game: "Construction hit speed boost decreased by N%"
-		 *
-		 * 
-		 *
-		 * Passive build-speed multiplier, same as the convar `tf_construction_build_rate_multiplier`.
-		 */
-		val constructionRate = BonusPenalty(
-			ItemAttributeNamed<Float>("Construction rate increased"),
-			ItemAttributeNamed<Float>("Construction rate decreased")
+		val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> = ItemAttributeNamed("alt fire teleport to spawn")
+	
+		val constructionRate: BonusPenalty<Float> = BonusPenalty(
+			ItemAttributeNamed("Construction rate increased"),
+			ItemAttributeNamed("Construction rate decreased"),
 		)
-		
-		/**
-		 * Bonus:
-		 *
-		 * 	- In-Game: "N% faster repair rate"
-		 *
-		 * 
-		 *
-		 * Penalty:
-		 *
-		 * 	- In-Game: "N% slower repair rate"
-		 *
-		 * 
-		 *
-		 * Multiplier to how much health is given per wrench hit.
-		 */
-		val repairRate = BonusPenalty(
-			ItemAttributeNamed<Float>("Repair rate increased"),
-			ItemAttributeNamed<Float>("Repair rate decreased")
+	
+		val repairRate: BonusPenalty<Float> = BonusPenalty(
+			ItemAttributeNamed("Repair rate increased"),
+			ItemAttributeNamed("Repair rate decreased"),
 		)
+	
+		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+	
+		val damage: DamageAttributes = DamageAttributes()
+	
+		val fireRate: FireRateAttributes = FireRateAttributes()
+	
+		val onHit: OnHitAttributes = OnHitAttributes()
+	
+		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	
+		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+	
+		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	}
 
 	/**
 	 * In-Game: "Press your reload key to choose to teleport to spawn or your exit teleporter"
-	 *
 	 * 
-	 *
 	 * If set, pressing reload shows the Eureka Effect teleport menu.
 	 */
-	val altFireTeleportToSpawn: ItemAttribute<Boolean> get() = WrenchAttributes.altFireTeleportToSpawn
+	val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> get() = WrenchAttributes.altFireTeleportToSpawn
 	
 	/**
 	 * In-Game: "Replaces the Sentry with a Mini-Sentry"
-	 *
 	 * 
-	 *
 	 * Detonates leveled sentries when equipping a wrench with this attribute.
-	 *
+	 * 
 	 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute.
-	 *
+	 * 
 	 * Removes engineer's glove on his model.
-	 *
+	 * 
 	 * Also determines if it's a "PDQ", which obviously builds minisentries.
 	 */
-	val wrenchBuildsMinisentry: ItemAttribute<Boolean> get() = WrenchAttributes.wrenchBuildsMinisentry
+	override val wrenchBuildsMinisentry: ItemAttributeNamed<Boolean> get() = super.wrenchBuildsMinisentry
 	
-	/**
-	 * Bonus:
-	 *
-	 * 	- In-Game: "Construction hit speed boost increased by N%"
-	 *
-	 * 
-	 *
-	 * Penalty:
-	 *
-	 * 	- In-Game: "Construction hit speed boost decreased by N%"
-	 *
-	 * 
-	 *
-	 * Passive build-speed multiplier, same as the convar `tf_construction_build_rate_multiplier`.
-	 */
-	val constructionRate: ItemAttribute<Float> get() = WrenchAttributes.constructionRate
+	val constructionRate: BonusPenalty<Float> get() = WrenchAttributes.constructionRate
 	
-	/**
-	 * Bonus:
-	 *
-	 * 	- In-Game: "N% faster repair rate"
-	 *
-	 * 
-	 *
-	 * Penalty:
-	 *
-	 * 	- In-Game: "N% slower repair rate"
-	 *
-	 * 
-	 *
-	 * Multiplier to how much health is given per wrench hit.
-	 */
-	val repairRate: ItemAttribute<Float> get() = WrenchAttributes.repairRate
+	val repairRate: BonusPenalty<Float> get() = WrenchAttributes.repairRate
+	
+	override val projectilePenetration: ProjectilePenetrationAttributes get() = WrenchAttributes.projectilePenetration
+	
+	override val damage: DamageAttributes get() = WrenchAttributes.damage
+	
+	override val fireRate: FireRateAttributes get() = WrenchAttributes.fireRate
+	
+	override val onHit: OnHitAttributes get() = WrenchAttributes.onHit
+	
+	override val revengeCrits: RevengeCritsAttributes get() = WrenchAttributes.revengeCrits
+	
+	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = WrenchAttributes.critVsBurningPlayers
+	
+	override val damageForceReduction: DamageForceReductionAttributes get() = WrenchAttributes.damageForceReduction
+	
+	override val ragdolls: RagdollsAttributes get() = WrenchAttributes.ragdolls
 
-   
+	
+	open class ProjectilePenetrationAttributes : BaseMeleeAttributes.ProjectilePenetrationAttributes() 
+	
+	
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
+	
+	
+	open class FireRateAttributes : BaseMeleeAttributes.FireRateAttributes() 
+	
+	
+	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
+		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+	
+		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+	
+		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+	
+	
+		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	
+	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
+	
+	
+	open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritVsBurningPlayersAttributes() 
+	
+	
+	open class DamageForceReductionAttributes : BaseMeleeAttributes.DamageForceReductionAttributes() 
+	
+	
+	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
 }
-
