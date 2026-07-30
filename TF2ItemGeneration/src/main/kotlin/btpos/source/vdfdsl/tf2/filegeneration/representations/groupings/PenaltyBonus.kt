@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import btpos.source.vdfdsl.tf2.filegeneration.representations.sanitize
+import btpos.source.vdfdsl.tf2.filegeneration.representations.removeBonusPenaltyHiddenStuff
 
 /**
  * Different description variants of the same attribute class, all combined into a single little namespace
@@ -19,7 +19,7 @@ data class PenaltyBonus(
 ) : ISortedNamedAttribute {
 	private val list = listOfNotNull(penalty, bonus, neutral, hidden)
 	
-	override val varName: String = list.first().varName.sanitize().overrideVarName()
+	override var varName: String = list.first().varName.removeBonusPenaltyHiddenStuff().overrideVarName()
 	
 	init {
 		require(list.size > 1) {

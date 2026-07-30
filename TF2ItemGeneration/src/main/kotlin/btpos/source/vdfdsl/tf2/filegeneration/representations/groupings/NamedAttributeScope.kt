@@ -7,7 +7,9 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import btpos.source.vdfdsl.tf2.filegeneration.representations.sanitize
+import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideScopeMemberNames
+import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
+import btpos.source.vdfdsl.tf2.filegeneration.representations.removeBonusPenaltyHiddenStuff
 import kotlin.properties.Delegates.notNull
 
 /**
@@ -19,17 +21,21 @@ open class NamedAttributeScope(
 	override val innateDescription: List<String> = emptyList(),
 	val _varName: String? = null,
 ) : ISortedNamedAttribute {
-	val scopeName = _scopeName.sanitize().overrideScopeName()
+	val scopeName = _scopeName.removeBonusPenaltyHiddenStuff().overrideScopeName()
 	
 	
 	
-	override val varName: String = (_varName?.overrideScopeName() ?: this.scopeName).decapitalize()
+	override val varName: String = (_varName?.overrideScopeName() ?: this.scopeName).decapitalize().overrideVarName()
 	
 	override fun clone(): ISortedNamedAttribute {
 		return NamedAttributeScope(this._scopeName, attrs=attrs.map { it.clone() }.toTypedArray(), innateDescription = innateDescription, _varName=_varName)
 	}
 	
 	val attrs = attrs.distinct()
+	
+	init {
+		overrideScopeMemberNames(scopeName, this.attrs)
+	}
 	
 	override fun propertyBuilder(): PropertyBuilder {
 		return PropertyBuilder(varName, getKotlinType()) {

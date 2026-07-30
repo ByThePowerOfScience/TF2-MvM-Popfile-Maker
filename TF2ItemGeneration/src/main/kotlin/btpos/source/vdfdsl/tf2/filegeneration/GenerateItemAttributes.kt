@@ -17,6 +17,8 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAtt
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyBonus
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Vis
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
+import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
+import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarNameForAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
 import java.io.File
 import java.nio.file.Path

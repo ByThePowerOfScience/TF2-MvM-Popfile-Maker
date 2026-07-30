@@ -1,11 +1,11 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
-import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import btpos.source.vdfdsl.tf2.filegeneration.representations.sanitize
+import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
+import btpos.source.vdfdsl.tf2.filegeneration.representations.removeBonusPenaltyHiddenStuff
 
 class Vis(
 	val visible: ISortedNamedAttribute,
@@ -28,7 +28,7 @@ class Vis(
 		return Vis(visible.clone(), hidden.clone(), _varName)
 	}
 	
-	override val varName: String =  visible.varName.sanitize().overrideVarName()
+	override var varName: String =  visible.varName.removeBonusPenaltyHiddenStuff().overrideVarName()
 	
 	override val innateDescription: List<String> = buildList {
 		add("Visible:")

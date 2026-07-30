@@ -1,6 +1,8 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
+import btpos.source.vdfdsl.tf2.filegeneration.re_notWordChar
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
+import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrThing
 
 object Overrides {
 	/**
@@ -13,10 +15,15 @@ object Overrides {
 
 val removeFromThing = listOf("hidden").map { Regex(it, RegexOption.IGNORE_CASE) }
 private val modRegex = Regex("^mod[ _]")
+
 fun String.sanitizeNamedAttributeName(): String {
-	return this.replace(modRegex, "").replace("SPELL", "spell").replace(":", " ")
+	return this.replace(modRegex, "").replace("SPELL", "spell").replace(":", " ").replace(re_notWordChar, "")
 }
-val overrideVarNames: Map<String, String> = mapOf(
+
+
+
+
+val overrideVarNames: MutableMap<String, String> = mutableMapOf(
 	"fixedShotPattern" to "fixedWeaponSpread",
 	"multSpreadScalesConsecutive" to "spreadIncreasesOnConsecutiveShots",
 	"spread" to "weaponSpread",
@@ -54,6 +61,13 @@ val overrideScopeNames = mapOf(
 	"MedigunChargeIsCritBoost" to "UberchargeType"
 )
 
+val removeFromScopeMembers = mutableMapOf(
+	"Meter" to "itemMeter"
+)
+
+val addMultPrefix = mutableSetOf(
+	"dmgFalloff",
+)
 
 private val attrClass_to_createScopeForItsItems = mapOf(
 	"set_buff_type" to { it: List<NamedAttribute> ->
@@ -61,14 +75,18 @@ private val attrClass_to_createScopeForItsItems = mapOf(
 			"BuffType",
 			*it.toTypedArray()
 		))
-	}
+	},
 ).withDefault {
 	{ listOf(NamedAttributeScope(it.first().varName.capitalize(), *it.toTypedArray())) }
 }
 
-private val attrClassesThatShouldBeSeparate = setOf<String>(
-
-)
+fun overrideScopeMemberNames(scopeName: String, scopeMembers: List<ISortedNamedAttribute>) {
+	removeFromScopeMembers[scopeName]?.let { toStrip ->
+		scopeMembers.onEach {
+			it.varName = it.varName.replace(toStrip, "").replace(toStrip.capitalize(), "")
+		}
+	}
+}
 
 /**
  * Create some combined representation for these attributes in the same attribute class.
@@ -83,6 +101,9 @@ fun fabricateScope(attrClass: String, attrsOfSameClass: List<NamedAttribute>): L
 fun String.overrideScopeName() = (overrideScopeNames[this] ?: this)
 
 fun String.overrideVarName(): String {
+	if (this in addMultPrefix) {
+		return "mult" + this.replaceFirstChar { it.uppercaseChar() }
+	}
 	return (overrideVarNames[this] ?: this)
 }
 
@@ -116,6 +137,6 @@ val customCodecs = mapOf(
 	"or_crit_vs_playercond" to FakeCodec("EnumSet<TFCritCondition>", "EnumSetOrCodec()"),
 )
 
-fun String.sanitize(): String {
+fun String.removeBonusPenaltyHiddenStuff(): String {
 	return (removeFromPBName + removeFromThing).fold(this) { it, re -> it.replace(re, "") }
 }

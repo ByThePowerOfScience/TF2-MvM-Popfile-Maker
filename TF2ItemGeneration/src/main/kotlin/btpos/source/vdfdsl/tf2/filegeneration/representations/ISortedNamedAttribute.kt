@@ -4,7 +4,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAtt
 import org.jetbrains.annotations.Contract
 
 interface ISortedNamedAttribute {
-	val varName: String
+	var varName: String
 	
 	/**
 	 * In-game descs and sorted in-game descs of contained attributes
