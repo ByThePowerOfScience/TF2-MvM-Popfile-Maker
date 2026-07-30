@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface ProjectileFlareAttributes : BaseProjectileAttributes {
-	
 	companion object {
 		val projectileSpeed: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
 			ItemAttributeNamed<Float>("Projectile speed increased"),

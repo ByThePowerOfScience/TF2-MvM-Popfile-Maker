@@ -8,16 +8,48 @@ import java.util.*
 
 
 
-
 interface FlamethrowerAttributes : BaseGunAttributes {
-	
 	companion object {
+		val airblast: AirblastAttributes = AirblastAttributes()
+	
 		val buffType: BuffTypeAttributes = BuffTypeAttributes()
 	
+		val flames: FlamesAttributes = FlamesAttributes()
+	
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	}
+
+	val airblast: AirblastAttributes get() = FlamethrowerAttributes.airblast
+	
+	override val crits: CritsAttributes get() = super.crits
+	
+	override val movement: MovementAttributes get() = super.movement
+	
+	override val ammo: AmmoAttributes get() = FlamethrowerAttributes.ammo
+	
+	override val healthAndHealing: HealthAndHealingAttributes get() = super.healthAndHealing
+	
+	val buffType: BuffTypeAttributes get() = FlamethrowerAttributes.buffType
+	
+	val flames: FlamesAttributes get() = FlamethrowerAttributes.flames
+	
+	override val damage: DamageAttributes get() = FlamethrowerAttributes.damage
+	
+	override val firing: FiringAttributes get() = FlamethrowerAttributes.firing
+	
+	override val projectiles: ProjectilesAttributes get() = FlamethrowerAttributes.projectiles
+
+	open class AirblastAttributes : IBlockScoped {
 		/**
 		 * In-Game: "No airblast"
 		 */
-		val airblastDisabled: ItemAttributeNamed<Boolean> = ItemAttributeNamed("airblast disabled")
+		open val airblastDisabled: ItemAttributeNamed<Boolean> = ItemAttributeNamed("airblast disabled")
 	
 		/**
 		 * In-Game: "Airblast can now be charged, which will push enemies further"
@@ -26,22 +58,12 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 		 * 
 		 * Fun fact: apparently this was going to be a FLAME ROCKET, but got changed later to be an airblast.
 		 */
-		val chargedAirblast: ItemAttributeNamed<Boolean> = ItemAttributeNamed("charged airblast")
+		open val chargedAirblast: ItemAttributeNamed<Boolean> = ItemAttributeNamed("charged airblast")
 	
-		val airblastCost: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
+		open val airblastCost: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
 			ItemAttributeNamed<Float>("airblast cost decreased"),
 			ItemAttributeNamed<Float>("airblast cost increased"),
 			ItemAttributeNamed<Float>("airblast cost scale hidden"),
-		)
-	
-		/**
-		 * In-Game: "100% critical hits from behind"
-		 */
-		val flamethrowerBackCrit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod flamethrower back crit")
-	
-		val flameAmmopersec: BonusPenalty<Float> = BonusPenalty(
-			ItemAttributeNamed("flame ammopersec decreased"),
-			ItemAttributeNamed("flame ammopersec increased"),
 		)
 	
 		/**
@@ -49,155 +71,65 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 		 * 
 		 * Secondary attack delay = 0.75 * this.
 		 */
-		val multAirblastRefireTime: ItemAttributeNamed<Float> = ItemAttributeNamed("mult airblast refire time")
+		open val multAirblastRefireTime: ItemAttributeNamed<Float> = ItemAttributeNamed("mult airblast refire time")
 	
 		/**
 		 * Scales the reflect hitbox for your airblast.
 		 */
-		val deflectionSizeMultiplier: ItemAttributeNamed<Float> = ItemAttributeNamed("deflection size multiplier")
+		open val deflectionSizeMultiplier: ItemAttributeNamed<Float> = ItemAttributeNamed("deflection size multiplier")
 	
+		/**
+		 * In-Game: "+N% airblast push force"
+		 */
+		open val airblastPushbackScale: ItemAttributeNamed<Float> = ItemAttributeNamed("airblast pushback scale")
+	
+		open val airblastVerticalPushbackScale: ItemAttributeNamed<Float> = ItemAttributeNamed("airblast vertical pushback scale")
+	
+		open val airblastDestroyProjectile: ItemAttributeNamed<Boolean> = ItemAttributeNamed("airblast_destroy_projectile")
+	
+		open val airblastPushbackDisabled: ItemAttributeNamed<Boolean> = ItemAttributeNamed("airblast_pushback_disabled")
+	}
+	
+	open class CritsAttributes : IBlockScoped {
+		/**
+		 * In-Game: "100% critical hits from behind"
+		 */
+		open val flamethrowerBackCrit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod flamethrower back crit")
+	}
+	
+	open class MovementAttributes : IBlockScoped 
+	
+	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
+		open val flameAmmopersec: BonusPenalty<Float> = BonusPenalty(
+			ItemAttributeNamed("flame ammopersec decreased"),
+			ItemAttributeNamed("flame ammopersec increased"),
+		)
+	}
+	
+	open class HealthAndHealingAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Extinguishing teammates restores N health"
 		 * 
 		 * How much health your extinguish restores.
 		 */
-		val extinguishRestoresHealth: ItemAttributeNamed<Int> = ItemAttributeNamed("extinguish restores health")
-	
-		/**
-		 * In-Game: "+N% airblast push force"
-		 */
-		val airblastPushbackScale: ItemAttributeNamed<Float> = ItemAttributeNamed("airblast pushback scale")
-	
-		val airblastVerticalPushbackScale: ItemAttributeNamed<Float> = ItemAttributeNamed("airblast vertical pushback scale")
-	
-		val flameSize: BonusPenalty<Float> = BonusPenalty(
-			ItemAttributeNamed("flame size bonus"),
-			ItemAttributeNamed("flame size penalty"),
-		)
-	
-		val flameLife: BonusPenalty<Float> = BonusPenalty(
-			ItemAttributeNamed("flame life bonus"),
-			ItemAttributeNamed("flame life penalty"),
-		)
-	
-		val airblastDestroyProjectile: ItemAttributeNamed<Boolean> = ItemAttributeNamed("airblast_destroy_projectile")
-	
-		val airblastPushbackDisabled: ItemAttributeNamed<Boolean> = ItemAttributeNamed("airblast_pushback_disabled")
-	
-		val flames: FlamesAttributes = FlamesAttributes()
-	
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val fireRate: FireRateAttributes = FireRateAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		open val extinguishRestoresHealth: ItemAttributeNamed<Int> = ItemAttributeNamed("extinguish restores health")
 	}
-
-	val buffType: BuffTypeAttributes get() = FlamethrowerAttributes.buffType
-	
-	/**
-	 * In-Game: "No airblast"
-	 */
-	val airblastDisabled: ItemAttributeNamed<Boolean> get() = FlamethrowerAttributes.airblastDisabled
-	
-	/**
-	 * In-Game: "Airblast can now be charged, which will push enemies further"
-	 * 
-	 * Enables charging an airblast for longer for higher push.
-	 * 
-	 * Fun fact: apparently this was going to be a FLAME ROCKET, but got changed later to be an airblast.
-	 */
-	val chargedAirblast: ItemAttributeNamed<Boolean> get() = FlamethrowerAttributes.chargedAirblast
-	
-	val airblastCost: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> get() = FlamethrowerAttributes.airblastCost
-	
-	/**
-	 * In-Game: "100% critical hits from behind"
-	 */
-	val flamethrowerBackCrit: ItemAttributeNamed<Boolean> get() = FlamethrowerAttributes.flamethrowerBackCrit
-	
-	val flameAmmopersec: BonusPenalty<Float> get() = FlamethrowerAttributes.flameAmmopersec
-	
-	/**
-	 * Multiplier for how long after airblasting until you can fire a primary OR secondary attack.
-	 * 
-	 * Secondary attack delay = 0.75 * this.
-	 */
-	val multAirblastRefireTime: ItemAttributeNamed<Float> get() = FlamethrowerAttributes.multAirblastRefireTime
-	
-	/**
-	 * Scales the reflect hitbox for your airblast.
-	 */
-	val deflectionSizeMultiplier: ItemAttributeNamed<Float> get() = FlamethrowerAttributes.deflectionSizeMultiplier
-	
-	/**
-	 * In-Game: "Extinguishing teammates restores N health"
-	 * 
-	 * How much health your extinguish restores.
-	 */
-	val extinguishRestoresHealth: ItemAttributeNamed<Int> get() = FlamethrowerAttributes.extinguishRestoresHealth
-	
-	/**
-	 * In-Game: "+N% airblast push force"
-	 */
-	val airblastPushbackScale: ItemAttributeNamed<Float> get() = FlamethrowerAttributes.airblastPushbackScale
-	
-	val airblastVerticalPushbackScale: ItemAttributeNamed<Float> get() = FlamethrowerAttributes.airblastVerticalPushbackScale
-	
-	/**
-	 * In-Game: "Halloween Fire"
-	 */
-	override val spellHalloweenGreenFlames: ItemAttributeNamed<Boolean> get() = super.spellHalloweenGreenFlames
-	
-	val flameSize: BonusPenalty<Float> get() = FlamethrowerAttributes.flameSize
-	
-	val flameLife: BonusPenalty<Float> get() = FlamethrowerAttributes.flameLife
-	
-	val airblastDestroyProjectile: ItemAttributeNamed<Boolean> get() = FlamethrowerAttributes.airblastDestroyProjectile
-	
-	val airblastPushbackDisabled: ItemAttributeNamed<Boolean> get() = FlamethrowerAttributes.airblastPushbackDisabled
-	
-	val flames: FlamesAttributes get() = FlamethrowerAttributes.flames
-	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = FlamethrowerAttributes.projectilePenetration
-	
-	override val damage: DamageAttributes get() = FlamethrowerAttributes.damage
-	
-	override val fireRate: FireRateAttributes get() = FlamethrowerAttributes.fireRate
-	
-	override val onHit: OnHitAttributes get() = FlamethrowerAttributes.onHit
-	
-	override val revengeCrits: RevengeCritsAttributes get() = FlamethrowerAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = FlamethrowerAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = FlamethrowerAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = FlamethrowerAttributes.ragdolls
-
 	
 	open class BuffTypeAttributes : IBlockScoped {
-		/**
-		 * If greater than 0, enables Phlog crits on having full rage.
-		 */
-		open val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
+		open val buffType: BuffTypeAttributes = BuffTypeAttributes()
 	
-		/**
-		 * If greater than 0, enables Phlog crits on having full rage.
-		 */
-		open val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
+		open class BuffTypeAttributes : IBlockScoped {
+			/**
+			 * If greater than 0, enables Phlog crits on having full rage.
+			 */
+			open val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
+	
+			/**
+			 * If greater than 0, enables Phlog crits on having full rage.
+			 */
+			open val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
+		}
 	}
-	
 	
 	open class FlamesAttributes : IBlockScoped {
 		open val flameSpreadDegree: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_spread_degree")
@@ -232,39 +164,29 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 		open val flameDrag: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_drag")
 	
 		open val flameUpSpeed: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_up_speed")
+	
+		open val flameLife: BonusPenalty<Float> = BonusPenalty(
+			ItemAttributeNamed("flame life bonus"),
+			ItemAttributeNamed("flame life penalty"),
+		)
+	
+		/**
+		 * In-Game: "Halloween Fire"
+		 */
+		open val spellHalloweenGreenFlames: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween green flames")
 	}
-	
-	
-	open class ProjectilePenetrationAttributes : BaseGunAttributes.ProjectilePenetrationAttributes() 
-	
 	
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
 	
+	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-	open class FireRateAttributes : BaseGunAttributes.FireRateAttributes() 
-	
-	
-	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-	
-		open class HealOnHitForRapidfireAttributes : BaseGunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-	
-		open class GenerateRageOnDamageAttributes : BaseGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
+	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
+		override val bullets: BulletsAttributes = BulletsAttributes()
 	
-	open class RevengeCritsAttributes : BaseGunAttributes.RevengeCritsAttributes() 
-	
-	
-	open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritVsBurningPlayersAttributes() 
-	
-	
-	open class DamageForceReductionAttributes : BaseGunAttributes.DamageForceReductionAttributes() 
-	
-	
-	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+		open class BulletsAttributes : BaseGunAttributes.ProjectilesAttributes.BulletsAttributes() 
+	}
 }

@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface StickBombAttributes : IBlockScoped {
-	
 	companion object {
 		/**
 		 * In-Game: "Pumpkin Bombs"

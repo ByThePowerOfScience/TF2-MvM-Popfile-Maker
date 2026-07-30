@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface RocketPackAttributes : BaseMeleeAttributes {
-	
 	companion object {
 		/**
 		 * In-Game: "Able to re-launch while already in-flight"
@@ -19,21 +17,13 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 		 */
 		val thermalThrusterAirLaunch: ItemAttributeNamed<Boolean> = ItemAttributeNamed("thermal_thruster_air_launch")
 	
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val fireRate: FireRateAttributes = FireRateAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	}
 
 	/**
@@ -43,53 +33,19 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 	 */
 	val thermalThrusterAirLaunch: ItemAttributeNamed<Boolean> get() = RocketPackAttributes.thermalThrusterAirLaunch
 	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = RocketPackAttributes.projectilePenetration
+	override val crits: CritsAttributes get() = RocketPackAttributes.crits
 	
 	override val damage: DamageAttributes get() = RocketPackAttributes.damage
 	
-	override val fireRate: FireRateAttributes get() = RocketPackAttributes.fireRate
-	
 	override val onHit: OnHitAttributes get() = RocketPackAttributes.onHit
 	
-	override val revengeCrits: RevengeCritsAttributes get() = RocketPackAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = RocketPackAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = RocketPackAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = RocketPackAttributes.ragdolls
+	override val swapWeapons: SwapWeaponsAttributes get() = RocketPackAttributes.swapWeapons
 
-	
-	open class ProjectilePenetrationAttributes : BaseMeleeAttributes.ProjectilePenetrationAttributes() 
-	
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
 	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
+	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() 
 	
-	open class FireRateAttributes : BaseMeleeAttributes.FireRateAttributes() 
-	
-	
-	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-	
-		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-	
-		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
-	}
-	
-	
-	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
-	
-	
-	open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritVsBurningPlayersAttributes() 
-	
-	
-	open class DamageForceReductionAttributes : BaseMeleeAttributes.DamageForceReductionAttributes() 
-	
-	
-	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
+	open class SwapWeaponsAttributes : BaseMeleeAttributes.SwapWeaponsAttributes() 
 }

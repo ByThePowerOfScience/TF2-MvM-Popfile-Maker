@@ -8,106 +8,61 @@ import java.util.*
 
 
 
-
 interface GrenadeLauncherAttributes : BaseGunAttributes {
-	
 	companion object {
 		/**
-		 * In-Game: "N% damage on grenades that explode on timer"
-		 * 
-		 * Flat multiplier applied to initial damage.
+		 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
 		 */
-		val grenadeDetonationDamagePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("grenade detonation damage penalty")
+		val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> = ItemAttributeNamed("grenade launcher mortar mode")
 	
-		val projectileSpeed: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	}
+
+	override val projectiles: ProjectilesAttributes get() = GrenadeLauncherAttributes.projectiles
+	
+	override val damage: DamageAttributes get() = GrenadeLauncherAttributes.damage
+	
+	/**
+	 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
+	 */
+	val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> get() = GrenadeLauncherAttributes.grenadeLauncherMortarMode
+	
+	override val ammo: AmmoAttributes get() = GrenadeLauncherAttributes.ammo
+	
+	override val firing: FiringAttributes get() = GrenadeLauncherAttributes.firing
+
+	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
+		open val projectileSpeed: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
 			ItemAttributeNamed<Float>("Projectile speed increased"),
 			ItemAttributeNamed<Float>("Projectile speed decreased"),
 			ItemAttributeNamed<Float>("Projectile speed increased HIDDEN"),
 		)
 	
+		override val bullets: BulletsAttributes = BulletsAttributes()
+	
+		open class BulletsAttributes : BaseGunAttributes.ProjectilesAttributes.BulletsAttributes() 
+	}
+	
+	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
 		/**
-		 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
+		 * In-Game: "N% damage on grenades that explode on timer"
+		 * 
+		 * Flat multiplier applied to initial damage.
 		 */
-		val grenadeLauncherMortarMode: ItemAttributeNamed<Float> = ItemAttributeNamed("grenade launcher mortar mode")
-	
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val fireRate: FireRateAttributes = FireRateAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	}
-
-	/**
-	 * In-Game: "N% damage on grenades that explode on timer"
-	 * 
-	 * Flat multiplier applied to initial damage.
-	 */
-	val grenadeDetonationDamagePenalty: ItemAttributeNamed<Float> get() = GrenadeLauncherAttributes.grenadeDetonationDamagePenalty
-	
-	val projectileSpeed: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> get() = GrenadeLauncherAttributes.projectileSpeed
-	
-	/**
-	 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
-	 */
-	val grenadeLauncherMortarMode: ItemAttributeNamed<Float> get() = GrenadeLauncherAttributes.grenadeLauncherMortarMode
-	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = GrenadeLauncherAttributes.projectilePenetration
-	
-	override val damage: DamageAttributes get() = GrenadeLauncherAttributes.damage
-	
-	override val fireRate: FireRateAttributes get() = GrenadeLauncherAttributes.fireRate
-	
-	override val onHit: OnHitAttributes get() = GrenadeLauncherAttributes.onHit
-	
-	override val revengeCrits: RevengeCritsAttributes get() = GrenadeLauncherAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = GrenadeLauncherAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = GrenadeLauncherAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = GrenadeLauncherAttributes.ragdolls
-
-	
-	open class ProjectilePenetrationAttributes : BaseGunAttributes.ProjectilePenetrationAttributes() 
-	
-	
-	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
-	
-	
-	open class FireRateAttributes : BaseGunAttributes.FireRateAttributes() 
-	
-	
-	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-	
-		open class HealOnHitForRapidfireAttributes : BaseGunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-	
-		open class GenerateRageOnDamageAttributes : BaseGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open val grenadeDetonationDamagePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("grenade detonation damage penalty")
 	}
 	
+	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() 
 	
-	open class RevengeCritsAttributes : BaseGunAttributes.RevengeCritsAttributes() 
+	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-	
-	open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritVsBurningPlayersAttributes() 
-	
-	
-	open class DamageForceReductionAttributes : BaseGunAttributes.DamageForceReductionAttributes() 
-	
-	
-	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
+	}
 }

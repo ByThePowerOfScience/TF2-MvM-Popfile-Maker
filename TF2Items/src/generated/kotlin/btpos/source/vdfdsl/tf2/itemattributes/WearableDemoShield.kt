@@ -8,25 +8,43 @@ import java.util.*
 
 
 
-
 interface WearableDemoShieldAttributes : WearableAttributes {
-	
 	companion object {
-		val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
+		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val chargeTime: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("charge time increased"), ItemAttributeNamed<Float>("charge time decreased"))
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val chargeImpactDamage: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("charge impact damage increased"), ItemAttributeNamed<Float>("charge impact damage decreased"))
+		private val meta: MetaAttributes = MetaAttributes()
 	}
 
-	val attackNotCancelCharge: ItemAttributeNamed<Boolean> get() = WearableDemoShieldAttributes.attackNotCancelCharge
+	val demoCharge: DemoChargeAttributes get() = WearableDemoShieldAttributes.demoCharge
 	
-	val chargeTime: VisHidden<Float> get() = WearableDemoShieldAttributes.chargeTime
+	override val resistance: ResistanceAttributes get() = WearableDemoShieldAttributes.resistance
 	
-	val chargeImpactDamage: VisHidden<Float> get() = WearableDemoShieldAttributes.chargeImpactDamage
+	override val meta: MetaAttributes get() = WearableDemoShieldAttributes.meta
+
+	open class DemoChargeAttributes : IBlockScoped {
+		open val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
 	
-	/**
-	 * In-Game: "Immune to the effects of afterburn."
-	 */
-	override val afterburnImmunity: ItemAttributeNamed<Boolean> get() = super.afterburnImmunity
+		open val chargeTime: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("charge time increased"), ItemAttributeNamed<Float>("charge time decreased"))
+	
+		open val chargeImpactDamage: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("charge impact damage increased"), ItemAttributeNamed<Float>("charge impact damage decreased"))
+	}
+	
+	open class ResistanceAttributes : WearableAttributes.ResistanceAttributes() {
+		/**
+		 * In-Game: "Immune to the effects of afterburn."
+		 */
+		override val afterburnImmunity: ItemAttributeNamed<Boolean> get() = super.afterburnImmunity
+	}
+	
+	open class MetaAttributes : WearableAttributes.MetaAttributes() {
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		open class PlayerAttributes : WearableAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class ItemsAttributes : WearableAttributes.MetaAttributes.ItemsAttributes() 
+	}
 }

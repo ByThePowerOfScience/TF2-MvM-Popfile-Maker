@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface SapperAttributes : BuilderAttributes {
-	
 	companion object {
 		/**
 		 * In-Game: "Reverses enemy building construction"

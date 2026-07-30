@@ -8,31 +8,28 @@ import java.util.*
 
 
 
-
 interface ScattergunAttributes : ShotgunAttributes {
+	companion object 
+
+	override val onHit: OnHitAttributes get() = super.onHit
 	
-	companion object {
+	override val reloading: ReloadingAttributes get() = super.reloading
+
+	open class OnHitAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Knockback on the target and shooter"
 		 * 
 		 * Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary.
 		 */
-		val scattergunHasKnockback: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun has knockback")
+		open val scattergunHasKnockback: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun has knockback")
 	
-		val scattergunKnockbackMult: ItemAttributeNamed<Float> = ItemAttributeNamed("scattergun knockback mult")
+		open val scattergunKnockbackMult: ItemAttributeNamed<Float> = ItemAttributeNamed("scattergun knockback mult")
 	}
-
-	/**
-	 * In-Game: "Knockback on the target and shooter"
-	 * 
-	 * Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary.
-	 */
-	val scattergunHasKnockback: ItemAttributeNamed<Boolean> get() = ScattergunAttributes.scattergunHasKnockback
 	
-	val scattergunKnockbackMult: ItemAttributeNamed<Float> get() = ScattergunAttributes.scattergunKnockbackMult
-	
-	/**
-	 * If 1, reloads entire clip at once.
-	 */
-	override val scattergunNoReloadSingle: ItemAttributeNamed<Boolean> get() = super.scattergunNoReloadSingle
+	open class ReloadingAttributes : IBlockScoped {
+		/**
+		 * If 1, reloads entire clip at once.
+		 */
+		open val scattergunNoReloadSingle: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun no reload single")
+	}
 }

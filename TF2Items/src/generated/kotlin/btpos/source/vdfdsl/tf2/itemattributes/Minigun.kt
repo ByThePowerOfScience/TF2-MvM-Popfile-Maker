@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface MinigunAttributes : BaseGunAttributes {
-	
 	companion object {
 		/**
 		 * In-Game: "Silent Killer: No barrel spin sound"
@@ -34,14 +32,17 @@ interface MinigunAttributes : BaseGunAttributes {
 		 */
 		val ringOfFireWhileAiming: ItemAttributeNamed<Int> = ItemAttributeNamed("ring of fire while aiming")
 	
-		/**
-		 * In-Game: "Consumes an additional N ammo per second while spun up"
-		 * 
-		 * Amount of ammo drained per second.
-		 */
-		val spinupAmmoDrain: ItemAttributeNamed<Int> = ItemAttributeNamed("uses ammo while aiming")
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	}
 
+	override val ammo: AmmoAttributes get() = MinigunAttributes.ammo
+	
 	/**
 	 * In-Game: "Silent Killer: No barrel spin sound"
 	 */
@@ -61,10 +62,32 @@ interface MinigunAttributes : BaseGunAttributes {
 	 */
 	val ringOfFireWhileAiming: ItemAttributeNamed<Int> get() = MinigunAttributes.ringOfFireWhileAiming
 	
-	/**
-	 * In-Game: "Consumes an additional N ammo per second while spun up"
-	 * 
-	 * Amount of ammo drained per second.
-	 */
-	val spinupAmmoDrain: ItemAttributeNamed<Int> get() = MinigunAttributes.spinupAmmoDrain
+	override val damage: DamageAttributes get() = MinigunAttributes.damage
+	
+	override val firing: FiringAttributes get() = MinigunAttributes.firing
+	
+	override val projectiles: ProjectilesAttributes get() = MinigunAttributes.projectiles
+
+	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
+		/**
+		 * In-Game: "Consumes an additional N ammo per second while spun up"
+		 * 
+		 * Amount of ammo drained per second.
+		 */
+		open val spinupAmmoDrain: ItemAttributeNamed<Int> = ItemAttributeNamed("uses ammo while aiming")
+	}
+	
+	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
+	
+	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
+	
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
+	}
+	
+	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
+		override val bullets: BulletsAttributes = BulletsAttributes()
+	
+		open class BulletsAttributes : BaseGunAttributes.ProjectilesAttributes.BulletsAttributes() 
+	}
 }

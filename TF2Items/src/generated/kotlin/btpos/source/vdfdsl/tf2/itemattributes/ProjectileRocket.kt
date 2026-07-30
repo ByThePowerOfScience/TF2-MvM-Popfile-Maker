@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface ProjectileRocketAttributes : BaseRocketAttributes {
-	
 	companion object 
 
 	/**

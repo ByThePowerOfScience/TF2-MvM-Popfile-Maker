@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
-	
 	companion object {
 		/**
 		 * In-Game: "Projectile penetrates enemy targets"

@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface ScoutPistolAttributes : PistolAttributes {
-	
 	companion object {
 		/**
 		 * If true, can headshot when behind an enemy.

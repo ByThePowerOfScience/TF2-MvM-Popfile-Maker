@@ -8,295 +8,319 @@ import java.util.*
 
 
 
-
 interface BaseGunAttributes : WeaponBaseAttributes {
-	
 	companion object {
-		/**
-		 * Multiplier applied to base fire delay.
-		 * 
-		 * Checked on player.
-		 */
-		val halloweenFireRateBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("halloween fire rate bonus")
+		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		/**
-		 * In-Game: "Fire rate increases as health decreases"
-		 * 
-		 * Used with the _old_ Panic Attack.
-		 */
-		val fireRateBonusWithReducedHealth: ItemAttributeNamed<Float> = ItemAttributeNamed("fire rate bonus with reduced health")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		/**
-		 * In-Game: "Increased attack speed and smaller blast radius while blast jumping"
-		 * 
-		 * Multiplier to fire delay while player is blast-jumping.
-		 */
-		val rocketjumpAttackrateBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("rocketjump attackrate bonus")
+		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		/**
-		 * In-Game: "Overrides the projectile fired from the weapon. Takes values from 1 to 26, each representing a different projectile, and not all projectiles work on all weapons"
-		 * 
-		 * If unset, uses the weapon's default projectile type.
-		 */
-		val overrideProjectileType: ItemAttributeNamed<TFProjectileType> = ItemAttributeNamed("override projectile type")
+		private val crits: CritsAttributes = CritsAttributes()
 	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		val firing: FiringAttributes = FiringAttributes()
+	
+		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		val movement: MovementAttributes = MovementAttributes()
+	
+		val heads: HeadsAttributes = HeadsAttributes()
+	
+		val onHit: OnHitAttributes = OnHitAttributes()
+	
+		val onKill: OnKillAttributes = OnKillAttributes()
+	
+		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		val taunting: TauntingAttributes = TauntingAttributes()
+	
+		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
+		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	}
+
+	override val ammo: AmmoAttributes get() = BaseGunAttributes.ammo
+	
+	override val damage: DamageAttributes get() = BaseGunAttributes.damage
+	
+	override val firing: FiringAttributes get() = BaseGunAttributes.firing
+	
+	override val projectiles: ProjectilesAttributes get() = BaseGunAttributes.projectiles
+	
+	override val afterburn: AfterburnAttributes get() = BaseGunAttributes.afterburn
+	
+	override val buildings: BuildingsAttributes get() = BaseGunAttributes.buildings
+	
+	override val crits: CritsAttributes get() = BaseGunAttributes.crits
+	
+	override val demoCharge: DemoChargeAttributes get() = BaseGunAttributes.demoCharge
+	
+	override val healthAndHealing: HealthAndHealingAttributes get() = BaseGunAttributes.healthAndHealing
+	
+	override val knockbackReceived: KnockbackReceivedAttributes get() = BaseGunAttributes.knockbackReceived
+	
+	override val meta: MetaAttributes get() = BaseGunAttributes.meta
+	
+	override val meter: MeterAttributes get() = BaseGunAttributes.meter
+	
+	override val movement: MovementAttributes get() = BaseGunAttributes.movement
+	
+	override val heads: HeadsAttributes get() = BaseGunAttributes.heads
+	
+	override val onHit: OnHitAttributes get() = BaseGunAttributes.onHit
+	
+	override val onKill: OnKillAttributes get() = BaseGunAttributes.onKill
+	
+	override val reloading: ReloadingAttributes get() = BaseGunAttributes.reloading
+	
+	override val resistance: ResistanceAttributes get() = BaseGunAttributes.resistance
+	
+	override val revengeCrits: RevengeCritsAttributes get() = BaseGunAttributes.revengeCrits
+	
+	override val statusEffects: StatusEffectsAttributes get() = BaseGunAttributes.statusEffects
+	
+	override val taunting: TauntingAttributes get() = BaseGunAttributes.taunting
+	
+	override val viewmodel: ViewmodelAttributes get() = BaseGunAttributes.viewmodel
+	
+	override val swapWeapons: SwapWeaponsAttributes get() = BaseGunAttributes.swapWeapons
+	
+	override val whenHit: WhenHitAttributes get() = BaseGunAttributes.whenHit
+	
+	override val ragdolls: RagdollsAttributes get() = BaseGunAttributes.ragdolls
+
+	open class AmmoAttributes : WeaponBaseAttributes.AmmoAttributes() {
 		/**
 		 * In-Game: "Per Shot: -N ammo"
 		 * 
 		 * How much ammo is used per shot. If 0, uses default.
 		 */
-		val ammoPerShot: ItemAttributeNamed<Int> = ItemAttributeNamed("mod ammo per shot")
+		open val ammoPerShot: ItemAttributeNamed<Int> = ItemAttributeNamed("mod ammo per shot")
 	
-		val projectileRange: BonusPenalty<Float> = BonusPenalty(
-			ItemAttributeNamed("Projectile range increased"),
-			ItemAttributeNamed("Projectile range decreased"),
-		)
+		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
-		/**
-		 * Don't spin loch n load pills.
-		 */
-		val grenadeNoSpin: ItemAttributeNamed<Boolean> = ItemAttributeNamed("grenade no spin")
+		open class ClipSizeAttributes : WeaponBaseAttributes.AmmoAttributes.ClipSizeAttributes() 
+	}
 	
-		val weaponSpread: BonusPenalty<Float> = BonusPenalty(
-			ItemAttributeNamed("weapon spread bonus"),
-			ItemAttributeNamed("spread penalty"),
-		)
-	
-		/**
-		 * In-Game: "Weapon spread increases as health decreases"
-		 * 
-		 * Multiplier applied to bullet spread as health gets lower.
-		 */
-		val multSpreadAsHealthDecreases: ItemAttributeNamed<Float> = ItemAttributeNamed("panic_attack_negative")
-	
-		/**
-		 * In-Game: "Successive shots become less accurate"
-		 * 
-		 * Scales weapon spread when firing consecutive shots, like the _New_ Panic Attack.
-		 */
-		val spreadIncreasesOnConsecutiveShots: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_spread_scales_consecutive")
-	
+	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() {
 		/**
 		 * In-Game: "+N% damage bonus while disguised"
 		 * 
 		 * When disguised (only checks if the player has the condition, doesn't check class), multiply damage by this amount.
 		 */
-		val damageBonusWhileDisguised: ItemAttributeNamed<Float> = ItemAttributeNamed("damage bonus while disguised")
+		open val damageBonusWhileDisguised: ItemAttributeNamed<Float> = ItemAttributeNamed("damage bonus while disguised")
 	
 		/**
 		 * In-Game: "Gains a damage bonus as rage increases, up to N%"
 		 * 
 		 * If you're a Soldier or Pyro, increases damage by `(n - 1) * (rage gauge proportion)`.
 		 */
-		val rageDamageBoost: ItemAttributeNamed<Float> = ItemAttributeNamed("mod rage damage boost")
+		open val rageDamageBoost: ItemAttributeNamed<Float> = ItemAttributeNamed("mod rage damage boost")
 	
 		/**
 		 * In-Game: "While a medic is healing you, this weapon's damage is increased by N%"
 		 * 
 		 * Multiply damage by this value once for each healer you have. (with 2 healers, that's `bonus * bonus`, exponential).
 		 */
-		val medicHealedDamageBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("mod medic healed damage bonus")
+		open val medicHealedDamageBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("mod medic healed damage bonus")
 	
 		/**
 		 * In-Game: "Accuracy scales damage"
 		 * 
 		 * If the projectile being fired is a bullet, multiply damage by your hit ratio over the past few seconds.
 		 */
-		val accuracyScalesDamage: ItemAttributeNamed<Float> = ItemAttributeNamed("accuracy scales damage")
+		open val accuracyScalesDamage: ItemAttributeNamed<Float> = ItemAttributeNamed("accuracy scales damage")
 	
-		/**
-		 * By default, all guns have perfect accuracy on the first shot, unless this is set.
-		 */
-		val multSpreadScaleFirstShot: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_spread_scale_first_shot")
+		override val damage: DamageAttributes = DamageAttributes()
 	
-		/**
-		 * In-Game: "Fires a wide, fixed shot pattern"
-		 * 
-		 * Enables fixed weapon spread on the weapon as though `tf_use_fixed_weaponspreads` were set.
-		 */
-		val fixedWeaponSpread: ItemAttributeNamed<Boolean> = ItemAttributeNamed("fixed_shot_pattern")
-	
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val fireRate: FireRateAttributes = FireRateAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		open class DamageAttributes : WeaponBaseAttributes.DamageAttributes.DamageAttributes() 
 	}
-
-	/**
-	 * Multiplier applied to base fire delay.
-	 * 
-	 * Checked on player.
-	 */
-	val halloweenFireRateBonus: ItemAttributeNamed<Float> get() = BaseGunAttributes.halloweenFireRateBonus
 	
-	/**
-	 * In-Game: "Fire rate increases as health decreases"
-	 * 
-	 * Used with the _old_ Panic Attack.
-	 */
-	val fireRateBonusWithReducedHealth: ItemAttributeNamed<Float> get() = BaseGunAttributes.fireRateBonusWithReducedHealth
+	open class FiringAttributes : WeaponBaseAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-	/**
-	 * In-Game: "Increased attack speed and smaller blast radius while blast jumping"
-	 * 
-	 * Multiplier to fire delay while player is blast-jumping.
-	 */
-	val rocketjumpAttackrateBonus: ItemAttributeNamed<Float> get() = BaseGunAttributes.rocketjumpAttackrateBonus
+		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() {
+			/**
+			 * Multiplier applied to base fire delay for miniguns.
+			 * 
+			 * Checked on player.
+			 */
+			open val halloweenFireRateBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("halloween fire rate bonus")
 	
-	/**
-	 * In-Game: "+N% faster reload time"
-	 * 
-	 * Used if the gun draws directly from the ammo supply without using a clip.
-	 */
-	override val fasterReloadRate: ItemAttributeNamed<Float> get() = super.fasterReloadRate
+			/**
+			 * In-Game: "Fire rate increases as health decreases"
+			 * 
+			 * Used with the pre-Blue Moon Panic Attack.
+			 */
+			open val fireRateBonusWithReducedHealth: ItemAttributeNamed<Float> = ItemAttributeNamed("fire rate bonus with reduced health")
 	
-	/**
-	 * In-Game: "Overrides the projectile fired from the weapon. Takes values from 1 to 26, each representing a different projectile, and not all projectiles work on all weapons"
-	 * 
-	 * If unset, uses the weapon's default projectile type.
-	 */
-	val overrideProjectileType: ItemAttributeNamed<TFProjectileType> get() = BaseGunAttributes.overrideProjectileType
+			/**
+			 * In-Game: "Increased attack speed and smaller blast radius while blast jumping"
+			 * 
+			 * Multiplier to fire delay while player is blast-jumping.
+			 */
+			open val rocketjumpAttackrateBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("rocketjump attackrate bonus")
 	
-	/**
-	 * In-Game: "Per Shot: -N ammo"
-	 * 
-	 * How much ammo is used per shot. If 0, uses default.
-	 */
-	val ammoPerShot: ItemAttributeNamed<Int> get() = BaseGunAttributes.ammoPerShot
+			override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-	/**
-	 * In-Game: "+N degrees random projectile deviation"
-	 * 
-	 * Used when firing pipe bombs.
-	 */
-	override val projectileSpreadAnglePenalty: ItemAttributeNamed<Float> get() = super.projectileSpreadAnglePenalty
+			open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
+		}
+	}
 	
-	val projectileRange: BonusPenalty<Float> get() = BaseGunAttributes.projectileRange
+	open class ProjectilesAttributes : WeaponBaseAttributes.ProjectilesAttributes() {
+		/**
+		 * In-Game: "Overrides the projectile fired from the weapon. Takes values from 1 to 26, each representing a different projectile, and not all projectiles work on all weapons"
+		 * 
+		 * If unset, uses the weapon's default projectile type.
+		 */
+		open val overrideProjectileType: ItemAttributeNamed<TFProjectileType> = ItemAttributeNamed("override projectile type")
 	
-	/**
-	 * Don't spin loch n load pills.
-	 */
-	val grenadeNoSpin: ItemAttributeNamed<Boolean> get() = BaseGunAttributes.grenadeNoSpin
+		/**
+		 * In-Game: "+N degrees random projectile deviation"
+		 * 
+		 * Also applicable to stickies.
+		 */
+		override val projectileSpreadAnglePenalty: ItemAttributeNamed<Float> get() = super.projectileSpreadAnglePenalty
 	
-	val weaponSpread: BonusPenalty<Float> get() = BaseGunAttributes.weaponSpread
+		open val projectileRange: BonusPenalty<Float> = BonusPenalty(
+			ItemAttributeNamed("Projectile range increased"),
+			ItemAttributeNamed("Projectile range decreased"),
+		)
 	
-	/**
-	 * In-Game: "Weapon spread increases as health decreases"
-	 * 
-	 * Multiplier applied to bullet spread as health gets lower.
-	 */
-	val multSpreadAsHealthDecreases: ItemAttributeNamed<Float> get() = BaseGunAttributes.multSpreadAsHealthDecreases
+		/**
+		 * Don't do tumble on tumbling projectiles.
+		 */
+		open val grenadeNoSpin: ItemAttributeNamed<Boolean> = ItemAttributeNamed("grenade no spin")
 	
-	/**
-	 * In-Game: "Successive shots become less accurate"
-	 * 
-	 * Scales weapon spread when firing consecutive shots, like the _New_ Panic Attack.
-	 */
-	val spreadIncreasesOnConsecutiveShots: ItemAttributeNamed<Float> get() = BaseGunAttributes.spreadIncreasesOnConsecutiveShots
+		override val bullets: BulletsAttributes = BulletsAttributes()
 	
-	/**
-	 * In-Game: "+N% damage bonus while disguised"
-	 * 
-	 * When disguised (only checks if the player has the condition, doesn't check class), multiply damage by this amount.
-	 */
-	val damageBonusWhileDisguised: ItemAttributeNamed<Float> get() = BaseGunAttributes.damageBonusWhileDisguised
+		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
 	
-	/**
-	 * In-Game: "Gains a damage bonus as rage increases, up to N%"
-	 * 
-	 * If you're a Soldier or Pyro, increases damage by `(n - 1) * (rage gauge proportion)`.
-	 */
-	val rageDamageBoost: ItemAttributeNamed<Float> get() = BaseGunAttributes.rageDamageBoost
+		open class BulletsAttributes : WeaponBaseAttributes.ProjectilesAttributes.BulletsAttributes() {
+			open val weaponSpread: BonusPenalty<Float> = BonusPenalty(
+				ItemAttributeNamed("weapon spread bonus"),
+				ItemAttributeNamed("spread penalty"),
+			)
 	
-	/**
-	 * In-Game: "While a medic is healing you, this weapon's damage is increased by N%"
-	 * 
-	 * Multiply damage by this value once for each healer you have. (with 2 healers, that's `bonus * bonus`, exponential).
-	 */
-	val medicHealedDamageBonus: ItemAttributeNamed<Float> get() = BaseGunAttributes.medicHealedDamageBonus
+			/**
+			 * In-Game: "Weapon spread increases as health decreases"
+			 * 
+			 * Multiplier applied to bullet spread as health gets lower.
+			 */
+			open val multSpreadAsHealthDecreases: ItemAttributeNamed<Float> = ItemAttributeNamed("panic_attack_negative")
 	
-	/**
-	 * In-Game: "Accuracy scales damage"
-	 * 
-	 * If the projectile being fired is a bullet, multiply damage by your hit ratio over the past few seconds.
-	 */
-	val accuracyScalesDamage: ItemAttributeNamed<Float> get() = BaseGunAttributes.accuracyScalesDamage
+			/**
+			 * In-Game: "Successive shots become less accurate"
+			 * 
+			 * Scales weapon spread when firing consecutive shots, like the post-"Blue Moon" Panic Attack.
+			 */
+			open val spreadIncreasesOnConsecutiveShots: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_spread_scales_consecutive")
 	
-	/**
-	 * By default, all guns have perfect accuracy on the first shot, unless this is set.
-	 */
-	val multSpreadScaleFirstShot: ItemAttributeNamed<Float> get() = BaseGunAttributes.multSpreadScaleFirstShot
+			/**
+			 * By default, all guns have perfect accuracy on the first shot, unless this is set.
+			 */
+			open val multSpreadScaleFirstShot: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_spread_scale_first_shot")
 	
-	/**
-	 * In-Game: "Fires a wide, fixed shot pattern"
-	 * 
-	 * Enables fixed weapon spread on the weapon as though `tf_use_fixed_weaponspreads` were set.
-	 */
-	val fixedWeaponSpread: ItemAttributeNamed<Boolean> get() = BaseGunAttributes.fixedWeaponSpread
+			/**
+			 * In-Game: "Fires a wide, fixed shot pattern"
+			 * 
+			 * Enables fixed weapon spread on the weapon as though `tf_use_fixed_weaponspreads` were set.
+			 */
+			open val fixedWeaponSpread: ItemAttributeNamed<Boolean> = ItemAttributeNamed("fixed_shot_pattern")
+		}
 	
-	/**
-	 * In-Game: "Attacks pierce damage resistance effects and bonuses"
-	 */
-	override val dmgPiercesResistsAbsorbs: ItemAttributeNamed<Boolean> get() = super.dmgPiercesResistsAbsorbs
+		open class ProjectilePenetrationAttributes : WeaponBaseAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
+	}
 	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = BaseGunAttributes.projectilePenetration
+	open class AfterburnAttributes : WeaponBaseAttributes.AfterburnAttributes() 
 	
-	override val damage: DamageAttributes get() = BaseGunAttributes.damage
+	open class BuildingsAttributes : WeaponBaseAttributes.BuildingsAttributes() 
 	
-	override val fireRate: FireRateAttributes get() = BaseGunAttributes.fireRate
+	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() {
+		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
 	
-	override val onHit: OnHitAttributes get() = BaseGunAttributes.onHit
+		open class CritVsBurningPlayersAttributes : WeaponBaseAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
+	}
 	
-	override val revengeCrits: RevengeCritsAttributes get() = BaseGunAttributes.revengeCrits
+	open class DemoChargeAttributes : WeaponBaseAttributes.DemoChargeAttributes() 
 	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = BaseGunAttributes.critVsBurningPlayers
+	open class HealthAndHealingAttributes : WeaponBaseAttributes.HealthAndHealingAttributes() 
 	
-	override val damageForceReduction: DamageForceReductionAttributes get() = BaseGunAttributes.damageForceReduction
+	open class KnockbackReceivedAttributes : WeaponBaseAttributes.KnockbackReceivedAttributes() {
+		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
 	
-	override val ragdolls: RagdollsAttributes get() = BaseGunAttributes.ragdolls
-
+		open class DamageForceReductionAttributes : WeaponBaseAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
+	}
 	
-	open class ProjectilePenetrationAttributes : WeaponBaseAttributes.ProjectilePenetrationAttributes() 
+	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	}
 	
-	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() 
+	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 
 	
+	open class MovementAttributes : WeaponBaseAttributes.MovementAttributes() {
+		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-	open class FireRateAttributes : WeaponBaseAttributes.FireRateAttributes() 
+		open class MoveSpeedAttributes : WeaponBaseAttributes.MovementAttributes.MoveSpeedAttributes() 
+	}
 	
+	open class HeadsAttributes : WeaponBaseAttributes.HeadsAttributes() 
 	
 	open class OnHitAttributes : WeaponBaseAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
 		open class HealOnHitForRapidfireAttributes : WeaponBaseAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
 	
 		open class GenerateRageOnDamageAttributes : WeaponBaseAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
 	}
 	
+	open class OnKillAttributes : WeaponBaseAttributes.OnKillAttributes() 
+	
+	open class ReloadingAttributes : WeaponBaseAttributes.ReloadingAttributes() 
+	
+	open class ResistanceAttributes : WeaponBaseAttributes.ResistanceAttributes() 
 	
 	open class RevengeCritsAttributes : WeaponBaseAttributes.RevengeCritsAttributes() 
 	
+	open class StatusEffectsAttributes : WeaponBaseAttributes.StatusEffectsAttributes() 
 	
-	open class CritVsBurningPlayersAttributes : WeaponBaseAttributes.CritVsBurningPlayersAttributes() 
+	open class TauntingAttributes : WeaponBaseAttributes.TauntingAttributes() 
 	
+	open class ViewmodelAttributes : WeaponBaseAttributes.ViewmodelAttributes() 
 	
-	open class DamageForceReductionAttributes : WeaponBaseAttributes.DamageForceReductionAttributes() 
+	open class SwapWeaponsAttributes : WeaponBaseAttributes.SwapWeaponsAttributes() {
+		override val deploy: DeployAttributes = DeployAttributes()
 	
+		open class DeployAttributes : WeaponBaseAttributes.SwapWeaponsAttributes.DeployAttributes() 
+	}
+	
+	open class WhenHitAttributes : WeaponBaseAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
 }

@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface ProjectileArrowAttributes : BaseRocketAttributes {
-	
 	companion object {
 		/**
 		 * In-Game: "Fires a special bolt that can repair friendly buildings"

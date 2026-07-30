@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface ShovelAttributes : BaseMeleeAttributes {
-	
 	companion object {
 		/**
 		 * In-Game: "Damage increases as the user becomes injured"
@@ -47,21 +45,13 @@ interface ShovelAttributes : BaseMeleeAttributes {
 		 */
 		val airJumpOnAttack: ItemAttributeNamed<Boolean> = ItemAttributeNamed("air jump on attack")
 	
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val fireRate: FireRateAttributes = FireRateAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	}
 
 	/**
@@ -99,53 +89,19 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	 */
 	val airJumpOnAttack: ItemAttributeNamed<Boolean> get() = ShovelAttributes.airJumpOnAttack
 	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = ShovelAttributes.projectilePenetration
+	override val crits: CritsAttributes get() = ShovelAttributes.crits
 	
 	override val damage: DamageAttributes get() = ShovelAttributes.damage
 	
-	override val fireRate: FireRateAttributes get() = ShovelAttributes.fireRate
-	
 	override val onHit: OnHitAttributes get() = ShovelAttributes.onHit
 	
-	override val revengeCrits: RevengeCritsAttributes get() = ShovelAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = ShovelAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = ShovelAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = ShovelAttributes.ragdolls
+	override val swapWeapons: SwapWeaponsAttributes get() = ShovelAttributes.swapWeapons
 
-	
-	open class ProjectilePenetrationAttributes : BaseMeleeAttributes.ProjectilePenetrationAttributes() 
-	
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
 	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
+	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() 
 	
-	open class FireRateAttributes : BaseMeleeAttributes.FireRateAttributes() 
-	
-	
-	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-	
-		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-	
-		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
-	}
-	
-	
-	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
-	
-	
-	open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritVsBurningPlayersAttributes() 
-	
-	
-	open class DamageForceReductionAttributes : BaseMeleeAttributes.DamageForceReductionAttributes() 
-	
-	
-	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
+	open class SwapWeaponsAttributes : BaseMeleeAttributes.SwapWeaponsAttributes() 
 }

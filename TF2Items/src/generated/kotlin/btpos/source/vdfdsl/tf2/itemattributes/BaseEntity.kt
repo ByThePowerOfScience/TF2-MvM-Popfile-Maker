@@ -8,62 +8,106 @@ import java.util.*
 
 
 
-
 interface BaseEntityAttributes : IBlockScoped {
-	
 	companion object {
-		/**
-		 * If true, this item will get kill assist credit in the killfeed.
-		 */
-		val countsAsAssisterIsSomeKindOfPetThisUpdateIsGoingToBeAwesome: ItemAttributeNamed<Boolean> = ItemAttributeNamed("counts as assister is some kind of pet this update is going to be awesome")
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val dmgFalloff: BonusPenalty<Float> = BonusPenalty(
+		val crits: CritsAttributes = CritsAttributes()
+	
+		val damage: DamageAttributes = DamageAttributes()
+	
+		val meta: MetaAttributes = MetaAttributes()
+	
+		val meter: MeterAttributes = MeterAttributes()
+	
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		val resistance: ResistanceAttributes = ResistanceAttributes()
+	}
+
+	val disguise: DisguiseAttributes get() = BaseEntityAttributes.disguise
+	
+	val crits: CritsAttributes get() = BaseEntityAttributes.crits
+	
+	val damage: DamageAttributes get() = BaseEntityAttributes.damage
+	
+	val meta: MetaAttributes get() = BaseEntityAttributes.meta
+	
+	val meter: MeterAttributes get() = BaseEntityAttributes.meter
+	
+	val knockbackReceived: KnockbackReceivedAttributes get() = BaseEntityAttributes.knockbackReceived
+	
+	val resistance: ResistanceAttributes get() = BaseEntityAttributes.resistance
+
+	open class DisguiseAttributes : IBlockScoped {
+		/**
+		 * In-Game: "Normal disguises require (and consume) a full cloak meter"
+		 * 
+		 * If true, disguising requires and consumes an entire cloak meter.
+		 */
+		open val disguiseConsumesCloak: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod_disguise_consumes_cloak")
+	}
+	
+	open class CritsAttributes : IBlockScoped 
+	
+	open class DamageAttributes : IBlockScoped {
+		open val multDmgFalloff: BonusPenalty<Float> = BonusPenalty(
 			ItemAttributeNamed("dmg falloff decreased"),
 			ItemAttributeNamed("dmg falloff increased"),
 		)
+	}
 	
+	open class MetaAttributes : IBlockScoped {
+		open val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		open class KillfeedAttributes : IBlockScoped {
+			/**
+			 * If true, this item will get kill assist credit in the killfeed.
+			 */
+			open val countsAsAssisterIsSomeKindOfPetThisUpdateIsGoingToBeAwesome: ItemAttributeNamed<Boolean> = ItemAttributeNamed("counts as assister is some kind of pet this update is going to be awesome")
+		}
+	}
+	
+	open class MeterAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Spawning and resupply do not affect the Gas meter"
 		 * 
-		 * If true, resupply cabinets and spawning do not fully recharge the meter for this item.  Instead, its "default charge meter value" is used.
+		 * If true, resupply cabinets and spawning do not fully recharge the meter for this item.	Instead, its "default charge meter value" is used.
 		 */
-		val itemMeterResupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("item_meter_resupply_denied")
+		open val resupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("item_meter_resupply_denied")
 	
 		/**
 		 * If `TIME` or `COMBO`, checks the `mult_item_meter_charge_rate` attribute for passive recharge rate mult.
 		 * 
 		 * If `DAMAGE` or `COMBO`, checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
 		 */
-		val itemMeterChargeType: ItemAttributeNamed<TFMeterRechargeType> = ItemAttributeNamed("item_meter_charge_type")
+		open val chargeType: ItemAttributeNamed<TFMeterRechargeType> = ItemAttributeNamed("item_meter_charge_type")
 	
 		/**
 		 * Amount of meter required to fully charge the item.
 		 * 
 		 * If negative, 0, or not set, does not attempt to fill the meter at all when dealing damage.
 		 */
-		val itemMeterDamageForFullCharge: ItemAttributeNamed<Float> = ItemAttributeNamed("item_meter_damage_for_full_charge")
+		open val damageForFullCharge: ItemAttributeNamed<Float> = ItemAttributeNamed("item_meter_damage_for_full_charge")
 	
 		/**
 		 * In-Game: "N% faster recharge rate"
 		 * 
 		 * Scale factor for meter gained per second and/or meter gained on dealing damage.
 		 */
-		val multItemMeterChargeRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_item_meter_charge_rate")
+		open val multChargeRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_item_meter_charge_rate")
+	}
 	
+	open class KnockbackReceivedAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Immune to push force from damage and airblast when spun up"
 		 * 
 		 * Only procs if Heavy and has a spun up minigun.
 		 */
-		val spunupPushForceImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("spunup_push_force_immunity")
+		open val spunupPushForceImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("spunup_push_force_immunity")
+	}
 	
-		/**
-		 * In-Game: "Normal disguises require (and consume) a full cloak meter"
-		 * 
-		 * If true, disguising requires and consumes an entire cloak meter.
-		 */
-		val disguiseConsumesCloak: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod_disguise_consumes_cloak")
-	
+	open class ResistanceAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Blocks a single backstab attempt"
 		 * 
@@ -71,64 +115,6 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * 
 		 * If on a weapon, reduces all backstab damage taken by the player for all backstabs without any cooldown. Performs identically to the Mannpower "Resistance" powerup in this respect.
 		 */
-		val backstabShield: ItemAttributeNamed<Boolean> = ItemAttributeNamed("backstab shield")
+		open val backstabShield: ItemAttributeNamed<Boolean> = ItemAttributeNamed("backstab shield")
 	}
-
-	/**
-	 * If true, this item will get kill assist credit in the killfeed.
-	 */
-	val countsAsAssisterIsSomeKindOfPetThisUpdateIsGoingToBeAwesome: ItemAttributeNamed<Boolean> get() = BaseEntityAttributes.countsAsAssisterIsSomeKindOfPetThisUpdateIsGoingToBeAwesome
-	
-	val dmgFalloff: BonusPenalty<Float> get() = BaseEntityAttributes.dmgFalloff
-	
-	/**
-	 * In-Game: "Spawning and resupply do not affect the Gas meter"
-	 * 
-	 * If true, resupply cabinets and spawning do not fully recharge the meter for this item.  Instead, its "default charge meter value" is used.
-	 */
-	val itemMeterResupplyDenied: ItemAttributeNamed<Boolean> get() = BaseEntityAttributes.itemMeterResupplyDenied
-	
-	/**
-	 * If `TIME` or `COMBO`, checks the `mult_item_meter_charge_rate` attribute for passive recharge rate mult.
-	 * 
-	 * If `DAMAGE` or `COMBO`, checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
-	 */
-	val itemMeterChargeType: ItemAttributeNamed<TFMeterRechargeType> get() = BaseEntityAttributes.itemMeterChargeType
-	
-	/**
-	 * Amount of meter required to fully charge the item.
-	 * 
-	 * If negative, 0, or not set, does not attempt to fill the meter at all when dealing damage.
-	 */
-	val itemMeterDamageForFullCharge: ItemAttributeNamed<Float> get() = BaseEntityAttributes.itemMeterDamageForFullCharge
-	
-	/**
-	 * In-Game: "N% faster recharge rate"
-	 * 
-	 * Scale factor for meter gained per second and/or meter gained on dealing damage.
-	 */
-	val multItemMeterChargeRate: ItemAttributeNamed<Float> get() = BaseEntityAttributes.multItemMeterChargeRate
-	
-	/**
-	 * In-Game: "Immune to push force from damage and airblast when spun up"
-	 * 
-	 * Only procs if Heavy and has a spun up minigun.
-	 */
-	val spunupPushForceImmunity: ItemAttributeNamed<Boolean> get() = BaseEntityAttributes.spunupPushForceImmunity
-	
-	/**
-	 * In-Game: "Normal disguises require (and consume) a full cloak meter"
-	 * 
-	 * If true, disguising requires and consumes an entire cloak meter.
-	 */
-	val disguiseConsumesCloak: ItemAttributeNamed<Boolean> get() = BaseEntityAttributes.disguiseConsumesCloak
-	
-	/**
-	 * In-Game: "Blocks a single backstab attempt"
-	 * 
-	 * If on a Wearable: the item is "broken", it is given `nodraw`, and the player's secondary weapon's meter is reset.
-	 * 
-	 * If on a weapon, reduces all backstab damage taken by the player for all backstabs without any cooldown. Performs identically to the Mannpower "Resistance" powerup in this respect.
-	 */
-	val backstabShield: ItemAttributeNamed<Boolean> get() = BaseEntityAttributes.backstabShield
 }

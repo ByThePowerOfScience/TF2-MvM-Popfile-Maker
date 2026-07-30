@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface ProjectileStickybombAttributes : IBlockScoped {
-	
 	companion object {
 		/**
 		 * In-Game: "Stickybombs fizzle N seconds after landing"

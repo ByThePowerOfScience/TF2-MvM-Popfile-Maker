@@ -26,48 +26,21 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		 */
 		val meltsInFire: ItemAttributeNamed<Boolean> = ItemAttributeNamed("melts in fire")
 	
-		/**
-		 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
-		 */
-		val disguiseOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disguise on backstab")
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		/**
-		 * In-Game: "Increase backstab damage against Giant Robots by N%"
-		 * 
-		 * Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%.
-		 * 
-		 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.
-		 * 
-		 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
-		 * 
-		 * Checked on player.
-		 */
-		val armorPiercing: ItemAttributeNamed<Float> = ItemAttributeNamed("armor piercing")
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		/**
-		 * In-Game: "On Backstab: Absorbs the health from your victim."
-		 * 
-		 * Gain health on backstab. (Conniver's Kunai).
-		 */
-		val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val fireRate: FireRateAttributes = FireRateAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	}
 
+	override val damage: DamageAttributes get() = KnifeAttributes.damage
+	
+	override val healthAndHealing: HealthAndHealingAttributes get() = super.healthAndHealing
+	
+	override val disguise: DisguiseAttributes get() = super.disguise
+	
 	/**
 	 * 0: Stock.
 	 * 
@@ -84,96 +57,78 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	 */
 	val meltsInFire: ItemAttributeNamed<Boolean> get() = KnifeAttributes.meltsInFire
 	
-	/**
-	 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
-	 */
-	val disguiseOnBackstab: ItemAttributeNamed<Boolean> get() = KnifeAttributes.disguiseOnBackstab
-	
-	override val damage: DamageAttributes get() = KnifeAttributes.damage
-	
-	/**
-	 * In-Game: "Increase backstab damage against Giant Robots by N%"
-	 * 
-	 * Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%.
-	 * 
-	 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.
-	 * 
-	 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
-	 * 
-	 * Checked on player.
-	 */
-	val armorPiercing: ItemAttributeNamed<Float> get() = KnifeAttributes.armorPiercing
-	
-	/**
-	 * In-Game: "On Backstab: Absorbs the health from your victim."
-	 * 
-	 * Gain health on backstab. (Conniver's Kunai).
-	 */
-	val gainHealthOnBackstab: ItemAttributeNamed<Boolean> get() = KnifeAttributes.gainHealthOnBackstab
-	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = KnifeAttributes.projectilePenetration
-	
-	override val fireRate: FireRateAttributes get() = KnifeAttributes.fireRate
+	override val crits: CritsAttributes get() = KnifeAttributes.crits
 	
 	override val onHit: OnHitAttributes get() = KnifeAttributes.onHit
 	
-	override val revengeCrits: RevengeCritsAttributes get() = KnifeAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = KnifeAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = KnifeAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = KnifeAttributes.ragdolls
+	override val swapWeapons: SwapWeaponsAttributes get() = KnifeAttributes.swapWeapons
 
 	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
 		/**
-		 * In-Game: "N% damage penalty"
+		 * In-Game: "Increase backstab damage against Giant Robots by N%"
 		 * 
-		 * Base backstab damage against minibosses is 250 * this proportion.
+		 * Spy only does 25% damage against minibosses by default.	The number here is added to that percentage, up to a max of 100% + 25% = 125%.
+		 * 
+		 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:	`25.0`, `50.0`, up to `100.0`.
+		 * 
+		 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
+		 * 
+		 * Checked on player.
 		 */
-		override val damagePenalty: ItemAttributeNamed<Float> get() = super.damagePenalty
+		open val armorPiercing: ItemAttributeNamed<Float> = ItemAttributeNamed("armor piercing")
 	
-		/**
-		 * In-Game: "+N% damage bonus"
-		 * 
-		 * Base backstab damage against minibosses is 250 * this proportion.
-		 */
-		override val damageBonus: ItemAttributeNamed<Float> get() = super.damageBonus
+		override val damage: DamageAttributes = DamageAttributes()
 	
-		/**
-		 * In-Game: "+N% damage bonus"
-		 * 
-		 * Base backstab damage against minibosses is 250 * this proportion.
-		 */
-		override val damageBonusHidden: ItemAttributeNamed<Float> get() = super.damageBonusHidden
+		open class DamageAttributes : IBlockScoped {
+			/**
+			 * In-Game: "N% damage penalty"
+			 * 
+			 * Base backstab damage against minibosses is 250 * this proportion.
+			 */
+			open val damagePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("damage penalty")
 	
-		/**
-		 * In-Game: "+N% damage bonus"
-		 * 
-		 * Base backstab damage against minibosses is 250 * this proportion.
-		 */
-		override val cardDamageBonus: ItemAttributeNamed<Float> get() = super.cardDamageBonus
+			/**
+			 * In-Game: "+N% damage bonus"
+			 * 
+			 * Base backstab damage against minibosses is 250 * this proportion.
+			 */
+			open val damageBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("damage bonus")
+	
+			/**
+			 * In-Game: "+N% damage bonus"
+			 * 
+			 * Base backstab damage against minibosses is 250 * this proportion.
+			 */
+			open val damageBonusHidden: ItemAttributeNamed<Float> = ItemAttributeNamed("damage bonus HIDDEN")
+	
+			/**
+			 * In-Game: "+N% damage bonus"
+			 * 
+			 * Base backstab damage against minibosses is 250 * this proportion.
+			 */
+			open val cardDamageBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("CARD: damage bonus")
+		}
 	}
 	
-	open class ProjectilePenetrationAttributes : BaseMeleeAttributes.ProjectilePenetrationAttributes() 
-	
-	open class FireRateAttributes : BaseMeleeAttributes.FireRateAttributes() 
-	
-	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
-		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	open class HealthAndHealingAttributes : IBlockScoped {
+		/**
+		 * In-Game: "On Backstab: Absorbs the health from your victim."
+		 * 
+		 * Gain health on backstab.
+		 */
+		open val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
 	}
 	
-	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
+	open class DisguiseAttributes : IBlockScoped {
+		/**
+		 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
+		 */
+		open val disguiseOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disguise on backstab")
+	}
 	
-	open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritVsBurningPlayersAttributes() 
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
-	open class DamageForceReductionAttributes : BaseMeleeAttributes.DamageForceReductionAttributes() 
+	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() 
 	
-	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
+	open class SwapWeaponsAttributes : BaseMeleeAttributes.SwapWeaponsAttributes() 
 }

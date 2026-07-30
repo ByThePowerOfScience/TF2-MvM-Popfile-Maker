@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface MvMBotAttributes : PlayerAttributes {
-	
 	companion object {
 		/**
 		 * If true, spawns a rocketjump particle whenever the robot jumps.
@@ -27,47 +25,53 @@ interface MvMBotAttributes : PlayerAttributes {
 		 */
 		val medicUberDeployDelayDuration: ItemAttributeNamed<Int> = ItemAttributeNamed("bot medic uber deploy delay duration")
 	
-		val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val jumpHeight: JumpHeightAttributes = JumpHeightAttributes()
+		val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
-		val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+		val cloak: CloakAttributes = CloakAttributes()
 	
-		val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
-		val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+		val firing: FiringAttributes = FiringAttributes()
 	
-		val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val buffType: BuffTypeAttributes = BuffTypeAttributes()
+		private val hud: HudAttributes = HudAttributes()
 	
-		val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val onDamageTaken: OnDamageTakenAttributes = OnDamageTakenAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		val onHit: OnHitAttributes = OnHitAttributes()
 	
 		val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val denyResupply: DenyResupplyAttributes = DenyResupplyAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val scoutOnly: ScoutOnlyAttributes = ScoutOnlyAttributes()
+		val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val demomanOnly: DemomanOnlyAttributes = DemomanOnlyAttributes()
+		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		val heavyOnly: HeavyOnlyAttributes = HeavyOnlyAttributes()
 	
 		val sniperOnly: SniperOnlyAttributes = SniperOnlyAttributes()
 	
 		val medicOnly: MedicOnlyAttributes = MedicOnlyAttributes()
 	
 		val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
-	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
 	}
 
 	/**
@@ -85,123 +89,65 @@ interface MvMBotAttributes : PlayerAttributes {
 	 */
 	val medicUberDeployDelayDuration: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberDeployDelayDuration
 	
-	override val vaccinator: VaccinatorAttributes get() = MvMBotAttributes.vaccinator
+	override val ammo: AmmoAttributes get() = MvMBotAttributes.ammo
 	
-	override val jumpHeight: JumpHeightAttributes get() = MvMBotAttributes.jumpHeight
+	override val buffItems: BuffItemsAttributes get() = MvMBotAttributes.buffItems
 	
-	override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes get() = MvMBotAttributes.dmgTakenFromCritReduced
+	override val buildings: BuildingsAttributes get() = MvMBotAttributes.buildings
 	
-	override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes get() = MvMBotAttributes.dmgTakenFromFireReduced
+	override val cloak: CloakAttributes get() = MvMBotAttributes.cloak
 	
-	override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes get() = MvMBotAttributes.dmgTakenFromBulletsReduced
+	override val damage: DamageAttributes get() = MvMBotAttributes.damage
 	
-	override val generateRageOnDamage: GenerateRageOnDamageAttributes get() = MvMBotAttributes.generateRageOnDamage
+	override val demoCharge: DemoChargeAttributes get() = MvMBotAttributes.demoCharge
 	
-	override val multChargeTurnControl: MultChargeTurnControlAttributes get() = MvMBotAttributes.multChargeTurnControl
+	override val disguise: DisguiseAttributes get() = MvMBotAttributes.disguise
 	
-	override val aimingMovespeed: AimingMovespeedAttributes get() = MvMBotAttributes.aimingMovespeed
+	override val firing: FiringAttributes get() = MvMBotAttributes.firing
 	
-	override val moveSpeed: MoveSpeedAttributes get() = MvMBotAttributes.moveSpeed
+	override val healthAndHealing: HealthAndHealingAttributes get() = MvMBotAttributes.healthAndHealing
 	
-	override val buffType: BuffTypeAttributes get() = MvMBotAttributes.buffType
+	override val hud: HudAttributes get() = MvMBotAttributes.hud
 	
-	override val healthRegen: HealthRegenAttributes get() = MvMBotAttributes.healthRegen
+	override val knockbackReceived: KnockbackReceivedAttributes get() = MvMBotAttributes.knockbackReceived
 	
-	override val maxHealthAdditive: MaxHealthAdditiveAttributes get() = MvMBotAttributes.maxHealthAdditive
+	override val meta: MetaAttributes get() = MvMBotAttributes.meta
 	
-	override val onDamageTaken: OnDamageTakenAttributes get() = MvMBotAttributes.onDamageTaken
+	override val meter: MeterAttributes get() = MvMBotAttributes.meter
+	
+	override val movement: MovementAttributes get() = MvMBotAttributes.movement
+	
+	override val onHit: OnHitAttributes get() = MvMBotAttributes.onHit
 	
 	override val onKill: OnKillAttributes get() = MvMBotAttributes.onKill
 	
-	override val denyResupply: DenyResupplyAttributes get() = MvMBotAttributes.denyResupply
+	override val resistance: ResistanceAttributes get() = MvMBotAttributes.resistance
 	
-	override val scoutOnly: ScoutOnlyAttributes get() = MvMBotAttributes.scoutOnly
+	override val taunting: TauntingAttributes get() = MvMBotAttributes.taunting
 	
-	override val demomanOnly: DemomanOnlyAttributes get() = MvMBotAttributes.demomanOnly
+	override val swapWeapons: SwapWeaponsAttributes get() = MvMBotAttributes.swapWeapons
+	
+	override val whenHit: WhenHitAttributes get() = MvMBotAttributes.whenHit
+	
+	override val heavyOnly: HeavyOnlyAttributes get() = MvMBotAttributes.heavyOnly
 	
 	override val sniperOnly: SniperOnlyAttributes get() = MvMBotAttributes.sniperOnly
 	
 	override val medicOnly: MedicOnlyAttributes get() = MvMBotAttributes.medicOnly
 	
 	override val spyOnly: SpyOnlyAttributes get() = MvMBotAttributes.spyOnly
-	
-	override val buildings: BuildingsAttributes get() = MvMBotAttributes.buildings
 
+	open class AmmoAttributes : PlayerAttributes.AmmoAttributes() {
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
-	open class VaccinatorAttributes : PlayerAttributes.VaccinatorAttributes() 
-	
-	
-	open class JumpHeightAttributes : PlayerAttributes.JumpHeightAttributes() 
-	
-	
-	open class DmgTakenFromCritReducedAttributes : PlayerAttributes.DmgTakenFromCritReducedAttributes() 
-	
-	
-	open class DmgTakenFromFireReducedAttributes : PlayerAttributes.DmgTakenFromFireReducedAttributes() 
-	
-	
-	open class DmgTakenFromBulletsReducedAttributes : PlayerAttributes.DmgTakenFromBulletsReducedAttributes() 
-	
-	
-	open class GenerateRageOnDamageAttributes : PlayerAttributes.GenerateRageOnDamageAttributes() 
-	
-	
-	open class MultChargeTurnControlAttributes : PlayerAttributes.MultChargeTurnControlAttributes() 
-	
-	
-	open class AimingMovespeedAttributes : PlayerAttributes.AimingMovespeedAttributes() 
-	
-	
-	open class MoveSpeedAttributes : PlayerAttributes.MoveSpeedAttributes() 
-	
-	
-	open class BuffTypeAttributes : PlayerAttributes.BuffTypeAttributes() 
-	
-	
-	open class HealthRegenAttributes : PlayerAttributes.HealthRegenAttributes() 
-	
-	
-	open class MaxHealthAdditiveAttributes : PlayerAttributes.MaxHealthAdditiveAttributes() 
-	
-	
-	open class OnDamageTakenAttributes : PlayerAttributes.OnDamageTakenAttributes() {
-		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
-	
-		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
-	
-		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
-	
-	
-		open class DmgTakenFromCritReducedAttributes : PlayerAttributes.OnDamageTakenAttributes.DmgTakenFromCritReducedAttributes() 
-	
-	
-		open class DmgTakenFromFireReducedAttributes : PlayerAttributes.OnDamageTakenAttributes.DmgTakenFromFireReducedAttributes() 
-	
-	
-		open class DmgTakenFromBulletsReducedAttributes : PlayerAttributes.OnDamageTakenAttributes.DmgTakenFromBulletsReducedAttributes() 
+		open class MaxAmmoAttributes : PlayerAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
+	open class BuffItemsAttributes : PlayerAttributes.BuffItemsAttributes() {
+		override val buffType: BuffTypeAttributes = BuffTypeAttributes()
 	
-	open class OnKillAttributes : PlayerAttributes.OnKillAttributes() 
-	
-	
-	open class DenyResupplyAttributes : PlayerAttributes.DenyResupplyAttributes() 
-	
-	
-	open class ScoutOnlyAttributes : PlayerAttributes.ScoutOnlyAttributes() 
-	
-	
-	open class DemomanOnlyAttributes : PlayerAttributes.DemomanOnlyAttributes() 
-	
-	
-	open class SniperOnlyAttributes : PlayerAttributes.SniperOnlyAttributes() 
-	
-	
-	open class MedicOnlyAttributes : PlayerAttributes.MedicOnlyAttributes() 
-	
-	
-	open class SpyOnlyAttributes : PlayerAttributes.SpyOnlyAttributes() 
-	
+		open class BuffTypeAttributes : PlayerAttributes.BuffItemsAttributes.BuffTypeAttributes() 
+	}
 	
 	open class BuildingsAttributes : PlayerAttributes.BuildingsAttributes() {
 		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
@@ -210,13 +156,132 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 		override val teleporter: TeleporterAttributes = TeleporterAttributes()
 	
-	
 		open class SentryGunAttributes : PlayerAttributes.BuildingsAttributes.SentryGunAttributes() 
-	
 	
 		open class DispenserAttributes : PlayerAttributes.BuildingsAttributes.DispenserAttributes() 
 	
-	
 		open class TeleporterAttributes : PlayerAttributes.BuildingsAttributes.TeleporterAttributes() 
 	}
+	
+	open class CloakAttributes : PlayerAttributes.CloakAttributes() 
+	
+	open class DamageAttributes : PlayerAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : PlayerAttributes.DamageAttributes.AlienAttributes() 
+	}
+	
+	open class DemoChargeAttributes : PlayerAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : PlayerAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class DisguiseAttributes : PlayerAttributes.DisguiseAttributes() 
+	
+	open class FiringAttributes : PlayerAttributes.FiringAttributes() 
+	
+	open class HealthAndHealingAttributes : PlayerAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : PlayerAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : PlayerAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
+	
+	open class HudAttributes : PlayerAttributes.HudAttributes() 
+	
+	open class KnockbackReceivedAttributes : PlayerAttributes.KnockbackReceivedAttributes() 
+	
+	open class MetaAttributes : PlayerAttributes.MetaAttributes() {
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
+		open class KillfeedAttributes : PlayerAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class NoisemakersAttributes : PlayerAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class ItemsAttributes : PlayerAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class PlayerAttributes : PlayerAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : PlayerAttributes.MetaAttributes.GameplayAttributes() 
+	}
+	
+	open class MeterAttributes : PlayerAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : PlayerAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	open class MovementAttributes : PlayerAttributes.MovementAttributes() {
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+		open class jumpHeightAttributes : PlayerAttributes.MovementAttributes.jumpHeightAttributes() 
+	
+		open class MoveSpeedAttributes : PlayerAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : PlayerAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : PlayerAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	}
+	
+	open class OnHitAttributes : PlayerAttributes.OnHitAttributes() {
+		override val falling: FallingAttributes = FallingAttributes()
+	
+		open class FallingAttributes : PlayerAttributes.OnHitAttributes.FallingAttributes() 
+	}
+	
+	open class OnKillAttributes : PlayerAttributes.OnKillAttributes() 
+	
+	open class ResistanceAttributes : PlayerAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : PlayerAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : PlayerAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : PlayerAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : PlayerAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
+	
+	open class TauntingAttributes : PlayerAttributes.TauntingAttributes() 
+	
+	open class SwapWeaponsAttributes : PlayerAttributes.SwapWeaponsAttributes() 
+	
+	open class WhenHitAttributes : PlayerAttributes.WhenHitAttributes() 
+	
+	open class HeavyOnlyAttributes : PlayerAttributes.HeavyOnlyAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : PlayerAttributes.HeavyOnlyAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	open class SniperOnlyAttributes : PlayerAttributes.SniperOnlyAttributes() 
+	
+	open class MedicOnlyAttributes : PlayerAttributes.MedicOnlyAttributes() 
+	
+	open class SpyOnlyAttributes : PlayerAttributes.SpyOnlyAttributes() 
 }

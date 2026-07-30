@@ -1,8 +1,6 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
-import btpos.source.vdfdsl.tf2.filegeneration.re_notWordChar
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
-import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrThing
 
 object Overrides {
 	/**
@@ -13,7 +11,7 @@ object Overrides {
 	)
 }
 
-val removeFromThing = listOf("hidden").map { Regex(it, RegexOption.IGNORE_CASE) }
+val removeFromThing = listOf("hidden(\\w)?").map { Regex(it, RegexOption.IGNORE_CASE) }
 private val modRegex = Regex("^mod[ _]")
 private val re_notWordOrSpace = Regex("[^\\s\\w]")
 
@@ -62,9 +60,38 @@ val overrideScopeNames = mapOf(
 	"MedigunChargeIsCritBoost" to "UberchargeType"
 )
 
+/**
+ * map of "scope name" to "word to remove from thing"
+ */
 val removeFromScopeMembers = mutableMapOf(
 	"Meter" to "itemMeter"
 )
+
+/**
+ * Cache conversion of stuff like `"itemMeter"` to `Regex("[Ii]temMeter")`
+ * so we can possibly match the thing in the middle of a word
+ */
+private val regexCache = HashMap<String, Regex>()
+
+fun String.removeFromCamelCase(toRemove: String): String {
+	val re = regexCache.computeIfAbsent(toRemove) {
+		Regex(it.replaceFirstChar { c ->
+			val alt = if (c.isUpperCase()) c.lowercaseChar() else c.uppercaseChar()
+			"[$c$alt]"
+		})
+	}
+	
+	return this.removeFromCamelCase(re)
+}
+
+fun String.removeFromCamelCase(toRemove: Regex): String {
+	if (toRemove.matchesAt(this, 0)) {
+		return toRemove.replaceFirst(this, "")
+			.replaceFirstChar { it.lowercaseChar() } // make sure beginning isn't left capitalized
+	}
+	
+	return this.replace(toRemove, "")
+}
 
 val addMultPrefix = mutableSetOf(
 	"dmgFalloff",
@@ -84,7 +111,7 @@ private val attrClass_to_createScopeForItsItems = mapOf(
 fun overrideScopeMemberNames(scopeName: String, scopeMembers: List<ISortedNamedAttribute>) {
 	removeFromScopeMembers[scopeName]?.let { toStrip ->
 		scopeMembers.onEach {
-			it.varName = it.varName.replace(toStrip, "").replace(toStrip.capitalize(), "")
+			it.varName = it.varName.removeFromCamelCase(toStrip)
 		}
 	}
 }
@@ -139,5 +166,5 @@ val customCodecs = mapOf(
 )
 
 fun String.removeBonusPenaltyHiddenStuff(): String {
-	return (removeFromPBName + removeFromThing).fold(this) { it, re -> it.replace(re, "") }
+	return (removeFromPBName + removeFromThing).fold(this) { it, re -> it.removeFromCamelCase(re) }
 }

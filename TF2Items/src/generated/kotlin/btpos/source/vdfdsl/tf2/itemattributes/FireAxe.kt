@@ -8,25 +8,22 @@ import java.util.*
 
 
 
-
 interface FireAxeAttributes : BaseMeleeAttributes {
-	
 	companion object {
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		/**
+		 * In-Game: "On Hit: target is engulfed in flames"
+		 * 
+		 * Ignite enemies on hit.
+		 */
+		val setDamagetypeIgnite: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Set DamageType Ignite")
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val fireRate: FireRateAttributes = FireRateAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	}
 
 	/**
@@ -34,55 +31,21 @@ interface FireAxeAttributes : BaseMeleeAttributes {
 	 * 
 	 * Ignite enemies on hit.
 	 */
-	override val setDamagetypeIgnite: ItemAttributeNamed<Boolean> get() = super.setDamagetypeIgnite
+	val setDamagetypeIgnite: ItemAttributeNamed<Boolean> get() = FireAxeAttributes.setDamagetypeIgnite
 	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = FireAxeAttributes.projectilePenetration
+	override val crits: CritsAttributes get() = FireAxeAttributes.crits
 	
 	override val damage: DamageAttributes get() = FireAxeAttributes.damage
 	
-	override val fireRate: FireRateAttributes get() = FireAxeAttributes.fireRate
-	
 	override val onHit: OnHitAttributes get() = FireAxeAttributes.onHit
 	
-	override val revengeCrits: RevengeCritsAttributes get() = FireAxeAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = FireAxeAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = FireAxeAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = FireAxeAttributes.ragdolls
+	override val swapWeapons: SwapWeaponsAttributes get() = FireAxeAttributes.swapWeapons
 
-	
-	open class ProjectilePenetrationAttributes : BaseMeleeAttributes.ProjectilePenetrationAttributes() 
-	
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
 	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
+	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() 
 	
-	open class FireRateAttributes : BaseMeleeAttributes.FireRateAttributes() 
-	
-	
-	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-	
-		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-	
-		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
-	}
-	
-	
-	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
-	
-	
-	open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritVsBurningPlayersAttributes() 
-	
-	
-	open class DamageForceReductionAttributes : BaseMeleeAttributes.DamageForceReductionAttributes() 
-	
-	
-	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
+	open class SwapWeaponsAttributes : BaseMeleeAttributes.SwapWeaponsAttributes() 
 }

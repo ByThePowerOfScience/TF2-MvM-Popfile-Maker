@@ -262,7 +262,7 @@ fun generateItemAttributes(
 
 	
 	/** Use sorted set to ensure that root scopes are processed before their children for [patchWithParentOverridesRecursive] */
-	val hierarchyScopes = PriorityQueue<HierarchyNamedAttributeScope>(Comparator.comparingInt { it.depth })
+	val hierarchyScopes = PriorityQueue<HierarchyNamedAttributeScope>(Comparator.comparingInt<HierarchyNamedAttributeScope> { it.depth }.reversed())
 	
 	val nonHierarchyScopes = mutableListOf<NamedAttributeScope>()
 	
@@ -318,99 +318,6 @@ fun ClassBuilder.withParentScopes(thisScope: HierarchyNamedAttributeScope): Clas
 	patchWithParentOverridesRecursive(thisScope, this, parentBuilder, listOf())
 }
 
-
-//fun patchWithParentOverridesRecursive(
-//	ownerParent: ClassBuilder,
-//	owner: ClassBuilder,
-//	parentVersion: ClassBuilder,
-//	ourVersion: ClassBuilder,
-//	rootParentScope: HierarchyNamedAttributeScope,
-//	pathFromRoot: List<String>
-//) {
-//
-//
-//
-//	val currentScopePath = pathFromRoot + ourVersion.name
-//
-//	ourVersion.baseClass = rootParentScope.clsname + "." + currentScopePath.joinToString(".")
-//	ourVersion.isOpen = true
-//
-//	// make sure any of our overridden properties are marked as override
-//	ourVersion.properties.values.forEach { ourProp ->
-//		if (ourProp in parentVersion || (rootParentScope.getParentsRecursive() + rootParentScope).mapNotNull { it.getNestedScope(currentScopePath) }.any { it.containsAttribute(ourProp.name) }) {
-//			ourProp.modality = PropertyBuilder.Modality.OVERRIDE
-//		}
-//	}
-//
-//
-//	val patchOwnerPropertyToReturnOurs: (String) -> Unit = if (ownerParent.type == Type.INTERFACE) {
-//		val parentCompanion: ClassBuilder = ownerParent.companionObject
-//		                                    ?: error("Parent doesn't have a companion object: $ownerParent");
-//		val ownerCompanion by lazy {
-//			owner.companionObject
-//				?: ClassBuilder.newCompanionObject().also { owner.companionObject = it }
-//		};
-//
-//		{ name ->
-//			// get property with initializer from parent's companion
-//			// add that to our companion object
-//			// add reference to that to our property
-//
-//			ownerCompanion.properties.computeIfAbsent(name) {
-//				parentCompanion.properties[name]?.copy()
-//					?.also {
-//						// properties that aren't already in there should be private so all inherited stuff doesn't show to people checking XAttributes.y
-//						it.access = PropertyBuilder.AccessModifier.PRIVATE
-//					} ?: error("No parent property '$name' found in $parentCompanion")
-//			}.isGetter = false // use raw initializer which should be the same name as our new class
-//
-//			val fromParent = ownerParent.properties[name]!!
-//
-//			owner.properties.computeIfAbsent(name) {
-//				fromParent.copy()
-//					.apply {
-//						kType = ourVersion.name
-//					}
-//			}
-//				.also {
-//					it.delegatesToSuper = false
-//					it.initializer = owner.name + "." + name
-//					it.modality = PropertyBuilder.Modality.OVERRIDE
-//				}
-//		}
-//	} else {
-//		{ propName ->
-//			owner.properties.computeIfAbsent(propName) {
-//				ownerParent.properties[it]!!.copy().apply {
-//					delegatesToSuper = false
-//				}
-//			}.apply {
-//				modality = PropertyBuilder.Modality.OVERRIDE
-//				kType = ourVersion.name
-//
-//				if (!delegatesToSuper)
-//					isGetter = false
-//			}
-//		}
-//	}
-//
-//	// force any props in our outer that construct the newly-overridden object to instantiate this one instead
-//	ownerParent.properties.values.forEach { parentProp ->
-//		if (parentProp.kType == parentVersion.name) {
-//			patchOwnerPropertyToReturnOurs(parentProp.name)
-//		}
-//	}
-//
-//	// repeat for all nested classes
-//	for ((name, parentNested) in parentVersion.nestedClasses) {
-//		val ourNested = ourVersion.nestedClasses.computeIfAbsent(name) {
-//			parentNested.copy().also { it.clearBody() }
-//		}
-//
-//		patchWithParentOverridesRecursive(parentVersion, ourVersion, parentNested, ourNested, rootParentScope, currentScopePath)
-//	}
-//
-//}
 
 /**
  * Params:
@@ -474,7 +381,6 @@ fun patchWithParentOverridesRecursive(
 		patchWithParentOverridesRecursive(ourRootScope, ourNestedClass, parentNestedClass, pathOfCurrentScope)
 		
 		ourNestedClass.ensureOverriddenPropertiesAreMarkedOverride(ourRootScope, pathOfCurrentScope)
-		
 		
 		ourClass.redirectPropertiesToNewType(ourNestedClass, parentVersionOfOurClass)
 	}

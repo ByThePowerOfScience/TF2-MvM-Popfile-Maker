@@ -8,18 +8,21 @@ import java.util.*
 
 
 
-
 interface RayGunAttributes : RocketLauncherAttributes {
-	
 	companion object {
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	}
+
+	override val ammo: AmmoAttributes get() = super.ammo
+	
+	override val projectiles: ProjectilesAttributes get() = RayGunAttributes.projectiles
+
+	open class AmmoAttributes : IBlockScoped {
 		/**
 		 * Removes ammo requirement to fire weapon.
 		 */
-		val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
+		open val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
 	}
-
-	/**
-	 * Removes ammo requirement to fire weapon.
-	 */
-	val energyWeaponNoDrain: ItemAttributeNamed<Boolean> get() = RayGunAttributes.energyWeaponNoDrain
+	
+	open class ProjectilesAttributes : RocketLauncherAttributes.ProjectilesAttributes() 
 }

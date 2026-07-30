@@ -8,86 +8,31 @@ import java.util.*
 
 
 
-
 interface CrossbowAttributes : RocketLauncherAttributes {
-	
 	companion object {
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val fireRate: FireRateAttributes = FireRateAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	}
 
-	override val reloadTime: BonusPenalty<Float> get() = super.reloadTime
+	override val reloading: ReloadingAttributes get() = super.reloading
 	
-	/**
-	 * In-Game: "N% slower reload time"
-	 */
-	override val reloadTimeIncreasedHidden: ItemAttributeNamed<Float> get() = super.reloadTimeIncreasedHidden
-	
-	/**
-	 * In-Game: "+N% faster reload time"
-	 */
-	override val fasterReloadRate: ItemAttributeNamed<Float> get() = super.fasterReloadRate
-	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = CrossbowAttributes.projectilePenetration
-	
-	override val damage: DamageAttributes get() = CrossbowAttributes.damage
-	
-	override val fireRate: FireRateAttributes get() = CrossbowAttributes.fireRate
-	
-	override val onHit: OnHitAttributes get() = CrossbowAttributes.onHit
-	
-	override val revengeCrits: RevengeCritsAttributes get() = CrossbowAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = CrossbowAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = CrossbowAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = CrossbowAttributes.ragdolls
+	override val projectiles: ProjectilesAttributes get() = CrossbowAttributes.projectiles
 
+	open class ReloadingAttributes : IBlockScoped {
+		open val reloadTime: BonusPenalty<Float> = BonusPenalty(
+			ItemAttributeNamed("Reload time decreased"),
+			ItemAttributeNamed("Reload time increased"),
+		)
 	
-	open class ProjectilePenetrationAttributes : RocketLauncherAttributes.ProjectilePenetrationAttributes() 
+		/**
+		 * In-Game: "N% slower reload time"
+		 */
+		open val reloadTimeIncreasedHidden: ItemAttributeNamed<Float> = ItemAttributeNamed("reload time increased hidden")
 	
-	
-	open class DamageAttributes : RocketLauncherAttributes.DamageAttributes() 
-	
-	
-	open class FireRateAttributes : RocketLauncherAttributes.FireRateAttributes() 
-	
-	
-	open class OnHitAttributes : RocketLauncherAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-	
-		open class HealOnHitForRapidfireAttributes : RocketLauncherAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-	
-		open class GenerateRageOnDamageAttributes : RocketLauncherAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		/**
+		 * In-Game: "+N% faster reload time"
+		 */
+		open val fasterReloadRate: ItemAttributeNamed<Float> = ItemAttributeNamed("faster reload rate")
 	}
 	
-	
-	open class RevengeCritsAttributes : RocketLauncherAttributes.RevengeCritsAttributes() 
-	
-	
-	open class CritVsBurningPlayersAttributes : RocketLauncherAttributes.CritVsBurningPlayersAttributes() 
-	
-	
-	open class DamageForceReductionAttributes : RocketLauncherAttributes.DamageForceReductionAttributes() 
-	
-	
-	open class RagdollsAttributes : RocketLauncherAttributes.RagdollsAttributes() 
+	open class ProjectilesAttributes : RocketLauncherAttributes.ProjectilesAttributes() 
 }

@@ -24,6 +24,7 @@ data class NamedAttribute(
 	}
 	
 	
+	
 	override fun clone(): ISortedNamedAttribute {
 		return this.copy().also {
 			it.forceType = forceType
@@ -37,7 +38,9 @@ data class NamedAttribute(
 	var codec: FakeCodec? = null
 	
 	override var varName: String = attrName.sanitizeNamedAttributeName().camelCase().overrideVarName()
-	
+	init {
+		"breakpoint"
+	}
 	override val innateDescription: List<String> = listOfNotNull(inGameDesc).map { "In-Game: \"$it\"" }
 	
 	override var notes: List<String> = listOf()

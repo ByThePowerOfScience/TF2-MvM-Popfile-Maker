@@ -8,91 +8,43 @@ import java.util.*
 
 
 
-
 interface RocketLauncherAttributes : BaseGunAttributes {
-	
 	companion object {
-		/**
-		 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow :3).
-		 */
-		val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("rocket launch impulse")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val fireRate: FireRateAttributes = FireRateAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	}
 
-	/**
-	 * In-Game: "Overrides the projectile fired from the weapon. Takes values from 1 to 26, each representing a different projectile, and not all projectiles work on all weapons"
-	 * 
-	 * If unset, uses the weapon's default projectile type.
-	 */
-	override val overrideProjectileType: ItemAttributeNamed<TFProjectileType> get() = super.overrideProjectileType
+	override val projectiles: ProjectilesAttributes get() = RocketLauncherAttributes.projectiles
 	
-	/**
-	 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow :3).
-	 */
-	val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> get() = RocketLauncherAttributes.canRocketJumpWithExplosion
-	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = RocketLauncherAttributes.projectilePenetration
+	override val ammo: AmmoAttributes get() = RocketLauncherAttributes.ammo
 	
 	override val damage: DamageAttributes get() = RocketLauncherAttributes.damage
 	
-	override val fireRate: FireRateAttributes get() = RocketLauncherAttributes.fireRate
-	
-	override val onHit: OnHitAttributes get() = RocketLauncherAttributes.onHit
-	
-	override val revengeCrits: RevengeCritsAttributes get() = RocketLauncherAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = RocketLauncherAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = RocketLauncherAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = RocketLauncherAttributes.ragdolls
+	override val firing: FiringAttributes get() = RocketLauncherAttributes.firing
 
+	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
+		/**
+		 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.).
+		 */
+		open val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("rocket launch impulse")
 	
-	open class ProjectilePenetrationAttributes : BaseGunAttributes.ProjectilePenetrationAttributes() 
+		override val bullets: BulletsAttributes = BulletsAttributes()
 	
+		open class BulletsAttributes : BaseGunAttributes.ProjectilesAttributes.BulletsAttributes() 
+	}
+	
+	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() 
 	
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
 	
+	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-	open class FireRateAttributes : BaseGunAttributes.FireRateAttributes() 
-	
-	
-	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-	
-		open class HealOnHitForRapidfireAttributes : BaseGunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-	
-		open class GenerateRageOnDamageAttributes : BaseGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
-	
-	
-	open class RevengeCritsAttributes : BaseGunAttributes.RevengeCritsAttributes() 
-	
-	
-	open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritVsBurningPlayersAttributes() 
-	
-	
-	open class DamageForceReductionAttributes : BaseGunAttributes.DamageForceReductionAttributes() 
-	
-	
-	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
 }

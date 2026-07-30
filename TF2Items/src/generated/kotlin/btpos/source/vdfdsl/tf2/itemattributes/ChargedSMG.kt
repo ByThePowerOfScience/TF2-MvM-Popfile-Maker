@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface ChargedSMGAttributes : SMGAttributes {
-	
 	companion object {
 		/**
 		 * In-Game: "Secondary fire when charged grants mini-crits for N seconds."

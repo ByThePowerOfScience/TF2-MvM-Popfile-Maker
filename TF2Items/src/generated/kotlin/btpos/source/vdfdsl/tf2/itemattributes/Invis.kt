@@ -8,9 +8,7 @@ import java.util.*
 
 
 
-
 interface InvisAttributes : WeaponBaseAttributes {
-	
 	companion object {
 		/**
 		 * In-Game: "Cloak Type: Feign Death. Leave a fake corpse on taking damage and temporarily gain invisibility, speed, and damage resistance."
@@ -26,49 +24,55 @@ interface InvisAttributes : WeaponBaseAttributes {
 		 */
 		val setCloakIsMovementBased: ItemAttributeNamed<Boolean> = ItemAttributeNamed("set cloak is movement based", NumberSelectorCodec(1))
 	
-		/**
-		 * How many seconds it takes to decloak.
-		 * 
-		 * Note that values less than or equal to `0.0` become `1.0`.
-		 */
-		val multDecloakRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult decloak rate")
+		val cloak: CloakAttributes = CloakAttributes()
 	
-		val multCloakMeterConsumeRate: MultCloakMeterConsumeRateAttributes = MultCloakMeterConsumeRateAttributes()
+		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val multCloakMeterRegenRate: MultCloakMeterRegenRateAttributes = MultCloakMeterRegenRateAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		/**
-		 * Disallows ammo boxes from affecting the cloak meter.
-		 */
-		val cloakNoRegenFromItems: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod_cloak_no_regen_from_items")
+		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		/**
-		 * In-Game: "No cloak meter from ammo boxes when invisible"
-		 * 
-		 * If true, cannot receive cloak while cloaked.
-		 */
-		val noCloakWhenCloaked: ItemAttributeNamed<Boolean> = ItemAttributeNamed("NoCloakWhenCloaked")
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		/**
-		 * In-Game: "N% cloak meter from ammo boxes"
-		 * 
-		 * Multiplier applied to cloak gained from ammo boxes.
-		 */
-		val reducedCloakFromAmmo: ItemAttributeNamed<Float> = ItemAttributeNamed("ReducedCloakFromAmmo")
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		val firing: FiringAttributes = FiringAttributes()
 	
-		val fireRate: FireRateAttributes = FireRateAttributes()
+		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		val movement: MovementAttributes = MovementAttributes()
+	
+		val heads: HeadsAttributes = HeadsAttributes()
 	
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
+		val onKill: OnKillAttributes = OnKillAttributes()
+	
+		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+		val taunting: TauntingAttributes = TauntingAttributes()
+	
+		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
+		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	}
@@ -87,131 +91,235 @@ interface InvisAttributes : WeaponBaseAttributes {
 	 */
 	val setCloakIsMovementBased: ItemAttributeNamed<Boolean> get() = InvisAttributes.setCloakIsMovementBased
 	
-	/**
-	 * How many seconds it takes to decloak.
-	 * 
-	 * Note that values less than or equal to `0.0` become `1.0`.
-	 */
-	val multDecloakRate: ItemAttributeNamed<Float> get() = InvisAttributes.multDecloakRate
+	val cloak: CloakAttributes get() = InvisAttributes.cloak
 	
-	val multCloakMeterConsumeRate: MultCloakMeterConsumeRateAttributes get() = InvisAttributes.multCloakMeterConsumeRate
+	override val afterburn: AfterburnAttributes get() = InvisAttributes.afterburn
 	
-	val multCloakMeterRegenRate: MultCloakMeterRegenRateAttributes get() = InvisAttributes.multCloakMeterRegenRate
+	override val ammo: AmmoAttributes get() = InvisAttributes.ammo
 	
-	/**
-	 * Disallows ammo boxes from affecting the cloak meter.
-	 */
-	val cloakNoRegenFromItems: ItemAttributeNamed<Boolean> get() = InvisAttributes.cloakNoRegenFromItems
+	override val buildings: BuildingsAttributes get() = InvisAttributes.buildings
 	
-	/**
-	 * In-Game: "No cloak meter from ammo boxes when invisible"
-	 * 
-	 * If true, cannot receive cloak while cloaked.
-	 */
-	val noCloakWhenCloaked: ItemAttributeNamed<Boolean> get() = InvisAttributes.noCloakWhenCloaked
-	
-	/**
-	 * In-Game: "N% cloak meter from ammo boxes"
-	 * 
-	 * Multiplier applied to cloak gained from ammo boxes.
-	 */
-	val reducedCloakFromAmmo: ItemAttributeNamed<Float> get() = InvisAttributes.reducedCloakFromAmmo
-	
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = InvisAttributes.projectilePenetration
+	override val crits: CritsAttributes get() = InvisAttributes.crits
 	
 	override val damage: DamageAttributes get() = InvisAttributes.damage
 	
-	override val fireRate: FireRateAttributes get() = InvisAttributes.fireRate
+	override val demoCharge: DemoChargeAttributes get() = InvisAttributes.demoCharge
+	
+	override val firing: FiringAttributes get() = InvisAttributes.firing
+	
+	override val healthAndHealing: HealthAndHealingAttributes get() = InvisAttributes.healthAndHealing
+	
+	override val knockbackReceived: KnockbackReceivedAttributes get() = InvisAttributes.knockbackReceived
+	
+	override val meta: MetaAttributes get() = InvisAttributes.meta
+	
+	override val meter: MeterAttributes get() = InvisAttributes.meter
+	
+	override val movement: MovementAttributes get() = InvisAttributes.movement
+	
+	override val heads: HeadsAttributes get() = InvisAttributes.heads
 	
 	override val onHit: OnHitAttributes get() = InvisAttributes.onHit
 	
+	override val onKill: OnKillAttributes get() = InvisAttributes.onKill
+	
+	override val projectiles: ProjectilesAttributes get() = InvisAttributes.projectiles
+	
+	override val reloading: ReloadingAttributes get() = InvisAttributes.reloading
+	
+	override val resistance: ResistanceAttributes get() = InvisAttributes.resistance
+	
 	override val revengeCrits: RevengeCritsAttributes get() = InvisAttributes.revengeCrits
 	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = InvisAttributes.critVsBurningPlayers
+	override val statusEffects: StatusEffectsAttributes get() = InvisAttributes.statusEffects
 	
-	override val damageForceReduction: DamageForceReductionAttributes get() = InvisAttributes.damageForceReduction
+	override val taunting: TauntingAttributes get() = InvisAttributes.taunting
+	
+	override val viewmodel: ViewmodelAttributes get() = InvisAttributes.viewmodel
+	
+	override val swapWeapons: SwapWeaponsAttributes get() = InvisAttributes.swapWeapons
+	
+	override val whenHit: WhenHitAttributes get() = InvisAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = InvisAttributes.ragdolls
 
-	
-	open class MultCloakMeterConsumeRateAttributes : IBlockScoped {
+	open class CloakAttributes : IBlockScoped {
 		/**
-		 * In-Game: "+N% cloak drain rate"
+		 * How many seconds it takes to decloak.
 		 * 
-		 * Multiply cloak consumption rate by this value.
-		 * 
-		 * Checked on player.
+		 * Note that values less than or equal to 0 become 1 second.
 		 */
-		open val multCloakMeterConsumeRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult cloak meter consume rate")
+		open val multDecloakRate: ItemAttributeNamed<Duration> = ItemAttributeNamed("mult decloak rate")
 	
 		/**
-		 * In-Game: "-N% cloak duration"
-		 * 
-		 * Multiply cloak consumption rate by this value.
-		 * 
-		 * Checked on player.
+		 * Disallows ammo boxes from affecting the cloak meter.
 		 */
-		open val cloakConsumeRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak consume rate increased")
+		open val cloakNoRegenFromItems: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod_cloak_no_regen_from_items")
 	
 		/**
-		 * In-Game: "+N% cloak duration"
+		 * In-Game: "No cloak meter from ammo boxes when invisible"
 		 * 
-		 * Multiply cloak consumption rate by this value.
-		 * 
-		 * Checked on player.
+		 * If true, cannot receive cloak while cloaked.
 		 */
-		open val cloakConsumeRateDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak consume rate decreased")
+		open val noCloakWhenCloaked: ItemAttributeNamed<Boolean> = ItemAttributeNamed("NoCloakWhenCloaked")
+	
+		/**
+		 * In-Game: "N% cloak meter from ammo boxes"
+		 * 
+		 * Multiplier applied to cloak gained from ammo boxes.
+		 */
+		open val reducedCloakFromAmmo: ItemAttributeNamed<Float> = ItemAttributeNamed("ReducedCloakFromAmmo")
+	
+		open val multCloakMeterConsumeRate: MultCloakMeterConsumeRateAttributes = MultCloakMeterConsumeRateAttributes()
+	
+		open val multCloakMeterRegenRate: MultCloakMeterRegenRateAttributes = MultCloakMeterRegenRateAttributes()
+	
+		open class MultCloakMeterConsumeRateAttributes : IBlockScoped {
+			/**
+			 * In-Game: "+N% cloak drain rate"
+			 * 
+			 * Multiply cloak consumed per second by this value.
+			 * 
+			 * Checked on player.
+			 */
+			open val multCloakMeterConsumeRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult cloak meter consume rate")
+	
+			/**
+			 * In-Game: "-N% cloak duration"
+			 * 
+			 * Multiply cloak consumed per second by this value.
+			 * 
+			 * Checked on player.
+			 */
+			open val cloakConsumeRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak consume rate increased")
+	
+			/**
+			 * In-Game: "+N% cloak duration"
+			 * 
+			 * Multiply cloak consumed per second by this value.
+			 * 
+			 * Checked on player.
+			 */
+			open val cloakConsumeRateDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak consume rate decreased")
+		}
+	
+		open class MultCloakMeterRegenRateAttributes : IBlockScoped {
+			/**
+			 * In-Game: "+N% cloak regen rate"
+			 */
+			open val multCloakMeterRegenRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult cloak meter regen rate")
+	
+			/**
+			 * In-Game: "+N% cloak regeneration rate"
+			 */
+			open val cloakRegenRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak regen rate increased")
+	
+			/**
+			 * In-Game: "N% cloak regeneration rate"
+			 */
+			open val cloakRegenRateDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak regen rate decreased")
+		}
 	}
 	
+	open class AfterburnAttributes : WeaponBaseAttributes.AfterburnAttributes() 
 	
-	open class MultCloakMeterRegenRateAttributes : IBlockScoped {
-		/**
-		 * In-Game: "+N% cloak regen rate"
-		 */
-		open val multCloakMeterRegenRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult cloak meter regen rate")
+	open class AmmoAttributes : WeaponBaseAttributes.AmmoAttributes() {
+		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
-		/**
-		 * In-Game: "+N% cloak regeneration rate"
-		 */
-		open val cloakRegenRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak regen rate increased")
-	
-		/**
-		 * In-Game: "N% cloak regeneration rate"
-		 */
-		open val cloakRegenRateDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak regen rate decreased")
+		open class ClipSizeAttributes : WeaponBaseAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
+	open class BuildingsAttributes : WeaponBaseAttributes.BuildingsAttributes() 
 	
-	open class ProjectilePenetrationAttributes : WeaponBaseAttributes.ProjectilePenetrationAttributes() 
+	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() {
+		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
 	
+		open class CritVsBurningPlayersAttributes : WeaponBaseAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
+	}
 	
-	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() 
+	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() {
+		override val damage: DamageAttributes = DamageAttributes()
 	
+		open class DamageAttributes : WeaponBaseAttributes.DamageAttributes.DamageAttributes() 
+	}
 	
-	open class FireRateAttributes : WeaponBaseAttributes.FireRateAttributes() 
+	open class DemoChargeAttributes : WeaponBaseAttributes.DemoChargeAttributes() 
 	
+	open class FiringAttributes : WeaponBaseAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
+	
+		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() {
+			override val fireRate: FireRateAttributes = FireRateAttributes()
+	
+			open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
+		}
+	}
+	
+	open class HealthAndHealingAttributes : WeaponBaseAttributes.HealthAndHealingAttributes() 
+	
+	open class KnockbackReceivedAttributes : WeaponBaseAttributes.KnockbackReceivedAttributes() {
+		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+	
+		open class DamageForceReductionAttributes : WeaponBaseAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
+	}
+	
+	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	}
+	
+	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 
+	
+	open class MovementAttributes : WeaponBaseAttributes.MovementAttributes() {
+		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+		open class MoveSpeedAttributes : WeaponBaseAttributes.MovementAttributes.MoveSpeedAttributes() 
+	}
+	
+	open class HeadsAttributes : WeaponBaseAttributes.HeadsAttributes() 
 	
 	open class OnHitAttributes : WeaponBaseAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
 		open class HealOnHitForRapidfireAttributes : WeaponBaseAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
 	
 		open class GenerateRageOnDamageAttributes : WeaponBaseAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
 	}
 	
+	open class OnKillAttributes : WeaponBaseAttributes.OnKillAttributes() 
+	
+	open class ProjectilesAttributes : WeaponBaseAttributes.ProjectilesAttributes() {
+		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+	
+		override val bullets: BulletsAttributes = BulletsAttributes()
+	
+		open class ProjectilePenetrationAttributes : WeaponBaseAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
+	
+		open class BulletsAttributes : WeaponBaseAttributes.ProjectilesAttributes.BulletsAttributes() 
+	}
+	
+	open class ReloadingAttributes : WeaponBaseAttributes.ReloadingAttributes() 
+	
+	open class ResistanceAttributes : WeaponBaseAttributes.ResistanceAttributes() 
 	
 	open class RevengeCritsAttributes : WeaponBaseAttributes.RevengeCritsAttributes() 
 	
+	open class StatusEffectsAttributes : WeaponBaseAttributes.StatusEffectsAttributes() 
 	
-	open class CritVsBurningPlayersAttributes : WeaponBaseAttributes.CritVsBurningPlayersAttributes() 
+	open class TauntingAttributes : WeaponBaseAttributes.TauntingAttributes() 
 	
+	open class ViewmodelAttributes : WeaponBaseAttributes.ViewmodelAttributes() 
 	
-	open class DamageForceReductionAttributes : WeaponBaseAttributes.DamageForceReductionAttributes() 
+	open class SwapWeaponsAttributes : WeaponBaseAttributes.SwapWeaponsAttributes() {
+		override val deploy: DeployAttributes = DeployAttributes()
 	
+		open class DeployAttributes : WeaponBaseAttributes.SwapWeaponsAttributes.DeployAttributes() 
+	}
+	
+	open class WhenHitAttributes : WeaponBaseAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
 }

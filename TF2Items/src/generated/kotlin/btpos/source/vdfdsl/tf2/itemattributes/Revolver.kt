@@ -8,74 +8,42 @@ import java.util.*
 
 
 
-
 interface RevolverAttributes : BaseGunAttributes {
-	
 	companion object {
-		val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val fireRate: FireRateAttributes = FireRateAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	}
 
-	override val projectilePenetration: ProjectilePenetrationAttributes get() = RevolverAttributes.projectilePenetration
+	override val heads: HeadsAttributes get() = super.heads
+	
+	override val ammo: AmmoAttributes get() = RevolverAttributes.ammo
 	
 	override val damage: DamageAttributes get() = RevolverAttributes.damage
 	
-	override val fireRate: FireRateAttributes get() = RevolverAttributes.fireRate
+	override val firing: FiringAttributes get() = RevolverAttributes.firing
 	
-	override val onHit: OnHitAttributes get() = RevolverAttributes.onHit
-	
-	override val revengeCrits: RevengeCritsAttributes get() = RevolverAttributes.revengeCrits
-	
-	override val critVsBurningPlayers: CritVsBurningPlayersAttributes get() = RevolverAttributes.critVsBurningPlayers
-	
-	override val damageForceReduction: DamageForceReductionAttributes get() = RevolverAttributes.damageForceReduction
-	
-	override val ragdolls: RagdollsAttributes get() = RevolverAttributes.ragdolls
+	override val projectiles: ProjectilesAttributes get() = RevolverAttributes.projectiles
 
+	open class HeadsAttributes : IBlockScoped 
 	
-	open class ProjectilePenetrationAttributes : BaseGunAttributes.ProjectilePenetrationAttributes() 
-	
+	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() 
 	
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
 	
+	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-	open class FireRateAttributes : BaseGunAttributes.FireRateAttributes() 
-	
-	
-	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
-		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
-	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-	
-		open class HealOnHitForRapidfireAttributes : BaseGunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
-	
-	
-		open class GenerateRageOnDamageAttributes : BaseGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
+	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
+		override val bullets: BulletsAttributes = BulletsAttributes()
 	
-	open class RevengeCritsAttributes : BaseGunAttributes.RevengeCritsAttributes() 
-	
-	
-	open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritVsBurningPlayersAttributes() 
-	
-	
-	open class DamageForceReductionAttributes : BaseGunAttributes.DamageForceReductionAttributes() 
-	
-	
-	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+		open class BulletsAttributes : BaseGunAttributes.ProjectilesAttributes.BulletsAttributes() 
+	}
 }
