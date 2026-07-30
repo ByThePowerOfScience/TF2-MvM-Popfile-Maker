@@ -266,7 +266,7 @@ object MyNotesFormatted {
 						"ProjectileSpellSpawnZombie",
 						"ProjectileSpellSpawnHorde",
 						"ProjectileSpellPumpkin" to listOf(
-							"ProjectileSpellKartBats"
+							"ProjectileSpellKartPumpkin"
 						),
 						"ProjectileSpellMirv" to listOf(
 							"ProjectileSpellKartMirv"
