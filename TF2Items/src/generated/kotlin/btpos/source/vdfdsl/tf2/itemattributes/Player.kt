@@ -121,7 +121,7 @@ interface PlayerAttributes : EntityAttributes {
 	
 	val spyOnly: SpyOnlyAttributes get() = PlayerAttributes.spyOnly
 
-	open class AmmoAttributes {
+	open class AmmoAttributes : IBlockScoped {
 		open val grenades1ResupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("grenades1_resupply_denied")
 	
 		open val grenades2ResupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("grenades2_resupply_denied")
@@ -151,7 +151,7 @@ interface PlayerAttributes : EntityAttributes {
 	
 		open val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
-		open class MaxAmmoAttributes {
+		open class MaxAmmoAttributes : IBlockScoped {
 			open val maxammoPrimaryReduced: BonusPenaltyHidden<Int, ItemAttributeNamed<Int>> = BonusPenaltyHidden(
 				ItemAttributeNamed<Int>("maxammo primary increased"),
 				ItemAttributeNamed<Int>("maxammo primary reduced"),
@@ -178,12 +178,12 @@ interface PlayerAttributes : EntityAttributes {
 		}
 	}
 	
-	open class BuffItemsAttributes {
+	open class BuffItemsAttributes : IBlockScoped {
 		open val buffDuration: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("increase buff duration"), ItemAttributeNamed<Float>("increase buff duration HIDDEN"))
 	
 		open val buffType: BuffTypeAttributes = BuffTypeAttributes()
 	
-		open class BuffTypeAttributes {
+		open class BuffTypeAttributes : IBlockScoped {
 			/**
 			 * Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
 			 */
@@ -261,7 +261,7 @@ interface PlayerAttributes : EntityAttributes {
 		}
 	}
 	
-	open class CloakAttributes {
+	open class CloakAttributes : IBlockScoped {
 		/**
 		 * In-Game: "N sec longer cloak blink time"
 		 * 
@@ -284,7 +284,7 @@ interface PlayerAttributes : EntityAttributes {
 		open val multDecloakRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult decloak rate")
 	}
 	
-	open class DamageAttributes {
+	open class DamageAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Deals 3x falling damage to the player you land on"
 		 * 
@@ -301,7 +301,7 @@ interface PlayerAttributes : EntityAttributes {
 	
 		open val alien: AlienAttributes = AlienAttributes()
 	
-		open class AlienAttributes {
+		open class AlienAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Increased Melee damage against Isolated Merc Set"
 			 * 
@@ -318,7 +318,7 @@ interface PlayerAttributes : EntityAttributes {
 		}
 	}
 	
-	open class DemoChargeAttributes {
+	open class DemoChargeAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Taking damage while shield charging reduces remaining charging time"
 		 * 
@@ -344,7 +344,7 @@ interface PlayerAttributes : EntityAttributes {
 	
 		open val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-		open class MultChargeTurnControlAttributes {
+		open class MultChargeTurnControlAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N% increase in turning control while charging"
 			 * 
@@ -361,7 +361,7 @@ interface PlayerAttributes : EntityAttributes {
 		}
 	}
 	
-	open class DisguiseAttributes {
+	open class DisguiseAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Immune to fire damage while disguised"
 		 * 
@@ -375,7 +375,7 @@ interface PlayerAttributes : EntityAttributes {
 		open val cannotDisguise: ItemAttributeNamed<Boolean> = ItemAttributeNamed("cannot disguise")
 	}
 	
-	open class FiringAttributes {
+	open class FiringAttributes : IBlockScoped {
 		/**
 		 * Prevents player from attacking.
 		 */
@@ -404,7 +404,7 @@ interface PlayerAttributes : EntityAttributes {
 	
 		open val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
 	
-		open class HealthRegenAttributes {
+		open class HealthRegenAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N health regenerated per second on wearer"
 			 * 
@@ -441,7 +441,7 @@ interface PlayerAttributes : EntityAttributes {
 			open val cardHealthRegen: ItemAttributeNamed<Float> = ItemAttributeNamed("CARD: health regen")
 		}
 	
-		open class MaxHealthAdditiveAttributes {
+		open class MaxHealthAdditiveAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N max health on wearer"
 			 * 
@@ -479,7 +479,7 @@ interface PlayerAttributes : EntityAttributes {
 		open val hideEnemyHealth: ItemAttributeNamed<Boolean> = ItemAttributeNamed("hide enemy health")
 	}
 	
-	open class KnockbackReceivedAttributes {
+	open class KnockbackReceivedAttributes : IBlockScoped {
 		open val airblastVulnerabilityMultiplier: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("airblast vulnerability multiplier"), ItemAttributeNamed<Float>("airblast vulnerability multiplier hidden"))
 	
 		open val airblastVerticalVulnerabilityMultiplier: ItemAttributeNamed<Float> = ItemAttributeNamed("airblast vertical vulnerability multiplier")
@@ -508,14 +508,14 @@ interface PlayerAttributes : EntityAttributes {
 	
 		open val gameplay: GameplayAttributes = GameplayAttributes()
 	
-		open class KillfeedAttributes {
+		open class KillfeedAttributes : IBlockScoped {
 			/**
 			 * If the weapon is a Holy Mackerel reskin (AKA either the fish or the Unarmed Combat) and this is set, use the Unarmed Combat "arm hit" killfeed notice instead of the "fish hit" notice.
 			 */
 			open val fishDamageOverride: ItemAttributeNamed<Boolean> = ItemAttributeNamed("fish damage override")
 		}
 	
-		open class NoisemakersAttributes {
+		open class NoisemakersAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Noise Maker"
 			 * 
@@ -526,14 +526,14 @@ interface PlayerAttributes : EntityAttributes {
 			open val unlimitedQuantity: VisHidden<Boolean> = VisHidden(ItemAttributeNamed<Boolean>("unlimited quantity"), ItemAttributeNamed<Boolean>("unlimited quantity hidden"))
 		}
 	
-		open class ItemsAttributes {
+		open class ItemsAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Killstreaks Active"
 			 */
 			open val killstreakTier: ItemAttributeNamed<Int> = ItemAttributeNamed("killstreak tier")
 		}
 	
-		open class PlayerAttributes {
+		open class PlayerAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Jingle all the way"
 			 * 
@@ -575,7 +575,7 @@ interface PlayerAttributes : EntityAttributes {
 			open val setBonusSpecialDsp: ItemAttributeNamed<Int> = ItemAttributeNamed("SET BONUS: special dsp")
 		}
 	
-		open class GameplayAttributes {
+		open class GameplayAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N capture rate on wearer"
 			 */
@@ -641,7 +641,7 @@ interface PlayerAttributes : EntityAttributes {
 	
 		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
-		open class GenerateRageOnDamageAttributes {
+		open class GenerateRageOnDamageAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Generate Rage by dealing damage.  When fully charged, press the Special-Attack key to activate knockback"
 			 * 
@@ -711,7 +711,7 @@ interface PlayerAttributes : EntityAttributes {
 			override val halloweenIncreasedJumpHeight: ItemAttributeNamed<Float> get() = super.halloweenIncreasedJumpHeight
 		}
 	
-		open class MoveSpeedAttributes {
+		open class MoveSpeedAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N% faster move speed on wearer (shield required)"
 			 */
@@ -721,7 +721,7 @@ interface PlayerAttributes : EntityAttributes {
 	
 			open val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-			open class AimingMovespeedAttributes {
+			open class AimingMovespeedAttributes : IBlockScoped {
 				/**
 				 * In-Game: "+N% faster move speed while deployed"
 				 * 
@@ -762,7 +762,7 @@ interface PlayerAttributes : EntityAttributes {
 				open val sniperAimingMovespeedDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("sniper aiming movespeed decreased")
 			}
 	
-			open class MoveSpeedAttributes {
+			open class MoveSpeedAttributes : IBlockScoped {
 				/**
 				 * In-Game: "N% slower move speed on wearer"
 				 */
@@ -788,10 +788,10 @@ interface PlayerAttributes : EntityAttributes {
 		}
 	}
 	
-	open class OnHitAttributes {
+	open class OnHitAttributes : IBlockScoped {
 		open val falling: FallingAttributes = FallingAttributes()
 	
-		open class FallingAttributes {
+		open class FallingAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Push enemies back when you land (force and radius based on velocity)"
 			 * 
@@ -810,7 +810,7 @@ interface PlayerAttributes : EntityAttributes {
 		}
 	}
 	
-	open class OnKillAttributes {
+	open class OnKillAttributes : IBlockScoped {
 		/**
 		 * In-Game: "On Kill: A small health pack is dropped"
 		 * 
@@ -875,7 +875,7 @@ interface PlayerAttributes : EntityAttributes {
 	
 		open val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
 	
-		open class DmgTakenFromCritReducedAttributes {
+		open class DmgTakenFromCritReducedAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N% critical hit damage resistance on wearer"
 			 */
@@ -892,7 +892,7 @@ interface PlayerAttributes : EntityAttributes {
 			open val setBonusDmgTakenFromCritReducedSetBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("SET BONUS: dmg taken from crit reduced set bonus")
 		}
 	
-		open class DmgTakenFromFireReducedAttributes {
+		open class DmgTakenFromFireReducedAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N% fire damage resistance on wearer"
 			 */
@@ -909,7 +909,7 @@ interface PlayerAttributes : EntityAttributes {
 			open val setBonusDmgTakenFromFireReducedSetBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("SET BONUS: dmg taken from fire reduced set bonus")
 		}
 	
-		open class DmgTakenFromBulletsReducedAttributes {
+		open class DmgTakenFromBulletsReducedAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N% bullet damage resistance on wearer"
 			 */
@@ -931,7 +931,7 @@ interface PlayerAttributes : EntityAttributes {
 			open val cardDmgTakenFromBulletsReduced: ItemAttributeNamed<Float> = ItemAttributeNamed("CARD: dmg taken from bullets reduced")
 		}
 	
-		open class VaccinatorAttributes {
+		open class VaccinatorAttributes : IBlockScoped {
 			/**
 			 * Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_BULLET_RESIST.
 			 */
@@ -964,7 +964,7 @@ interface PlayerAttributes : EntityAttributes {
 		}
 	}
 	
-	open class TauntingAttributes {
+	open class TauntingAttributes : IBlockScoped {
 		/**
 		 * In-Game: "+N% faster taunt speed on wearer"
 		 * 
@@ -978,11 +978,11 @@ interface PlayerAttributes : EntityAttributes {
 		open val cosmeticTauntSound: ItemAttributeNamed<String> = ItemAttributeNamed("cosmetic taunt sound")
 	}
 	
-	open class SwapWeaponsAttributes {
+	open class SwapWeaponsAttributes : IBlockScoped {
 		open val disableWeaponSwitch: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disable weapon switch")
 	}
 	
-	open class WhenHitAttributes {
+	open class WhenHitAttributes : IBlockScoped {
 		/**
 		 * Number of seconds the player who hit this entity should be marked for death.
 		 * 
@@ -1000,10 +1000,10 @@ interface PlayerAttributes : EntityAttributes {
 		open val jarateBackstabber: ItemAttributeNamed<Boolean> = ItemAttributeNamed("jarate backstabber")
 	}
 	
-	open class HeavyOnlyAttributes {
+	open class HeavyOnlyAttributes : IBlockScoped {
 		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
-		open class GenerateRageOnDamageAttributes {
+		open class GenerateRageOnDamageAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Generate Rage by dealing damage.  When fully charged, press the Special-Attack key to activate knockback"
 			 * 
@@ -1020,7 +1020,7 @@ interface PlayerAttributes : EntityAttributes {
 		}
 	}
 	
-	open class SniperOnlyAttributes {
+	open class SniperOnlyAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Knockback reduced by N% when aiming"
 		 */
@@ -1034,7 +1034,7 @@ interface PlayerAttributes : EntityAttributes {
 		open val rageOnKill: ItemAttributeNamed<Float> = ItemAttributeNamed("rage on kill")
 	}
 	
-	open class MedicOnlyAttributes {
+	open class MedicOnlyAttributes : IBlockScoped {
 		/**
 		 * In-Game: "+25% heal rate for patient, +25% faster revive rate, and +25% self heal rate, per point"
 		 * 
@@ -1059,7 +1059,7 @@ interface PlayerAttributes : EntityAttributes {
 		open val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
 	}
 	
-	open class SpyOnlyAttributes {
+	open class SpyOnlyAttributes : IBlockScoped {
 		/**
 		 * In-Game: "+N% cloak on kill"
 		 * 

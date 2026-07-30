@@ -31,7 +31,7 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	

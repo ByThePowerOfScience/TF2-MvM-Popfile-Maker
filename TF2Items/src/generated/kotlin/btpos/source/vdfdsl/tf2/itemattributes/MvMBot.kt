@@ -29,7 +29,7 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 		val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
-		private val buildings: BuildingsAttributes = BuildingsAttributes()
+		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
 		val cloak: CloakAttributes = CloakAttributes()
 	
@@ -41,23 +41,23 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
-		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val hud: HudAttributes = HudAttributes()
+		val hud: HudAttributes = HudAttributes()
 	
 		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
-		private val movement: MovementAttributes = MovementAttributes()
+		val movement: MovementAttributes = MovementAttributes()
 	
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
 		val onKill: OnKillAttributes = OnKillAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val taunting: TauntingAttributes = TauntingAttributes()
 	

@@ -61,6 +61,20 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		val ammo: AmmoAttributes = AmmoAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		val crits: CritsAttributes = CritsAttributes()
+	
+		val damage: DamageAttributes = DamageAttributes()
+	
+		val meta: MetaAttributes = MetaAttributes()
+	
+		val meter: MeterAttributes = MeterAttributes()
+	
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	}
 
 	/**
@@ -83,9 +97,9 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	
 	val buildings: BuildingsAttributes get() = WeaponBaseAttributes.buildings
 	
-	override val crits: CritsAttributes get() = super.crits
+	override val crits: CritsAttributes get() = WeaponBaseAttributes.crits
 	
-	override val damage: DamageAttributes get() = super.damage
+	override val damage: DamageAttributes get() = WeaponBaseAttributes.damage
 	
 	val demoCharge: DemoChargeAttributes get() = WeaponBaseAttributes.demoCharge
 	
@@ -93,11 +107,11 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	
 	val healthAndHealing: HealthAndHealingAttributes get() = WeaponBaseAttributes.healthAndHealing
 	
-	override val knockbackReceived: KnockbackReceivedAttributes get() = super.knockbackReceived
+	override val knockbackReceived: KnockbackReceivedAttributes get() = WeaponBaseAttributes.knockbackReceived
 	
-	override val meta: MetaAttributes get() = super.meta
+	override val meta: MetaAttributes get() = WeaponBaseAttributes.meta
 	
-	override val meter: MeterAttributes get() = super.meter
+	override val meter: MeterAttributes get() = WeaponBaseAttributes.meter
 	
 	val movement: MovementAttributes get() = WeaponBaseAttributes.movement
 	
@@ -111,7 +125,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	
 	val reloading: ReloadingAttributes get() = WeaponBaseAttributes.reloading
 	
-	override val resistance: ResistanceAttributes get() = super.resistance
+	override val resistance: ResistanceAttributes get() = WeaponBaseAttributes.resistance
 	
 	val revengeCrits: RevengeCritsAttributes get() = WeaponBaseAttributes.revengeCrits
 	
@@ -126,6 +140,8 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	val whenHit: WhenHitAttributes get() = WeaponBaseAttributes.whenHit
 	
 	val ragdolls: RagdollsAttributes get() = WeaponBaseAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = WeaponBaseAttributes.disguise
 
 	open class AfterburnAttributes {
 		/**
@@ -205,7 +221,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val engineerBuildingTeleportingPickup: ItemAttributeNamed<Int> = ItemAttributeNamed("engineer building teleporting pickup")
 	}
 	
-	open class CritsAttributes {
+	open class CritsAttributes : BaseCombatWeaponAttributes.CritsAttributes() {
 		open val critChance: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("crit mod disabled"), ItemAttributeNamed<Float>("crit mod disabled hidden"))
 	
 		/**
@@ -323,7 +339,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		}
 	}
 	
-	open class DamageAttributes {
+	open class DamageAttributes : BaseCombatWeaponAttributes.DamageAttributes() {
 		open val dmgVsBuildings: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("dmg bonus vs buildings"), ItemAttributeNamed<Float>("dmg penalty vs buildings"))
 	
 		/**
@@ -525,7 +541,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val maxhealthDrainRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mod_maxhealth_drain_rate")
 	}
 	
-	open class KnockbackReceivedAttributes {
+	open class KnockbackReceivedAttributes : BaseCombatWeaponAttributes.KnockbackReceivedAttributes() {
 		open val selfDmgPushForce: BonusPenalty<Float> = BonusPenalty(
 			ItemAttributeNamed("self dmg push force increased"),
 			ItemAttributeNamed("self dmg push force decreased"),
@@ -564,15 +580,15 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		}
 	}
 	
-	open class MetaAttributes {
+	open class MetaAttributes : BaseCombatWeaponAttributes.MetaAttributes() {
 		/**
 		 * What "Strange Part" kills with this weapon should contribute to.
 		 */
 		open val killEaterKillType: ItemAttributeNamed<Int> = ItemAttributeNamed("kill eater kill type")
 	
-		open val killfeed: KillfeedAttributes = KillfeedAttributes()
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
-		open class KillfeedAttributes {
+		open class KillfeedAttributes : BaseCombatWeaponAttributes.MetaAttributes.KillfeedAttributes() {
 			open val isGigerCounter: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is giger counter")
 	
 			/**
@@ -596,7 +612,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		}
 	}
 	
-	open class MeterAttributes {
+	open class MeterAttributes : BaseCombatWeaponAttributes.MeterAttributes() {
 		/**
 		 * In-Game: "+N% increase in recharge rate"
 		 * 
@@ -992,7 +1008,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val reloadTimeDecreasedWhileHealed: ItemAttributeNamed<Float> = ItemAttributeNamed("reload time decreased while healed")
 	}
 	
-	open class ResistanceAttributes {
+	open class ResistanceAttributes : BaseCombatWeaponAttributes.ResistanceAttributes() {
 		/**
 		 * In-Game: "On Hit by Fire: Fireproof for 1 second and Afterburn immunity for N seconds"
 		 * 
@@ -1209,4 +1225,6 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 */
 		open val ragdollsPlasmaEffect: ItemAttributeNamed<Boolean> = ItemAttributeNamed("ragdolls plasma effect")
 	}
+	
+	open class DisguiseAttributes : BaseCombatWeaponAttributes.DisguiseAttributes() 
 }

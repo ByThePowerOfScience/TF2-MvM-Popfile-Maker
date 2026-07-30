@@ -262,7 +262,7 @@ fun generateItemAttributes(
 
 	
 	/** Use sorted set to ensure that root scopes are processed before their children for [patchWithParentOverridesRecursive] */
-	val hierarchyScopes = PriorityQueue<HierarchyNamedAttributeScope>(Comparator.comparingInt<HierarchyNamedAttributeScope> { it.depth }.reversed())
+	val hierarchyScopes = PriorityQueue<HierarchyNamedAttributeScope>(Comparator.comparingInt<HierarchyNamedAttributeScope> { it.depth })
 	
 	val nonHierarchyScopes = mutableListOf<NamedAttributeScope>()
 	

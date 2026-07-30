@@ -21,12 +21,54 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	
 		private val damage: DamageAttributes = DamageAttributes()
 	
-		private val onHit: OnHitAttributes = OnHitAttributes()
+		val onHit: OnHitAttributes = OnHitAttributes()
 	
-		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		val firing: FiringAttributes = FiringAttributes()
+	
+		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		val movement: MovementAttributes = MovementAttributes()
+	
+		val heads: HeadsAttributes = HeadsAttributes()
+	
+		val onKill: OnKillAttributes = OnKillAttributes()
+	
+		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		val taunting: TauntingAttributes = TauntingAttributes()
+	
+		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
+		val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	}
 
-	override val buildings: BuildingsAttributes get() = super.buildings
+	override val buildings: BuildingsAttributes get() = WrenchAttributes.buildings
 	
 	/**
 	 * In-Game: "Press your reload key to choose to teleport to spawn or your exit teleporter"
@@ -42,8 +84,48 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	override val onHit: OnHitAttributes get() = WrenchAttributes.onHit
 	
 	override val swapWeapons: SwapWeaponsAttributes get() = WrenchAttributes.swapWeapons
+	
+	override val afterburn: AfterburnAttributes get() = WrenchAttributes.afterburn
+	
+	override val ammo: AmmoAttributes get() = WrenchAttributes.ammo
+	
+	override val demoCharge: DemoChargeAttributes get() = WrenchAttributes.demoCharge
+	
+	override val firing: FiringAttributes get() = WrenchAttributes.firing
+	
+	override val healthAndHealing: HealthAndHealingAttributes get() = WrenchAttributes.healthAndHealing
+	
+	override val knockbackReceived: KnockbackReceivedAttributes get() = WrenchAttributes.knockbackReceived
+	
+	override val meta: MetaAttributes get() = WrenchAttributes.meta
+	
+	override val meter: MeterAttributes get() = WrenchAttributes.meter
+	
+	override val movement: MovementAttributes get() = WrenchAttributes.movement
+	
+	override val heads: HeadsAttributes get() = WrenchAttributes.heads
+	
+	override val onKill: OnKillAttributes get() = WrenchAttributes.onKill
+	
+	override val projectiles: ProjectilesAttributes get() = WrenchAttributes.projectiles
+	
+	override val reloading: ReloadingAttributes get() = WrenchAttributes.reloading
+	
+	override val resistance: ResistanceAttributes get() = WrenchAttributes.resistance
+	
+	override val revengeCrits: RevengeCritsAttributes get() = WrenchAttributes.revengeCrits
+	
+	override val statusEffects: StatusEffectsAttributes get() = WrenchAttributes.statusEffects
+	
+	override val taunting: TauntingAttributes get() = WrenchAttributes.taunting
+	
+	override val viewmodel: ViewmodelAttributes get() = WrenchAttributes.viewmodel
+	
+	override val whenHit: WhenHitAttributes get() = WrenchAttributes.whenHit
+	
+	override val ragdolls: RagdollsAttributes get() = WrenchAttributes.ragdolls
 
-	open class BuildingsAttributes : IBlockScoped {
+	open class BuildingsAttributes : BaseMeleeAttributes.BuildingsAttributes() {
 		open val constructionRate: BonusPenalty<Float> = BonusPenalty(
 			ItemAttributeNamed("Construction rate increased"),
 			ItemAttributeNamed("Construction rate decreased"),
@@ -72,11 +154,103 @@ interface WrenchAttributes : BaseMeleeAttributes {
 		}
 	}
 	
-	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
+		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
 	
-	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
+		open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
+	}
 	
-	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() 
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
+		override val damage: DamageAttributes = DamageAttributes()
 	
-	open class SwapWeaponsAttributes : BaseMeleeAttributes.SwapWeaponsAttributes() 
+		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() 
+	}
+	
+	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
+		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+	
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+	
+		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	open class SwapWeaponsAttributes : BaseMeleeAttributes.SwapWeaponsAttributes() {
+		override val deploy: DeployAttributes = DeployAttributes()
+	
+		open class DeployAttributes : BaseMeleeAttributes.SwapWeaponsAttributes.DeployAttributes() 
+	}
+	
+	open class AfterburnAttributes : BaseMeleeAttributes.AfterburnAttributes() 
+	
+	open class AmmoAttributes : BaseMeleeAttributes.AmmoAttributes() {
+		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
+	
+		open class ClipSizeAttributes : BaseMeleeAttributes.AmmoAttributes.ClipSizeAttributes() 
+	}
+	
+	open class DemoChargeAttributes : BaseMeleeAttributes.DemoChargeAttributes() 
+	
+	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
+	
+		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() {
+			override val fireRate: FireRateAttributes = FireRateAttributes()
+	
+			open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
+		}
+	}
+	
+	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() 
+	
+	open class KnockbackReceivedAttributes : BaseMeleeAttributes.KnockbackReceivedAttributes() {
+		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+	
+		open class DamageForceReductionAttributes : BaseMeleeAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
+	}
+	
+	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	}
+	
+	open class MeterAttributes : BaseMeleeAttributes.MeterAttributes() 
+	
+	open class MovementAttributes : BaseMeleeAttributes.MovementAttributes() {
+		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+		open class MoveSpeedAttributes : BaseMeleeAttributes.MovementAttributes.MoveSpeedAttributes() 
+	}
+	
+	open class HeadsAttributes : BaseMeleeAttributes.HeadsAttributes() 
+	
+	open class OnKillAttributes : BaseMeleeAttributes.OnKillAttributes() 
+	
+	open class ProjectilesAttributes : BaseMeleeAttributes.ProjectilesAttributes() {
+		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+	
+		override val bullets: BulletsAttributes = BulletsAttributes()
+	
+		open class ProjectilePenetrationAttributes : BaseMeleeAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
+	
+		open class BulletsAttributes : BaseMeleeAttributes.ProjectilesAttributes.BulletsAttributes() 
+	}
+	
+	open class ReloadingAttributes : BaseMeleeAttributes.ReloadingAttributes() 
+	
+	open class ResistanceAttributes : BaseMeleeAttributes.ResistanceAttributes() 
+	
+	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
+	
+	open class StatusEffectsAttributes : BaseMeleeAttributes.StatusEffectsAttributes() 
+	
+	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() 
+	
+	open class ViewmodelAttributes : BaseMeleeAttributes.ViewmodelAttributes() 
+	
+	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
+	
+	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
 }

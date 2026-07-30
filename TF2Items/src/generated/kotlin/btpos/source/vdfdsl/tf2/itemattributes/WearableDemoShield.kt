@@ -12,9 +12,19 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	companion object {
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		val crits: CritsAttributes = CritsAttributes()
+	
+		val damage: DamageAttributes = DamageAttributes()
+	
+		val meter: MeterAttributes = MeterAttributes()
+	
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	}
 
 	val demoCharge: DemoChargeAttributes get() = WearableDemoShieldAttributes.demoCharge
@@ -22,6 +32,16 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	override val resistance: ResistanceAttributes get() = WearableDemoShieldAttributes.resistance
 	
 	override val meta: MetaAttributes get() = WearableDemoShieldAttributes.meta
+	
+	override val disguise: DisguiseAttributes get() = WearableDemoShieldAttributes.disguise
+	
+	override val crits: CritsAttributes get() = WearableDemoShieldAttributes.crits
+	
+	override val damage: DamageAttributes get() = WearableDemoShieldAttributes.damage
+	
+	override val meter: MeterAttributes get() = WearableDemoShieldAttributes.meter
+	
+	override val knockbackReceived: KnockbackReceivedAttributes get() = WearableDemoShieldAttributes.knockbackReceived
 
 	open class DemoChargeAttributes : IBlockScoped {
 		open val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
@@ -43,8 +63,22 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
 		open class PlayerAttributes : WearableAttributes.MetaAttributes.PlayerAttributes() 
 	
 		open class ItemsAttributes : WearableAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class KillfeedAttributes : WearableAttributes.MetaAttributes.KillfeedAttributes() 
 	}
+	
+	open class DisguiseAttributes : WearableAttributes.DisguiseAttributes() 
+	
+	open class CritsAttributes : WearableAttributes.CritsAttributes() 
+	
+	open class DamageAttributes : WearableAttributes.DamageAttributes() 
+	
+	open class MeterAttributes : WearableAttributes.MeterAttributes() 
+	
+	open class KnockbackReceivedAttributes : WearableAttributes.KnockbackReceivedAttributes() 
 }

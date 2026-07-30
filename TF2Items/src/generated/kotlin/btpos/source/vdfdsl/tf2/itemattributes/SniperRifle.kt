@@ -93,14 +93,56 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	
 		private val damage: DamageAttributes = DamageAttributes()
 	
-		private val firing: FiringAttributes = FiringAttributes()
+		val firing: FiringAttributes = FiringAttributes()
 	
-		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		val movement: MovementAttributes = MovementAttributes()
+	
+		val heads: HeadsAttributes = HeadsAttributes()
+	
+		val onHit: OnHitAttributes = OnHitAttributes()
+	
+		val onKill: OnKillAttributes = OnKillAttributes()
+	
+		val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		val taunting: TauntingAttributes = TauntingAttributes()
+	
+		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
+		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	}
 
 	override val damage: DamageAttributes get() = SniperRifleAttributes.damage
 	
-	override val onHit: OnHitAttributes get() = super.onHit
+	override val onHit: OnHitAttributes get() = SniperRifleAttributes.onHit
 	
 	/**
 	 * In-Game: "No headshots"
@@ -186,6 +228,46 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	override val firing: FiringAttributes get() = SniperRifleAttributes.firing
 	
 	override val projectiles: ProjectilesAttributes get() = SniperRifleAttributes.projectiles
+	
+	override val afterburn: AfterburnAttributes get() = SniperRifleAttributes.afterburn
+	
+	override val buildings: BuildingsAttributes get() = SniperRifleAttributes.buildings
+	
+	override val crits: CritsAttributes get() = SniperRifleAttributes.crits
+	
+	override val demoCharge: DemoChargeAttributes get() = SniperRifleAttributes.demoCharge
+	
+	override val healthAndHealing: HealthAndHealingAttributes get() = SniperRifleAttributes.healthAndHealing
+	
+	override val knockbackReceived: KnockbackReceivedAttributes get() = SniperRifleAttributes.knockbackReceived
+	
+	override val meta: MetaAttributes get() = SniperRifleAttributes.meta
+	
+	override val meter: MeterAttributes get() = SniperRifleAttributes.meter
+	
+	override val movement: MovementAttributes get() = SniperRifleAttributes.movement
+	
+	override val heads: HeadsAttributes get() = SniperRifleAttributes.heads
+	
+	override val onKill: OnKillAttributes get() = SniperRifleAttributes.onKill
+	
+	override val reloading: ReloadingAttributes get() = SniperRifleAttributes.reloading
+	
+	override val resistance: ResistanceAttributes get() = SniperRifleAttributes.resistance
+	
+	override val revengeCrits: RevengeCritsAttributes get() = SniperRifleAttributes.revengeCrits
+	
+	override val statusEffects: StatusEffectsAttributes get() = SniperRifleAttributes.statusEffects
+	
+	override val taunting: TauntingAttributes get() = SniperRifleAttributes.taunting
+	
+	override val viewmodel: ViewmodelAttributes get() = SniperRifleAttributes.viewmodel
+	
+	override val swapWeapons: SwapWeaponsAttributes get() = SniperRifleAttributes.swapWeapons
+	
+	override val whenHit: WhenHitAttributes get() = SniperRifleAttributes.whenHit
+	
+	override val ragdolls: RagdollsAttributes get() = SniperRifleAttributes.ragdolls
 
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
 		/**
@@ -194,9 +276,13 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 * If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge.
 		 */
 		open val fullChargeDamageBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("sniper full charge damage bonus")
+	
+		override val damage: DamageAttributes = DamageAttributes()
+	
+		open class DamageAttributes : BaseGunAttributes.DamageAttributes.DamageAttributes() 
 	}
 	
-	open class OnHitAttributes : IBlockScoped {
+	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
 		/**
 		 * In-Game: "N% movement speed on targets"
 		 * 
@@ -205,6 +291,14 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 * Duration is equal to the rifle's `jarate_duration` attribute.
 		 */
 		open val appliesSnareEffect: ItemAttributeNamed<Float> = ItemAttributeNamed("applies snare effect")
+	
+		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+	
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class HealOnHitForRapidfireAttributes : BaseGunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+	
+		open class GenerateRageOnDamageAttributes : BaseGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
 	}
 	
 	open class BuffTypeAttributes : IBlockScoped {
@@ -236,17 +330,89 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		open val srifleChargeRateDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("SRifle Charge rate decreased")
 	}
 	
-	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() 
+	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
+		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
+	
+		open class ClipSizeAttributes : BaseGunAttributes.AmmoAttributes.ClipSizeAttributes() 
+	}
 	
 	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() {
+			override val fireRate: FireRateAttributes = FireRateAttributes()
+	
+			open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
+		}
 	}
 	
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
+		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+	
 		open class BulletsAttributes : BaseGunAttributes.ProjectilesAttributes.BulletsAttributes() 
+	
+		open class ProjectilePenetrationAttributes : BaseGunAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
 	}
+	
+	open class AfterburnAttributes : BaseGunAttributes.AfterburnAttributes() 
+	
+	open class BuildingsAttributes : BaseGunAttributes.BuildingsAttributes() 
+	
+	open class CritsAttributes : BaseGunAttributes.CritsAttributes() {
+		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	
+		open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
+	}
+	
+	open class DemoChargeAttributes : BaseGunAttributes.DemoChargeAttributes() 
+	
+	open class HealthAndHealingAttributes : BaseGunAttributes.HealthAndHealingAttributes() 
+	
+	open class KnockbackReceivedAttributes : BaseGunAttributes.KnockbackReceivedAttributes() {
+		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+	
+		open class DamageForceReductionAttributes : BaseGunAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
+	}
+	
+	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	}
+	
+	open class MeterAttributes : BaseGunAttributes.MeterAttributes() 
+	
+	open class MovementAttributes : BaseGunAttributes.MovementAttributes() {
+		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+		open class MoveSpeedAttributes : BaseGunAttributes.MovementAttributes.MoveSpeedAttributes() 
+	}
+	
+	open class HeadsAttributes : BaseGunAttributes.HeadsAttributes() 
+	
+	open class OnKillAttributes : BaseGunAttributes.OnKillAttributes() 
+	
+	open class ReloadingAttributes : BaseGunAttributes.ReloadingAttributes() 
+	
+	open class ResistanceAttributes : BaseGunAttributes.ResistanceAttributes() 
+	
+	open class RevengeCritsAttributes : BaseGunAttributes.RevengeCritsAttributes() 
+	
+	open class StatusEffectsAttributes : BaseGunAttributes.StatusEffectsAttributes() 
+	
+	open class TauntingAttributes : BaseGunAttributes.TauntingAttributes() 
+	
+	open class ViewmodelAttributes : BaseGunAttributes.ViewmodelAttributes() 
+	
+	open class SwapWeaponsAttributes : BaseGunAttributes.SwapWeaponsAttributes() {
+		override val deploy: DeployAttributes = DeployAttributes()
+	
+		open class DeployAttributes : BaseGunAttributes.SwapWeaponsAttributes.DeployAttributes() 
+	}
+	
+	open class WhenHitAttributes : BaseGunAttributes.WhenHitAttributes() 
+	
+	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
 }

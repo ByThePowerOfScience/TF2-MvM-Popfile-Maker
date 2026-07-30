@@ -40,9 +40,9 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
@@ -50,11 +50,11 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -68,7 +68,7 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -83,6 +83,8 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -155,6 +157,8 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	override val whenHit: WhenHitAttributes get() = ProjectileGrenadeAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = ProjectileGrenadeAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = ProjectileGrenadeAttributes.disguise
 
 	open class AfterburnAttributes : WeaponBaseAttributes.AfterburnAttributes() 
 	
@@ -257,4 +261,6 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	open class WhenHitAttributes : WeaponBaseAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : WeaponBaseAttributes.DisguiseAttributes() 
 }

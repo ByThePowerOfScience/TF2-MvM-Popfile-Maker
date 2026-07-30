@@ -55,14 +55,14 @@ interface WearableAttributes : BaseEntityAttributes {
 	
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
-		open class PlayerAttributes {
+		open class PlayerAttributes : IBlockScoped {
 			/**
 			 * Overrides the skin used for the player. (e.g. Zombie).
 			 */
 			open val playerSkinOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("player skin override")
 		}
 	
-		open class ItemsAttributes {
+		open class ItemsAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Duck Power : N / 5"
 			 * 
