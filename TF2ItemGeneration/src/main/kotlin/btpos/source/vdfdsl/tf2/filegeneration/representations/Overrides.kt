@@ -15,9 +15,10 @@ object Overrides {
 
 val removeFromThing = listOf("hidden").map { Regex(it, RegexOption.IGNORE_CASE) }
 private val modRegex = Regex("^mod[ _]")
+private val re_notWordOrSpace = Regex("[^\\s\\w]")
 
 fun String.sanitizeNamedAttributeName(): String {
-	return this.replace(modRegex, "").replace("SPELL", "spell").replace(":", " ").replace(re_notWordChar, "")
+	return this.replace(modRegex, "").replace("SPELL", "spell").replace(":", " ").replace(re_notWordOrSpace, "")
 }
 
 

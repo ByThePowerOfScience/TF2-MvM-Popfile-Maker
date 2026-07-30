@@ -25,7 +25,7 @@ open class NamedAttributeScope(
 	
 	
 	
-	override val varName: String = (_varName?.overrideScopeName() ?: this.scopeName).decapitalize().overrideVarName()
+	override var varName: String = (_varName?.overrideScopeName() ?: this.scopeName).decapitalize().overrideVarName()
 	
 	override fun clone(): ISortedNamedAttribute {
 		return NamedAttributeScope(this._scopeName, attrs=attrs.map { it.clone() }.toTypedArray(), innateDescription = innateDescription, _varName=_varName)

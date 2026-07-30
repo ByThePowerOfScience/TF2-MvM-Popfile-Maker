@@ -309,9 +309,9 @@ object MyNotesFormatted {
 			AttrClassScope(
 				DISGUISE,
 				"""
-			        - `mod_disguise_consumes_cloak`: Boolean
+					- `mod_disguise_consumes_cloak`: Boolean
 						- If true, disguising requires and consumes an entire cloak meter
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				CRITS,
@@ -329,9 +329,9 @@ object MyNotesFormatted {
 				AttrClassScope(
 					META_KILLFEED,
 					"""
-				        - `counts_as_assister`: Boolean
+						- `counts_as_assister`: Boolean
 							- If true, this item will get kill assist credit in the killfeed
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
@@ -359,10 +359,10 @@ object MyNotesFormatted {
 			AttrClassScope(
 				RESISTANCE,
 				"""
-			        - `set_blockbackstab_once`: Boolean
+					- `set_blockbackstab_once`: Boolean
 						- If on a Wearable: the item is "broken", it is given `nodraw`, and the player's secondary weapon's meter is reset.
 						- If on a weapon, reduces all backstab damage taken by the player for all backstabs without any cooldown. Performs identically to the Mannpower "Resistance" powerup in this respect.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 		),
 		
@@ -403,16 +403,16 @@ object MyNotesFormatted {
 			""".trimIndent(),
 			AttrClassScope(
 				AFTERBURN,
-			    """
+				"""
 				- `set_dmgtype_ignite`: Boolean
 					- Ignites player on hit
-			    - `mult_wpn_burndmg`: Float
+				- `mult_wpn_burndmg`: Float
 					- Mult afterburn damage
 				- `mult_wpn_burntime`: Float
 					- Afterburn duration
 				- `halloween_green_flames`: Boolean
 					- Makes afterburn green
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				AMMO,
@@ -438,11 +438,11 @@ object MyNotesFormatted {
 			),
 			AttrClassScope(
 				BUILDINGS,
-			    """
-			    - `building_teleporting_pickup`: Int
+				"""
+				- `building_teleporting_pickup`: Int
 					- Metal cost to pick up a building at range.
 					- Restricted to the default rescue ranger range, but can be used by any weapon.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				CRITS,
@@ -522,17 +522,17 @@ object MyNotesFormatted {
 				""".trimIndent(),
 				AttrClassScope(
 					FIRING_FIRINGSPEED,
-				    """
-				    - `mult_postfiredelay`: Float
+					"""
+					- `mult_postfiredelay`: Float
 						- After firing, you wait a bit before you can fire again. That's the "delay".
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				
 			),
 			AttrClassScope(
 				HEALTH,
-			    """
-			    - `weapon_blocks_healing`: Boolean
+				"""
+				- `weapon_blocks_healing`: Boolean
 					- Prevents mediguns from latching onto you.
 				- `active_item_health_regen`: Int
 					- Amount of health restored per heal tick while this weapon is active.
@@ -553,75 +553,75 @@ object MyNotesFormatted {
 				- `mod_maxhealth_drain_rate`: Float
 					- Maximum health decrease per tick while weapon is active. (Gloves of Running Urgently/Eviction Notice)
 				
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				KNOCKBACK_RECEIVED,
 				"""
-			    - `mult_dmgself_push_force`: Float
+				- `mult_dmgself_push_force`: Float
 					- Flat multiplier applied to push damage taken from self-damage.
 				- `damage_force_reduction`: Float
 					- Attribute class is a flat multiplier applied to push force received from damage.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			AttrClassScope(
 				META,
-			    """
+				"""
 				- `kill_eater_kill_type`: Int
 					- What "Strange Part" kills with this weapon should contribute to.
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
 					META_KILLFEED,
-				    """
-				    - `is_giger_counter`: Boolean
+					"""
+					- `is_giger_counter`: Boolean
 					- `is_australium_item`: Boolean
 						- Sets killfeed background gold
 					- `set_turn_to_gold`: Boolean
 						- Sets killfeed background gold
 					- `set_silent_killer`: Boolean
 						- Kills will not show up in the killfeed.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				
 				notes= listOf("Related to the killfeed, scoreboard, and other non-gameplay elements.")
 			),
 			AttrClassScope(
-			    METER,
-			    """
-			    - `effectbar_recharge_rate`: Float
+				METER,
+				"""
+				- `effectbar_recharge_rate`: Float
 					- For things like throwable recharge timers, jetpack charging, etc: how much it recharges per second.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				MOVEMENT,
-			    """
-			    - `mod_jump_height_from_weapon`: Float
+				"""
+				- `mod_jump_height_from_weapon`: Float
 					- Only takes effect while this weapon is active.
 				- `air_dash_count`: Int
 					- If greater than 0, attacks minicrit while airborne.
 					- Only procs on Scout
 				- `firing_forward_pull`: Float
 					- While firing the weapon, pulls the user forward with this velocity.
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
 					MOVEMENT_MOVESPEED,
 					"""
-				        - `mult_player_movespeed_resource_level`: Float
+						- `mult_player_movespeed_resource_level`: Float
 							- Multiplier applied to movement speed scaled by ubercharge percentage.
 							- Only works if the player using this item is a Medic with a Medigun
 						- `mult_player_movespeed_active`: Float
 							- Multiplier applied to player movement speed only while this is the active weapon.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
 				HEADS,
-			    """
-			    - `extra_damage_on_hit`: Int
+				"""
+				- `extra_damage_on_hit`: Int
 					- Gain this many heads on hitting an enemy.
 					- On Revolvers specifically: for every head you have, deal +1% damage.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			AttrClassScope(
@@ -693,7 +693,7 @@ object MyNotesFormatted {
 			AttrClassScope(
 				ONKILL,
 				"""
-			    - `add_onkill_critboost_time`: Int
+				- `add_onkill_critboost_time`: Int
 					- Seconds of crit-boost gained on kill.
 					- Note: actual time is `this + 1`.
 				- `add_onkill_minicritboost_time`: Int
@@ -711,7 +711,7 @@ object MyNotesFormatted {
 				- `halloween_death_ghosts`: Boolean
 					- Exorcism spell effect
 				
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				PROJECTILES,
@@ -778,7 +778,7 @@ object MyNotesFormatted {
 				- `no_death_from_headshots`: Boolean
 					- When a headshot would kill you, reduce health to 1.
 				
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				REVENGECRITS,
@@ -793,30 +793,30 @@ object MyNotesFormatted {
 			),
 			AttrClassScope(
 				STATUSEFFECTS,
-			    """
-			    - `explode_on_ignite`: Boolean
+				"""
+				- `explode_on_ignite`: Boolean
 					- Applies when *any weapon* with this attribute is in the second loadout slot of the player who covered someone in gas.	This attribute does not specifically check for the Gas Passer.	For example, if a Soldier has a rocket launcher that applies `TF_COND_GAS` and their shotgun in their secondary has this attribute, they'll still explode on ignite.
 					- Only the afterburn specifically checks for the Gas Passer.
 				
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			AttrClassScope(
 				TAUNTING,
 				"""
-			    - `enables_aoe_heal`: Boolean
+				- `enables_aoe_heal`: Boolean
 					- Makes default weapon taunt perform the Amputator radial healing effect.
 				- `special_taunt`: Boolean
 					- If true, prevents holiday taunts from being used.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				VIEWMODEL,
-			    """
-			    - `weapon_allow_inspect`: Boolean
+				"""
+				- `weapon_allow_inspect`: Boolean
 				- `weapon_stattrak_module_scale`: Float
 				- `min_viewmodel_offset`: String
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			AttrClassScope(
@@ -847,10 +847,10 @@ object MyNotesFormatted {
 			),
 			AttrClassScope(
 				WHENHIT,
-			    """
+				"""
 				- `damage_causes_airblast`: Boolean
 					- Knocks back attacker when wielder receives damage.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				RAGDOLLS,
@@ -873,16 +873,16 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"BaseGun",
 			AttrClassScope(
-			    AMMO,
-			    """
-			    - `mod_ammo_per_shot`: Int
+				AMMO,
+				"""
+				- `mod_ammo_per_shot`: Int
 					- How much ammo is used per shot. If 0, uses default.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
-			    DAMAGE,
-			    """
-			    - `mult_dmg_disguised`: Float
+				DAMAGE,
+				"""
+				- `mult_dmg_disguised`: Float
 					- When disguised (only checks if the player has the condition, doesn't check class), multiply damage by this amount.
 				- `rage_damage`: Float
 					- If you're a Soldier or Pyro, increases damage by `(n - 1) * (rage gauge proportion)`
@@ -890,44 +890,44 @@ object MyNotesFormatted {
 					- Multiply damage by this value once for each healer you have. (with 2 healers, that's `bonus * bonus`, exponential)
 				- `accuracy_scales_damage`: Float
 					- If the projectile being fired is a bullet, multiply damage by your hit ratio over the past few seconds.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			AttrClassScope(
-			    FIRING,
+				FIRING,
 				"""
 					- `keep_disguise_on_attack`: Boolean
 						- If true, spies will keep their disguise when attacking with this weapon.
 				""".trimIndent(),
 				AttrClassScope(
-				    FIRING_FIRINGSPEED,
-				    """
+					FIRING_FIRINGSPEED,
+					"""
 					- On player: `hwn_mult_postfiredelay`: Float
 						- Multiplier applied to base fire delay for miniguns
-				    - `mult_postfiredelay_with_reduced_health`: Float
+					- `mult_postfiredelay_with_reduced_health`: Float
 						- Used with the pre-Blue Moon Panic Attack.
 					- `rocketjump_attackrate_bonus`: Float
 						- Multiplier to fire delay while player is blast-jumping
 					- `mul_nonrocketjump_attackrate`: Float
 						- Multiplier to fire delay while player is NOT blast-jumping
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
-			    PROJECTILES,
-			    """
-			    - `override_projectile_type`: TFProjectileType
+				PROJECTILES,
+				"""
+				- `override_projectile_type`: TFProjectileType
 					- If unset, uses the weapon's default projectile type.
 				- `projectile_spread_angle`: Float
 					- Also applicable to stickies.
 				- `mult_projectile_range`: Float
 				- `grenade_no_spin`: Boolean
 					- Don't do tumble on tumbling projectiles.
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
-				    PROJECTILES_BULLETS,
-				    """
-				    - `mult_spread_scale`: Float
+					PROJECTILES_BULLETS,
+					"""
+					- `mult_spread_scale`: Float
 						- Modifies bullet spread.
 					- `panic_attack_negative`: Float
 						- Multiplier applied to bullet spread as health gets lower.
@@ -937,7 +937,7 @@ object MyNotesFormatted {
 						- By default, all guns have perfect accuracy on the first shot, unless this is set.
 					- `fixed_shot_pattern`: Boolean
 						- Enables fixed weapon spread on the weapon as though `tf_use_fixed_weaponspreads` were set.
-				    """.trimIndent()
+					""".trimIndent()
 				)
 				
 			),
@@ -947,29 +947,29 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"BaseMelee",
 			AttrClassScope(
-			    CRITS,
-			    """
-			    - `crit_from_behind`: Boolean
+				CRITS,
+				"""
+				- `crit_from_behind`: Boolean
 				- `crit_forces_victim_to_laugh`: Boolean
 				- `crit_does_no_damage`: Boolean
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
-			    DAMAGE,
-			    """
-			    - `mult_dmg_bonus_while_half_dead`: Float
+				DAMAGE,
+				"""
+				- `mult_dmg_bonus_while_half_dead`: Float
 					- If health < 50%, apply mult.
 				- `mult_dmg_penalty_while_half_alive`: Float
 					- If health >= 50%, apply mult
 				- `mult_dmg_with_reduced_health`: Float
 					- Apply multiplier that is divided by the player's current health proportion.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			AttrClassScope(
-			    ONHIT,
-			    """
-			    - `set_dmg_apply_to_sapper`: Int
+				ONHIT,
+				"""
+				- `set_dmg_apply_to_sapper`: Int
 					- Damage sappers with swing
 				- `speed_buff_ally`: Boolean
 					- Applies speed boost cond to yourself and the teammate you hit
@@ -980,15 +980,15 @@ object MyNotesFormatted {
 				- `tickle_enemies_wielding_same_weapon`: Boolean
 					- Force enemies to laugh if they're also wielding this weapon.
 				
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			AttrClassScope(
-			    WEAPONSWITCH,
-			    """
-			    - `self_mark_for_death`: Boolean
+				WEAPONSWITCH,
+				"""
+				- `self_mark_for_death`: Boolean
 					- Mark self for death when switching to this weapon
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			"""
 				- `is_a_sword`: Boolean
@@ -1011,9 +1011,9 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"Flamethrower",
 			AttrClassScope(
-			    "Airblast",
-			    """
-			    - `airblast_disabled`: Boolean
+				"Airblast",
+				"""
+				- `airblast_disabled`: Boolean
 				- `set_charged_airblast`: Boolean
 					- Enables charging an airblast for longer for higher push
 					- Fun fact: apparently this was going to be a FLAME ROCKET, but got changed later to be an airblast
@@ -1044,40 +1044,40 @@ object MyNotesFormatted {
 				- `airblast_vertical_pushback_scale`: Float
 				- `airblast_destroy_projectile`: Boolean
 				- `airblast_pushback_disabled`: Boolean
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
-			    CRITS,
-			    """
-			    - `set_flamethrower_back_crit`: Boolean
-			    """.trimIndent()
+				CRITS,
+				"""
+				- `set_flamethrower_back_crit`: Boolean
+				""".trimIndent()
 			),
 			AttrClassScope(
-			    MOVEMENT,
-			    """
-			    - `firing_forward_pull`: Boolean
+				MOVEMENT,
+				"""
+				- `firing_forward_pull`: Boolean
 					- If true, you get a speedboost while firing your flamethrower.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
-			    AMMO,
-			    """
-			    - `mult_flame_ammopersec`: Float
-			    """.trimIndent()
+				AMMO,
+				"""
+				- `mult_flame_ammopersec`: Float
+				""".trimIndent()
 			),
 			AttrClassScope(
-			    HEALTH,
-			    """
-			    - `extinguish_restores_health`: Int
+				HEALTH,
+				"""
+				- `extinguish_restores_health`: Int
 					- How much health your extinguish restores
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
-			    "BuffType",
-			    """
-			    - `set_buff_type`: Int
+				"BuffType",
+				"""
+				- `set_buff_type`: Int
 					- If greater than 0, enables Phlog crits on having full rage
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			"""
 			- `mod_flamethrower_spinup_time`: Duration
@@ -1188,20 +1188,20 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"Bonesaw",
 			AttrClassScope(
-			    HEADS,
-			    """
-			    - `add_head_on_kill`: Boolean
+				HEADS,
+				"""
+				- `add_head_on_kill`: Boolean
 					- On kill, take an organ (uses "heads" field like usual)
 				- `add_head_on_hit`: Boolean
 					- If the player should take a "head" when dealing damage with a melee
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
-			    TAUNTING,
-			    """
-			    - `special_taunt`: Boolean
+				TAUNTING,
+				"""
+				- `special_taunt`: Boolean
 					- If set, the player will taunt on right click
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			"""
@@ -1215,11 +1215,11 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"Minigun",
 			AttrClassScope(
-			    AMMO,
-			    """
-			    - `uses_ammo_while_aiming`: Int
+				AMMO,
+				"""
+				- `uses_ammo_while_aiming`: Int
 					- Amount of ammo drained per second
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			
 			"""
@@ -1251,13 +1251,13 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"Revolver",
 			AttrClassScope(
-			    HEADS,
-			    """
-			    - `extra_damage_on_hit`: Boolean
+				HEADS,
+				"""
+				- `extra_damage_on_hit`: Boolean
 					- If true, increases damage by 1% per "head" collected (note: this is not the diamondback's "revenge crit" mechanic)
 				- `extra_damage_on_hit_penalty`: Int
 					- Lowers your head count by this amount every time you fire a shot
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			applicableWeapons = listOf("TF_WEAPON_REVOLVER, The Ambassador, TTG Sam Revolver, Upgradeable TF_WEAPON_REVOLVER, L'Etranger, The Enforcer, The Diamondback, Festive Ambassador, Festive Revolver 2014")
 		),
@@ -1290,7 +1290,7 @@ object MyNotesFormatted {
 			AttrClassScope(
 				CLOAK,
 				"""
-			        - `mult_decloak_rate`: Duration
+					- `mult_decloak_rate`: Duration
 						- How many seconds it takes to decloak.
 						- Note that values less than or equal to 0 become 1 second
 					- On player: `mult_cloak_meter_consume_rate`: Float
@@ -1302,7 +1302,7 @@ object MyNotesFormatted {
 						- If true, cannot receive cloak while cloaked.
 					- `ReducedCloakFromAmmo`: Float
 						- Multiplier applied to cloak gained from ammo boxes.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			applicableWeapons = listOf("TF_WEAPON_INVIS, The Dead Ringer, The Cloak and Dagger, Upgradeable TF_WEAPON_INVIS, The Quackenbirdt, The Enthusiast's Timepiece")
 		),
@@ -1330,14 +1330,14 @@ object MyNotesFormatted {
 			AttrClassScope(
 				BUFFITEMS,
 				"""
-			        - `set_buff_type`: Int
+					- `set_buff_type`: Int
 						- Sets which banner is used
 						- 0 = Buff Banner
 						- 1 = Battalion's Backup
 						- 2 = Concheror
 					- `mod_buff_duration`: Float
 						- Multiplier to buff duration
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			applicableWeapons = listOf("The Buff Banner, The Battalion's Backup, The Concheror, Festive Buff Banner, The B.A.S.E Jumper")
 		),
@@ -1347,20 +1347,20 @@ object MyNotesFormatted {
 			AttrClassScope(
 				BUILDINGS,
 				"""
-			        - `mult_construction_value`: Float
+					- `mult_construction_value`: Float
 						- Passive build-speed multiplier, same as the convar `tf_construction_build_rate_multiplier`.
 					- `mult_repair_value`: Float
 						- Multiplier to how much health is given per wrench hit.
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
 					BUILDINGS_SENTRY,
 					"""
-				        - `wrench_builds_minisentry`: Boolean
+						- `wrench_builds_minisentry`: Boolean
 							- Sentry built is a minisentry.
 							- Detonates leveled sentries when equipping a wrench with this attribute.
 							- If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute.
 							- Removes engineer's glove on his model.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			"""
@@ -1375,11 +1375,11 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"RocketLauncher",
 			AttrClassScope(
-			    PROJECTILES,
-			    """
-			    - `mod_rocket_launch_impulse`: Boolean
+				PROJECTILES,
+				"""
+				- `mod_rocket_launch_impulse`: Boolean
 					- Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.)
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			applicableWeapons = listOf(
 				"Stock Rocket Launcher + Reskins + The Original, The Black Box + Festive, Rocket Jumper, The Liberty Launcher, The Beggar's Bazooka",
@@ -1391,14 +1391,14 @@ object MyNotesFormatted {
 		HierarchyAttrClassScope(
 			"RocketLauncher_AirStrike",
 			AttrClassScope(
-			    AMMO,
-			    AttrClassScope(
-			        AMMO_CLIPSIZE,
-			        """
-			        - `clipsize_increase_on_kill`: Int
+				AMMO,
+				AttrClassScope(
+					AMMO_CLIPSIZE,
+					"""
+					- `clipsize_increase_on_kill`: Int
 						- This attribute is on all weapons, but it's specifically checked for on the Air Strike.
-			        """.trimIndent()
-			    ),
+					""".trimIndent()
+				),
 			),
 			applicableWeapons = listOf("The Air Strike")
 		),
@@ -1408,15 +1408,15 @@ object MyNotesFormatted {
 			AttrClassScope(
 				PROJECTILES,
 				"""
-			        - `mult_projectile_speed`: Float
-			    """.trimIndent()
+					- `mult_projectile_speed`: Float
+				""".trimIndent()
 			),
 			AttrClassScope(
 				DAMAGE,
 				"""
-			        - `grenade_detonation_damage_penalty`: Float
+					- `grenade_detonation_damage_penalty`: Float
 						- Flat multiplier applied to initial damage
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			"""
 			- `set_detonate_mode`: Int
@@ -1432,10 +1432,10 @@ object MyNotesFormatted {
 			AttrClassScope(
 				RELOADING,
 				"""
-			        - `mult_reload_time`: Float
+					- `mult_reload_time`: Float
 					- `mult_reload_time_hidden`: Float
 					- `fast_reload`: Float
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			"""
 			- `fires_milk_bolt`: Boolean
@@ -1449,9 +1449,9 @@ object MyNotesFormatted {
 			AttrClassScope(
 				AMMO,
 				"""
-			        - `energy_weapon_no_drain`: Boolean
+					- `energy_weapon_no_drain`: Boolean
 						- Removes ammo requirement to fire weapon.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			applicableWeapons = listOf("The Righteous Bison", "The Pomson 6000")
 		),
@@ -1500,17 +1500,17 @@ object MyNotesFormatted {
 			AttrClassScope(
 				ONHIT,
 				"""
-			        - `set_scattergun_has_knockback`: Boolean
+					- `set_scattergun_has_knockback`: Boolean
 						- Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary.
 					- `scattergun_knockback_mult`: Float
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				RELOADING,
 				"""
-			        - `set_scattergun_no_reload_single`: Boolean
+					- `set_scattergun_no_reload_single`: Boolean
 						- If 1, reloads entire clip at once.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			applicableWeapons = listOf("Stock Scattergun + Reskins, The Force-a-Nature, The Back Scatter", "The Soda Popper", "The Baby Face's Blaster")
 		),
@@ -1521,26 +1521,26 @@ object MyNotesFormatted {
 			AttrClassScope(
 				DAMAGE,
 				"""
-			        - `mult_dmg`: Float
+					- `mult_dmg`: Float
 						- Base backstab damage against minibosses is 250 * this proportion.
 					- On player: `armor_piercing`: Float (**PERCENTAGE**)
 						- Spy only does 25% damage against minibosses by default.	The number here is added to that percentage, up to a max of 100% + 25% = 125%
 						- Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:	`25.0`, `50.0`, up to `100.0`.
 						- Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				HEALTH,
 				"""
-			        - `sanguisuge`: Boolean
+					- `sanguisuge`: Boolean
 						- Gain health on backstab.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				DISGUISE,
 				"""
-			        - `set_disguise_on_backstab`: Boolean
-			    """.trimIndent()
+					- `set_disguise_on_backstab`: Boolean
+				""".trimIndent()
 			),
 			"""
 			- `set_weapon_mode`: Int
@@ -1558,10 +1558,10 @@ object MyNotesFormatted {
 			AttrClassScope(
 				ONKILL,
 				"""
-			        - `decapitate_type`: Int
+					- `decapitate_type`: Int
 						- More like a boolean.	Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
 						- If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			applicableWeapons = listOf("The Eyelander, The Scotsman's Skullcutter, The Horseless Headless Horseman's Headtaker, The Claidheamohmor (sic), The Persian Persuader, Nessie's Nine Iron, Festive Eyelander")
 		),
@@ -1571,25 +1571,25 @@ object MyNotesFormatted {
 			AttrClassScope(
 				RESISTANCE,
 				"""
-			        - `afterburn_immunity`: Boolean
+					- `afterburn_immunity`: Boolean
 						- For the base "`Wearable`", only checked on Sniper.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				META,
 				AttrClassScope(
 					META_PLAYER,
 					"""
-				        - `player_skin_override`: Int
+						- `player_skin_override`: Int
 							- Overrides the skin used for the player. (e.g. Zombie)
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				AttrClassScope(
 					META_ITEMSTATS,
 					"""
-				        - `duck_badge_level`: Int
+						- `duck_badge_level`: Int
 							- Determines if ***BONUS DUCKSSSS*** should increment the badge level.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			applicableWeapons = listOf("Cosmetics", "The Manntreads, The Gunboats", "The Razorback, Darwin's Danger Shield, The Cozy Camper", "Ali Baba's Wee Booties, The Bootlegger")
@@ -1600,18 +1600,18 @@ object MyNotesFormatted {
 			AttrClassScope(
 				DEMOCHARGE,
 				"""
-	            - `attack_not_cancel_charge`: Boolean
+				- `attack_not_cancel_charge`: Boolean
 				- On player: `mod_charge_time`: Float
 					- Charge time mult
 				- On player: `charge_impact_damage`: Float
 					- Impact damage mult
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				RESISTANCE,
 				"""
-			        - `afterburn_immunity`: Boolean
-			    """.trimIndent()
+					- `afterburn_immunity`: Boolean
+				""".trimIndent()
 			),
 			applicableWeapons = listOf("The Chargin' Targe, The Splendid Screen, The Tide Turner, Festive Targe 2014")
 		),
@@ -1633,25 +1633,25 @@ object MyNotesFormatted {
 			AttrClassScope(
 				PROJECTILES,
 				"""
-			        - `override_projectile_type`: TFProjectileType
+					- `override_projectile_type`: TFProjectileType
 						- Used to select the model
 						- Select between `TF_PROJECTILE_FESTIVE_JAR`, `TF_PROJECTILE_BREADMONSTER_JARATE`, and `TF_PROJECTILE_BREADMONSTER_MADMILK`
 						- Otherwise uses default for its class
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				METER,
 				"""
-			        - `extinguish_reduces_cooldown`: Float
+					- `extinguish_reduces_cooldown`: Float
 						- Subtracts this value from the cooldown
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				ONHIT,
 				"""
-			        - On player: `applies_snare_effect`: Float
+					- On player: `applies_snare_effect`: Float
 						- If NOT `1.0`, stun the victim
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			applicableWeapons = listOf(
 				"Jarate, Festive Jarate, The Self-Aware Beauty Mark",
@@ -1685,17 +1685,17 @@ object MyNotesFormatted {
 			AttrClassScope(
 				DAMAGE,
 				"""
-			         - `sniper_full_charge_damage_bonus`: Float
+					- `sniper_full_charge_damage_bonus`: Float
 						- If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				ONHIT,
 				"""
-			        - `applies_snare_effect`: Float
+					- `applies_snare_effect`: Float
 						- Multiplier applied to target move-speed on hit
 						- Duration is equal to the rifle's `jarate_duration` attribute
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			"""
 			- `set_weapon_mode`: Int
@@ -1855,52 +1855,52 @@ object MyNotesFormatted {
 			AttrClassScope(
 				HEALTH,
 				"""
-			        - `mult_health_frompacks`: Float
+					- `mult_health_frompacks`: Float
 					- `mult_healing_from_medics`: Float
 						- Specifically checked on Crossbow Bolt impacts.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				META,
 				"""
 					- `appear_as_mvm_robot`: Boolean
 						- If true, appear as an MvM robot in your hud when selecting a class. (Not fully implemented.)
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				METER,
 				"""
-			        - `hype_resets_on_jump`: Int
+					- `hype_resets_on_jump`: Int
 						- Lose this amount of hype if you airdash
 						- Note that this only applies to scout hype, not rage in general
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				MOVEMENT,
 				"""
-			    - `cannot_swim`: Boolean
+				- `cannot_swim`: Boolean
 					- Forbids you from floating upwards with the jump button in the water
 				- `mod_jump_height`: Float
 				- `parachute_attribute`: Boolean
 					- Allows parachute to be deployed. Parachute prop only appears if the BASE Jumper is equipped, but the functionality is the same regardless.
 				- `parachute_disabled`: Boolean
 					- Prevents parachute from being deployed, but still allows it to be retracted.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				HUD,
 				"""
-			        - `set_custom_buildmenu`: Int
+					- `set_custom_buildmenu`: Int
 						- Only used if the build menu is actually shown
 						- 0 = default
 						- 1 = pipboy
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				RESISTANCE,
 				"""
-			        - `cannot_be_backstabbed`: Boolean
-			    """.trimIndent()
+					- `cannot_be_backstabbed`: Boolean
+				""".trimIndent()
 			)
 		),
 		
@@ -1921,74 +1921,74 @@ object MyNotesFormatted {
 						- Multiplier applied to metal gained from ammo boxes
 					- `add_metal_regen`: Int
 						- Amount of metal regenerated every 5 seconds.
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
 					AMMO_MAXAMMO,
 					"""
-				        - `mult_maxammo_primary`: Int
+						- `mult_maxammo_primary`: Int
 						- `mult_maxammo_secondary`: Int
 						- `mult_maxammo_metal`: Int
 						- `mult_maxammo_grenades1`: Int
 							- Only used for bat balls
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
 				BUFFITEMS,
 				"""
-			        - `set_buff_type`: Int
+					- `set_buff_type`: Int
 						- Note that Phlogistinator's rage has a small cooldown after expiring before it can gain rage again, to prevent the lingering crit flames from immediately filling it up again.
 					- `mod_buff_duration`: Float
 						- Multiplier applied to buff duration.
 					- `mod_soldier_buff_range`: Float
 						- Multiplier applied to the default 450 hammer unit range on banners.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				BUILDINGS,
 				"""
-			        - `cannot_pick_up_buildings`: Boolean
+					- `cannot_pick_up_buildings`: Boolean
 						- Prevents player from picking up buildings.
 					- `building_cost_reduction`: Int
 						- Sets the cost to construct any building type to this value.
 					- `sentry_build_rate_multiplier`: Float
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
 					BUILDINGS_SENTRY,
 					"""
-				        - `engy_disposable_sentries`: Int
+						- `engy_disposable_sentries`: Int
 							- Number of disposable sentries you're allowed to build.
 							- Checked when checking if the player can build something.
 							- Only works if the "uses upgrades" gamerule is set.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				AttrClassScope(
 					BUILDINGS_DISPENSER,
 					"""
-				        - `teleporter_build_rate_multiplier`: Float
+						- `teleporter_build_rate_multiplier`: Float
 							- Multiplier applied to passive build time for dispensers and teleporters.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				AttrClassScope(
 					BUILDINGS_TELEPORTER,
 					"""
-				        - `mod_teleporter_cost`: Float
+						- `mod_teleporter_cost`: Float
 							- Multiplier applied to teleporter construction cost
 						- `teleporter_build_rate_multiplier`: Float
 							- Multiplier applied to passive build time for dispensers and teleporters.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
 				CLOAK,
 				"""
-			        - `cloak_blink_time_penalty`: Float
+					- `cloak_blink_time_penalty`: Float
 						- Multiplier
 					- `mult_cloak_rate`: Float
 					- `set_quiet_unstealth`: Boolean
 						- If true, plays `Player.Spy_UnCloakReduced` when decloaking
 					- `mult_decloak_rate`: Float
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				DAMAGE,
@@ -1997,21 +1997,21 @@ object MyNotesFormatted {
 						- Deal 3x falling damage to player you land on
 					- `headshot_damage_modify`: Float
 						- Multiplier applied to headshot damage
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
 					"Alien",
 					"""
-				        - `alien_isolation_xeno_bonus_pos`: Boolean
+						- `alien_isolation_xeno_bonus_pos`: Boolean
 							- Deal extra damage to players wearing the Alien set.
 						- `alien_isolation_merc_bonus_pos`: Boolean
 							- Deal extra damage to players wearing the Xenomorph set.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
 				DEMOCHARGE,
 				"""
-			        - `charge_turn_control`: Float
+					- `charge_turn_control`: Float
 						- Default is 0.45f, and this is a multiplier applied to it
 					- `lose_demo_charge_on_damage_when_charging`: Boolean
 						- Used to detect the Tide Turner when deciding whether to give you minicrits or crits
@@ -2022,50 +2022,50 @@ object MyNotesFormatted {
 						- Attribute class is a flat multiplier applied to total charge time when charging
 					- `charge_recharge_rate`: Float
 						- Only applies to Demoman
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				DISGUISE,
 				"""
-			    - `disguise_no_burn`: Boolean
+				- `disguise_no_burn`: Boolean
 					- Prevent afterburn while disguised
 				- `set_cannot_disguise`: Boolean
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				FIRING,
 				"""
-			        - `no_attack`: Boolean
+					- `no_attack`: Boolean
 						- Prevents player from attacking.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				HEALTH,
 				"""
-			        - `mult_health_fromhealers`: Float
+					- `mult_health_fromhealers`: Float
 					- `weapon_blocks_healing`: Boolean
 					- `add_health_regen`: Float
 						- Amount of health regenerated per regen tick.	Scales by the amount of time since the player last took damage in non-MvM modes.
-			        - `add_maxhealth_nonbuffed`: Int
+					- `add_maxhealth_nonbuffed`: Int
 						- Additive base-health increase.
 					- `add_maxhealth`: Int
 						- Additive maximum health increase only checked when overhealing.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				HUD,
 				"""
-			        - `see_enemy_health`: Boolean
+					- `see_enemy_health`: Boolean
 					- `hide_enemy_health`: Boolean
 						- Always true in MvM
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				KNOCKBACK_RECEIVED,
 				"""
-			        - `airblast_vulnerability_multiplier`: Float
+					- `airblast_vulnerability_multiplier`: Float
 					- `airblast_vertical_vulnerability_multiplier`: Float
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				META,
@@ -2077,35 +2077,35 @@ object MyNotesFormatted {
 					
 					- `calling_card_on_kill`: Int
 						- Defines the calling card that should be dropped when this player kills another player.
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
 					META_KILLFEED,
 					"""
-				        - `fish_damage_override`: Boolean
+						- `fish_damage_override`: Boolean
 							- If the weapon is a Holy Mackerel reskin (AKA either the fish or the Unarmed Combat) and this is set, use the Unarmed Combat "arm hit" killfeed notice instead of the "fish hit" notice.
 				
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				AttrClassScope(
 					META_NOISEMAKER,
 					"""
-				        - `enable_misc2_noisemaker`: Boolean
+						- `enable_misc2_noisemaker`: Boolean
 							- Uses noise maker when pressing action slot key
 						- `unlimited_quantity`: Boolean
 							- If true, noisemakers are unlimited usage.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				AttrClassScope(
 					META_ITEMSTATS,
 					"""
-				        - `killstreak_tier`: Int
+						- `killstreak_tier`: Int
 						
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				AttrClassScope(
 					META_PLAYER,
 					"""
-				        - `add_jingle_to_footsteps`: Int
+						- `add_jingle_to_footsteps`: Int
 							- If 1, use xmas.jingle, if 2 or higher use xmas.jingle_higher
 						- `halloween_footstep_type`: Int
 							- Decimal version of the 4-byte hex code determining color of footsteps (e.g. `0xFFFFFFFF`, but in decimal)
@@ -2118,18 +2118,18 @@ object MyNotesFormatted {
 						- `hand_scale`: Float
 						- `special_dsp`: Int
 							- DSP used when emitting sounds created by this player.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 				AttrClassScope(
 					META_GAMEPLAY,
 					"""
-				        - `add_player_capturevalue`: Int
+						- `add_player_capturevalue`: Int
 						- `canteen_specialist`: Int
 							- Discounts canteens by 10 * level
 						- `cannot_pick_up_intelligence`: Boolean
 						- `force_distribute_currency_on_death`: Boolean
 							- Only works in MvM. Automatically collects the money this player would drop on death, as though they were killed by a sniper.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
@@ -2141,7 +2141,7 @@ object MyNotesFormatted {
 						- On Heavy, adds `0.22` * the damage.
 					- `rage_giving_scale`: Float
 						- Multiplier applied to rage gained by dealing damage, taking damage, or dealing burn damage.
-			        - `hype_on_damage`: Boolean
+					- `hype_on_damage`: Boolean
 						- Adds the amount of damage dealt to the Scout hype meter, to a maximum of 200 damage which adds 50% meter.
 					- `rage_on_assists`: Float
 						- Only procs on Sniper. Gain this amount of rage meter on assists.
@@ -2153,12 +2153,12 @@ object MyNotesFormatted {
 						- How much the Scout's hype meter decays every tick
 					- `lose_hype_on_take_damage`: Int
 						- Amount of hype lost per point of damage taken.
-			    """.trimIndent(),
+				""".trimIndent(),
 			),
 			AttrClassScope(
 				MOVEMENT,
 				"""
-			        - `cannot_swim`: Boolean
+					- `cannot_swim`: Boolean
 						- If the jump button should work while in waist-high water
 						- Also makes you sink like a stone in water instead of being able to move freely
 					- `swimming_mastery`: Boolean
@@ -2175,18 +2175,18 @@ object MyNotesFormatted {
 						- Prevents player from crouching.
 					- `set_scout_doublejump_disabled`: Boolean
 					
-			    """.trimIndent(),
+				""".trimIndent(),
 				AttrClassScope(
 					MOVEMENT_MOVESPEED,
 					"""
-				        - `mult_player_aiming_movespeed`: Float
+						- `mult_player_aiming_movespeed`: Float
 							- Only applies to players that have TF_COND_AIMING
 							- If Heavy, default aiming movespeed is 110
 							- Else if player is using a compound bow, 160
 							- Else 80
 						- `mult_player_movespeed`: Float
 						- `mult_player_movespeed_shieldrequired`: Float
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
@@ -2194,12 +2194,12 @@ object MyNotesFormatted {
 				AttrClassScope(
 					"Falling",
 					"""
-				         - `falling_impact_radius_pushback`: Boolean
+						- `falling_impact_radius_pushback`: Boolean
 							- Requires player to have the `TF_COND_ROCKETPACK` condition.
 							- Pushes back nearby players around the landing site.
 						- `falling_impact_radius_stun`: Boolean
 							- If `falling_impact_radius_pushback` is set, this will also stun any enemies in the impact radius.
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
@@ -2237,7 +2237,7 @@ object MyNotesFormatted {
 				AttrClassScope(
 					"Vaccinator",
 					"""
-				        - `medigun_bullet_resist_deployed`: Float
+						- `medigun_bullet_resist_deployed`: Float
 							- Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_BULLET_RESIST
 						- `medigun_bullet_resist_passive`: Float
 							- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_BULLET_RESIST
@@ -2249,28 +2249,28 @@ object MyNotesFormatted {
 							- Multiplier to damage taken if player has TF_COND_MEDIGUN_UBER_FIRE_RESIST
 						- `medigun_fire_resist_passive`: Float
 							- Multiplier to damage taken if player has TF_COND_MEDIGUN_SMALL_FIRE_RESIST
-				    """.trimIndent()
+					""".trimIndent()
 				),
 			),
 			AttrClassScope(
 				TAUNTING,
 				"""
-			        - `mult_gesture_time`: Float
+					- `mult_gesture_time`: Float
 						- Multiplier applied to taunt speed.
 					- `cosmetic_taunt_sound`: String
 						- Sound to be played when performing a taunt.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				WEAPONSWITCH,
 				"""
-			        - `disable_weapon_switch`: Boolean
-			    """.trimIndent()
+					- `disable_weapon_switch`: Boolean
+				""".trimIndent()
 			),
 			AttrClassScope(
 				WHENHIT,
 				"""
-			        - `uber_on_damage_taken`: Float
+					- `uber_on_damage_taken`: Float
 						- Chance to gain stock uber effect when hit
 					- `mod_mark_attacker_for_death`: Float
 						- Number of seconds the player who hit this entity should be marked for death.
@@ -2280,7 +2280,7 @@ object MyNotesFormatted {
 						- Note: does not block backstabs on its own.
 					- `teleport_instead_of_die`: Float
 						- Chance to teleport back to spawn upon receiving fatal damage instead of dying.
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			"""
 			- `add_uber_time`: Duration
@@ -2303,7 +2303,7 @@ object MyNotesFormatted {
 			  
 					- `generate_rage_on_dmg`: Boolean
 						- Only procs on Heavies, multiplies damage by 50% while rage is draining
-			    """.trimIndent()
+				""".trimIndent()
 			),
 			AttrClassScope(
 				"SniperOnly",

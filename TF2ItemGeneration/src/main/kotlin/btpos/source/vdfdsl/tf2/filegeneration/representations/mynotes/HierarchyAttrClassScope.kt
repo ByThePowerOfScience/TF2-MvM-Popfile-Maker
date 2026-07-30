@@ -15,6 +15,7 @@ class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAtt
 		when (it) {
 			is String -> list.addAll(it.notesToAttrClassUsages())
 			is IAttrThing -> list.add(it)
+			is List<*> -> list.addAll(it.flatMap { (it as? IAttrThing)?.let(::listOf) ?: (it as? String)?.notesToAttrClassUsages() ?: emptyList() })
 			else -> error("Expected either string or attrs")
 		}
 		list
