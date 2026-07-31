@@ -782,8 +782,8 @@ fun wave7() = WaveBuilder {
 		}
 		val huntsmanSniper = TFBot(template = RobotStandardTemplates.Sniper.HUNTSMAN) {
 			addAttributesForExisting(Weapons.HUNTSMAN) {
-				damage.bonus.visible = 0.075f
-				fasterReloadRate = 0.4f
+				damage.damage.damageBonus = 0.075
+				fasterReloadRate = 0.4
 			}
 		}
 		

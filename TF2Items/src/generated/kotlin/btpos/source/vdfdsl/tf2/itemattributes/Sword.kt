@@ -5,14 +5,15 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface SwordAttributes : BaseMeleeAttributes {
-	companion object {
-		private val crits: CritsAttributes = CritsAttributes()
+	companion object : IBlockScoped {
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
@@ -20,7 +21,7 @@ interface SwordAttributes : BaseMeleeAttributes {
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
@@ -30,11 +31,11 @@ interface SwordAttributes : BaseMeleeAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -46,7 +47,7 @@ interface SwordAttributes : BaseMeleeAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -59,6 +60,8 @@ interface SwordAttributes : BaseMeleeAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val onKill: OnKillAttributes get() = SwordAttributes.onKill
@@ -110,6 +113,8 @@ interface SwordAttributes : BaseMeleeAttributes {
 	override val whenHit: WhenHitAttributes get() = SwordAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = SwordAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = SwordAttributes.disguise
 
 	open class OnKillAttributes : BaseMeleeAttributes.OnKillAttributes() {
 		/**
@@ -183,7 +188,15 @@ interface SwordAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseMeleeAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseMeleeAttributes.MeterAttributes() 
@@ -221,4 +234,6 @@ interface SwordAttributes : BaseMeleeAttributes {
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() 
 }

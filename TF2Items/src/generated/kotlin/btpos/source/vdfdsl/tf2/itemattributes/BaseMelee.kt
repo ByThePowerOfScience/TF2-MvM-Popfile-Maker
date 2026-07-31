@@ -5,15 +5,16 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface BaseMeleeAttributes : WeaponBaseAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * Multiplier applied to the bounding box of the swing to detect if a player is inside it.
 		 */
-		val meleeBoundsMultiplier: ItemAttributeNamed<Float> = ItemAttributeNamed("melee bounds multiplier")
+		val meleeBoundsMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("melee bounds multiplier")
 	
 		/**
 		 * In-Game: "On Miss: Hit yourself. Idiot."
@@ -24,13 +25,13 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
@@ -38,11 +39,11 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -56,7 +57,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -71,6 +72,8 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val crits: CritsAttributes get() = BaseMeleeAttributes.crits
@@ -93,7 +96,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	/**
 	 * Multiplier applied to the bounding box of the swing to detect if a player is inside it.
 	 */
-	val meleeBoundsMultiplier: ItemAttributeNamed<Float> get() = BaseMeleeAttributes.meleeBoundsMultiplier
+	val meleeBoundsMultiplier: ItemAttributeNamed<Number> get() = BaseMeleeAttributes.meleeBoundsMultiplier
 	
 	/**
 	 * In-Game: "On Miss: Hit yourself. Idiot."
@@ -143,6 +146,8 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	override val whenHit: WhenHitAttributes get() = BaseMeleeAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = BaseMeleeAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = BaseMeleeAttributes.disguise
 
 	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() {
 		/**
@@ -171,14 +176,14 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 		 * 
 		 * If health < 50%, apply mult.
 		 */
-		open val dmgBonusWhileHalfDead: ItemAttributeNamed<Float> = ItemAttributeNamed("dmg bonus while half dead")
+		open val dmgBonusWhileHalfDead: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg bonus while half dead")
 	
 		/**
 		 * In-Game: "N% decrease in damage when health >50% of max"
 		 * 
 		 * If health >= 50%, apply mult.
 		 */
-		open val dmgPenaltyWhileHalfAlive: ItemAttributeNamed<Float> = ItemAttributeNamed("dmg penalty while half alive")
+		open val dmgPenaltyWhileHalfAlive: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg penalty while half alive")
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	
@@ -205,7 +210,7 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 		 * 
 		 * Used as arg to addcond speedboost.
 		 */
-		open val speedBoostOnHitEnemy: ItemAttributeNamed<Float> = ItemAttributeNamed("speed_boost_on_hit_enemy")
+		open val speedBoostOnHitEnemy: ItemAttributeNamed<Number> = ItemAttributeNamed("speed_boost_on_hit_enemy")
 	
 		/**
 		 * In-Game: "On Hit: Force enemies to laugh who are also wearing this item"
@@ -269,7 +274,15 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : WeaponBaseAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 
@@ -309,4 +322,6 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	open class WhenHitAttributes : WeaponBaseAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : WeaponBaseAttributes.DisguiseAttributes() 
 }

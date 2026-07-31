@@ -5,16 +5,17 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface BuffItemAttributes : BaseMeleeAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
@@ -22,7 +23,7 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
@@ -32,11 +33,11 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -48,7 +49,7 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -61,6 +62,8 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	val buffItems: BuffItemsAttributes get() = BuffItemAttributes.buffItems
@@ -114,9 +117,11 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	override val whenHit: WhenHitAttributes get() = BuffItemAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = BuffItemAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = BuffItemAttributes.disguise
 
 	open class BuffItemsAttributes : IBlockScoped {
-		open val buffDuration: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("increase buff duration"), ItemAttributeNamed<Float>("increase buff duration HIDDEN"))
+		open val buffDuration: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("increase buff duration"), ItemAttributeNamed<Number>("increase buff duration HIDDEN"))
 	
 		open val buffType: BuffTypeAttributes = BuffTypeAttributes()
 	
@@ -206,7 +211,15 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseMeleeAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseMeleeAttributes.MeterAttributes() 
@@ -246,4 +259,6 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() 
 }

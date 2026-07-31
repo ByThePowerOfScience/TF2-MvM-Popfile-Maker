@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface FlareGunAttributes : BaseGunAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Flare knocks back target on hit and explodes when it hits the ground. Increased knock back on burning players"
 		 * 
@@ -23,9 +24,9 @@ interface FlareGunAttributes : BaseGunAttributes {
 		 */
 		val flaregunFiresPelletsWithKnockback: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod flaregun fires pellets with knockback", NumberSelectorCodec(3))
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
@@ -35,17 +36,17 @@ interface FlareGunAttributes : BaseGunAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -57,7 +58,7 @@ interface FlareGunAttributes : BaseGunAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -72,6 +73,8 @@ interface FlareGunAttributes : BaseGunAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -136,6 +139,8 @@ interface FlareGunAttributes : BaseGunAttributes {
 	override val whenHit: WhenHitAttributes get() = FlareGunAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = FlareGunAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = FlareGunAttributes.disguise
 
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
@@ -192,7 +197,15 @@ interface FlareGunAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseGunAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseGunAttributes.MeterAttributes() 
@@ -238,4 +251,6 @@ interface FlareGunAttributes : BaseGunAttributes {
 	open class WhenHitAttributes : BaseGunAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseGunAttributes.DisguiseAttributes() 
 }

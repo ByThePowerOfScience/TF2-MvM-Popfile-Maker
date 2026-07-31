@@ -9,8 +9,8 @@ open class BonusPenalty<T : Any>(
 	override val penalty: ItemAttributeNamed<T>,
 ) : BPBonus<T>, BPPenalty<T>, ItemAttribute<T> {
 	context(attrs: IAttributeContainer)
-	override fun assign(value: T?) {
-		bonus.assign(value)
+	override fun set(value: T?) {
+		bonus.set(value)
 	}
 	
 	context(attrs: IAttributeContainer)

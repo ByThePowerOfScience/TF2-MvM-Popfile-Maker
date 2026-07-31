@@ -38,18 +38,18 @@ data class NamedAttribute(
 	var codec: FakeCodec? = null
 	
 	override var varName: String = attrName.sanitizeNamedAttributeName().camelCase().overrideVarName()
-	init {
-		"breakpoint"
-	}
+
 	override val innateDescription: List<String> = listOfNotNull(inGameDesc).map { "In-Game: \"$it\"" }
 	
 	override var notes: List<String> = listOf()
 	
 	override fun getKotlinType(): String {
-		if (codec != null) // trust codecs over attribute class notes
-			return codec!!.visibleType
-		else if (forceType != null)
-			return forceType!!
+		codec?.let { // trust codecs over attribute class notes
+			return it.visibleType
+		}
+		forceType?.let {
+			return it.takeIf { it != "Float" && it != "Double" } ?: "Number"
+		}
 		
 		if ("percentage" in attrType)
 			return "Number"
@@ -78,7 +78,11 @@ data class NamedAttribute(
 		return PropertyBuilder(varName, "ItemAttributeNamed<${getKotlinType()}>") {
 			initializer = "ItemAttributeNamed<${getKotlinType()}>(\"${attrName}\"$codec)"
 			docComment += innateDescription
-			docComment += notes
+			if (attrName == "set_weapon_node" && "NumberSelectorCodec" in codec) {
+				// don't add notes since we're autoselecting the number
+			} else {
+				docComment += notes
+			}
 		}
 	}
 	

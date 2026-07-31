@@ -5,21 +5,22 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface CompoundBowAttributes : StickybombLauncherAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "+N% faster reload time"
 		 * 
 		 * Mult applied to reload speed.
 		 */
-		val fasterReloadRate: ItemAttributeNamed<Float> = ItemAttributeNamed("faster reload rate")
+		val fasterReloadRate: ItemAttributeNamed<Number> = ItemAttributeNamed("faster reload rate")
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
@@ -29,17 +30,17 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -51,7 +52,7 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -66,6 +67,8 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -73,7 +76,7 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	 * 
 	 * Mult applied to reload speed.
 	 */
-	val fasterReloadRate: ItemAttributeNamed<Float> get() = CompoundBowAttributes.fasterReloadRate
+	val fasterReloadRate: ItemAttributeNamed<Number> get() = CompoundBowAttributes.fasterReloadRate
 	
 	override val ammo: AmmoAttributes get() = CompoundBowAttributes.ammo
 	
@@ -124,6 +127,8 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	override val whenHit: WhenHitAttributes get() = CompoundBowAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = CompoundBowAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = CompoundBowAttributes.disguise
 
 	open class AmmoAttributes : StickybombLauncherAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
@@ -180,7 +185,15 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	open class MetaAttributes : StickybombLauncherAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : StickybombLauncherAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : StickybombLauncherAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : StickybombLauncherAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : StickybombLauncherAttributes.MeterAttributes() 
@@ -226,4 +239,6 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	open class WhenHitAttributes : StickybombLauncherAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : StickybombLauncherAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : StickybombLauncherAttributes.DisguiseAttributes() 
 }

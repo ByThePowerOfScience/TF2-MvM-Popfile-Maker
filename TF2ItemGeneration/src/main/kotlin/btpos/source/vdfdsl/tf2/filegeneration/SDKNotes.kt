@@ -1,5 +1,10 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
+import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.LongAttributeHiLo
+import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.AttrClassScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.AttrClassUsage
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.HierarchyAttrClassScope
@@ -93,19 +98,26 @@ private const val AMMO_MAXAMMO = "MaxAmmo"
 
 private const val META_NOISEMAKER = "Noisemakers"
 
-object MyNotesFormatted {
+private const val META_PARTICLES = "Particles"
+
+private const val FLAMES = "Flames"
+
+object SDKNotes {
 	fun getParent(name: String): String? {
 		return hierarchy.getParent(name)
 	}
 	
 	val hierarchy = TFClassHierarchy(
 		"BaseEntity" to listOf(
-			"BaseCombatWeapon",
-			"Wearable",
-			"EconEntity"
+			"EconEntity" to listOf(
+				"Wearable",
+				"BaseCombatWeapon" to listOf("WeaponBase"),
+			),
+			"Player" to listOf(
+				"MvMBot", // technically doesn't exist, but it's mainly just to
+			)
 		),
 		
-		"BaseCombatWeapon" to listOf("WeaponBase"),
 		
 		"WeaponBase" to listOf(
 			"WeaponBaseGrenade",
@@ -249,12 +261,14 @@ object MyNotesFormatted {
 					"ProjectileSentryRocket",
 					"ProjectileSpellFireball" to listOf(
 						"ProjectileSpellLightningOrb",
-					)
+					),
+					"ProjectileDragonsFury"
 				),
 				"ProjectileEnergyBall"
 			),
 			"ProjectileEnergyRing",
 			"ProjectileFlare",
+			"ProjectileSyringe"
 		),
 		
 		"BaseGrenadeProjectile" to listOf(
@@ -280,9 +294,6 @@ object MyNotesFormatted {
 			)
 		),
 		
-		
-		
-		
 		"Wearable" to listOf(
 			"PDAExpansionDispenser",
 			"PDAExpansionTeleporter",
@@ -293,10 +304,6 @@ object MyNotesFormatted {
 			"WearableLevelableItem",
 			"WearableRobotArm",
 			"WearableVM",
-		),
-		
-		"Entity" to listOf(
-			"Player" to listOf("MvMBot")
 		),
 	)
 	
@@ -908,6 +915,7 @@ object MyNotesFormatted {
 						- Used with the pre-Blue Moon Panic Attack.
 					- `rocketjump_attackrate_bonus`: Float
 						- Multiplier to fire delay while player is blast-jumping
+						- If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80% of its normal range
 					- `mul_nonrocketjump_attackrate`: Float
 						- Multiplier to fire delay while player is NOT blast-jumping
 					""".trimIndent()
@@ -1084,7 +1092,7 @@ object MyNotesFormatted {
 				- If not 0, how many seconds it should take between pressing `+attack` and the flames appearing, like revving up a minigun.
 			""".trimIndent(),
 			AttrClassScope(
-				"Flames",
+				FLAMES,
 				"""
 				- `flame_spread_degree`: Float
 				- `redirected_flame_size_mult`: Float
@@ -1777,8 +1785,8 @@ object MyNotesFormatted {
 			- On owner: `mark_for_death_on_building_pickup`: Boolean
 			- `sapper_voice_pak`: Float
 				- If 1.0, it's a wheatley sapper
-			- `robo_sapper`: Boolean
-				- On base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target
+			- `robo_sapper`: Int
+				- If greater than 0 on base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target
 			""".trimIndent(),
 			applicableWeapons = listOf("Construction PDA, Unimplemented Spy PDA")
 		),
@@ -1806,107 +1814,7 @@ object MyNotesFormatted {
 		
 		
 		
-		/// Entity attributes
-		HierarchyAttrClassScope(
-			"Entity",
-			AttrClassScope(
-				BUILDINGS,
-				"""
-					- `mod_build_rate`: Float
-						- Multiplies building build time by this amount
-					- `upgrade_rate_mod`: Int
-						- Add this amount of metal to any building hit by this player, using player's metal reserve
-						- Recall that all players have 100 hidden metal
-					- `mult_engy_building_health`: Int
-						- Only applied if the building is NOT a disposable sentry
-				""".trimIndent(),
-				AttrClassScope(
-					BUILDINGS_SENTRY,
-					"""
-						- `mvm_sentry_ammo`: Float
-							- Multiplier to max ammo
-						- `mult_sentry_range`: Float
-						- `mult_sentry_firerate`: Float
-						- `build_small_sentries`: Boolean
-							- If true, upgrade metal is only 150 instead of 200
-							- Also creates a sentry that's 80% size
-					""".trimIndent(),
-				),
-				AttrClassScope(
-					BUILDINGS_DISPENSER,
-					"""
-						- `mult_dispenser_rate`: Float
-							- Dispenser resupply rate for health, ammo, and metal
-						- `mult_dispenser_radius`: Float
-					""".trimIndent()
-				),
-				AttrClassScope(
-					BUILDINGS_TELEPORTER,
-					"""
-						- `mod_teleporter_speed_boost`: Boolean
-							- If true, teleporter adds speed boost condition with arg 4.0 to teleported player
-						- `mod_teleporter_cost`: Float
-							- Flat mult to metal cost to build
-						- `bidirectional_teleport`: Boolean
-						- `mult_teleporter_recharge_rate`: Float
-					""".trimIndent()
-				)
-			),
-			AttrClassScope(
-				HEALTH,
-				"""
-					- `mult_health_frompacks`: Float
-					- `mult_healing_from_medics`: Float
-						- Specifically checked on Crossbow Bolt impacts.
-				""".trimIndent()
-			),
-			AttrClassScope(
-				META,
-				"""
-					- `appear_as_mvm_robot`: Boolean
-						- If true, appear as an MvM robot in your hud when selecting a class. (Not fully implemented.)
-				""".trimIndent()
-			),
-			AttrClassScope(
-				METER,
-				"""
-					- `hype_resets_on_jump`: Int
-						- Lose this amount of hype if you airdash
-						- Note that this only applies to scout hype, not rage in general
-				""".trimIndent()
-			),
-			AttrClassScope(
-				MOVEMENT,
-				"""
-				- `cannot_swim`: Boolean
-					- Forbids you from floating upwards with the jump button in the water
-				- `mod_jump_height`: Float
-				- `parachute_attribute`: Boolean
-					- Allows parachute to be deployed. Parachute prop only appears if the BASE Jumper is equipped, but the functionality is the same regardless.
-				- `parachute_disabled`: Boolean
-					- Prevents parachute from being deployed, but still allows it to be retracted.
-				""".trimIndent()
-			),
-			AttrClassScope(
-				HUD,
-				"""
-					- `set_custom_buildmenu`: Int
-						- Only used if the build menu is actually shown
-						- 0 = default
-						- 1 = pipboy
-				""".trimIndent()
-			),
-			AttrClassScope(
-				RESISTANCE,
-				"""
-					- `cannot_be_backstabbed`: Boolean
-				""".trimIndent()
-			)
-		),
-		
-		
-		
-		
+		/// Player attributes
 		HierarchyAttrClassScope(
 			"Player",
 			AttrClassScope(
@@ -1947,6 +1855,13 @@ object MyNotesFormatted {
 			AttrClassScope(
 				BUILDINGS,
 				"""
+					- `mod_build_rate`: Float
+						- Multiplies building build time by this amount
+					- `upgrade_rate_mod`: Int
+						- Add this amount of metal to any building hit by this player, using player's metal reserve
+						- Recall that all players have 100 hidden metal
+					- `mult_engy_building_health`: Int
+						- Only applied if the building is NOT a disposable sentry
 					- `cannot_pick_up_buildings`: Boolean
 						- Prevents player from picking up buildings.
 					- `building_cost_reduction`: Int
@@ -1956,15 +1871,25 @@ object MyNotesFormatted {
 				AttrClassScope(
 					BUILDINGS_SENTRY,
 					"""
+						- `mvm_sentry_ammo`: Float
+							- Multiplier to max ammo
+						- `mult_sentry_range`: Float
+						- `mult_sentry_firerate`: Float
+						- `build_small_sentries`: Boolean
+							- If true, upgrade metal is only 150 instead of 200
+							- Also creates a sentry that's 80% size
 						- `engy_disposable_sentries`: Int
 							- Number of disposable sentries you're allowed to build.
 							- Checked when checking if the player can build something.
 							- Only works if the "uses upgrades" gamerule is set.
-					""".trimIndent()
+					""".trimIndent(),
 				),
 				AttrClassScope(
 					BUILDINGS_DISPENSER,
 					"""
+						- `mult_dispenser_rate`: Float
+							- Dispenser resupply rate for health, ammo, and metal
+						- `mult_dispenser_radius`: Float
 						- `teleporter_build_rate_multiplier`: Float
 							- Multiplier applied to passive build time for dispensers and teleporters.
 					""".trimIndent()
@@ -1972,12 +1897,16 @@ object MyNotesFormatted {
 				AttrClassScope(
 					BUILDINGS_TELEPORTER,
 					"""
+						- `mod_teleporter_speed_boost`: Boolean
+							- If true, teleporter adds speed boost condition with arg 4.0 to teleported player
+						- `bidirectional_teleport`: Boolean
+						- `mult_teleporter_recharge_rate`: Float
 						- `mod_teleporter_cost`: Float
 							- Multiplier applied to teleporter construction cost
 						- `teleporter_build_rate_multiplier`: Float
 							- Multiplier applied to passive build time for dispensers and teleporters.
 					""".trimIndent()
-				),
+				)
 			),
 			AttrClassScope(
 				CLOAK,
@@ -2030,6 +1959,9 @@ object MyNotesFormatted {
 				- `disguise_no_burn`: Boolean
 					- Prevent afterburn while disguised
 				- `set_cannot_disguise`: Boolean
+				- `disguise_as_dispenser_on_crouch`: Boolean
+					- While crouched, use the Dispenser model.
+					- Hardcoded in vanilla for Spy.
 				""".trimIndent()
 			),
 			AttrClassScope(
@@ -2040,14 +1972,30 @@ object MyNotesFormatted {
 				""".trimIndent()
 			),
 			AttrClassScope(
+				HEADS,
+				"""
+					- `add_head_on_hit`: Boolean
+						- This attribute only works on players that are a Medic wielding the Vitasaw. For the all-class version, see `extra_damage_on_hit` (unimplemented in vanilla, accessible via Rafmod).
+						- Gives extra player movespeed the more heads you have. (Partially implemented.)
+						- Will not work if the player is not a Medic wielding the VitaSaw.
+			    """.trimIndent()
+			),
+			AttrClassScope(
 				HEALTH,
 				"""
+					- `healing_mastery`: Int
+						- On Medic only, each level raises the Medic's passive regen by 25% of its normal value.
+					- `mult_health_frompacks`: Float
+					- `mult_healing_from_medics`: Float
+						- Specifically checked on Crossbow Bolt impacts.
 					- `mult_health_fromhealers`: Float
+						- Applies to all heal-beam sources of healing: Dispensers, Mediguns
 					- `weapon_blocks_healing`: Boolean
+						- If set, this player may not be targeted by heal-beams or healed from Crossbow impacts.
 					- `add_health_regen`: Float
 						- Amount of health regenerated per regen tick.	Scales by the amount of time since the player last took damage in non-MvM modes.
 					- `add_maxhealth_nonbuffed`: Int
-						- Additive base-health increase.
+						- Additive maximum health increase. See also: [addMaxHealth]
 					- `add_maxhealth`: Int
 						- Additive maximum health increase only checked when overhealing.
 				""".trimIndent()
@@ -2055,6 +2003,13 @@ object MyNotesFormatted {
 			AttrClassScope(
 				HUD,
 				"""
+					- `set_custom_buildmenu`: Int
+						- Only used if the build menu is actually shown.
+						- 0 = default
+						- 1 = pipboy
+						- Works on Engineer and Spy (if you can give him a build menu)
+					- `appear_as_mvm_robot`: Boolean
+						- If true, appear as an MvM robot in your hud when selecting a class. (Not fully implemented.)
 					- `see_enemy_health`: Boolean
 					- `hide_enemy_health`: Boolean
 						- Always true in MvM
@@ -2065,8 +2020,11 @@ object MyNotesFormatted {
 				"""
 					- `airblast_vulnerability_multiplier`: Float
 					- `airblast_vertical_vulnerability_multiplier`: Float
+					- `mult_aiming_knockback_resistance`: Float
+						- Only works on Sniper.
 				""".trimIndent()
 			),
+			
 			AttrClassScope(
 				META,
 				"""
@@ -2074,7 +2032,6 @@ object MyNotesFormatted {
 						- If true, add `kills + captures + defenses + buildingsdestroyed - (3 * deaths)` to player score, on top of the default scoring algorithm
 					- `spawn_with_physics_toy`: Int
 						- If 1, create a soccer ball on the ground when the player spawns.
-					
 					- `calling_card_on_kill`: Int
 						- Defines the calling card that should be dropped when this player kills another player.
 				""".trimIndent(),
@@ -2083,7 +2040,6 @@ object MyNotesFormatted {
 					"""
 						- `fish_damage_override`: Boolean
 							- If the weapon is a Holy Mackerel reskin (AKA either the fish or the Unarmed Combat) and this is set, use the Unarmed Combat "arm hit" killfeed notice instead of the "fish hit" notice.
-				
 					""".trimIndent()
 				),
 				AttrClassScope(
@@ -2131,14 +2087,28 @@ object MyNotesFormatted {
 							- Only works in MvM. Automatically collects the money this player would drop on death, as though they were killed by a sniper.
 					""".trimIndent()
 				),
+				AttrClassScope(
+					META_PARTICLES,
+					"""
+					- `particle_effect_use_head_origin`: Boolean
+					- `particle_effect_vertical_offset`: Float
+					""".trimIndent()
+				),
 			),
 			AttrClassScope(
 				METER,
 				"""
+					- `generate_rage_on_heal`: Boolean
+						- Gain shield meter from damage healed. Only works on Medic.
+					- `rage_on_kill`: Float
+						- Amount of Sniper rage gained on kill.  Only works on Sniper.
+					- `hype_resets_on_jump`: Int
+						- Lose this amount of hype if you airdash
+						- Note that this only applies to scout hype, not rage in general
 					- `generate_rage_on_dmg`: Boolean
 						- Only works on Engineer and Heavy.
 						- On Engineer, adds all damage dealt to the rage meter.
-						- On Heavy, adds `0.22` * the damage.
+						- On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
 					- `rage_giving_scale`: Float
 						- Multiplier applied to rage gained by dealing damage, taking damage, or dealing burn damage.
 					- `hype_on_damage`: Boolean
@@ -2147,7 +2117,7 @@ object MyNotesFormatted {
 						- Only procs on Sniper. Gain this amount of rage meter on assists.
 					- `hype_resets_on_jump`: Int
 						- The amount to be subtracted from the hype meter when the Scout double-jumps.
-					- `item_meter_charge_type`: Int
+					- `item_meter_charge_type`: TFMeterRechargeType
 						- If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAMEBALL
 					- `hype_decays_over_time`: Float
 						- How much the Scout's hype meter decays every tick
@@ -2159,11 +2129,17 @@ object MyNotesFormatted {
 				MOVEMENT,
 				"""
 					- `cannot_swim`: Boolean
+						- Forbids you from floating upwards with the jump button in the water
+					- `mod_jump_height`: Float
+					- `parachute_attribute`: Boolean
+						- Allows parachute to be deployed. Parachute prop only appears if the BASE Jumper is equipped, but the functionality is the same regardless.
+					- `parachute_disabled`: Boolean
+						- Prevents parachute from being deployed, but still allows it to be retracted.
+					- `cannot_swim`: Boolean
 						- If the jump button should work while in waist-high water
 						- Also makes you sink like a stone in water instead of being able to move freely
 					- `swimming_mastery`: Boolean
 						- If false or not present, move speed is 80% while swimming
-					- `mod_jump_height`: Float
 					- `mod_air_control`: Float
 						- Note: the jetpack condition always multiplies your air acceleration by 50%
 					- `mod_air_control_blast_jump`: Float
@@ -2211,8 +2187,10 @@ object MyNotesFormatted {
 					- On killing an enemy, schadenfreude
 				- `decapitate_type`: Int
 					- More like a boolean.	Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
-					- Checked on all hitscan attacks.
-					
+					- Checked on all hitscan attacks, including melee swings.
+				- `add_cloak_on_kill`: Int
+					- Value: amount of cloak gained on kill.
+					- Only works on Spy.
 				""".trimIndent()
 			),
 			AttrClassScope(
@@ -2259,6 +2237,8 @@ object MyNotesFormatted {
 						- Multiplier applied to taunt speed.
 					- `cosmetic_taunt_sound`: String
 						- Sound to be played when performing a taunt.
+					- `custom_taunt_particle_attr`: Boolean
+						- Use Saharan Spy particle effect when performing a stock knife taunt.  Only works on Spy.
 				""".trimIndent()
 			),
 			AttrClassScope(
@@ -2282,67 +2262,22 @@ object MyNotesFormatted {
 						- Chance to teleport back to spawn upon receiving fatal damage instead of dying.
 				""".trimIndent()
 			),
-			"""
-			- `add_uber_time`: Duration
-				- Duration in seconds
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			""".trimIndent(),
 			AttrClassScope(
-				"HeavyOnly",
+				RESISTANCE,
 				"""
-			  
-					- `generate_rage_on_dmg`: Boolean
-						- Only procs on Heavies, multiplies damage by 50% while rage is draining
+					- `cannot_be_backstabbed`: Boolean
 				""".trimIndent()
 			),
-			AttrClassScope(
-				"SniperOnly",
-				"""
-					- `mult_aiming_knockback_resistance`: Float
-					- `rage_on_kill`: Float
-						- Amount of sniper rage gained on kill.
-				""".trimIndent()
-			),
-			AttrClassScope(
-				"MedicOnly",
-				"""
-					- `healing_mastery`: Int
-						- Each level gives +25% of the Medic's passive regen
-					- `generate_rage_on_heal`: Boolean
-						- Gain shield meter from damage healed
-					- `add_head_on_hit`: Boolean
-						- This part is only semi-implemented...
-						- Gives extra player movespeed the more heads you have
-						- Will not work if the player is not a Medic wielding the VitaSaw.
-				""".trimIndent()
-			),
+			
 			AttrClassScope(
 				"SpyOnly",
 				"""
-				- `add_cloak_on_kill`: Int
-					- Amount of cloak gained on kill.
-				- `custom_taunt_particle_attr`: Boolean
-					- Use Saharan Spy particle effect when performing a stock knife taunt.
-				- `set_custom_buildmenu`: Int
 				- `override_engineer_object_type`: Int
 					- Default = -1
-					- If 0, build a catapult
-				- `disguise_as_dispenser_on_crouch`: Boolean
+					- If 0, Spy can build a catapult
 				""".trimIndent()
 			)
 		),
-		
-		
 		HierarchyAttrClassScope(
 			"MvMBot",
 			"""
@@ -2369,10 +2304,9 @@ object MyNotesFormatted {
 			- `mini_rockets`: Boolean
 				- Uses the "mini rockets" model
 			- `rocketjump_attackrate_bonus`: Float
-				- If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80%
 			- `mult_projectile_speed`: Float
 			- `rocket_specialist`: Int
-			- `halloween_pumpkin_explosions`: Int
+			- `halloween_pumpkin_explosions`: Boolean
 				- Does pumpkin bombs particle effect
 			- `use_large_smoke_explosion`: Int
 				- Use the big MvM particle when it explodes
@@ -2441,7 +2375,7 @@ object MyNotesFormatted {
 		),
 		
 		
-		AttrClassScope(
+		HierarchyAttrClassScope(
 			"PowerUpBottle",
 			AttrClassScope(
 				"Type",
@@ -2463,30 +2397,176 @@ object MyNotesFormatted {
 			""".trimIndent()
 		),
 		
-		AttrClassScope(
-			"Particles",
-			"""
-			- `particle_effect_use_head_origin`: Boolean
-			- `particle_effect_vertical_offset`: Float
-			""".trimIndent()
-		),
 		
-		AttrClassScope(
+		
+		HierarchyAttrClassScope(
 			"EconEntity",
-			"""
-			- `is_festivized`: Boolean
-				- Attaches festivizer
-			- `set_attached_particle_static`: Int (index into ItemSchema AttributeControlledParticleSystem)
-				- Attaches static particle, such as smoking a pipe
-				- Cosmetics can only have one
-			- `set_attached_particle`: Int (index into ItemSchema AttributeControlledParticleSystem)
-				- Dynamic particle systems, such as unusuals
-			- `throwable_particle_trail_only`: Boolean
-				- If false, attaches the `set_attached_particle` to the item itself
-				- If true, the particle only applies to the throwable particle trail.
-			""".trimIndent()
+			AttrClassScope(
+				META,
+				AttrClassScope(
+					META_ITEMSTATS,
+					"""
+						- `is_festivized`: Boolean
+							- Attaches festivizer
+				    """.trimIndent()
+				),
+				AttrClassScope(
+					META_PARTICLES,
+					"""
+				        - `set_attached_particle_static`: Int (index into ItemSchema AttributeControlledParticleSystem)
+							- Attaches static particle, such as smoking a pipe
+							- Cosmetics can only have one.
+						- `set_attached_particle`: Int (index into ItemSchema AttributeControlledParticleSystem)
+							- Dynamic particle systems, such as unusuals
+						- `throwable_particle_trail_only`: Boolean
+							- If false, attaches the `set_attached_particle` to the item itself
+							- If true, the particle only applies to the throwable particle trail.
+				    """.trimIndent()
+				),
+			),
 		),
 	)
+	
+	val specificallyCheckedAttributes: List<Pair<String, List<ISortedNamedAttribute>>> get() {
+		operator fun String.invoke(kType: String, notes: List<String> = listOf(), codec: FakeCodec? = null): NamedAttribute {
+			return NamedAttribute(
+				this,
+				"",
+				"",
+				null,
+				null
+			).apply {
+				this.notes = notes
+				this.forceType = kType
+				codec?.let { this.setCodec { codec } }
+			}
+		}
+		
+		fun LoHi(lo: String, hi: String, notes: List<String> = listOf()): LongAttributeHiLo {
+			return LongAttributeHiLo(lo("Int"), hi("Int"), notes)
+		}
+		
+		val DURATION_IN_SECONDS = FakeCodec("Duration", "DURATION_IN_SECONDS")
+		return listOf<Pair<String, List<ISortedNamedAttribute>>>(
+			"EconEntity" to listOf(
+				NamedAttributeScope(
+					"WarPaints",
+					"paintkit_proto_def_index"("Int", notes=listOf("Value: War Paint index")),
+					"set_item_texture_wear"("WarPaintsAttributes.Wear"),
+					"texture_wear_default"("WarPaintsAttributes.Wear"),
+					LoHi("custom_paintkit_seed_lo", "custom_paintkit_seed_hi")
+				),
+				NamedAttributeScope(
+					META,
+					NamedAttributeScope(
+						META_GAMEPLAY,
+						"allowed in medieval mode"("Boolean"),
+						
+					),
+					NamedAttributeScope(
+						META_NOISEMAKER,
+						"duck badge level"("Int", notes=listOf("Determines how fast the duck noisemaker can be activated."))
+					),
+					NamedAttributeScope(
+						META_ITEMSTATS,
+						"weapon_uses_stattrak_module"("Boolean"),
+//						LoHi("quest loaner id low", "quest loaner id hi"),
+//						"expiration date"("Date", codec=FakeCodec("DateTo")),
+						"item name text override"("String"),
+						"quality text override"("String"),
+						"set item tint RGB"("java.awt.Color", codec=FakeCodec("Color", "ColorCodec")),
+						"set item tint RGB 2"("java.awt.Color", codec=FakeCodec("Color", "ColorCodec"), notes=listOf("Used for team-color paints.")),
+					),
+					NamedAttributeScope(
+						META_PARTICLES,
+						"attach particle effect"("Int", notes=listOf("Value: particle index")),
+						"hat only unusual effect"("Int", notes=listOf("Value: particle index")),
+						"taunt only unusual effect"("Int", notes=listOf("Value: particle index")),
+						"taunt attach particle index"("Int", notes=listOf("Value: particle index")),
+					)
+				),
+				NamedAttributeScope(
+					TAUNTING,
+					"taunt is press and hold"("Boolean"),
+					"taunt mimic"("Boolean", notes=listOf("Check if this taunt can be mimicked by other players.")),
+					"taunt success sound"("Sound"),
+					"taunt success sound offset"("Duration", codec= DURATION_IN_SECONDS),
+					"taunt success sound loop"("String"),
+					"taunt success sound loop offset"("Duration", codec= DURATION_IN_SECONDS),
+					"taunt attack name"("String"),
+					"taunt attack time"("Duration", codec=DURATION_IN_SECONDS)
+				),
+			),
+			"Wearable" to listOf(
+				NamedAttributeScope(
+					META,
+					"additional halloween response criteria name"("String"),
+				)
+			),
+			"ProjectileSyringe" to listOf(
+				"projectile particle name"("String", notes=listOf("Sets the projectile trail."))
+			),
+			"BaseGun" to listOf(
+				"custom projectile model"("String", notes=listOf("Value is the path to a projectile model. Models must be precached."))
+			),
+			"PowerUpBottle" to listOf(
+				"powerup charges"("Int", notes=listOf("The current number of charges in the canteen."))
+			),
+			"Flamethrower" to listOf(
+				NamedAttributeScope(
+					FLAMES,
+					"fire particle blue"("String"),
+					"fire particle blue crit"("String"),
+					"fire particle red"("String"),
+					"fire particle red crit"("String"),
+				)
+			),
+			"BaseEntity" to listOf(
+				NamedAttributeScope(
+					METER,
+					"meter_label"("String")
+				),
+			),
+			"MvMBot" to listOf(
+				NamedAttributeScope(
+					HEALTH,
+					"health regen"("Int", notes=listOf("Health regained per second when the bomb carrier is at stage 2 of self-upgrading."))
+				)
+			),
+			"Player" to listOf(
+				NamedAttributeScope(
+					TAUNTING,
+					"taunt force weapon slot"("String", notes=listOf("Taunting force-equips a certain weapon slot"))
+				)
+			),
+			"Jar" to listOf(
+				NamedAttributeScope(
+					PROJECTILES,
+					"projectile entity name"("String")
+				)
+			)
+		)
+	}
+	
+	val attributeClassesAlsoChecked = listOf(
+		"no_attack",
+		"no_jump",
+		"no_duck"
+	)
+	
+	/*
+	strange_attr_set_t g_KillEaterAttr[] =
+	{
+		strange_attr_set_t( "kill eater",			"kill eater score type",		"strange restriction type 1",		"strange restriction value 1",		false ),
+		strange_attr_set_t( "kill eater 2",			"kill eater score type 2",		"strange restriction type 2",		"strange restriction value 2",		false ),
+		strange_attr_set_t( "kill eater 3",			"kill eater score type 3",		"strange restriction type 3",		"strange restriction value 3",		false ),
+	
+		// assumption: all of the user-customizable attributes will follow all of the schema-specified attributes
+		strange_attr_set_t( "kill eater user 1",	"kill eater user score type 1",	"strange restriction user type 1",	"strange restriction user value 1",	true ),
+		strange_attr_set_t( "kill eater user 2",	"kill eater user score type 2", "strange restriction user type 2",	"strange restriction user value 2",	true ),
+		strange_attr_set_t( "kill eater user 3",	"kill eater user score type 3", "strange restriction user type 3",	"strange restriction user value 3",	true ),
+	};
+	 */
 }
 
 fun String.notesToAttrClassUsages(): List<IAttrThing> {

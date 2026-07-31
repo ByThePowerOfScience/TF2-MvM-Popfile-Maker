@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface LunchboxAttributes : WeaponBaseAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Adds +50 max health for 30 seconds"
 		 * 
@@ -35,17 +36,17 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 		/**
 		 * In-Game: "N% healing effect"
 		 */
-		val lunchboxHealingDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("lunchbox healing decreased")
+		val lunchboxHealingDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("lunchbox healing decreased")
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
@@ -53,11 +54,11 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -71,7 +72,7 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -86,6 +87,8 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -113,7 +116,7 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	/**
 	 * In-Game: "N% healing effect"
 	 */
-	val lunchboxHealingDecreased: ItemAttributeNamed<Float> get() = LunchboxAttributes.lunchboxHealingDecreased
+	val lunchboxHealingDecreased: ItemAttributeNamed<Number> get() = LunchboxAttributes.lunchboxHealingDecreased
 	
 	override val afterburn: AfterburnAttributes get() = LunchboxAttributes.afterburn
 	
@@ -164,6 +167,8 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	override val whenHit: WhenHitAttributes get() = LunchboxAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = LunchboxAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = LunchboxAttributes.disguise
 
 	open class AfterburnAttributes : WeaponBaseAttributes.AfterburnAttributes() 
 	
@@ -210,7 +215,15 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : WeaponBaseAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 
@@ -266,4 +279,6 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	open class WhenHitAttributes : WeaponBaseAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : WeaponBaseAttributes.DisguiseAttributes() 
 }

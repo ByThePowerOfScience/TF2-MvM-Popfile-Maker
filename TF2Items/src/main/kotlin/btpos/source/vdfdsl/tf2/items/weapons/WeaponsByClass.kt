@@ -433,7 +433,7 @@ object WeaponsByClass {
 			/**
 			 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 			 *
-			 * @see Weapons.TrueStock.SYRINGEGUN_MEDIC
+			 * @see Weapons.TrueStock.SYRINGE_GUN_MEDIC
 			 */
 			val STOCK_SYRINGE_GUN get() = Weapons.STOCK_SYRINGE_GUN
 			val OVERDOSE get() = Weapons.OVERDOSE

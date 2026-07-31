@@ -5,14 +5,15 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface RocketLauncherAttributes : BaseGunAttributes {
-	companion object {
-		private val ammo: AmmoAttributes = AmmoAttributes()
+	companion object : IBlockScoped {
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
@@ -22,17 +23,17 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -44,7 +45,7 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -59,6 +60,8 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val projectiles: ProjectilesAttributes get() = RocketLauncherAttributes.projectiles
@@ -110,6 +113,8 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	override val whenHit: WhenHitAttributes get() = RocketLauncherAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = RocketLauncherAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = RocketLauncherAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
 		/**
@@ -171,7 +176,15 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseGunAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseGunAttributes.MeterAttributes() 
@@ -217,4 +230,6 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	open class WhenHitAttributes : BaseGunAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseGunAttributes.DisguiseAttributes() 
 }

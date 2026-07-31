@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface SniperRifleAttributes : BaseGunAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "No headshots"
 		 * 
@@ -34,7 +35,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 * 
 		 * Fun fact: this is also affected by the Precision mannpower powerup.
 		 */
-		val fasterReloadRate: ItemAttributeNamed<Float> = ItemAttributeNamed("faster reload rate")
+		val fasterReloadRate: ItemAttributeNamed<Number> = ItemAttributeNamed("faster reload rate")
 	
 		/**
 		 * In-Game: "Cannot fire unless zoomed"
@@ -80,7 +81,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 * 
 		 * Note: Not actually used in Sydney Sleeper Jarate calculation, as far as I could tell.
 		 */
-		val jarateDuration: ItemAttributeNamed<Float> = ItemAttributeNamed("jarate duration")
+		val jarateDuration: ItemAttributeNamed<Number> = ItemAttributeNamed("jarate duration")
 	
 		/**
 		 * In-Game: "No flinching when aiming and fully charged"
@@ -89,9 +90,9 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 */
 		val aimingNoFlinch: ItemAttributeNamed<Boolean> = ItemAttributeNamed("aiming no flinch")
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
@@ -101,17 +102,17 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -123,7 +124,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -138,6 +139,8 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val damage: DamageAttributes get() = SniperRifleAttributes.damage
@@ -168,7 +171,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 * 
 	 * Fun fact: this is also affected by the Precision mannpower powerup.
 	 */
-	val fasterReloadRate: ItemAttributeNamed<Float> get() = SniperRifleAttributes.fasterReloadRate
+	val fasterReloadRate: ItemAttributeNamed<Number> get() = SniperRifleAttributes.fasterReloadRate
 	
 	/**
 	 * In-Game: "Cannot fire unless zoomed"
@@ -214,7 +217,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 * 
 	 * Note: Not actually used in Sydney Sleeper Jarate calculation, as far as I could tell.
 	 */
-	val jarateDuration: ItemAttributeNamed<Float> get() = SniperRifleAttributes.jarateDuration
+	val jarateDuration: ItemAttributeNamed<Number> get() = SniperRifleAttributes.jarateDuration
 	
 	/**
 	 * In-Game: "No flinching when aiming and fully charged"
@@ -268,6 +271,8 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	override val whenHit: WhenHitAttributes get() = SniperRifleAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = SniperRifleAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = SniperRifleAttributes.disguise
 
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
 		/**
@@ -275,7 +280,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 * 
 		 * If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge.
 		 */
-		open val fullChargeDamageBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("sniper full charge damage bonus")
+		open val fullChargeDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper full charge damage bonus")
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	
@@ -290,7 +295,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 * 
 		 * Duration is equal to the rifle's `jarate_duration` attribute.
 		 */
-		open val appliesSnareEffect: ItemAttributeNamed<Float> = ItemAttributeNamed("applies snare effect")
+		open val appliesSnareEffect: ItemAttributeNamed<Number> = ItemAttributeNamed("applies snare effect")
 	
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
@@ -317,17 +322,17 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		/**
 		 * In-Game: "+N% charge rate"
 		 */
-		open val sniperChargePerSec: ItemAttributeNamed<Float> = ItemAttributeNamed("sniper charge per sec")
+		open val sniperChargePerSec: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper charge per sec")
 	
 		/**
 		 * In-Game: "N% faster power charge"
 		 */
-		open val srifleChargeRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("SRifle Charge rate increased")
+		open val srifleChargeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate increased")
 	
 		/**
 		 * In-Game: "N% slower power charge"
 		 */
-		open val srifleChargeRateDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("SRifle Charge rate decreased")
+		open val srifleChargeRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate decreased")
 	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
@@ -379,7 +384,15 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseGunAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseGunAttributes.MeterAttributes() 
@@ -415,4 +428,6 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	open class WhenHitAttributes : BaseGunAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseGunAttributes.DisguiseAttributes() 
 }

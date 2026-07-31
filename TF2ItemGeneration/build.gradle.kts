@@ -29,7 +29,7 @@ buildConfig {
 	
 	buildConfigField("String", "BASE_PACKAGE", "\"$basePackage\"")
 	
-	buildConfigField("String", "ITEM_FACTORY_LOCATION", "\"$basePackage.items.TFItemFactory\"")
+	buildConfigField("String", "ITEM_FACTORY_LOCATION", "\"$basePackage.items.TFItemFactories\"")
 	buildConfigField("String", "ATTRIBUTES_TARGET_PACKAGE", "\"$basePackage.itemattributes\"")
 	buildConfigField("String", "COSMETICS_TARGET_PACKAGE", "\"$basePackage.items.cosmetics\"")
 	buildConfigField("String", "POPFILETEMPLATE_LOCATION", "\"$basePackage.templates.PopFileTemplate\"")

@@ -5,14 +5,15 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface ThrowableAttributes : JarAttributes {
-	companion object {
-		val throwableRechargeTime: ItemAttributeNamed<Float> = ItemAttributeNamed("throwable recharge time")
+	companion object : IBlockScoped {
+		val throwableRechargeTime: ItemAttributeNamed<Number> = ItemAttributeNamed("throwable recharge time")
 	
-		val throwableDetonationTime: ItemAttributeNamed<Float> = ItemAttributeNamed("throwable detonation time")
+		val throwableDetonationTime: ItemAttributeNamed<Number> = ItemAttributeNamed("throwable detonation time")
 	
 		/**
 		 * For timed explosions.
@@ -26,13 +27,13 @@ interface ThrowableAttributes : JarAttributes {
 	
 		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
@@ -40,15 +41,15 @@ interface ThrowableAttributes : JarAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -58,7 +59,7 @@ interface ThrowableAttributes : JarAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -73,11 +74,13 @@ interface ThrowableAttributes : JarAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
-	val throwableRechargeTime: ItemAttributeNamed<Float> get() = ThrowableAttributes.throwableRechargeTime
+	val throwableRechargeTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableRechargeTime
 	
-	val throwableDetonationTime: ItemAttributeNamed<Float> get() = ThrowableAttributes.throwableDetonationTime
+	val throwableDetonationTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableDetonationTime
 	
 	/**
 	 * For timed explosions.
@@ -138,6 +141,8 @@ interface ThrowableAttributes : JarAttributes {
 	override val whenHit: WhenHitAttributes get() = ThrowableAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = ThrowableAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = ThrowableAttributes.disguise
 
 	open class ProjectilesAttributes : JarAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
@@ -206,7 +211,15 @@ interface ThrowableAttributes : JarAttributes {
 	open class MetaAttributes : JarAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : JarAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : JarAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : JarAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MovementAttributes : JarAttributes.MovementAttributes() {
@@ -240,4 +253,6 @@ interface ThrowableAttributes : JarAttributes {
 	open class WhenHitAttributes : JarAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : JarAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : JarAttributes.DisguiseAttributes() 
 }

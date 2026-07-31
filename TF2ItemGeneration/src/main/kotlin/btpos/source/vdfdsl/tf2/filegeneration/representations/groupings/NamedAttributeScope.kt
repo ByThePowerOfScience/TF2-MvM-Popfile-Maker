@@ -61,6 +61,7 @@ open class NamedAttributeScope(
 	
 	private var cacheNestedTypes: List<ClassBuilder> by notNull()
 	
+	
 	/**
 	 * Anything that this class needs to generate will go inside the object
 	 */

@@ -5,12 +5,13 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface MedigunAttributes : BaseGunAttributes {
-	companion object {
-		val healRate: BonusPenalty<Float> = BonusPenalty(
+	companion object : IBlockScoped {
+		val healRate: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("heal rate bonus"),
 			ItemAttributeNamed("heal rate penalty"),
 		)
@@ -31,7 +32,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	
 		val giveCrits: GiveCritsAttributes = GiveCritsAttributes()
 	
-		val overheal: BonusPenalty<Float> = BonusPenalty(
+		val overheal: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("overheal bonus"),
 			ItemAttributeNamed("overheal penalty"),
 		)
@@ -47,16 +48,16 @@ interface MedigunAttributes : BaseGunAttributes {
 		 * 
 		 * Checked on owner.
 		 */
-		val overhealExpert: ItemAttributeNamed<Float> = ItemAttributeNamed("overheal expert")
+		val overhealExpert: ItemAttributeNamed<Number> = ItemAttributeNamed("overheal expert")
 	
 		/**
 		 * In-Game: "N% ÜberCharge rate on Overhealed patients"
 		 * 
 		 * Checked on owner.
 		 */
-		val uberchargeOverhealRatePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("ubercharge overheal rate penalty")
+		val uberchargeOverhealRatePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("ubercharge overheal rate penalty")
 	
-		val uberchargeRate: BonusPenalty<Float> = BonusPenalty(
+		val uberchargeRate: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("ubercharge rate bonus"),
 			ItemAttributeNamed("ubercharge rate penalty"),
 		)
@@ -77,9 +78,9 @@ interface MedigunAttributes : BaseGunAttributes {
 		 */
 		val generateRageOnHeal: ItemAttributeNamed<Int> = ItemAttributeNamed("generate rage on heal")
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
@@ -89,17 +90,17 @@ interface MedigunAttributes : BaseGunAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -111,7 +112,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -126,9 +127,11 @@ interface MedigunAttributes : BaseGunAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
-	val healRate: BonusPenalty<Float> get() = MedigunAttributes.healRate
+	val healRate: BonusPenalty<Number> get() = MedigunAttributes.healRate
 	
 	/**
 	 * In-Game: "On death up to N% of your stored ÜberCharge is retained"
@@ -146,7 +149,7 @@ interface MedigunAttributes : BaseGunAttributes {
 	
 	val giveCrits: GiveCritsAttributes get() = MedigunAttributes.giveCrits
 	
-	val overheal: BonusPenalty<Float> get() = MedigunAttributes.overheal
+	val overheal: BonusPenalty<Number> get() = MedigunAttributes.overheal
 	
 	val overhealDecay: OverhealDecayAttributes get() = MedigunAttributes.overhealDecay
 	
@@ -159,16 +162,16 @@ interface MedigunAttributes : BaseGunAttributes {
 	 * 
 	 * Checked on owner.
 	 */
-	val overhealExpert: ItemAttributeNamed<Float> get() = MedigunAttributes.overhealExpert
+	val overhealExpert: ItemAttributeNamed<Number> get() = MedigunAttributes.overhealExpert
 	
 	/**
 	 * In-Game: "N% ÜberCharge rate on Overhealed patients"
 	 * 
 	 * Checked on owner.
 	 */
-	val uberchargeOverhealRatePenalty: ItemAttributeNamed<Float> get() = MedigunAttributes.uberchargeOverhealRatePenalty
+	val uberchargeOverhealRatePenalty: ItemAttributeNamed<Number> get() = MedigunAttributes.uberchargeOverhealRatePenalty
 	
-	val uberchargeRate: BonusPenalty<Float> get() = MedigunAttributes.uberchargeRate
+	val uberchargeRate: BonusPenalty<Number> get() = MedigunAttributes.uberchargeRate
 	
 	/**
 	 * In-Game: "Über duration increased N seconds"
@@ -235,6 +238,8 @@ interface MedigunAttributes : BaseGunAttributes {
 	override val whenHit: WhenHitAttributes get() = MedigunAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = MedigunAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = MedigunAttributes.disguise
 
 	open class GiveCritsAttributes : IBlockScoped {
 		/**
@@ -263,17 +268,17 @@ interface MedigunAttributes : BaseGunAttributes {
 		/**
 		 * In-Game: "N% shorter overheal time"
 		 */
-		open val overhealDecayPenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("overheal decay penalty")
+		open val overhealDecayPenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("overheal decay penalty")
 	
 		/**
 		 * In-Game: "+N% longer overheal time"
 		 */
-		open val overhealDecayBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("overheal decay bonus")
+		open val overhealDecayBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("overheal decay bonus")
 	
 		/**
 		 * In-Game: "Overheal bonus doesn't decay"
 		 */
-		open val overhealDecayDisabled: ItemAttributeNamed<Float> = ItemAttributeNamed("overheal decay disabled")
+		open val overhealDecayDisabled: ItemAttributeNamed<Number> = ItemAttributeNamed("overheal decay disabled")
 	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
@@ -331,7 +336,15 @@ interface MedigunAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseGunAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseGunAttributes.MeterAttributes() 
@@ -377,4 +390,6 @@ interface MedigunAttributes : BaseGunAttributes {
 	open class WhenHitAttributes : BaseGunAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseGunAttributes.DisguiseAttributes() 
 }

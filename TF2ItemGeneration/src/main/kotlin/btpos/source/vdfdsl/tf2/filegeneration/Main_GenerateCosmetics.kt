@@ -203,8 +203,8 @@ fun main() {
 fun generateAttributesNotes(parsedItemSchema: VDFSubtree, outputFile: Path) {
 //	val prefabs = parsedItemSchema.getSubtree("prefabs")!!.single().toMap()
 	
-	val hierarchy = MyNotesFormatted.hierarchy
-	val attrsByClass = MyNotesFormatted.attrsByClass
+	val hierarchy = SDKNotes.hierarchy
+	val attrsByClass = SDKNotes.attrsByClass
 	
 	fun getParentOfTFClass(tfclass: String): HierarchyAttrClassScope? {
 		val parentName = hierarchy.getParent(tfclass)

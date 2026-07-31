@@ -5,20 +5,21 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface FlamethrowerAttributes : BaseGunAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		val airblast: AirblastAttributes = AirblastAttributes()
 	
 		val buffType: BuffTypeAttributes = BuffTypeAttributes()
 	
 		val flames: FlamesAttributes = FlamesAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
@@ -28,17 +29,17 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -50,7 +51,7 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -65,6 +66,8 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	val airblast: AirblastAttributes get() = FlamethrowerAttributes.airblast
@@ -122,6 +125,8 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	override val whenHit: WhenHitAttributes get() = FlamethrowerAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = FlamethrowerAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = FlamethrowerAttributes.disguise
 
 	open class AirblastAttributes : IBlockScoped {
 		/**
@@ -138,10 +143,10 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 		 */
 		open val chargedAirblast: ItemAttributeNamed<Boolean> = ItemAttributeNamed("charged airblast")
 	
-		open val airblastCost: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
-			ItemAttributeNamed<Float>("airblast cost decreased"),
-			ItemAttributeNamed<Float>("airblast cost increased"),
-			ItemAttributeNamed<Float>("airblast cost scale hidden"),
+		open val airblastCost: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+			ItemAttributeNamed<Number>("airblast cost decreased"),
+			ItemAttributeNamed<Number>("airblast cost increased"),
+			ItemAttributeNamed<Number>("airblast cost scale hidden"),
 		)
 	
 		/**
@@ -149,19 +154,19 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 		 * 
 		 * Secondary attack delay = 0.75 * this.
 		 */
-		open val multAirblastRefireTime: ItemAttributeNamed<Float> = ItemAttributeNamed("mult airblast refire time")
+		open val multAirblastRefireTime: ItemAttributeNamed<Number> = ItemAttributeNamed("mult airblast refire time")
 	
 		/**
 		 * Scales the reflect hitbox for your airblast.
 		 */
-		open val deflectionSizeMultiplier: ItemAttributeNamed<Float> = ItemAttributeNamed("deflection size multiplier")
+		open val deflectionSizeMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("deflection size multiplier")
 	
 		/**
 		 * In-Game: "+N% airblast push force"
 		 */
-		open val airblastPushbackScale: ItemAttributeNamed<Float> = ItemAttributeNamed("airblast pushback scale")
+		open val airblastPushbackScale: ItemAttributeNamed<Number> = ItemAttributeNamed("airblast pushback scale")
 	
-		open val airblastVerticalPushbackScale: ItemAttributeNamed<Float> = ItemAttributeNamed("airblast vertical pushback scale")
+		open val airblastVerticalPushbackScale: ItemAttributeNamed<Number> = ItemAttributeNamed("airblast vertical pushback scale")
 	
 		open val airblastDestroyProjectile: ItemAttributeNamed<Boolean> = ItemAttributeNamed("airblast_destroy_projectile")
 	
@@ -186,7 +191,7 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
-		open val flameAmmopersec: BonusPenalty<Float> = BonusPenalty(
+		open val flameAmmopersec: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("flame ammopersec decreased"),
 			ItemAttributeNamed("flame ammopersec increased"),
 		)
@@ -222,40 +227,40 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	}
 	
 	open class FlamesAttributes : IBlockScoped {
-		open val flameSpreadDegree: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_spread_degree")
+		open val flameSpreadDegree: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_spread_degree")
 	
-		open val redirectedFlameSizeMult: ItemAttributeNamed<Float> = ItemAttributeNamed("redirected_flame_size_mult")
+		open val redirectedFlameSizeMult: ItemAttributeNamed<Number> = ItemAttributeNamed("redirected_flame_size_mult")
 	
-		open val flameSize: BonusPenalty<Float> = BonusPenalty(
+		open val flameSize: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("flame size bonus"),
 			ItemAttributeNamed("flame size penalty"),
 		)
 	
-		open val multEndFlameSize: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_end_flame_size")
+		open val multEndFlameSize: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_end_flame_size")
 	
-		open val flameIgnorePlayerVelocity: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_ignore_player_velocity")
+		open val flameIgnorePlayerVelocity: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_ignore_player_velocity")
 	
-		open val flameReflectionAddLifeTime: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_reflection_add_life_time")
+		open val flameReflectionAddLifeTime: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_reflection_add_life_time")
 	
-		open val reflectedFlameDmgReduction: ItemAttributeNamed<Float> = ItemAttributeNamed("reflected_flame_dmg_reduction")
+		open val reflectedFlameDmgReduction: ItemAttributeNamed<Number> = ItemAttributeNamed("reflected_flame_dmg_reduction")
 	
 		open val maxFlameReflectionCount: ItemAttributeNamed<Int> = ItemAttributeNamed("max_flame_reflection_count")
 	
 		open val flameReflectOnCollision: ItemAttributeNamed<Boolean> = ItemAttributeNamed("flame_reflect_on_collision")
 	
-		open val flameSpeed: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_speed")
+		open val flameSpeed: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_speed")
 	
-		open val flameLifetime: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_lifetime")
+		open val flameLifetime: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_lifetime")
 	
-		open val flameRandomLifeTimeOffset: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_random_life_time_offset")
+		open val flameRandomLifeTimeOffset: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_random_life_time_offset")
 	
-		open val flameGravity: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_gravity")
+		open val flameGravity: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_gravity")
 	
-		open val flameDrag: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_drag")
+		open val flameDrag: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_drag")
 	
-		open val flameUpSpeed: ItemAttributeNamed<Float> = ItemAttributeNamed("flame_up_speed")
+		open val flameUpSpeed: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_up_speed")
 	
-		open val flameLife: BonusPenalty<Float> = BonusPenalty(
+		open val flameLife: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("flame life bonus"),
 			ItemAttributeNamed("flame life penalty"),
 		)
@@ -307,7 +312,15 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseGunAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseGunAttributes.MeterAttributes() 
@@ -347,4 +360,6 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	open class WhenHitAttributes : BaseGunAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseGunAttributes.DisguiseAttributes() 
 }

@@ -5,20 +5,21 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
-interface BaseCombatWeaponAttributes : BaseEntityAttributes {
-	companion object {
+interface BaseCombatWeaponAttributes : EconEntityAttributes {
+	companion object : IBlockScoped {
 		val ammo: AmmoAttributes = AmmoAttributes()
+	
+		val meta: MetaAttributes = MetaAttributes()
 	
 		val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		val crits: CritsAttributes = CritsAttributes()
 	
 		val damage: DamageAttributes = DamageAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
 	
 		val meter: MeterAttributes = MeterAttributes()
 	
@@ -29,13 +30,13 @@ interface BaseCombatWeaponAttributes : BaseEntityAttributes {
 
 	val ammo: AmmoAttributes get() = BaseCombatWeaponAttributes.ammo
 	
+	override val meta: MetaAttributes get() = BaseCombatWeaponAttributes.meta
+	
 	override val disguise: DisguiseAttributes get() = BaseCombatWeaponAttributes.disguise
 	
 	override val crits: CritsAttributes get() = BaseCombatWeaponAttributes.crits
 	
 	override val damage: DamageAttributes get() = BaseCombatWeaponAttributes.damage
-	
-	override val meta: MetaAttributes get() = BaseCombatWeaponAttributes.meta
 	
 	override val meter: MeterAttributes get() = BaseCombatWeaponAttributes.meter
 	
@@ -58,7 +59,7 @@ interface BaseCombatWeaponAttributes : BaseEntityAttributes {
 		 * 
 		 * If != 1.0 (if present), says the weapon "does not reload one shot at a time".
 		 */
-		open val noReload_displayOnly: ItemAttributeNamed<Float> = ItemAttributeNamed("mod no reload DISPLAY ONLY")
+		open val noReload_displayOnly: ItemAttributeNamed<Number> = ItemAttributeNamed("mod no reload DISPLAY ONLY")
 	
 		/**
 		 * Checked in the same place.	If true, weapon does not reload one shot at a time. (e.g. FaN).
@@ -77,21 +78,29 @@ interface BaseCombatWeaponAttributes : BaseEntityAttributes {
 		}
 	}
 	
-	open class DisguiseAttributes : BaseEntityAttributes.DisguiseAttributes() 
+	open class MetaAttributes : EconEntityAttributes.MetaAttributes() {
+		override val items: ItemsAttributes = ItemsAttributes()
 	
-	open class CritsAttributes : BaseEntityAttributes.CritsAttributes() 
+		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
-	open class DamageAttributes : BaseEntityAttributes.DamageAttributes() 
-	
-	open class MetaAttributes : BaseEntityAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
-		open class KillfeedAttributes : BaseEntityAttributes.MetaAttributes.KillfeedAttributes() 
+		open class ItemsAttributes : EconEntityAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : EconEntityAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class KillfeedAttributes : EconEntityAttributes.MetaAttributes.KillfeedAttributes() 
 	}
 	
-	open class MeterAttributes : BaseEntityAttributes.MeterAttributes() 
+	open class DisguiseAttributes : EconEntityAttributes.DisguiseAttributes() 
 	
-	open class KnockbackReceivedAttributes : BaseEntityAttributes.KnockbackReceivedAttributes() 
+	open class CritsAttributes : EconEntityAttributes.CritsAttributes() 
 	
-	open class ResistanceAttributes : BaseEntityAttributes.ResistanceAttributes() 
+	open class DamageAttributes : EconEntityAttributes.DamageAttributes() 
+	
+	open class MeterAttributes : EconEntityAttributes.MeterAttributes() 
+	
+	open class KnockbackReceivedAttributes : EconEntityAttributes.KnockbackReceivedAttributes() 
+	
+	open class ResistanceAttributes : EconEntityAttributes.ResistanceAttributes() 
 }

@@ -5,19 +5,20 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface GrenadeLauncherAttributes : BaseGunAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
 		 */
 		val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> = ItemAttributeNamed("grenade launcher mortar mode")
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
@@ -27,17 +28,17 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -49,7 +50,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -64,6 +65,8 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val projectiles: ProjectilesAttributes get() = GrenadeLauncherAttributes.projectiles
@@ -120,12 +123,14 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	override val whenHit: WhenHitAttributes get() = GrenadeLauncherAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = GrenadeLauncherAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = GrenadeLauncherAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
-		open val projectileSpeed: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
-			ItemAttributeNamed<Float>("Projectile speed increased"),
-			ItemAttributeNamed<Float>("Projectile speed decreased"),
-			ItemAttributeNamed<Float>("Projectile speed increased HIDDEN"),
+		open val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+			ItemAttributeNamed<Number>("Projectile speed increased"),
+			ItemAttributeNamed<Number>("Projectile speed decreased"),
+			ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
 		)
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
@@ -143,7 +148,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 		 * 
 		 * Flat multiplier applied to initial damage.
 		 */
-		open val grenadeDetonationDamagePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("grenade detonation damage penalty")
+		open val grenadeDetonationDamagePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("grenade detonation damage penalty")
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	
@@ -189,7 +194,15 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseGunAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseGunAttributes.MeterAttributes() 
@@ -235,4 +248,6 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	open class WhenHitAttributes : BaseGunAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseGunAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseGunAttributes.DisguiseAttributes() 
 }

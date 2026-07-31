@@ -20,7 +20,6 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClass
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
 import java.io.File
 import java.nio.file.Path
-import java.util.PriorityQueue
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
@@ -53,9 +52,10 @@ fun main() {
 		"import btpos.source.vdfdsl.serialization.codecs.*\n" +
 		"import ${BuildConfig.ATTRIBUTES_TARGET_PACKAGE}.impl.*\n" +
 		"import ${BuildConfig.BASE_PACKAGE}.tftypes.*\n" +
-		"import java.util.*\n\n",
+		"import java.util.*\n" +
+		"import kotlin.time.Duration\n\n",
 		allNamedAttributes,
-		MyNotesFormatted.attrsByClass
+		SDKNotes.attrsByClass
 	)
 }
 
@@ -104,7 +104,7 @@ fun generateItemAttributes(
 	/**
 	 * What weapon classes use each of these attributes.
 	 *
-	 * See [MyNotesFormatted] for an example, and make sure to use the names established there if you're generating attributes yourself.
+	 * See [SDKNotes] for an example, and make sure to use the names established there if you're generating attributes yourself.
 	 */
 	attrClassUsagesByBaseClass: List<IAttrClassScope>,
 	/**
@@ -262,7 +262,7 @@ fun generateItemAttributes(
 
 	
 	/** Use sorted set to ensure that root scopes are processed before their children for [patchWithParentOverridesRecursive] */
-	val hierarchyScopes = PriorityQueue<HierarchyNamedAttributeScope>(Comparator.comparingInt<HierarchyNamedAttributeScope> { it.depth })
+	val hierarchyScopes = mutableListOf<HierarchyNamedAttributeScope>()
 	
 	val nonHierarchyScopes = mutableListOf<NamedAttributeScope>()
 	
@@ -276,7 +276,19 @@ fun generateItemAttributes(
 		}
 	}
 	
-	
+	// Generate classes for every single weaponclass, even ones that don't have notes.
+	hierarchyScopes.mapTo(mutableSetOf()) { it.scopeName }.let { alreadyIncludedScopes ->
+		SDKNotes.hierarchy.nodes.values.forEach { node ->
+			if (node.name !in alreadyIncludedScopes) {
+				val parent = node.parents.takeIf { it.isNotEmpty() }?.let {
+					it.singleOrNull() ?: error("Node ${node.name} has too many parents: ${it.map { it.name }}")
+				}?.name
+				hierarchyScopes.add(HierarchyNamedAttributeScope(node.name, parent))
+			}
+		}
+	}
+	// sort hierarchy by depth to ensure higher-level classes are made before their children
+	hierarchyScopes.sortWith(Comparator.comparingInt { it.depth })
 	
 	val outDir = outBaseDir.resolve(targetPackage.replace('.', File.separatorChar)).also {
 		if (it.exists())
@@ -307,6 +319,22 @@ fun generateItemAttributes(
 						writer.newLine()
 					}
 			}
+	}
+	
+	outBaseDir.resolve(BuildConfig.ITEM_FACTORY_LOCATION.replace(".", File.separator) + ".kt").bufferedWriter().use { out ->
+		out.append("package ").append(BuildConfig.ITEM_FACTORY_LOCATION.substringBeforeLast('.')).append("\n\n")
+		out.append("import ").append(targetPackage).appendLine(".*")
+		   .append(imports)
+		
+		out.append("object ").append(BuildConfig.ITEM_FACTORY_LOCATION.substringAfterLast(".")).append(" {\n")
+		// generate item factories for each item type in TFItemFactories
+		for (weaponType in hierarchyScopes) {
+			if ("Projectile" in weaponType.scopeName.lowercase())
+				continue;
+			
+			out.append("\t@JvmField val ").append(weaponType.scopeName.uppercase()).append(" = TFItemFactory(").append(weaponType.clsname).append(")\n\n")
+		}
+		out.append("}")
 	}
 }
 

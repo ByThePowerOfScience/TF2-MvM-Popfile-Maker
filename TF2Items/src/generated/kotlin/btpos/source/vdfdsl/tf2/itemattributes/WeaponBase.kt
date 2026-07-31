@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "This Weapon has a large melee range and deploys and holsters slower"
 		 * 
@@ -62,13 +63,13 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	
 		val ammo: AmmoAttributes = AmmoAttributes()
 	
+		val meta: MetaAttributes = MetaAttributes()
+	
 		val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		val crits: CritsAttributes = CritsAttributes()
 	
 		val damage: DamageAttributes = DamageAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
 	
 		val meter: MeterAttributes = MeterAttributes()
 	
@@ -143,7 +144,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	
 	override val disguise: DisguiseAttributes get() = WeaponBaseAttributes.disguise
 
-	open class AfterburnAttributes {
+	open class AfterburnAttributes : IBlockScoped {
 		/**
 		 * In-Game: "On Hit: target is engulfed in flames"
 		 * 
@@ -151,12 +152,12 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 */
 		open val setDamagetypeIgnite: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Set DamageType Ignite")
 	
-		open val weaponBurnDmgReduced: BonusPenalty<Float> = BonusPenalty(
+		open val weaponBurnDmgReduced: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("weapon burn dmg increased"),
 			ItemAttributeNamed("weapon burn dmg reduced"),
 		)
 	
-		open val weaponBurnTimeReduced: BonusPenalty<Float> = BonusPenalty(
+		open val weaponBurnTimeReduced: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("weapon burn time increased"),
 			ItemAttributeNamed("weapon burn time reduced"),
 		)
@@ -183,10 +184,10 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
 		open class ClipSizeAttributes : BaseCombatWeaponAttributes.AmmoAttributes.ClipSizeAttributes() {
-			open val clipSize: BonusPenaltyHidden<Float, ItemAttributeNamed<Float>> = BonusPenaltyHidden(
-				ItemAttributeNamed<Float>("clip size bonus"),
-				ItemAttributeNamed<Float>("clip size penalty"),
-				ItemAttributeNamed<Float>("clip size penalty HIDDEN"),
+			open val clipSize: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+				ItemAttributeNamed<Number>("clip size bonus"),
+				ItemAttributeNamed<Number>("clip size penalty"),
+				ItemAttributeNamed<Number>("clip size penalty HIDDEN"),
 			)
 	
 			/**
@@ -210,7 +211,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		}
 	}
 	
-	open class BuildingsAttributes {
+	open class BuildingsAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Alt-Fire: Use N metal to pick up your targeted building from long range"
 		 * 
@@ -222,7 +223,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	}
 	
 	open class CritsAttributes : BaseCombatWeaponAttributes.CritsAttributes() {
-		open val critChance: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("crit mod disabled"), ItemAttributeNamed<Float>("crit mod disabled hidden"))
+		open val critChance: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("crit mod disabled"), ItemAttributeNamed<Number>("crit mod disabled hidden"))
 	
 		/**
 		 * In-Game: "Cannot be crit boosted"
@@ -315,7 +316,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	
 		open val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
 	
-		open class CritVsBurningPlayersAttributes {
+		open class CritVsBurningPlayersAttributes : IBlockScoped {
 			/**
 			 * In-Game: "100% critical hit vs burning players"
 			 * 
@@ -340,22 +341,22 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	}
 	
 	open class DamageAttributes : BaseCombatWeaponAttributes.DamageAttributes() {
-		open val dmgVsBuildings: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("dmg bonus vs buildings"), ItemAttributeNamed<Float>("dmg penalty vs buildings"))
+		open val dmgVsBuildings: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("dmg bonus vs buildings"), ItemAttributeNamed<Number>("dmg penalty vs buildings"))
 	
 		/**
 		 * In-Game: "N% damage vs players"
 		 */
-		open val dmgPenaltyVsPlayers: ItemAttributeNamed<Float> = ItemAttributeNamed("dmg penalty vs players")
+		open val dmgPenaltyVsPlayers: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg penalty vs players")
 	
 		/**
 		 * In-Game: "N% damage vs non-burning players"
 		 */
-		open val dmgPenaltyVsNonburning: ItemAttributeNamed<Float> = ItemAttributeNamed("dmg penalty vs nonburning")
+		open val dmgPenaltyVsNonburning: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg penalty vs nonburning")
 	
 		/**
 		 * In-Game: "N% damage bonus vs burning players"
 		 */
-		open val damageBonusVsBurning: ItemAttributeNamed<Float> = ItemAttributeNamed("damage bonus vs burning")
+		open val damageBonusVsBurning: ItemAttributeNamed<Number> = ItemAttributeNamed("damage bonus vs burning")
 	
 		/**
 		 * In-Game: "Attacks pierce damage resistance effects and bonuses"
@@ -367,47 +368,47 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		/**
 		 * In-Game: "N% increased damage to your sentry's target"
 		 */
-		open val damageBonusBulletVsSentryTarget: ItemAttributeNamed<Float> = ItemAttributeNamed("damage bonus bullet vs sentry target")
+		open val damageBonusBulletVsSentryTarget: ItemAttributeNamed<Number> = ItemAttributeNamed("damage bonus bullet vs sentry target")
 	
 		/**
 		 * In-Game: "N% damage on body shot"
 		 * 
 		 * Multiplier applied to bodyshot damage.
 		 */
-		open val damagePenaltyOnBodyshot: ItemAttributeNamed<Float> = ItemAttributeNamed("damage penalty on bodyshot")
+		open val damagePenaltyOnBodyshot: ItemAttributeNamed<Number> = ItemAttributeNamed("damage penalty on bodyshot")
 	
 		open val damage: DamageAttributes = DamageAttributes()
 	
-		open class DamageAttributes {
+		open class DamageAttributes : IBlockScoped {
 			/**
 			 * In-Game: "N% damage penalty"
 			 */
-			open val damagePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("damage penalty")
+			open val damagePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("damage penalty")
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 */
-			open val damageBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("damage bonus")
+			open val damageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("damage bonus")
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 */
-			open val damageBonusHidden: ItemAttributeNamed<Float> = ItemAttributeNamed("damage bonus HIDDEN")
+			open val damageBonusHidden: ItemAttributeNamed<Number> = ItemAttributeNamed("damage bonus HIDDEN")
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 */
-			open val cardDamageBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("CARD: damage bonus")
+			open val cardDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("CARD: damage bonus")
 		}
 	}
 	
-	open class DemoChargeAttributes {
+	open class DemoChargeAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Melee hits refill  N% of your charge meter."
 		 * 
 		 * Restores demoman shield charge on hit.
 		 */
-		open val chargeMeterOnHit: ItemAttributeNamed<Float> = ItemAttributeNamed("charge meter on hit")
+		open val chargeMeterOnHit: ItemAttributeNamed<Number> = ItemAttributeNamed("charge meter on hit")
 	
 		/**
 		 * In-Game: "Ammo boxes collected also give Charge"
@@ -417,7 +418,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val ammoPacksGiveDemoknightCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("ammo gives charge")
 	}
 	
-	open class FiringAttributes {
+	open class FiringAttributes : IBlockScoped {
 		open val autoFiresFullClip: BonusPenalty<Boolean> = BonusPenalty(
 			ItemAttributeNamed("auto fires full clip"),
 			ItemAttributeNamed("auto fires full clip penalty"),
@@ -436,47 +437,47 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	
 		open val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes {
+		open class FireRateAttributes : IBlockScoped {
 			open val fireRate: FireRateAttributes = FireRateAttributes()
 	
-			open class FireRateAttributes {
+			open class FireRateAttributes : IBlockScoped {
 				/**
 				 * In-Game: "N% slower firing speed"
 				 * 
 				 * After firing, you wait a bit before you can fire again. That's the "delay".
 				 */
-				open val fireRatePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("fire rate penalty")
+				open val fireRatePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("fire rate penalty")
 	
 				/**
 				 * In-Game: "+N% faster firing speed"
 				 * 
 				 * After firing, you wait a bit before you can fire again. That's the "delay".
 				 */
-				open val fireRateBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("fire rate bonus")
+				open val fireRateBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("fire rate bonus")
 	
 				/**
 				 * After firing, you wait a bit before you can fire again. That's the "delay".
 				 */
-				open val fireRatePenaltyHidden: ItemAttributeNamed<Float> = ItemAttributeNamed("fire rate penalty HIDDEN")
+				open val fireRatePenaltyHidden: ItemAttributeNamed<Number> = ItemAttributeNamed("fire rate penalty HIDDEN")
 	
 				/**
 				 * In-Game: "+N% faster firing speed"
 				 * 
 				 * After firing, you wait a bit before you can fire again. That's the "delay".
 				 */
-				open val fireRateBonusHidden: ItemAttributeNamed<Float> = ItemAttributeNamed("fire rate bonus HIDDEN")
+				open val fireRateBonusHidden: ItemAttributeNamed<Number> = ItemAttributeNamed("fire rate bonus HIDDEN")
 	
 				/**
 				 * In-Game: "+N% faster melee attack speed"
 				 * 
 				 * After firing, you wait a bit before you can fire again. That's the "delay".
 				 */
-				open val meleeAttackRateBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("melee attack rate bonus")
+				open val meleeAttackRateBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("melee attack rate bonus")
 			}
 		}
 	}
 	
-	open class HealthAndHealingAttributes {
+	open class HealthAndHealingAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Blocks healing while in use"
 		 * 
@@ -496,7 +497,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * NOTE: Only applied if user is outside of the respawn room.
 		 */
-		open val uberchargeRateBonusForHealer: ItemAttributeNamed<Float> = ItemAttributeNamed("ubercharge rate bonus for healer")
+		open val uberchargeRateBonusForHealer: ItemAttributeNamed<Number> = ItemAttributeNamed("ubercharge rate bonus for healer")
 	
 		/**
 		 * In-Game: "On Hit: Gain up to +N health per attack"
@@ -512,23 +513,23 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Attribute class is a flat multiplier applied to health from healers while weapon is active.
 		 */
-		open val multHealthFromhealersPenaltyActive: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_health_fromhealers_penalty_active")
+		open val multHealthFromhealersPenaltyActive: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_health_fromhealers_penalty_active")
 	
 		/**
 		 * In-Game: "N% Overheal build rate."
 		 * 
 		 * Checked on the player that is healing an entity.
 		 */
-		open val overhealFillRateReduced: ItemAttributeNamed<Float> = ItemAttributeNamed("overheal fill rate reduced")
+		open val overhealFillRateReduced: ItemAttributeNamed<Number> = ItemAttributeNamed("overheal fill rate reduced")
 	
 		/**
 		 * In-Game: "N% less healing from Medic sources"
 		 * 
 		 * Applies to all non-dispenser forms of healing that apply the `TF_COND_HEAL_BUFF` status.
 		 */
-		open val reducedHealingFromMedics: ItemAttributeNamed<Float> = ItemAttributeNamed("reduced_healing_from_medics")
+		open val reducedHealingFromMedics: ItemAttributeNamed<Number> = ItemAttributeNamed("reduced_healing_from_medics")
 	
-		open val healingReceived: BonusPenalty<Float> = BonusPenalty(
+		open val healingReceived: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("healing received bonus"),
 			ItemAttributeNamed("healing received penalty"),
 		)
@@ -538,45 +539,45 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Maximum health decrease per tick while weapon is active. (Gloves of Running Urgently/Eviction Notice).
 		 */
-		open val maxhealthDrainRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mod_maxhealth_drain_rate")
+		open val maxhealthDrainRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mod_maxhealth_drain_rate")
 	}
 	
 	open class KnockbackReceivedAttributes : BaseCombatWeaponAttributes.KnockbackReceivedAttributes() {
-		open val selfDmgPushForce: BonusPenalty<Float> = BonusPenalty(
+		open val selfDmgPushForce: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("self dmg push force increased"),
 			ItemAttributeNamed("self dmg push force decreased"),
 		)
 	
 		open val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
 	
-		open class DamageForceReductionAttributes {
+		open class DamageForceReductionAttributes : IBlockScoped {
 			/**
 			 * In-Game: "N% reduction in push force taken from damage"
 			 * 
 			 * Attribute class is a flat multiplier applied to push force received from damage.
 			 */
-			open val damageForceReduction: ItemAttributeNamed<Float> = ItemAttributeNamed("damage force reduction")
+			open val damageForceReduction: ItemAttributeNamed<Number> = ItemAttributeNamed("damage force reduction")
 	
 			/**
 			 * In-Game: "N% increase in push force taken from damage"
 			 * 
 			 * Attribute class is a flat multiplier applied to push force received from damage.
 			 */
-			open val damageForceIncrease: ItemAttributeNamed<Float> = ItemAttributeNamed("damage force increase")
+			open val damageForceIncrease: ItemAttributeNamed<Number> = ItemAttributeNamed("damage force increase")
 	
 			/**
 			 * In-Game: "N% increase in push force taken from damage"
 			 * 
 			 * Attribute class is a flat multiplier applied to push force received from damage.
 			 */
-			open val damageForceIncreaseHidden: ItemAttributeNamed<Float> = ItemAttributeNamed("damage force increase hidden")
+			open val damageForceIncreaseHidden: ItemAttributeNamed<Number> = ItemAttributeNamed("damage force increase hidden")
 	
 			/**
 			 * In-Game: "Increase in push force taken from damage and airblast"
 			 * 
 			 * Attribute class is a flat multiplier applied to push force received from damage.
 			 */
-			open val damageForceIncreaseText: ItemAttributeNamed<Float> = ItemAttributeNamed("damage force increase text")
+			open val damageForceIncreaseText: ItemAttributeNamed<Number> = ItemAttributeNamed("damage force increase text")
 		}
 	}
 	
@@ -587,6 +588,10 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val killEaterKillType: ItemAttributeNamed<Int> = ItemAttributeNamed("kill eater kill type")
 	
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseCombatWeaponAttributes.MetaAttributes.KillfeedAttributes() {
 			open val isGigerCounter: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is giger counter")
@@ -610,6 +615,10 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 			 */
 			open val silentKiller: ItemAttributeNamed<Boolean> = ItemAttributeNamed("silent killer")
 		}
+	
+		open class ItemsAttributes : BaseCombatWeaponAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseCombatWeaponAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseCombatWeaponAttributes.MeterAttributes() {
@@ -618,16 +627,16 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * For things like throwable recharge timers, jetpack charging, etc: how much it recharges per second.
 		 */
-		open val effectBarRechargeRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("effect bar recharge rate increased")
+		open val effectBarRechargeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("effect bar recharge rate increased")
 	}
 	
-	open class MovementAttributes {
+	open class MovementAttributes : IBlockScoped {
 		/**
 		 * In-Game: "+N% greater jump height when active"
 		 * 
 		 * Only takes effect while this weapon is active.
 		 */
-		open val increasedJumpHeightFromWeapon: ItemAttributeNamed<Float> = ItemAttributeNamed("increased jump height from weapon")
+		open val increasedJumpHeightFromWeapon: ItemAttributeNamed<Number> = ItemAttributeNamed("increased jump height from weapon")
 	
 		/**
 		 * In-Game: "Grants Triple Jump while deployed. Melee attacks mini-crit while airborne."
@@ -640,26 +649,26 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 	
 		open val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes {
+		open class MoveSpeedAttributes : IBlockScoped {
 			/**
 			 * Multiplier applied to movement speed scaled by ubercharge percentage.
 			 * 
 			 * Only works if the player using this item is a Medic with a Medigun.
 			 */
-			open val moveSpeedBonusResourceLevel: ItemAttributeNamed<Float> = ItemAttributeNamed("move speed bonus resource level")
+			open val moveSpeedBonusResourceLevel: ItemAttributeNamed<Number> = ItemAttributeNamed("move speed bonus resource level")
 	
 			/**
 			 * In-Game: "+N% faster move speed on wearer"
 			 * 
 			 * Multiplier applied to player movement speed only while this is the active weapon.
 			 */
-			open val multPlayerMovespeedActive: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_player_movespeed_active")
+			open val multPlayerMovespeedActive: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_player_movespeed_active")
 		}
 	}
 	
-	open class HeadsAttributes 
+	open class HeadsAttributes : IBlockScoped 
 	
-	open class OnHitAttributes {
+	open class OnHitAttributes : IBlockScoped {
 		/**
 		 * In-Game: "+N% cloak on hit"
 		 * 
@@ -698,7 +707,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Only procs if on a Medic.
 		 */
-		open val addUberChargeOnHit: ItemAttributeNamed<Float> = ItemAttributeNamed("add uber charge on hit")
+		open val addUberChargeOnHit: ItemAttributeNamed<Number> = ItemAttributeNamed("add uber charge on hit")
 	
 		open val rageOnHit: BonusPenalty<Int> = BonusPenalty(
 			ItemAttributeNamed("mod rage on hit bonus"),
@@ -749,14 +758,14 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Gain speedboost on hit.
 		 */
-		open val slowEnemyOnHit: ItemAttributeNamed<Float> = ItemAttributeNamed("slow enemy on hit")
+		open val slowEnemyOnHit: ItemAttributeNamed<Number> = ItemAttributeNamed("slow enemy on hit")
 	
 		/**
 		 * In-Game: "On Hit: Slow target movement by 40% for Ns"
 		 * 
 		 * Gain speedboost for N seconds.
 		 */
-		open val slowEnemyOnHitMajor: ItemAttributeNamed<Float> = ItemAttributeNamed("slow enemy on hit major")
+		open val slowEnemyOnHitMajor: ItemAttributeNamed<Number> = ItemAttributeNamed("slow enemy on hit major")
 	
 		/**
 		 * In-Game: "Syringes deliver a highly concentrated dose of Mad Milk. Duration increases per hit to a max of 4 seconds."
@@ -780,19 +789,19 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		/**
 		 * Apply this amount of z velocity to players hit with this weapon.
 		 */
-		open val applyZVelocityOnDamage: ItemAttributeNamed<Float> = ItemAttributeNamed("apply z velocity on damage")
+		open val applyZVelocityOnDamage: ItemAttributeNamed<Number> = ItemAttributeNamed("apply z velocity on damage")
 	
 		/**
 		 * Apply this amount of velocity in the direction you're facing to players hit with this weapon.
 		 */
-		open val applyLookVelocityOnDamage: ItemAttributeNamed<Float> = ItemAttributeNamed("apply look velocity on damage")
+		open val applyLookVelocityOnDamage: ItemAttributeNamed<Number> = ItemAttributeNamed("apply look velocity on damage")
 	
 		/**
 		 * Push force applied to target when hitting an enemy.
 		 * 
 		 * Scales by range, to a minimum of 50% of the given value.
 		 */
-		open val damageBlastPush: ItemAttributeNamed<Float> = ItemAttributeNamed("damage blast push")
+		open val damageBlastPush: ItemAttributeNamed<Number> = ItemAttributeNamed("damage blast push")
 	
 		/**
 		 * In-Game: "On Hit: Bleed for N seconds"
@@ -801,13 +810,13 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Value is a time in seconds.
 		 */
-		open val bleedingDuration: ItemAttributeNamed<Float> = ItemAttributeNamed("bleeding duration")
+		open val bleedingDuration: ItemAttributeNamed<Number> = ItemAttributeNamed("bleeding duration")
 	
 		open val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
-		open class HealOnHitForRapidfireAttributes {
+		open class HealOnHitForRapidfireAttributes : IBlockScoped {
 			/**
 			 * In-Game: "On Hit: Gain up to +N health"
 			 * 
@@ -837,7 +846,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 			open val selfdmgOnHitForSlowfire: ItemAttributeNamed<Int> = ItemAttributeNamed("selfdmg on hit for slowfire")
 		}
 	
-		open class GenerateRageOnDamageAttributes {
+		open class GenerateRageOnDamageAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Generate Rage by dealing damage.  When fully charged, press the Special-Attack key to activate knockback"
 			 * 
@@ -854,7 +863,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		}
 	}
 	
-	open class OnKillAttributes {
+	open class OnKillAttributes : IBlockScoped {
 		/**
 		 * In-Game: "On Kill: N seconds of 100% critical chance"
 		 * 
@@ -906,7 +915,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val spellHalloweenDeathGhosts: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween death ghosts")
 	}
 	
-	open class ProjectilesAttributes {
+	open class ProjectilesAttributes : IBlockScoped {
 		/**
 		 * Note: "Projectile" includes bullets.
 		 */
@@ -917,13 +926,13 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Does not include bullets.
 		 */
-		open val projectileSpreadAnglePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("projectile spread angle penalty")
+		open val projectileSpreadAnglePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("projectile spread angle penalty")
 	
 		open val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
 	
 		open val bullets: BulletsAttributes = BulletsAttributes()
 	
-		open class ProjectilePenetrationAttributes {
+		open class ProjectilePenetrationAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Projectiles penetrate enemy players"
 			 * 
@@ -939,11 +948,11 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 			open val projectilePenetrationHeavy: ItemAttributeNamed<Int> = ItemAttributeNamed("projectile penetration heavy")
 		}
 	
-		open class BulletsAttributes {
+		open class BulletsAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N% bullets per shot"
 			 */
-			open val bulletsPerShotBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("bullets per shot bonus")
+			open val bulletsPerShotBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("bullets per shot bonus")
 	
 			/**
 			 * In-Game: "Fires tracer rounds"
@@ -977,8 +986,8 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		}
 	}
 	
-	open class ReloadingAttributes {
-		open val reloadTime: BonusPenalty<Float> = BonusPenalty(
+	open class ReloadingAttributes : IBlockScoped {
+		open val reloadTime: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("Reload time decreased"),
 			ItemAttributeNamed("Reload time increased"),
 		)
@@ -986,26 +995,26 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		/**
 		 * In-Game: "N% slower reload time"
 		 */
-		open val reloadTimeIncreasedHidden: ItemAttributeNamed<Float> = ItemAttributeNamed("reload time increased hidden")
+		open val reloadTimeIncreasedHidden: ItemAttributeNamed<Number> = ItemAttributeNamed("reload time increased hidden")
 	
 		/**
 		 * In-Game: "+N% faster reload time"
 		 * 
 		 * This is what's used for weapons that draw directly from reserve ammo, like the flare gun and sniper rifle.
 		 */
-		open val fasterReloadRate: ItemAttributeNamed<Float> = ItemAttributeNamed("faster reload rate")
+		open val fasterReloadRate: ItemAttributeNamed<Number> = ItemAttributeNamed("faster reload rate")
 	
 		/**
 		 * Halloween reload time multiplier.
 		 * 
 		 * Checked on player.
 		 */
-		open val halloweenReloadTimeDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("halloween reload time decreased")
+		open val halloweenReloadTimeDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("halloween reload time decreased")
 	
 		/**
 		 * In-Game: "N% faster reload time while being healed"
 		 */
-		open val reloadTimeDecreasedWhileHealed: ItemAttributeNamed<Float> = ItemAttributeNamed("reload time decreased while healed")
+		open val reloadTimeDecreasedWhileHealed: ItemAttributeNamed<Number> = ItemAttributeNamed("reload time decreased while healed")
 	}
 	
 	open class ResistanceAttributes : BaseCombatWeaponAttributes.ResistanceAttributes() {
@@ -1014,26 +1023,26 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Addcond parameter.
 		 */
-		open val becomeFireproofOnHitByFire: ItemAttributeNamed<Float> = ItemAttributeNamed("become fireproof on hit by fire")
+		open val becomeFireproofOnHitByFire: ItemAttributeNamed<Number> = ItemAttributeNamed("become fireproof on hit by fire")
 	
 		/**
 		 * In-Game: "N% damage vulnerability on wearer"
 		 */
-		open val multDmgtakenActive: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_dmgtaken_active")
+		open val multDmgtakenActive: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_dmgtaken_active")
 	
 		/**
 		 * In-Game: "+N% damage from melee sources while active"
 		 * 
 		 * Multiplier applied to incoming melee damage.
 		 */
-		open val dmgFromMeleeIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("dmg from melee increased")
+		open val dmgFromMeleeIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg from melee increased")
 	
 		/**
 		 * In-Game: "N% damage from ranged sources while active"
 		 * 
 		 * Multiplier applied to incoming blast, bullet, buckshot, ignite, and sonic damage.
 		 */
-		open val dmgFromRangedReduced: ItemAttributeNamed<Float> = ItemAttributeNamed("dmg from ranged reduced")
+		open val dmgFromRangedReduced: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg from ranged reduced")
 	
 		/**
 		 * In-Game: "No self inflicted blast damage taken"
@@ -1047,21 +1056,21 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Multiplier applied to blast damage taken from an explosion caused by said entity.
 		 */
-		open val blastDmgToSelfIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("blast dmg to self increased")
+		open val blastDmgToSelfIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("blast dmg to self increased")
 	
 		/**
 		 * In-Game: "+N% fire damage resistance while deployed"
 		 * 
 		 * Resist this proportion of fire damage only while this weapon is active.
 		 */
-		open val dmgTakenFromFireReducedOnActive: ItemAttributeNamed<Float> = ItemAttributeNamed("dmg taken from fire reduced on active")
+		open val dmgTakenFromFireReducedOnActive: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from fire reduced on active")
 	
 		/**
 		 * In-Game: "+N% damage vulnerability while active"
 		 * 
 		 * Increases damage taken while minicrit-boosted by Crit-a-Cola, Buffalo Steak, etc.
 		 */
-		open val energyBuffDmgTakenMultiplier: ItemAttributeNamed<Float> = ItemAttributeNamed("energy buff dmg taken multiplier")
+		open val energyBuffDmgTakenMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("energy buff dmg taken multiplier")
 	
 		/**
 		 * In-Game: "The wearer cannot be killed by headshots"
@@ -1071,7 +1080,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val setBonusNoDeathFromHeadshots: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SET BONUS: no death from headshots")
 	}
 	
-	open class RevengeCritsAttributes {
+	open class RevengeCritsAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Gives one guaranteed critical hit for each building destroyed with your sapper attached or backstab kill"
 		 * 
@@ -1094,7 +1103,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val canGainRevengeCrits: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod sentry killed revenge")
 	}
 	
-	open class StatusEffectsAttributes {
+	open class StatusEffectsAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Ignited enemies explode"
 		 * 
@@ -1105,7 +1114,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val explodeOnIgnite: ItemAttributeNamed<Boolean> = ItemAttributeNamed("explode_on_ignite")
 	}
 	
-	open class TauntingAttributes {
+	open class TauntingAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Alt-Fire: Applies a healing effect to all nearby teammates"
 		 * 
@@ -1119,15 +1128,15 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		open val specialTaunt: ItemAttributeNamed<Boolean> = ItemAttributeNamed("special taunt")
 	}
 	
-	open class ViewmodelAttributes {
+	open class ViewmodelAttributes : IBlockScoped {
 		open val weaponAllowInspect: ItemAttributeNamed<Boolean> = ItemAttributeNamed("weapon_allow_inspect")
 	
-		open val weaponStattrakModuleScale: ItemAttributeNamed<Float> = ItemAttributeNamed("weapon_stattrak_module_scale")
+		open val weaponStattrakModuleScale: ItemAttributeNamed<Number> = ItemAttributeNamed("weapon_stattrak_module_scale")
 	
 		open val minViewmodelOffset: ItemAttributeNamed<String> = ItemAttributeNamed("min_viewmodel_offset")
 	}
 	
-	open class SwapWeaponsAttributes {
+	open class SwapWeaponsAttributes : IBlockScoped {
 		/**
 		 * In-Game: "When weapon is active:"
 		 * 
@@ -1144,7 +1153,7 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		 * 
 		 * Checked on player.
 		 */
-		open val medicHealedDeployTimePenalty: ItemAttributeNamed<Float> = ItemAttributeNamed("mod medic healed deploy time penalty")
+		open val medicHealedDeployTimePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("mod medic healed deploy time penalty")
 	
 		/**
 		 * Should force switch to this item when your current weapon is unavailable?.
@@ -1161,36 +1170,36 @@ interface WeaponBaseAttributes : BaseCombatWeaponAttributes {
 		/**
 		 * If greater than 0 (like with the Thermal Thruster), takes that amount of time to holster BEFORE actually swapping weapons.
 		 */
-		open val holsterAnimTime: ItemAttributeNamed<Float> = ItemAttributeNamed("holster_anim_time")
+		open val holsterAnimTime: ItemAttributeNamed<Number> = ItemAttributeNamed("holster_anim_time")
 	
 		open val deploy: DeployAttributes = DeployAttributes()
 	
-		open class DeployAttributes {
-			open val deployTime: BonusPenalty<Float> = BonusPenalty(
+		open class DeployAttributes : IBlockScoped {
+			open val deployTime: BonusPenalty<Number> = BonusPenalty(
 				ItemAttributeNamed("deploy time decreased"),
 				ItemAttributeNamed("deploy time increased"),
 			)
 	
-			open val singleWepDeployTime: BonusPenalty<Float> = BonusPenalty(
+			open val singleWepDeployTime: BonusPenalty<Number> = BonusPenalty(
 				ItemAttributeNamed("single wep deploy time decreased"),
 				ItemAttributeNamed("single wep deploy time increased"),
 			)
 	
-			open val singleWepHolsterTime: BonusPenalty<Float> = BonusPenalty(
+			open val singleWepHolsterTime: BonusPenalty<Number> = BonusPenalty(
 				ItemAttributeNamed("switch from wep deploy time decreased"),
 				ItemAttributeNamed("single wep holster time increased"),
 			)
 		}
 	}
 	
-	open class WhenHitAttributes {
+	open class WhenHitAttributes : IBlockScoped {
 		/**
 		 * Knocks back attacker when wielder receives damage.
 		 */
 		open val damageCausesAirblast: ItemAttributeNamed<Boolean> = ItemAttributeNamed("damage causes airblast")
 	}
 	
-	open class RagdollsAttributes {
+	open class RagdollsAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Killing an enemy with a critical hit will dismember your victim. Painfully."
 		 */

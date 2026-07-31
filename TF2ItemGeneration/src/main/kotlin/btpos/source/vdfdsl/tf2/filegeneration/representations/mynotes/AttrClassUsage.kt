@@ -28,7 +28,7 @@ class AttrClassUsage(val attr_class: String, val kType: String, notes: List<Stri
 			val notes2 = notes.map { noteRegex.matchEntire(it)!!.groupValues[1] } +
 			             listOfNotNull(
 							 onWhat.takeIf { it.isNotBlank() }?.let { "Checked on $it" },
-							 _extratypeinfo.takeIf { it.isNotBlank() }
+							 _extratypeinfo.takeIf { it.isNotBlank() }?.let { "Value: $it" }
 						 )
 			
 			return AttrClassUsage(cls, type2, notes2)

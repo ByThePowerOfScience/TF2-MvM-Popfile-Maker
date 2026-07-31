@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface MvMBotAttributes : PlayerAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * If true, spawns a rocketjump particle whenever the robot jumps.
 		 */
@@ -41,6 +42,8 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 		val firing: FiringAttributes = FiringAttributes()
 	
+		val heads: HeadsAttributes = HeadsAttributes()
+	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
 		val hud: HudAttributes = HudAttributes()
@@ -65,13 +68,9 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val heavyOnly: HeavyOnlyAttributes = HeavyOnlyAttributes()
-	
-		val sniperOnly: SniperOnlyAttributes = SniperOnlyAttributes()
-	
-		val medicOnly: MedicOnlyAttributes = MedicOnlyAttributes()
-	
 		val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
+	
+		val crits: CritsAttributes = CritsAttributes()
 	}
 
 	/**
@@ -105,6 +104,8 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 	override val firing: FiringAttributes get() = MvMBotAttributes.firing
 	
+	override val heads: HeadsAttributes get() = MvMBotAttributes.heads
+	
 	override val healthAndHealing: HealthAndHealingAttributes get() = MvMBotAttributes.healthAndHealing
 	
 	override val hud: HudAttributes get() = MvMBotAttributes.hud
@@ -129,13 +130,9 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 	override val whenHit: WhenHitAttributes get() = MvMBotAttributes.whenHit
 	
-	override val heavyOnly: HeavyOnlyAttributes get() = MvMBotAttributes.heavyOnly
-	
-	override val sniperOnly: SniperOnlyAttributes get() = MvMBotAttributes.sniperOnly
-	
-	override val medicOnly: MedicOnlyAttributes get() = MvMBotAttributes.medicOnly
-	
 	override val spyOnly: SpyOnlyAttributes get() = MvMBotAttributes.spyOnly
+	
+	override val crits: CritsAttributes get() = MvMBotAttributes.crits
 
 	open class AmmoAttributes : PlayerAttributes.AmmoAttributes() {
 		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
@@ -181,6 +178,8 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 	open class FiringAttributes : PlayerAttributes.FiringAttributes() 
 	
+	open class HeadsAttributes : PlayerAttributes.HeadsAttributes() 
+	
 	open class HealthAndHealingAttributes : PlayerAttributes.HealthAndHealingAttributes() {
 		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
 	
@@ -206,6 +205,8 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 		override val gameplay: GameplayAttributes = GameplayAttributes()
 	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : PlayerAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class NoisemakersAttributes : PlayerAttributes.MetaAttributes.NoisemakersAttributes() 
@@ -215,6 +216,8 @@ interface MvMBotAttributes : PlayerAttributes {
 		open class PlayerAttributes : PlayerAttributes.MetaAttributes.PlayerAttributes() 
 	
 		open class GameplayAttributes : PlayerAttributes.MetaAttributes.GameplayAttributes() 
+	
+		open class ParticlesAttributes : PlayerAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : PlayerAttributes.MeterAttributes() {
@@ -273,15 +276,7 @@ interface MvMBotAttributes : PlayerAttributes {
 	
 	open class WhenHitAttributes : PlayerAttributes.WhenHitAttributes() 
 	
-	open class HeavyOnlyAttributes : PlayerAttributes.HeavyOnlyAttributes() {
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
-	
-		open class GenerateRageOnDamageAttributes : PlayerAttributes.HeavyOnlyAttributes.GenerateRageOnDamageAttributes() 
-	}
-	
-	open class SniperOnlyAttributes : PlayerAttributes.SniperOnlyAttributes() 
-	
-	open class MedicOnlyAttributes : PlayerAttributes.MedicOnlyAttributes() 
-	
 	open class SpyOnlyAttributes : PlayerAttributes.SpyOnlyAttributes() 
+	
+	open class CritsAttributes : PlayerAttributes.CritsAttributes() 
 }

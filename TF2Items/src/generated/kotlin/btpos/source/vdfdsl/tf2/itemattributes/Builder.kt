@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface BuilderAttributes : WeaponBaseAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Self mark for death when hauling buildings"
 		 * 
@@ -20,24 +21,24 @@ interface BuilderAttributes : WeaponBaseAttributes {
 		/**
 		 * If 1.0, it's a wheatley sapper.
 		 */
-		val sapperVoicePak: ItemAttributeNamed<Float> = ItemAttributeNamed("sapper voice pak")
+		val sapperVoicePak: ItemAttributeNamed<Number> = ItemAttributeNamed("sapper voice pak")
 	
 		/**
 		 * In-Game: "Increased robot Sapper radius and duration"
 		 * 
-		 * On base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
+		 * If greater than 0 on base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
 		 */
-		val roboSapper: ItemAttributeNamed<Boolean> = ItemAttributeNamed("robo sapper")
+		val roboSapper: ItemAttributeNamed<Int> = ItemAttributeNamed("robo sapper")
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
@@ -45,11 +46,11 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -63,7 +64,7 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -78,6 +79,8 @@ interface BuilderAttributes : WeaponBaseAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -90,14 +93,14 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	/**
 	 * If 1.0, it's a wheatley sapper.
 	 */
-	val sapperVoicePak: ItemAttributeNamed<Float> get() = BuilderAttributes.sapperVoicePak
+	val sapperVoicePak: ItemAttributeNamed<Number> get() = BuilderAttributes.sapperVoicePak
 	
 	/**
 	 * In-Game: "Increased robot Sapper radius and duration"
 	 * 
-	 * On base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
+	 * If greater than 0 on base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
 	 */
-	val roboSapper: ItemAttributeNamed<Boolean> get() = BuilderAttributes.roboSapper
+	val roboSapper: ItemAttributeNamed<Int> get() = BuilderAttributes.roboSapper
 	
 	override val afterburn: AfterburnAttributes get() = BuilderAttributes.afterburn
 	
@@ -148,6 +151,8 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	override val whenHit: WhenHitAttributes get() = BuilderAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = BuilderAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = BuilderAttributes.disguise
 
 	open class AfterburnAttributes : WeaponBaseAttributes.AfterburnAttributes() 
 	
@@ -194,7 +199,15 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : WeaponBaseAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 
@@ -250,4 +263,6 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	open class WhenHitAttributes : WeaponBaseAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : WeaponBaseAttributes.DisguiseAttributes() 
 }

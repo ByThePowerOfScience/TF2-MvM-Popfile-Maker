@@ -5,19 +5,20 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface FistsAttributes : BaseMeleeAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * Note that despite being present in the item schema, this is explicitly COMMENTED OUT of the code, and has no gameplay effects at least.
 		 */
 		val breadglovesProperties: ItemAttributeNamed<Boolean> = ItemAttributeNamed("breadgloves properties")
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
@@ -25,7 +26,7 @@ interface FistsAttributes : BaseMeleeAttributes {
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
@@ -35,11 +36,11 @@ interface FistsAttributes : BaseMeleeAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -51,7 +52,7 @@ interface FistsAttributes : BaseMeleeAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -64,6 +65,8 @@ interface FistsAttributes : BaseMeleeAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -120,6 +123,8 @@ interface FistsAttributes : BaseMeleeAttributes {
 	override val whenHit: WhenHitAttributes get() = FistsAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = FistsAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = FistsAttributes.disguise
 
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
 		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
@@ -182,7 +187,15 @@ interface FistsAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseMeleeAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseMeleeAttributes.MeterAttributes() 
@@ -222,4 +235,6 @@ interface FistsAttributes : BaseMeleeAttributes {
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() 
 }

@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface KnifeAttributes : BaseMeleeAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * 0: Stock.
 		 * 
@@ -26,9 +27,9 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		 */
 		val meltsInFire: ItemAttributeNamed<Boolean> = ItemAttributeNamed("melts in fire")
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
@@ -36,7 +37,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
@@ -46,11 +47,11 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -62,7 +63,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -75,13 +76,15 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val damage: DamageAttributes get() = KnifeAttributes.damage
 	
 	override val healthAndHealing: HealthAndHealingAttributes get() = KnifeAttributes.healthAndHealing
 	
-	override val disguise: DisguiseAttributes get() = super.disguise
+	override val disguise: DisguiseAttributes get() = KnifeAttributes.disguise
 	
 	/**
 	 * 0: Stock.
@@ -157,7 +160,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		 * 
 		 * Checked on player.
 		 */
-		open val armorPiercing: ItemAttributeNamed<Float> = ItemAttributeNamed("armor piercing")
+		open val armorPiercing: ItemAttributeNamed<Number> = ItemAttributeNamed("armor piercing")
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	
@@ -167,28 +170,28 @@ interface KnifeAttributes : BaseMeleeAttributes {
 			 * 
 			 * Base backstab damage against minibosses is 250 * this proportion.
 			 */
-			override val damagePenalty: ItemAttributeNamed<Float> get() = super.damagePenalty
+			override val damagePenalty: ItemAttributeNamed<Number> get() = super.damagePenalty
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 * 
 			 * Base backstab damage against minibosses is 250 * this proportion.
 			 */
-			override val damageBonus: ItemAttributeNamed<Float> get() = super.damageBonus
+			override val damageBonus: ItemAttributeNamed<Number> get() = super.damageBonus
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 * 
 			 * Base backstab damage against minibosses is 250 * this proportion.
 			 */
-			override val damageBonusHidden: ItemAttributeNamed<Float> get() = super.damageBonusHidden
+			override val damageBonusHidden: ItemAttributeNamed<Number> get() = super.damageBonusHidden
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 * 
 			 * Base backstab damage against minibosses is 250 * this proportion.
 			 */
-			override val cardDamageBonus: ItemAttributeNamed<Float> get() = super.cardDamageBonus
+			override val cardDamageBonus: ItemAttributeNamed<Number> get() = super.cardDamageBonus
 		}
 	}
 	
@@ -201,7 +204,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		open val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
 	}
 	
-	open class DisguiseAttributes : IBlockScoped {
+	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() {
 		/**
 		 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
 		 */
@@ -261,7 +264,15 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseMeleeAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseMeleeAttributes.MeterAttributes() 

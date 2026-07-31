@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface WrenchAttributes : BaseMeleeAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Press your reload key to choose to teleport to spawn or your exit teleporter"
 		 * 
@@ -17,9 +18,9 @@ interface WrenchAttributes : BaseMeleeAttributes {
 		 */
 		val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> = ItemAttributeNamed("alt fire teleport to spawn")
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
@@ -27,7 +28,7 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
@@ -37,11 +38,11 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -53,7 +54,7 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -66,6 +67,8 @@ interface WrenchAttributes : BaseMeleeAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val buildings: BuildingsAttributes get() = WrenchAttributes.buildings
@@ -124,14 +127,16 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	override val whenHit: WhenHitAttributes get() = WrenchAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = WrenchAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = WrenchAttributes.disguise
 
 	open class BuildingsAttributes : BaseMeleeAttributes.BuildingsAttributes() {
-		open val constructionRate: BonusPenalty<Float> = BonusPenalty(
+		open val constructionRate: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("Construction rate increased"),
 			ItemAttributeNamed("Construction rate decreased"),
 		)
 	
-		open val repairRate: BonusPenalty<Float> = BonusPenalty(
+		open val repairRate: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("Repair rate increased"),
 			ItemAttributeNamed("Repair rate decreased"),
 		)
@@ -213,7 +218,15 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : BaseMeleeAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : BaseMeleeAttributes.MeterAttributes() 
@@ -253,4 +266,6 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() 
 }

@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * Checked on launcher.
 		 */
@@ -22,7 +23,7 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 		 */
 		val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween pumpkin explosions")
 	
-		val blastRadius: BonusPenalty<Float> = BonusPenalty(
+		val blastRadius: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("Blast radius increased"),
 			ItemAttributeNamed("Blast radius decreased"),
 		)
@@ -32,7 +33,7 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 		 * 
 		 * Checked on owner.
 		 */
-		val fuseBonus: ItemAttributeNamed<Float> = ItemAttributeNamed("fuse bonus")
+		val fuseBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("fuse bonus")
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
@@ -99,14 +100,14 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	 */
 	val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = ProjectileGrenadeAttributes.spellHalloweenPumpkinExplosions
 	
-	val blastRadius: BonusPenalty<Float> get() = ProjectileGrenadeAttributes.blastRadius
+	val blastRadius: BonusPenalty<Number> get() = ProjectileGrenadeAttributes.blastRadius
 	
 	/**
 	 * In-Game: "N% fuse time on grenades"
 	 * 
 	 * Checked on owner.
 	 */
-	val fuseBonus: ItemAttributeNamed<Float> get() = ProjectileGrenadeAttributes.fuseBonus
+	val fuseBonus: ItemAttributeNamed<Number> get() = ProjectileGrenadeAttributes.fuseBonus
 	
 	override val afterburn: AfterburnAttributes get() = ProjectileGrenadeAttributes.afterburn
 	
@@ -205,7 +206,15 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : WeaponBaseAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 

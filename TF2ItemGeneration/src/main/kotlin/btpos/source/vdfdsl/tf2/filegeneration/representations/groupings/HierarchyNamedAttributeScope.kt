@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
+import btpos.source.vdfdsl.tf2.filegeneration.SDKNotes
 import btpos.source.vdfdsl.tf2.filegeneration.hierarchiesByName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
@@ -22,6 +23,9 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 	}
 	
 	init {
+		require(scopeName in SDKNotes.hierarchy) {
+			"Hierarchy scope '$scopeName' not in class hierarchy"
+		}
 		hierarchiesByName[scopeName] = this
 	}
 	
@@ -69,7 +73,7 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 			interfaceBuilder.parentInterfaces += directParent.clsname
 		}
 		
-		interfaceBuilder.companionObject = ClassBuilder("", ClassBuilder.Type.COMPANION_OBJECT) {
+		interfaceBuilder.companionObject = ClassBuilder.newCompanionObject().apply {
 			addProperties(
 				(if (allParents.isEmpty())
 					attrProperties
@@ -77,6 +81,7 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 					attrProperties.filterNot { it.isOverridden() })
 					.map { it.copy() }
 			)
+			parentInterfaces += "IBlockScoped"
 		}
 		
 		interfaceBuilder.addProperties(

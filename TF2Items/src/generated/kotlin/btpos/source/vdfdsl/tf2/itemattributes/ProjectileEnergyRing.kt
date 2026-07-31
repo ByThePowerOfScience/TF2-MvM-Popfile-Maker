@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Projectile penetrates enemy targets"
 		 * 

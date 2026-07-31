@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface WearableDemoShieldAttributes : WearableAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		val resistance: ResistanceAttributes = ResistanceAttributes()
@@ -46,9 +47,9 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	open class DemoChargeAttributes : IBlockScoped {
 		open val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
 	
-		open val chargeTime: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("charge time increased"), ItemAttributeNamed<Float>("charge time decreased"))
+		open val chargeTime: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge time increased"), ItemAttributeNamed<Number>("charge time decreased"))
 	
-		open val chargeImpactDamage: VisHidden<Float> = VisHidden(ItemAttributeNamed<Float>("charge impact damage increased"), ItemAttributeNamed<Float>("charge impact damage decreased"))
+		open val chargeImpactDamage: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge impact damage increased"), ItemAttributeNamed<Number>("charge impact damage decreased"))
 	}
 	
 	open class ResistanceAttributes : WearableAttributes.ResistanceAttributes() {
@@ -63,11 +64,15 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
 		open class PlayerAttributes : WearableAttributes.MetaAttributes.PlayerAttributes() 
 	
 		open class ItemsAttributes : WearableAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : WearableAttributes.MetaAttributes.ParticlesAttributes() 
 	
 		open class KillfeedAttributes : WearableAttributes.MetaAttributes.KillfeedAttributes() 
 	}

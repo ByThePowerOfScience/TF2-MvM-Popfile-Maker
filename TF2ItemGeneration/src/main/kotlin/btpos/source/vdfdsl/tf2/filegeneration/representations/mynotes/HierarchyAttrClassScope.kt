@@ -1,12 +1,11 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes
 
-import btpos.source.vdfdsl.tf2.filegeneration.MyNotesFormatted
+import btpos.source.vdfdsl.tf2.filegeneration.SDKNotes
 import btpos.source.vdfdsl.tf2.filegeneration.notesToAttrClassUsages
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.attrToSelector
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
-import kotlin.collections.flatten
 
 class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAttrThing> = listOf(), applicableWeapons: List<Any> = listOf(), notes: List<String> = emptyList()) : IAttrClassScope(name, attrClassesOrNestedScopes, applicableWeapons, notes) {
 	constructor(name: String, vararg attrClassesOrNestedScopes: Any, applicableWeapons: List<Any> = listOf()) : this(
@@ -22,7 +21,7 @@ class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAtt
 	}, applicableWeapons)
 	
 	init {
-		require(name in MyNotesFormatted.hierarchy) { "Name $name not found in hierarchy" }
+		require(name in SDKNotes.hierarchy) { "Name $name not found in hierarchy" }
 	}
 	
 	override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
@@ -41,7 +40,7 @@ class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAtt
 		return listOf(
 			HierarchyNamedAttributeScope(
 				this.name,
-				MyNotesFormatted.getParent(this.name),
+				SDKNotes.getParent(this.name),
 				*mapped.toTypedArray(),
 				notes=listOfNotNull(applicableWeapons.takeIf { it.isNotEmpty() }
 					?.joinToString(", ")

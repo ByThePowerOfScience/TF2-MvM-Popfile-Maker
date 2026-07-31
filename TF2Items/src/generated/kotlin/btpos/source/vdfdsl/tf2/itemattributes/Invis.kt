@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface InvisAttributes : WeaponBaseAttributes {
-	companion object {
+	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Cloak Type: Feign Death. Leave a fake corpse on taking damage and temporarily gain invisibility, speed, and damage resistance."
 		 * 
@@ -28,13 +29,13 @@ interface InvisAttributes : WeaponBaseAttributes {
 	
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		val crits: CritsAttributes = CritsAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
@@ -42,11 +43,11 @@ interface InvisAttributes : WeaponBaseAttributes {
 	
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
+		val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		val meter: MeterAttributes = MeterAttributes()
 	
 		val movement: MovementAttributes = MovementAttributes()
 	
@@ -60,7 +61,7 @@ interface InvisAttributes : WeaponBaseAttributes {
 	
 		val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		private val resistance: ResistanceAttributes = ResistanceAttributes()
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
 		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
@@ -75,6 +76,8 @@ interface InvisAttributes : WeaponBaseAttributes {
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -142,6 +145,8 @@ interface InvisAttributes : WeaponBaseAttributes {
 	override val whenHit: WhenHitAttributes get() = InvisAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = InvisAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = InvisAttributes.disguise
 
 	open class CloakAttributes : IBlockScoped {
 		/**
@@ -168,7 +173,7 @@ interface InvisAttributes : WeaponBaseAttributes {
 		 * 
 		 * Multiplier applied to cloak gained from ammo boxes.
 		 */
-		open val reducedCloakFromAmmo: ItemAttributeNamed<Float> = ItemAttributeNamed("ReducedCloakFromAmmo")
+		open val reducedCloakFromAmmo: ItemAttributeNamed<Number> = ItemAttributeNamed("ReducedCloakFromAmmo")
 	
 		open val multCloakMeterConsumeRate: MultCloakMeterConsumeRateAttributes = MultCloakMeterConsumeRateAttributes()
 	
@@ -182,7 +187,7 @@ interface InvisAttributes : WeaponBaseAttributes {
 			 * 
 			 * Checked on player.
 			 */
-			open val multCloakMeterConsumeRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult cloak meter consume rate")
+			open val multCloakMeterConsumeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult cloak meter consume rate")
 	
 			/**
 			 * In-Game: "-N% cloak duration"
@@ -191,7 +196,7 @@ interface InvisAttributes : WeaponBaseAttributes {
 			 * 
 			 * Checked on player.
 			 */
-			open val cloakConsumeRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak consume rate increased")
+			open val cloakConsumeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak consume rate increased")
 	
 			/**
 			 * In-Game: "+N% cloak duration"
@@ -200,24 +205,24 @@ interface InvisAttributes : WeaponBaseAttributes {
 			 * 
 			 * Checked on player.
 			 */
-			open val cloakConsumeRateDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak consume rate decreased")
+			open val cloakConsumeRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak consume rate decreased")
 		}
 	
 		open class MultCloakMeterRegenRateAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N% cloak regen rate"
 			 */
-			open val multCloakMeterRegenRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult cloak meter regen rate")
+			open val multCloakMeterRegenRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult cloak meter regen rate")
 	
 			/**
 			 * In-Game: "+N% cloak regeneration rate"
 			 */
-			open val cloakRegenRateIncreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak regen rate increased")
+			open val cloakRegenRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak regen rate increased")
 	
 			/**
 			 * In-Game: "N% cloak regeneration rate"
 			 */
-			open val cloakRegenRateDecreased: ItemAttributeNamed<Float> = ItemAttributeNamed("cloak regen rate decreased")
+			open val cloakRegenRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak regen rate decreased")
 		}
 	}
 	
@@ -266,7 +271,15 @@ interface InvisAttributes : WeaponBaseAttributes {
 	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
 		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : WeaponBaseAttributes.MetaAttributes.ParticlesAttributes() 
 	}
 	
 	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 
@@ -322,4 +335,6 @@ interface InvisAttributes : WeaponBaseAttributes {
 	open class WhenHitAttributes : WeaponBaseAttributes.WhenHitAttributes() 
 	
 	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : WeaponBaseAttributes.DisguiseAttributes() 
 }

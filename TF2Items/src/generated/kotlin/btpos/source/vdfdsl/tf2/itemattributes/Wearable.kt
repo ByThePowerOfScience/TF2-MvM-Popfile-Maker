@@ -5,18 +5,19 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
-interface WearableAttributes : BaseEntityAttributes {
-	companion object {
+interface WearableAttributes : EconEntityAttributes {
+	companion object : IBlockScoped {
+		val meta: MetaAttributes = MetaAttributes()
+	
 		val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		val crits: CritsAttributes = CritsAttributes()
 	
 		val damage: DamageAttributes = DamageAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
 	
 		val meter: MeterAttributes = MeterAttributes()
 	
@@ -39,7 +40,7 @@ interface WearableAttributes : BaseEntityAttributes {
 	
 	override val knockbackReceived: KnockbackReceivedAttributes get() = WearableAttributes.knockbackReceived
 
-	open class ResistanceAttributes : BaseEntityAttributes.ResistanceAttributes() {
+	open class ResistanceAttributes : EconEntityAttributes.ResistanceAttributes() {
 		/**
 		 * In-Game: "Immune to the effects of afterburn."
 		 * 
@@ -48,10 +49,12 @@ interface WearableAttributes : BaseEntityAttributes {
 		open val afterburnImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("afterburn immunity")
 	}
 	
-	open class MetaAttributes : BaseEntityAttributes.MetaAttributes() {
+	open class MetaAttributes : EconEntityAttributes.MetaAttributes() {
 		open val player: PlayerAttributes = PlayerAttributes()
 	
-		open val items: ItemsAttributes = ItemsAttributes()
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
@@ -62,7 +65,7 @@ interface WearableAttributes : BaseEntityAttributes {
 			open val playerSkinOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("player skin override")
 		}
 	
-		open class ItemsAttributes : IBlockScoped {
+		open class ItemsAttributes : EconEntityAttributes.MetaAttributes.ItemsAttributes() {
 			/**
 			 * In-Game: "Duck Power : N / 5"
 			 * 
@@ -71,16 +74,18 @@ interface WearableAttributes : BaseEntityAttributes {
 			open val duckBadgeLevel: ItemAttributeNamed<Int> = ItemAttributeNamed("duck badge level")
 		}
 	
-		open class KillfeedAttributes : BaseEntityAttributes.MetaAttributes.KillfeedAttributes() 
+		open class ParticlesAttributes : EconEntityAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class KillfeedAttributes : EconEntityAttributes.MetaAttributes.KillfeedAttributes() 
 	}
 	
-	open class DisguiseAttributes : BaseEntityAttributes.DisguiseAttributes() 
+	open class DisguiseAttributes : EconEntityAttributes.DisguiseAttributes() 
 	
-	open class CritsAttributes : BaseEntityAttributes.CritsAttributes() 
+	open class CritsAttributes : EconEntityAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : BaseEntityAttributes.DamageAttributes() 
+	open class DamageAttributes : EconEntityAttributes.DamageAttributes() 
 	
-	open class MeterAttributes : BaseEntityAttributes.MeterAttributes() 
+	open class MeterAttributes : EconEntityAttributes.MeterAttributes() 
 	
-	open class KnockbackReceivedAttributes : BaseEntityAttributes.KnockbackReceivedAttributes() 
+	open class KnockbackReceivedAttributes : EconEntityAttributes.KnockbackReceivedAttributes() 
 }

@@ -5,11 +5,12 @@ import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 
 
 interface BaseEntityAttributes : IBlockScoped {
-	companion object {
+	companion object : IBlockScoped {
 		val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		val crits: CritsAttributes = CritsAttributes()
@@ -51,7 +52,7 @@ interface BaseEntityAttributes : IBlockScoped {
 	open class CritsAttributes : IBlockScoped 
 	
 	open class DamageAttributes : IBlockScoped {
-		open val multDmgFalloff: BonusPenalty<Float> = BonusPenalty(
+		open val multDmgFalloff: BonusPenalty<Number> = BonusPenalty(
 			ItemAttributeNamed("dmg falloff decreased"),
 			ItemAttributeNamed("dmg falloff increased"),
 		)
@@ -88,14 +89,14 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * 
 		 * If negative, 0, or not set, does not attempt to fill the meter at all when dealing damage.
 		 */
-		open val damageForFullCharge: ItemAttributeNamed<Float> = ItemAttributeNamed("item_meter_damage_for_full_charge")
+		open val damageForFullCharge: ItemAttributeNamed<Number> = ItemAttributeNamed("item_meter_damage_for_full_charge")
 	
 		/**
 		 * In-Game: "N% faster recharge rate"
 		 * 
 		 * Scale factor for meter gained per second and/or meter gained on dealing damage.
 		 */
-		open val multChargeRate: ItemAttributeNamed<Float> = ItemAttributeNamed("mult_item_meter_charge_rate")
+		open val multChargeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_item_meter_charge_rate")
 	}
 	
 	open class KnockbackReceivedAttributes : IBlockScoped {
