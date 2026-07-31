@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface CrossbowAttributes : RocketLauncherAttributes {
 	companion object : IBlockScoped {
 		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
@@ -117,17 +115,28 @@ interface CrossbowAttributes : RocketLauncherAttributes {
 	override val disguise: DisguiseAttributes get() = CrossbowAttributes.disguise
 
 	open class ReloadingAttributes : RocketLauncherAttributes.ReloadingAttributes() {
-		override val reloadTime: BonusPenalty<Number> get() = super.reloadTime
+		companion object : IBlockScoped 
+	
+		context(attrs: IAttributeContainer)
+		override var reloadTime: Number? 
+			get() = super.reloadTime
+			set(value) { super.reloadTime = value }
 	
 		/**
 		 * In-Game: "N% slower reload time"
 		 */
-		override val reloadTimeIncreasedHidden: ItemAttributeNamed<Number> get() = super.reloadTimeIncreasedHidden
+		context(attrs: IAttributeContainer)
+		override var reloadTimeIncreasedHidden: Number? 
+			get() = super.reloadTimeIncreasedHidden
+			set(value) { super.reloadTimeIncreasedHidden = value }
 	
 		/**
 		 * In-Game: "+N% faster reload time"
 		 */
-		override val fasterReloadRate: ItemAttributeNamed<Number> get() = super.fasterReloadRate
+		context(attrs: IAttributeContainer)
+		override var fasterReloadRate: Number? 
+			get() = super.fasterReloadRate
+			set(value) { super.fasterReloadRate = value }
 	}
 	
 	open class ProjectilesAttributes : RocketLauncherAttributes.ProjectilesAttributes() {

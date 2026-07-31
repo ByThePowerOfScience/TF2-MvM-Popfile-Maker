@@ -101,7 +101,7 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 					}
 				}
 			}.onEach {
-				it.isGetter = true
+				it.usesGetter = true
 				it.initializer = interfaceBuilder.name + "." + it.name
 			}.asIterable()
 		)

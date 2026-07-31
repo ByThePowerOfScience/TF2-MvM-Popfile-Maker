@@ -62,6 +62,7 @@ open class NamedAttributeScope(
 	private var cacheNestedTypes: List<ClassBuilder> by notNull()
 	
 	
+	
 	/**
 	 * Anything that this class needs to generate will go inside the object
 	 */
@@ -71,28 +72,65 @@ open class NamedAttributeScope(
 		val parent = baseHierarchyItem.getParent()
 		val parentVersionOfThisScope = parent?.getNestedScope(currentScopePath)
 		
+		val allParents = baseHierarchyItem.getParentsRecursive().mapNotNull { it.getNestedScope(currentScopePath) }.toList()
+		
+		fun PropertyBuilder.isOverridden() = allParents.isNotEmpty() && allParents.any { it.containsAttribute(this.name) }
+		
+		
 		val cb = ClassBuilder(this.clsname, Type.CLASS) {
 			isOpen = true
 		}
 		
-		cb.addProperties(attrs.asSequence().filter { it !is NamedAttributeScope }.map {
-			it.propertyBuilder().apply {
-				when {
-					parentVersionOfThisScope != null && parentVersionOfThisScope.containsAttribute(it.varName) -> {
-						modality = PropertyBuilder.Modality.OVERRIDE
-						delegatesToSuper = true
-					}
-					else -> modality = PropertyBuilder.Modality.OPEN
-				}
-			}
-		}.asIterable())
+		val attrProperties = attrs.map { it.propertyBuilder() }
 		
-		if (parentVersionOfThisScope == null) {
-			cb.parentInterfaces += "IBlockScoped"
-		} else {
-			cb.baseClass = "${parent.clsname}.${currentScopePath.joinToString(".")}"
+		when {
+			parentVersionOfThisScope == null -> cb.parentInterfaces += "IBlockScoped"
+			else -> cb.baseClass += parentVersionOfThisScope.clsname
 		}
 		
+		// change it to be an interface, with stuff stored in the companion
+		cb.getOrCreateCompanionObject().apply {
+			addProperties(
+				(if (allParents.isEmpty()) attrProperties else attrProperties.filterNot { it.isOverridden() })
+					.map { it.copy() }
+			)
+			parentInterfaces += "IBlockScoped"
+		}
+		
+		cb.addProperties(
+			attrs.groupBy { it is NamedAttributeScope }.let {
+				(it[false]?.asSequence()
+					 .orEmpty()
+					 .map { it to it.propertyBuilder() }
+					 .onEach {
+						 it.second.getSetAttrFromCompanion(cb.name, it.first)
+					 }
+					 .map { (attr, prop) ->
+						 prop.copy()
+							 .apply {
+								 if (isOverridden()) {
+									 modality = PropertyBuilder.Modality.OVERRIDE
+									 delegatesToSuper = true
+								 } else {
+									 modality = PropertyBuilder.Modality.OPEN
+								 }
+							 }
+					 } +
+				 it[true]?.asSequence()
+					 .orEmpty()
+					 .map {
+						 it.propertyBuilder()
+							 .apply {
+								 if (isOverridden()) {
+									 modality = PropertyBuilder.Modality.OVERRIDE
+									 delegatesToSuper = true
+								 } else {
+									 modality = PropertyBuilder.Modality.OPEN
+								 }
+							 }
+					 }).asIterable()
+			}
+		)
 		
 		attrs.asSequence()
 			.filterIsInstance<NamedAttributeScope>()
@@ -146,6 +184,16 @@ open class NamedAttributeScope(
 	
 	override fun toString(): String {
 		return "NamedAttributeScope(scopeName='$scopeName', attrs=$attrs, notes=$notes)"
+	}
+	
+	
+	protected fun PropertyBuilder.getSetAttrFromCompanion(clsName: String, attr: ISortedNamedAttribute) {
+		this.isVal = false
+		this.usesGetter = true
+		this.initializer = "$clsName.${this.name}.get()"
+		this.setter = "$clsName.${this.name}.set(value)"
+		this.contextParams += "attrs" to "IAttributeContainer"
+		this.kType = attr.getKotlinType() + "?"
 	}
 }
 

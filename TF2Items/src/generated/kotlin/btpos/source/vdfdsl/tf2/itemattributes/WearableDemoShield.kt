@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface WearableDemoShieldAttributes : WearableAttributes {
 	companion object : IBlockScoped {
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
@@ -45,18 +43,40 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	override val knockbackReceived: KnockbackReceivedAttributes get() = WearableDemoShieldAttributes.knockbackReceived
 
 	open class DemoChargeAttributes : IBlockScoped {
-		open val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
+		companion object : IBlockScoped {
+			val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
 	
-		open val chargeTime: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge time increased"), ItemAttributeNamed<Number>("charge time decreased"))
+			val chargeTime: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge time increased"), ItemAttributeNamed<Number>("charge time decreased"))
 	
-		open val chargeImpactDamage: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge impact damage increased"), ItemAttributeNamed<Number>("charge impact damage decreased"))
+			val chargeImpactDamage: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge impact damage increased"), ItemAttributeNamed<Number>("charge impact damage decreased"))
+		}
+	
+		context(attrs: IAttributeContainer)
+		open var attackNotCancelCharge: Boolean? 
+			get() = DemoChargeAttributes.attackNotCancelCharge.get()
+			set(value) { DemoChargeAttributes.attackNotCancelCharge.set(value) }
+	
+		context(attrs: IAttributeContainer)
+		open var chargeTime: Number? 
+			get() = DemoChargeAttributes.chargeTime.get()
+			set(value) { DemoChargeAttributes.chargeTime.set(value) }
+	
+		context(attrs: IAttributeContainer)
+		open var chargeImpactDamage: Number? 
+			get() = DemoChargeAttributes.chargeImpactDamage.get()
+			set(value) { DemoChargeAttributes.chargeImpactDamage.set(value) }
 	}
 	
 	open class ResistanceAttributes : WearableAttributes.ResistanceAttributes() {
+		companion object : IBlockScoped 
+	
 		/**
 		 * In-Game: "Immune to the effects of afterburn."
 		 */
-		override val afterburnImmunity: ItemAttributeNamed<Boolean> get() = super.afterburnImmunity
+		context(attrs: IAttributeContainer)
+		override var afterburnImmunity: Boolean? 
+			get() = super.afterburnImmunity
+			set(value) { super.afterburnImmunity = value }
 	}
 	
 	open class MetaAttributes : WearableAttributes.MetaAttributes() {

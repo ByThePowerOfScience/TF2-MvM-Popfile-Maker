@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface KnifeAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
 		/**
@@ -149,6 +147,21 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	override val ragdolls: RagdollsAttributes get() = KnifeAttributes.ragdolls
 
 	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Increase backstab damage against Giant Robots by N%"
+			 * 
+			 * Spy only does 25% damage against minibosses by default.	The number here is added to that percentage, up to a max of 100% + 25% = 125%.
+			 * 
+			 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:	`25.0`, `50.0`, up to `100.0`.
+			 * 
+			 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
+			 * 
+			 * Checked on player.
+			 */
+			val armorPiercing: ItemAttributeNamed<Number> = ItemAttributeNamed("armor piercing")
+		}
+	
 		/**
 		 * In-Game: "Increase backstab damage against Giant Robots by N%"
 		 * 
@@ -160,55 +173,94 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		 * 
 		 * Checked on player.
 		 */
-		open val armorPiercing: ItemAttributeNamed<Number> = ItemAttributeNamed("armor piercing")
+		context(attrs: IAttributeContainer)
+		open var armorPiercing: Number? 
+			get() = DamageAttributes.armorPiercing.get()
+			set(value) { DamageAttributes.armorPiercing.set(value) }
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	
 		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() {
+			companion object : IBlockScoped 
+	
 			/**
 			 * In-Game: "N% damage penalty"
 			 * 
 			 * Base backstab damage against minibosses is 250 * this proportion.
 			 */
-			override val damagePenalty: ItemAttributeNamed<Number> get() = super.damagePenalty
+			context(attrs: IAttributeContainer)
+			override var damagePenalty: Number? 
+				get() = super.damagePenalty
+				set(value) { super.damagePenalty = value }
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 * 
 			 * Base backstab damage against minibosses is 250 * this proportion.
 			 */
-			override val damageBonus: ItemAttributeNamed<Number> get() = super.damageBonus
+			context(attrs: IAttributeContainer)
+			override var damageBonus: Number? 
+				get() = super.damageBonus
+				set(value) { super.damageBonus = value }
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 * 
 			 * Base backstab damage against minibosses is 250 * this proportion.
 			 */
-			override val damageBonusHidden: ItemAttributeNamed<Number> get() = super.damageBonusHidden
+			context(attrs: IAttributeContainer)
+			override var damageBonusHidden: Number? 
+				get() = super.damageBonusHidden
+				set(value) { super.damageBonusHidden = value }
 	
 			/**
 			 * In-Game: "+N% damage bonus"
 			 * 
 			 * Base backstab damage against minibosses is 250 * this proportion.
 			 */
-			override val cardDamageBonus: ItemAttributeNamed<Number> get() = super.cardDamageBonus
+			context(attrs: IAttributeContainer)
+			override var cardDamageBonus: Number? 
+				get() = super.cardDamageBonus
+				set(value) { super.cardDamageBonus = value }
 		}
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "On Backstab: Absorbs the health from your victim."
+			 * 
+			 * Gain health on backstab.
+			 */
+			val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
+		}
+	
 		/**
 		 * In-Game: "On Backstab: Absorbs the health from your victim."
 		 * 
 		 * Gain health on backstab.
 		 */
-		open val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
+		context(attrs: IAttributeContainer)
+		open var gainHealthOnBackstab: Boolean? 
+			get() = HealthAndHealingAttributes.gainHealthOnBackstab.get()
+			set(value) { HealthAndHealingAttributes.gainHealthOnBackstab.set(value) }
 	}
 	
 	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
+			 */
+			val disguiseOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disguise on backstab")
+		}
+	
 		/**
 		 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
 		 */
-		open val disguiseOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disguise on backstab")
+		context(attrs: IAttributeContainer)
+		open var disguiseOnBackstab: Boolean? 
+			get() = DisguiseAttributes.disguiseOnBackstab.get()
+			set(value) { DisguiseAttributes.disguiseOnBackstab.set(value) }
 	}
 	
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {

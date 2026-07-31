@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface RocketLauncher_AirStrikeAttributes : RocketLauncherAttributes {
 	companion object : IBlockScoped {
 		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
@@ -117,15 +115,22 @@ interface RocketLauncher_AirStrikeAttributes : RocketLauncherAttributes {
 	override val disguise: DisguiseAttributes get() = RocketLauncher_AirStrikeAttributes.disguise
 
 	open class AmmoAttributes : RocketLauncherAttributes.AmmoAttributes() {
+		companion object : IBlockScoped 
+	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
 		open class ClipSizeAttributes : RocketLauncherAttributes.AmmoAttributes.ClipSizeAttributes() {
+			companion object : IBlockScoped 
+	
 			/**
 			 * In-Game: "Clip size increased on kill"
 			 * 
 			 * This attribute is on all weapons, but it's specifically checked for on the Air Strike.
 			 */
-			override val clipsizeIncreaseOnKill: ItemAttributeNamed<Int> get() = super.clipsizeIncreaseOnKill
+			context(attrs: IAttributeContainer)
+			override var clipsizeIncreaseOnKill: Int? 
+				get() = super.clipsizeIncreaseOnKill
+				set(value) { super.clipsizeIncreaseOnKill = value }
 		}
 	}
 	

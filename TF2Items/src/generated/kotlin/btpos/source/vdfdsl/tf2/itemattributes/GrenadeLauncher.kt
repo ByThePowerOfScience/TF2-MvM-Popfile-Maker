@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface GrenadeLauncherAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
 		/**
@@ -127,11 +125,18 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = GrenadeLauncherAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
-		open val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
-			ItemAttributeNamed<Number>("Projectile speed increased"),
-			ItemAttributeNamed<Number>("Projectile speed decreased"),
-			ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
-		)
+		companion object : IBlockScoped {
+			val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+				ItemAttributeNamed<Number>("Projectile speed increased"),
+				ItemAttributeNamed<Number>("Projectile speed decreased"),
+				ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
+			)
+		}
+	
+		context(attrs: IAttributeContainer)
+		open var projectileSpeed: Number? 
+			get() = ProjectilesAttributes.projectileSpeed.get()
+			set(value) { ProjectilesAttributes.projectileSpeed.set(value) }
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
@@ -143,12 +148,24 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	}
 	
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "N% damage on grenades that explode on timer"
+			 * 
+			 * Flat multiplier applied to initial damage.
+			 */
+			val grenadeDetonationDamagePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("grenade detonation damage penalty")
+		}
+	
 		/**
 		 * In-Game: "N% damage on grenades that explode on timer"
 		 * 
 		 * Flat multiplier applied to initial damage.
 		 */
-		open val grenadeDetonationDamagePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("grenade detonation damage penalty")
+		context(attrs: IAttributeContainer)
+		open var grenadeDetonationDamagePenalty: Number? 
+			get() = DamageAttributes.grenadeDetonationDamagePenalty.get()
+			set(value) { DamageAttributes.grenadeDetonationDamagePenalty.set(value) }
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	

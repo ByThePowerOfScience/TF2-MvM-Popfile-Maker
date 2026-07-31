@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface ScattergunAttributes : ShotgunAttributes {
 	companion object : IBlockScoped {
 		val ammo: AmmoAttributes = AmmoAttributes()
@@ -117,14 +115,31 @@ interface ScattergunAttributes : ShotgunAttributes {
 	override val disguise: DisguiseAttributes get() = ScattergunAttributes.disguise
 
 	open class OnHitAttributes : ShotgunAttributes.OnHitAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Knockback on the target and shooter"
+			 * 
+			 * Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary.
+			 */
+			val scattergunHasKnockback: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun has knockback")
+	
+			val scattergunKnockbackMult: ItemAttributeNamed<Number> = ItemAttributeNamed("scattergun knockback mult")
+		}
+	
 		/**
 		 * In-Game: "Knockback on the target and shooter"
 		 * 
 		 * Note: if `scattergun_knockback_mult` is greater than 1.0, this is not necessary.
 		 */
-		open val scattergunHasKnockback: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun has knockback")
+		context(attrs: IAttributeContainer)
+		open var scattergunHasKnockback: Boolean? 
+			get() = OnHitAttributes.scattergunHasKnockback.get()
+			set(value) { OnHitAttributes.scattergunHasKnockback.set(value) }
 	
-		open val scattergunKnockbackMult: ItemAttributeNamed<Number> = ItemAttributeNamed("scattergun knockback mult")
+		context(attrs: IAttributeContainer)
+		open var scattergunKnockbackMult: Number? 
+			get() = OnHitAttributes.scattergunKnockbackMult.get()
+			set(value) { OnHitAttributes.scattergunKnockbackMult.set(value) }
 	
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
@@ -136,10 +151,20 @@ interface ScattergunAttributes : ShotgunAttributes {
 	}
 	
 	open class ReloadingAttributes : ShotgunAttributes.ReloadingAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * If 1, reloads entire clip at once.
+			 */
+			val scattergunNoReloadSingle: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun no reload single")
+		}
+	
 		/**
 		 * If 1, reloads entire clip at once.
 		 */
-		open val scattergunNoReloadSingle: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun no reload single")
+		context(attrs: IAttributeContainer)
+		open var scattergunNoReloadSingle: Boolean? 
+			get() = ReloadingAttributes.scattergunNoReloadSingle.get()
+			set(value) { ReloadingAttributes.scattergunNoReloadSingle.set(value) }
 	}
 	
 	open class AmmoAttributes : ShotgunAttributes.AmmoAttributes() {

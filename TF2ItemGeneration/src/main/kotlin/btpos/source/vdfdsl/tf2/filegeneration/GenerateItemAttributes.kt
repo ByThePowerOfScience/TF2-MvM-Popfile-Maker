@@ -17,12 +17,14 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAtt
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyBonus
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Vis
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
+import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromCamelCase
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
+import kotlin.io.path.createParentDirectories
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.exists
 import kotlin.io.path.useDirectoryEntries
@@ -53,7 +55,7 @@ fun main() {
 		"import ${BuildConfig.ATTRIBUTES_TARGET_PACKAGE}.impl.*\n" +
 		"import ${BuildConfig.BASE_PACKAGE}.tftypes.*\n" +
 		"import java.util.*\n" +
-		"import kotlin.time.Duration\n\n",
+		"import kotlin.time.Duration",
 		allNamedAttributes,
 		SDKNotes.attrsByClass
 	)
@@ -324,7 +326,7 @@ fun generateItemAttributes(
 	outBaseDir.resolve(BuildConfig.ITEM_FACTORY_LOCATION.replace(".", File.separator) + ".kt").bufferedWriter().use { out ->
 		out.append("package ").append(BuildConfig.ITEM_FACTORY_LOCATION.substringBeforeLast('.')).append("\n\n")
 		out.append("import ").append(targetPackage).appendLine(".*")
-		   .append(imports)
+		   .append(imports).append("\n\n")
 		
 		out.append("object ").append(BuildConfig.ITEM_FACTORY_LOCATION.substringAfterLast(".")).append(" {\n")
 		// generate item factories for each item type in TFItemFactories
@@ -335,6 +337,34 @@ fun generateItemAttributes(
 			out.append("\t@JvmField val ").append(weaponType.scopeName.uppercase()).append(" = TFItemFactory(").append(weaponType.clsname).append(")\n\n")
 		}
 		out.append("}")
+	}
+	
+	(BuildConfig.ATTRIBUTES_TARGET_PACKAGE).let { implPkg ->
+		outBaseDir.resolve(implPkg.replace(".", File.separator)).let { implDir ->
+			implDir.resolve("projectileExtensions.kt").createParentDirectories().bufferedWriter().use { out ->
+				out + "package " + implPkg + "\n\n"
+				out + "import " + targetPackage + ".*\n" + imports + "\n"
+				
+				for (projectileClass in SDKNotes.hierarchy.nodes.asSequence().map { it.value.name }.filter { it.startsWith("Projectile") }) {
+					val projectileScope = hierarchiesByName[projectileClass] ?: error("No scope found for $projectileClass")
+					
+					
+					val x = projectileScope.propertyBuilder().apply {
+						extensionOf = "BaseGunAttributes.ProjectilesAttributes"
+					}
+					
+					x.name = x.name.removeFromCamelCase("projectile")
+					
+					out + "\nprivate val _" + x.name + " = " + x.initializer.removeSuffix("()").let { "object : $it {}" }
+					
+					x.initializer = "_${x.name}"
+					x.usesGetter = true
+					
+					
+					out + "\n" + x.build() + "\n"
+				}
+			}
+		}
 	}
 }
 
@@ -445,7 +475,7 @@ fun ClassBuilder.redirectPropertiesToNewType(newType: ClassBuilder, ourParent: C
 			}
 			
 			// force it to create our version of the object
-			ourVersionOfProp.isGetter = false
+			ourVersionOfProp.usesGetter = false
 			ourVersionOfProp.delegatesToSuper = false // should never delegate to super, because we're forcing it to have a new type
 			ourVersionOfProp.initializer = newType.name + "()"
 		}
@@ -471,7 +501,7 @@ fun ClassBuilder.redirectPropertiesToNewType(newType: ClassBuilder, ourParent: C
 			
 			ourInterfaceProp.modality = PropertyBuilder.Modality.OVERRIDE
 			ourInterfaceProp.delegatesToSuper = false
-			ourInterfaceProp.isGetter = true
+			ourInterfaceProp.usesGetter = true
 			ourInterfaceProp.initializer = this.name + "." + ourInterfaceProp.name
 			
 			
@@ -485,7 +515,7 @@ fun ClassBuilder.redirectPropertiesToNewType(newType: ClassBuilder, ourParent: C
 			}
 			
 			companionObjectProp.initializer = newType.name + "()"
-			companionObjectProp.isGetter = false
+			companionObjectProp.usesGetter = false
 		}
 	}
 }

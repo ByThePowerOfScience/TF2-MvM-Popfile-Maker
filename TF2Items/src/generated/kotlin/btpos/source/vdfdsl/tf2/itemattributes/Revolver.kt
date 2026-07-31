@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface RevolverAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
 		val ammo: AmmoAttributes = AmmoAttributes()
@@ -116,7 +114,9 @@ interface RevolverAttributes : BaseGunAttributes {
 	
 	override val disguise: DisguiseAttributes get() = RevolverAttributes.disguise
 
-	open class HeadsAttributes : BaseGunAttributes.HeadsAttributes() 
+	open class HeadsAttributes : BaseGunAttributes.HeadsAttributes() {
+		companion object : IBlockScoped 
+	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()

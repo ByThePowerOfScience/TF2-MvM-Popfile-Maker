@@ -11,13 +11,17 @@ class PropertyBuilder(var name: String, var kType: String) {
 		val re_genericTypes = Regex("""<.+>""")
 	}
 	
+	var isVal = true
+	
+	var usesGetter: Boolean = false
+	
 	lateinit var initializer: String
+	
+	var setter: String? = null
 	
 	var extensionOf: String? = null
 	
 	var modality: Modality = Modality.FINAL
-	
-	var isGetter: Boolean = false
 	
 	var delegatesToSuper: Boolean = false
 	
@@ -25,20 +29,31 @@ class PropertyBuilder(var name: String, var kType: String) {
 	
 	var access: AccessModifier = AccessModifier.PUBLIC
 	
-	
-	
+	var contextParams: List<Pair<String, String>> = listOf()
 	
 	fun copy() = PropertyBuilder(name, kType).apply {
+		isVal = this@PropertyBuilder.isVal
 		initializer = this@PropertyBuilder.initializer
+		setter = this@PropertyBuilder.setter
 		extensionOf = this@PropertyBuilder.extensionOf
 		modality = this@PropertyBuilder.modality
-		isGetter = this@PropertyBuilder.isGetter
+		usesGetter = this@PropertyBuilder.usesGetter
 		delegatesToSuper = this@PropertyBuilder.delegatesToSuper
 		docComment += this@PropertyBuilder.docComment
 		access = this@PropertyBuilder.access
+		contextParams = this@PropertyBuilder.contextParams
 	}
 	
 	fun build(classType: ClassBuilder.Type? = null): String {
+		if (!isVal && usesGetter) {
+			require(delegatesToSuper || setter != null) {
+				"Setter may not be null on a variable property without a backing field that doesn't delegate to super."
+			}
+		}
+		
+		val valOrVar = if (isVal) "val" else "var"
+		
+		
 		val overrideString = if (extensionOf != null) "" else when (modality) {
 			Modality.OPEN -> when (classType) {
 				ClassBuilder.Type.INTERFACE, ClassBuilder.Type.COMPANION_OBJECT, ClassBuilder.Type.OBJECT -> "" // straight up cannot make it open
@@ -64,11 +79,25 @@ class PropertyBuilder(var name: String, var kType: String) {
 			}
 		}
 		
+		val context = if (contextParams.isNotEmpty()) {
+			"context(${contextParams.joinToString { (name, type) -> "$name: $type" } })\n"
+		} else ""
+		
+		val getIndent = if (isVal) "" else "\n\t"
+		
 		val body = when {
-			delegatesToSuper -> "get() = super.$name"
-			isGetter -> "get() = $newInitializer"
+			delegatesToSuper -> "${getIndent}get() = super.$name"
+			usesGetter -> "${getIndent}get() = $newInitializer"
 			else -> "= $newInitializer"
 		}
+		
+		val setter = if (!isVal) {
+			"\n\tset(value) { " + if (delegatesToSuper) {
+				"super.$name = value"
+			} else {
+				setter!!
+			} + " }"
+		} else ""
 		
 		val accessQualifier = when (access) {
 			AccessModifier.PUBLIC -> ""
@@ -78,7 +107,7 @@ class PropertyBuilder(var name: String, var kType: String) {
 		}
 		
 		return docComment +
-		       "${accessQualifier}${overrideString}val $extString$name: $kType " + body
+		       "${context}${accessQualifier}${overrideString}$valOrVar $extString$name: $kType " + body + setter
 	}
 	
 	

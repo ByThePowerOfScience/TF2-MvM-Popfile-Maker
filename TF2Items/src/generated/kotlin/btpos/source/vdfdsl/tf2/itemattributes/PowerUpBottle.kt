@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface PowerUpBottleAttributes : WearableAttributes {
 	companion object : IBlockScoped {
 		val type: TypeAttributes = TypeAttributes()
@@ -83,30 +81,72 @@ interface PowerUpBottleAttributes : WearableAttributes {
 	override val knockbackReceived: KnockbackReceivedAttributes get() = PowerUpBottleAttributes.knockbackReceived
 
 	open class TypeAttributes : IBlockScoped {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Consumable: Become Crit Boosted for 5 seconds (and double your sentry's firing speed)"
+			 */
+			val critboost: ItemAttributeNamed<Boolean> = ItemAttributeNamed("critboost")
+	
+			/**
+			 * In-Game: "Consumable: Become Übercharged for 5 seconds (and shield your sentry from damage)"
+			 */
+			val ubercharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("ubercharge")
+	
+			/**
+			 * In-Game: "Consumable: Instantly teleport to spawn"
+			 */
+			val recall: ItemAttributeNamed<Boolean> = ItemAttributeNamed("recall")
+	
+			/**
+			 * In-Game: "Consumable: Instantly refill all weapon clips and ammo"
+			 */
+			val refillAmmo: ItemAttributeNamed<Boolean> = ItemAttributeNamed("refill_ammo")
+	
+			/**
+			 * In-Game: "Consumable: Instantly upgrade all buildings to max level"
+			 */
+			val buildingInstantUpgrade: ItemAttributeNamed<Boolean> = ItemAttributeNamed("building instant upgrade")
+		}
+	
 		/**
 		 * In-Game: "Consumable: Become Crit Boosted for 5 seconds (and double your sentry's firing speed)"
 		 */
-		open val critboost: ItemAttributeNamed<Boolean> = ItemAttributeNamed("critboost")
+		context(attrs: IAttributeContainer)
+		open var critboost: Boolean? 
+			get() = TypeAttributes.critboost.get()
+			set(value) { TypeAttributes.critboost.set(value) }
 	
 		/**
 		 * In-Game: "Consumable: Become Übercharged for 5 seconds (and shield your sentry from damage)"
 		 */
-		open val ubercharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("ubercharge")
+		context(attrs: IAttributeContainer)
+		open var ubercharge: Boolean? 
+			get() = TypeAttributes.ubercharge.get()
+			set(value) { TypeAttributes.ubercharge.set(value) }
 	
 		/**
 		 * In-Game: "Consumable: Instantly teleport to spawn"
 		 */
-		open val recall: ItemAttributeNamed<Boolean> = ItemAttributeNamed("recall")
+		context(attrs: IAttributeContainer)
+		open var recall: Boolean? 
+			get() = TypeAttributes.recall.get()
+			set(value) { TypeAttributes.recall.set(value) }
 	
 		/**
 		 * In-Game: "Consumable: Instantly refill all weapon clips and ammo"
 		 */
-		open val refillAmmo: ItemAttributeNamed<Boolean> = ItemAttributeNamed("refill_ammo")
+		context(attrs: IAttributeContainer)
+		open var refillAmmo: Boolean? 
+			get() = TypeAttributes.refillAmmo.get()
+			set(value) { TypeAttributes.refillAmmo.set(value) }
 	
 		/**
 		 * In-Game: "Consumable: Instantly upgrade all buildings to max level"
 		 */
-		open val buildingInstantUpgrade: ItemAttributeNamed<Boolean> = ItemAttributeNamed("building instant upgrade")
+		context(attrs: IAttributeContainer)
+		open var buildingInstantUpgrade: Boolean? 
+			get() = TypeAttributes.buildingInstantUpgrade.get()
+			set(value) { TypeAttributes.buildingInstantUpgrade.set(value) }
 	}
 	
 	open class ResistanceAttributes : WearableAttributes.ResistanceAttributes() 

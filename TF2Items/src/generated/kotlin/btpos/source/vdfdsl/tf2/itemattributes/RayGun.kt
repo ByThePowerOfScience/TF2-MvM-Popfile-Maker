@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface RayGunAttributes : RocketLauncherAttributes {
 	companion object : IBlockScoped {
 		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
@@ -117,10 +115,20 @@ interface RayGunAttributes : RocketLauncherAttributes {
 	override val disguise: DisguiseAttributes get() = RayGunAttributes.disguise
 
 	open class AmmoAttributes : RocketLauncherAttributes.AmmoAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * Removes ammo requirement to fire weapon.
+			 */
+			val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
+		}
+	
 		/**
 		 * Removes ammo requirement to fire weapon.
 		 */
-		open val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
+		context(attrs: IAttributeContainer)
+		open var energyWeaponNoDrain: Boolean? 
+			get() = AmmoAttributes.energyWeaponNoDrain.get()
+			set(value) { AmmoAttributes.energyWeaponNoDrain.set(value) }
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	

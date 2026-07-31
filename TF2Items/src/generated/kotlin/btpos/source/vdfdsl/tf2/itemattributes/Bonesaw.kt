@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface BonesawAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
 		/**
@@ -127,24 +125,49 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = BonesawAttributes.disguise
 
 	open class HeadsAttributes : BaseMeleeAttributes.HeadsAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Collect the organs of your victims"
+			 * 
+			 * On kill, take an organ (uses "heads" field like usual).
+			 */
+			val addHeadOnKill: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add_head_on_kill")
+	
+			/**
+			 * If the player should take a "head" when dealing damage with a melee.
+			 */
+			val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
+		}
+	
 		/**
 		 * In-Game: "Collect the organs of your victims"
 		 * 
 		 * On kill, take an organ (uses "heads" field like usual).
 		 */
-		open val addHeadOnKill: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add_head_on_kill")
+		context(attrs: IAttributeContainer)
+		open var addHeadOnKill: Boolean? 
+			get() = HeadsAttributes.addHeadOnKill.get()
+			set(value) { HeadsAttributes.addHeadOnKill.set(value) }
 	
 		/**
 		 * If the player should take a "head" when dealing damage with a melee.
 		 */
-		open val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
+		context(attrs: IAttributeContainer)
+		open var addHeadOnHit: Boolean? 
+			get() = HeadsAttributes.addHeadOnHit.get()
+			set(value) { HeadsAttributes.addHeadOnHit.set(value) }
 	}
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() {
+		companion object : IBlockScoped 
+	
 		/**
 		 * If set, the player will taunt on right click.
 		 */
-		override val specialTaunt: ItemAttributeNamed<Boolean> get() = super.specialTaunt
+		context(attrs: IAttributeContainer)
+		override var specialTaunt: Boolean? 
+			get() = super.specialTaunt
+			set(value) { super.specialTaunt = value }
 	}
 	
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {

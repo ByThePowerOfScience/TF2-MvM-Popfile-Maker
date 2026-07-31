@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface MinigunAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
 		/**
@@ -158,12 +156,24 @@ interface MinigunAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = MinigunAttributes.disguise
 
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Consumes an additional N ammo per second while spun up"
+			 * 
+			 * Amount of ammo drained per second.
+			 */
+			val spinupAmmoDrain: ItemAttributeNamed<Int> = ItemAttributeNamed("uses ammo while aiming")
+		}
+	
 		/**
 		 * In-Game: "Consumes an additional N ammo per second while spun up"
 		 * 
 		 * Amount of ammo drained per second.
 		 */
-		open val spinupAmmoDrain: ItemAttributeNamed<Int> = ItemAttributeNamed("uses ammo while aiming")
+		context(attrs: IAttributeContainer)
+		open var spinupAmmoDrain: Int? 
+			get() = AmmoAttributes.spinupAmmoDrain.get()
+			set(value) { AmmoAttributes.spinupAmmoDrain.set(value) }
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	

@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface MvMBotAttributes : PlayerAttributes {
 	companion object : IBlockScoped {
 		/**

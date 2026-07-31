@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface SniperRifleAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
 		/**
@@ -275,12 +273,24 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = SniperRifleAttributes.disguise
 
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "On Full Charge: +N% damage per shot"
+			 * 
+			 * If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge.
+			 */
+			val fullChargeDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper full charge damage bonus")
+		}
+	
 		/**
 		 * In-Game: "On Full Charge: +N% damage per shot"
 		 * 
 		 * If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge.
 		 */
-		open val fullChargeDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper full charge damage bonus")
+		context(attrs: IAttributeContainer)
+		open var fullChargeDamageBonus: Number? 
+			get() = DamageAttributes.fullChargeDamageBonus.get()
+			set(value) { DamageAttributes.fullChargeDamageBonus.set(value) }
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	
@@ -288,6 +298,17 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	}
 	
 	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "N% movement speed on targets"
+			 * 
+			 * Multiplier applied to target move-speed on hit.
+			 * 
+			 * Duration is equal to the rifle's `jarate_duration` attribute.
+			 */
+			val appliesSnareEffect: ItemAttributeNamed<Number> = ItemAttributeNamed("applies snare effect")
+		}
+	
 		/**
 		 * In-Game: "N% movement speed on targets"
 		 * 
@@ -295,7 +316,10 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 * 
 		 * Duration is equal to the rifle's `jarate_duration` attribute.
 		 */
-		open val appliesSnareEffect: ItemAttributeNamed<Number> = ItemAttributeNamed("applies snare effect")
+		context(attrs: IAttributeContainer)
+		open var appliesSnareEffect: Number? 
+			get() = OnHitAttributes.appliesSnareEffect.get()
+			set(value) { OnHitAttributes.appliesSnareEffect.set(value) }
 	
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
@@ -307,32 +331,76 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	}
 	
 	open class BuffTypeAttributes : IBlockScoped {
-		/**
-		 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
-		 */
-		open val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
+		companion object : IBlockScoped {
+			/**
+			 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
+			 */
+			val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
+	
+			/**
+			 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
+			 */
+			val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
+		}
 	
 		/**
 		 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
 		 */
-		open val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
+		context(attrs: IAttributeContainer)
+		open var soldierBuffType: Int? 
+			get() = BuffTypeAttributes.soldierBuffType.get()
+			set(value) { BuffTypeAttributes.soldierBuffType.set(value) }
+	
+		/**
+		 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
+		 */
+		context(attrs: IAttributeContainer)
+		open var demoBuffType: Int? 
+			get() = BuffTypeAttributes.demoBuffType.get()
+			set(value) { BuffTypeAttributes.demoBuffType.set(value) }
 	}
 	
 	open class SniperChargePerSecAttributes : IBlockScoped {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "+N% charge rate"
+			 */
+			val sniperChargePerSec: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper charge per sec")
+	
+			/**
+			 * In-Game: "N% faster power charge"
+			 */
+			val srifleChargeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate increased")
+	
+			/**
+			 * In-Game: "N% slower power charge"
+			 */
+			val srifleChargeRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate decreased")
+		}
+	
 		/**
 		 * In-Game: "+N% charge rate"
 		 */
-		open val sniperChargePerSec: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper charge per sec")
+		context(attrs: IAttributeContainer)
+		open var sniperChargePerSec: Number? 
+			get() = SniperChargePerSecAttributes.sniperChargePerSec.get()
+			set(value) { SniperChargePerSecAttributes.sniperChargePerSec.set(value) }
 	
 		/**
 		 * In-Game: "N% faster power charge"
 		 */
-		open val srifleChargeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate increased")
+		context(attrs: IAttributeContainer)
+		open var srifleChargeRateIncreased: Number? 
+			get() = SniperChargePerSecAttributes.srifleChargeRateIncreased.get()
+			set(value) { SniperChargePerSecAttributes.srifleChargeRateIncreased.set(value) }
 	
 		/**
 		 * In-Game: "N% slower power charge"
 		 */
-		open val srifleChargeRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate decreased")
+		context(attrs: IAttributeContainer)
+		open var srifleChargeRateDecreased: Number? 
+			get() = SniperChargePerSecAttributes.srifleChargeRateDecreased.get()
+			set(value) { SniperChargePerSecAttributes.srifleChargeRateDecreased.set(value) }
 	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {

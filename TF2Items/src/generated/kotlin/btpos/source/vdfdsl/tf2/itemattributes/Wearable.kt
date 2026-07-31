@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface WearableAttributes : EconEntityAttributes {
 	companion object : IBlockScoped {
 		val meta: MetaAttributes = MetaAttributes()
@@ -41,15 +39,31 @@ interface WearableAttributes : EconEntityAttributes {
 	override val knockbackReceived: KnockbackReceivedAttributes get() = WearableAttributes.knockbackReceived
 
 	open class ResistanceAttributes : EconEntityAttributes.ResistanceAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Immune to the effects of afterburn."
+			 * 
+			 * For the base "`Wearable`", only checked on Sniper.
+			 */
+			val afterburnImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("afterburn immunity")
+		}
+	
 		/**
 		 * In-Game: "Immune to the effects of afterburn."
 		 * 
 		 * For the base "`Wearable`", only checked on Sniper.
 		 */
-		open val afterburnImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("afterburn immunity")
+		context(attrs: IAttributeContainer)
+		open var afterburnImmunity: Boolean? 
+			get() = ResistanceAttributes.afterburnImmunity.get()
+			set(value) { ResistanceAttributes.afterburnImmunity.set(value) }
 	}
 	
 	open class MetaAttributes : EconEntityAttributes.MetaAttributes() {
+		companion object : IBlockScoped {
+			val player: PlayerAttributes = PlayerAttributes()
+		}
+	
 		open val player: PlayerAttributes = PlayerAttributes()
 	
 		override val items: ItemsAttributes = ItemsAttributes()
@@ -59,19 +73,41 @@ interface WearableAttributes : EconEntityAttributes {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
 		open class PlayerAttributes : IBlockScoped {
+			companion object : IBlockScoped {
+				/**
+				 * Overrides the skin used for the player. (e.g. Zombie).
+				 */
+				val playerSkinOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("player skin override")
+			}
+	
 			/**
 			 * Overrides the skin used for the player. (e.g. Zombie).
 			 */
-			open val playerSkinOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("player skin override")
+			context(attrs: IAttributeContainer)
+			open var playerSkinOverride: Int? 
+				get() = PlayerAttributes.playerSkinOverride.get()
+				set(value) { PlayerAttributes.playerSkinOverride.set(value) }
 		}
 	
 		open class ItemsAttributes : EconEntityAttributes.MetaAttributes.ItemsAttributes() {
+			companion object : IBlockScoped {
+				/**
+				 * In-Game: "Duck Power : N / 5"
+				 * 
+				 * Determines if ***BONUS DUCKSSSS*** should increment the badge level.
+				 */
+				val duckBadgeLevel: ItemAttributeNamed<Int> = ItemAttributeNamed("duck badge level")
+			}
+	
 			/**
 			 * In-Game: "Duck Power : N / 5"
 			 * 
 			 * Determines if ***BONUS DUCKSSSS*** should increment the badge level.
 			 */
-			open val duckBadgeLevel: ItemAttributeNamed<Int> = ItemAttributeNamed("duck badge level")
+			context(attrs: IAttributeContainer)
+			open var duckBadgeLevel: Int? 
+				get() = ItemsAttributes.duckBadgeLevel.get()
+				set(value) { ItemsAttributes.duckBadgeLevel.set(value) }
 		}
 	
 		open class ParticlesAttributes : EconEntityAttributes.MetaAttributes.ParticlesAttributes() 

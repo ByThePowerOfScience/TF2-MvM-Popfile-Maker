@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface ShotgunRevengeAttributes : ShotgunAttributes {
 	companion object : IBlockScoped {
 		val ammo: AmmoAttributes = AmmoAttributes()
@@ -117,12 +115,17 @@ interface ShotgunRevengeAttributes : ShotgunAttributes {
 	override val disguise: DisguiseAttributes get() = ShotgunRevengeAttributes.disguise
 
 	open class RevengeCritsAttributes : ShotgunAttributes.RevengeCritsAttributes() {
+		companion object : IBlockScoped 
+	
 		/**
 		 * In-Game: "Gain 2 revenge crits for each sentry kill and 1 for each sentry assist when your sentry is destroyed."
 		 * 
 		 * Specifically checked here when it tries to gain revenge crits, which means removing this attribute from the Frontier Justice will remove its ability to gain revenge crits.
 		 */
-		override val canGainRevengeCrits: ItemAttributeNamed<Boolean> get() = super.canGainRevengeCrits
+		context(attrs: IAttributeContainer)
+		override var canGainRevengeCrits: Boolean? 
+			get() = super.canGainRevengeCrits
+			set(value) { super.canGainRevengeCrits = value }
 	}
 	
 	open class AmmoAttributes : ShotgunAttributes.AmmoAttributes() {

@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface WrenchAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
 		/**
@@ -131,19 +129,48 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = WrenchAttributes.disguise
 
 	open class BuildingsAttributes : BaseMeleeAttributes.BuildingsAttributes() {
-		open val constructionRate: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("Construction rate increased"),
-			ItemAttributeNamed("Construction rate decreased"),
-		)
+		companion object : IBlockScoped {
+			val constructionRate: BonusPenalty<Number> = BonusPenalty(
+				ItemAttributeNamed("Construction rate increased"),
+				ItemAttributeNamed("Construction rate decreased"),
+			)
 	
-		open val repairRate: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("Repair rate increased"),
-			ItemAttributeNamed("Repair rate decreased"),
-		)
+			val repairRate: BonusPenalty<Number> = BonusPenalty(
+				ItemAttributeNamed("Repair rate increased"),
+				ItemAttributeNamed("Repair rate decreased"),
+			)
+	
+			val sentryGun: SentryGunAttributes = SentryGunAttributes()
+		}
+	
+		context(attrs: IAttributeContainer)
+		open var constructionRate: Number? 
+			get() = BuildingsAttributes.constructionRate.get()
+			set(value) { BuildingsAttributes.constructionRate.set(value) }
+	
+		context(attrs: IAttributeContainer)
+		open var repairRate: Number? 
+			get() = BuildingsAttributes.repairRate.get()
+			set(value) { BuildingsAttributes.repairRate.set(value) }
 	
 		open val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
 		open class SentryGunAttributes : IBlockScoped {
+			companion object : IBlockScoped {
+				/**
+				 * In-Game: "Replaces the Sentry with a Mini-Sentry"
+				 * 
+				 * Sentry built is a minisentry.
+				 * 
+				 * Detonates leveled sentries when equipping a wrench with this attribute.
+				 * 
+				 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute.
+				 * 
+				 * Removes engineer's glove on his model.
+				 */
+				val wrenchBuildsMinisentry: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod wrench builds minisentry")
+			}
+	
 			/**
 			 * In-Game: "Replaces the Sentry with a Mini-Sentry"
 			 * 
@@ -155,7 +182,10 @@ interface WrenchAttributes : BaseMeleeAttributes {
 			 * 
 			 * Removes engineer's glove on his model.
 			 */
-			open val wrenchBuildsMinisentry: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod wrench builds minisentry")
+			context(attrs: IAttributeContainer)
+			open var wrenchBuildsMinisentry: Boolean? 
+				get() = SentryGunAttributes.wrenchBuildsMinisentry.get()
+				set(value) { SentryGunAttributes.wrenchBuildsMinisentry.set(value) }
 		}
 	}
 	

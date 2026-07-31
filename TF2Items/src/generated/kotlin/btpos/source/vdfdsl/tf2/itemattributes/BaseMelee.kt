@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface BaseMeleeAttributes : WeaponBaseAttributes {
 	companion object : IBlockScoped {
 		/**
@@ -150,20 +148,46 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	override val disguise: DisguiseAttributes get() = BaseMeleeAttributes.disguise
 
 	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Always critical hit from behind"
+			 */
+			val critFromBehind: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit from behind")
+	
+			/**
+			 * In-Game: "Critical hit forces victim to laugh"
+			 */
+			val critForcesVictimToLaugh: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit forces victim to laugh")
+	
+			/**
+			 * In-Game: "Critical hits do no damage"
+			 */
+			val critDoesNoDamage: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit does no damage")
+		}
+	
 		/**
 		 * In-Game: "Always critical hit from behind"
 		 */
-		open val critFromBehind: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit from behind")
+		context(attrs: IAttributeContainer)
+		open var critFromBehind: Boolean? 
+			get() = CritsAttributes.critFromBehind.get()
+			set(value) { CritsAttributes.critFromBehind.set(value) }
 	
 		/**
 		 * In-Game: "Critical hit forces victim to laugh"
 		 */
-		open val critForcesVictimToLaugh: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit forces victim to laugh")
+		context(attrs: IAttributeContainer)
+		open var critForcesVictimToLaugh: Boolean? 
+			get() = CritsAttributes.critForcesVictimToLaugh.get()
+			set(value) { CritsAttributes.critForcesVictimToLaugh.set(value) }
 	
 		/**
 		 * In-Game: "Critical hits do no damage"
 		 */
-		open val critDoesNoDamage: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit does no damage")
+		context(attrs: IAttributeContainer)
+		open var critDoesNoDamage: Boolean? 
+			get() = CritsAttributes.critDoesNoDamage.get()
+			set(value) { CritsAttributes.critDoesNoDamage.set(value) }
 	
 		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
 	
@@ -171,19 +195,41 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	}
 	
 	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "N% increase in damage when health <50% of max"
+			 * 
+			 * If health < 50%, apply mult.
+			 */
+			val dmgBonusWhileHalfDead: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg bonus while half dead")
+	
+			/**
+			 * In-Game: "N% decrease in damage when health >50% of max"
+			 * 
+			 * If health >= 50%, apply mult.
+			 */
+			val dmgPenaltyWhileHalfAlive: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg penalty while half alive")
+		}
+	
 		/**
 		 * In-Game: "N% increase in damage when health <50% of max"
 		 * 
 		 * If health < 50%, apply mult.
 		 */
-		open val dmgBonusWhileHalfDead: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg bonus while half dead")
+		context(attrs: IAttributeContainer)
+		open var dmgBonusWhileHalfDead: Number? 
+			get() = DamageAttributes.dmgBonusWhileHalfDead.get()
+			set(value) { DamageAttributes.dmgBonusWhileHalfDead.set(value) }
 	
 		/**
 		 * In-Game: "N% decrease in damage when health >50% of max"
 		 * 
 		 * If health >= 50%, apply mult.
 		 */
-		open val dmgPenaltyWhileHalfAlive: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg penalty while half alive")
+		context(attrs: IAttributeContainer)
+		open var dmgPenaltyWhileHalfAlive: Number? 
+			get() = DamageAttributes.dmgPenaltyWhileHalfAlive.get()
+			set(value) { DamageAttributes.dmgPenaltyWhileHalfAlive.set(value) }
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	
@@ -191,33 +237,75 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	}
 	
 	open class OnHitAttributes : WeaponBaseAttributes.OnHitAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Damage removes Sappers"
+			 * 
+			 * Damage sappers with swing.
+			 */
+			val damageAppliesToSappers: ItemAttributeNamed<Int> = ItemAttributeNamed("damage applies to sappers")
+	
+			/**
+			 * In-Game: "On Hit Teammate: Boosts both players' speed for several seconds"
+			 * 
+			 * Applies speed boost cond to yourself and the teammate you hit.
+			 */
+			val speedBuffAlly: ItemAttributeNamed<Boolean> = ItemAttributeNamed("speed buff ally")
+	
+			/**
+			 * In-Game: "Gain a speed boost when you hit an enemy player"
+			 * 
+			 * Used as arg to addcond speedboost.
+			 */
+			val speedBoostOnHitEnemy: ItemAttributeNamed<Number> = ItemAttributeNamed("speed_boost_on_hit_enemy")
+	
+			/**
+			 * In-Game: "On Hit: Force enemies to laugh who are also wearing this item"
+			 * 
+			 * Force enemies to laugh if they're also wielding this weapon.
+			 */
+			val tickleEnemiesWieldingSameWeapon: ItemAttributeNamed<Boolean> = ItemAttributeNamed("tickle enemies wielding same weapon")
+		}
+	
 		/**
 		 * In-Game: "Damage removes Sappers"
 		 * 
 		 * Damage sappers with swing.
 		 */
-		open val damageAppliesToSappers: ItemAttributeNamed<Int> = ItemAttributeNamed("damage applies to sappers")
+		context(attrs: IAttributeContainer)
+		open var damageAppliesToSappers: Int? 
+			get() = OnHitAttributes.damageAppliesToSappers.get()
+			set(value) { OnHitAttributes.damageAppliesToSappers.set(value) }
 	
 		/**
 		 * In-Game: "On Hit Teammate: Boosts both players' speed for several seconds"
 		 * 
 		 * Applies speed boost cond to yourself and the teammate you hit.
 		 */
-		open val speedBuffAlly: ItemAttributeNamed<Boolean> = ItemAttributeNamed("speed buff ally")
+		context(attrs: IAttributeContainer)
+		open var speedBuffAlly: Boolean? 
+			get() = OnHitAttributes.speedBuffAlly.get()
+			set(value) { OnHitAttributes.speedBuffAlly.set(value) }
 	
 		/**
 		 * In-Game: "Gain a speed boost when you hit an enemy player"
 		 * 
 		 * Used as arg to addcond speedboost.
 		 */
-		open val speedBoostOnHitEnemy: ItemAttributeNamed<Number> = ItemAttributeNamed("speed_boost_on_hit_enemy")
+		context(attrs: IAttributeContainer)
+		open var speedBoostOnHitEnemy: Number? 
+			get() = OnHitAttributes.speedBoostOnHitEnemy.get()
+			set(value) { OnHitAttributes.speedBoostOnHitEnemy.set(value) }
 	
 		/**
 		 * In-Game: "On Hit: Force enemies to laugh who are also wearing this item"
 		 * 
 		 * Force enemies to laugh if they're also wielding this weapon.
 		 */
-		open val tickleEnemiesWieldingSameWeapon: ItemAttributeNamed<Boolean> = ItemAttributeNamed("tickle enemies wielding same weapon")
+		context(attrs: IAttributeContainer)
+		open var tickleEnemiesWieldingSameWeapon: Boolean? 
+			get() = OnHitAttributes.tickleEnemiesWieldingSameWeapon.get()
+			set(value) { OnHitAttributes.tickleEnemiesWieldingSameWeapon.set(value) }
 	
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
@@ -229,12 +317,24 @@ interface BaseMeleeAttributes : WeaponBaseAttributes {
 	}
 	
 	open class SwapWeaponsAttributes : WeaponBaseAttributes.SwapWeaponsAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "You are Marked-For-Death while active, and for short period after switching weapons"
+			 * 
+			 * Mark self for death when switching to this weapon.
+			 */
+			val selfMarkForDeath: ItemAttributeNamed<Boolean> = ItemAttributeNamed("self mark for death")
+		}
+	
 		/**
 		 * In-Game: "You are Marked-For-Death while active, and for short period after switching weapons"
 		 * 
 		 * Mark self for death when switching to this weapon.
 		 */
-		open val selfMarkForDeath: ItemAttributeNamed<Boolean> = ItemAttributeNamed("self mark for death")
+		context(attrs: IAttributeContainer)
+		open var selfMarkForDeath: Boolean? 
+			get() = SwapWeaponsAttributes.selfMarkForDeath.get()
+			set(value) { SwapWeaponsAttributes.selfMarkForDeath.set(value) }
 	
 		override val deploy: DeployAttributes = DeployAttributes()
 	

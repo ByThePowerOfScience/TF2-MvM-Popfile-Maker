@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface BaseGunAttributes : WeaponBaseAttributes {
 	companion object : IBlockScoped {
 		val afterburn: AfterburnAttributes = AfterburnAttributes()
@@ -117,12 +115,24 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	override val disguise: DisguiseAttributes get() = BaseGunAttributes.disguise
 
 	open class AmmoAttributes : WeaponBaseAttributes.AmmoAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Per Shot: -N ammo"
+			 * 
+			 * How much ammo is used per shot. If 0, uses default.
+			 */
+			val ammoPerShot: ItemAttributeNamed<Int> = ItemAttributeNamed("mod ammo per shot")
+		}
+	
 		/**
 		 * In-Game: "Per Shot: -N ammo"
 		 * 
 		 * How much ammo is used per shot. If 0, uses default.
 		 */
-		open val ammoPerShot: ItemAttributeNamed<Int> = ItemAttributeNamed("mod ammo per shot")
+		context(attrs: IAttributeContainer)
+		open var ammoPerShot: Int? 
+			get() = AmmoAttributes.ammoPerShot.get()
+			set(value) { AmmoAttributes.ammoPerShot.set(value) }
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
@@ -130,33 +140,75 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	}
 	
 	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "+N% damage bonus while disguised"
+			 * 
+			 * When disguised (only checks if the player has the condition, doesn't check class), multiply damage by this amount.
+			 */
+			val damageBonusWhileDisguised: ItemAttributeNamed<Number> = ItemAttributeNamed("damage bonus while disguised")
+	
+			/**
+			 * In-Game: "Gains a damage bonus as rage increases, up to N%"
+			 * 
+			 * If you're a Soldier or Pyro, increases damage by `(n - 1) * (rage gauge proportion)`.
+			 */
+			val rageDamageBoost: ItemAttributeNamed<Number> = ItemAttributeNamed("mod rage damage boost")
+	
+			/**
+			 * In-Game: "While a medic is healing you, this weapon's damage is increased by N%"
+			 * 
+			 * Multiply damage by this value once for each healer you have. (with 2 healers, that's `bonus * bonus`, exponential).
+			 */
+			val medicHealedDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("mod medic healed damage bonus")
+	
+			/**
+			 * In-Game: "Accuracy scales damage"
+			 * 
+			 * If the projectile being fired is a bullet, multiply damage by your hit ratio over the past few seconds.
+			 */
+			val accuracyScalesDamage: ItemAttributeNamed<Number> = ItemAttributeNamed("accuracy scales damage")
+		}
+	
 		/**
 		 * In-Game: "+N% damage bonus while disguised"
 		 * 
 		 * When disguised (only checks if the player has the condition, doesn't check class), multiply damage by this amount.
 		 */
-		open val damageBonusWhileDisguised: ItemAttributeNamed<Number> = ItemAttributeNamed("damage bonus while disguised")
+		context(attrs: IAttributeContainer)
+		open var damageBonusWhileDisguised: Number? 
+			get() = DamageAttributes.damageBonusWhileDisguised.get()
+			set(value) { DamageAttributes.damageBonusWhileDisguised.set(value) }
 	
 		/**
 		 * In-Game: "Gains a damage bonus as rage increases, up to N%"
 		 * 
 		 * If you're a Soldier or Pyro, increases damage by `(n - 1) * (rage gauge proportion)`.
 		 */
-		open val rageDamageBoost: ItemAttributeNamed<Number> = ItemAttributeNamed("mod rage damage boost")
+		context(attrs: IAttributeContainer)
+		open var rageDamageBoost: Number? 
+			get() = DamageAttributes.rageDamageBoost.get()
+			set(value) { DamageAttributes.rageDamageBoost.set(value) }
 	
 		/**
 		 * In-Game: "While a medic is healing you, this weapon's damage is increased by N%"
 		 * 
 		 * Multiply damage by this value once for each healer you have. (with 2 healers, that's `bonus * bonus`, exponential).
 		 */
-		open val medicHealedDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("mod medic healed damage bonus")
+		context(attrs: IAttributeContainer)
+		open var medicHealedDamageBonus: Number? 
+			get() = DamageAttributes.medicHealedDamageBonus.get()
+			set(value) { DamageAttributes.medicHealedDamageBonus.set(value) }
 	
 		/**
 		 * In-Game: "Accuracy scales damage"
 		 * 
 		 * If the projectile being fired is a bullet, multiply damage by your hit ratio over the past few seconds.
 		 */
-		open val accuracyScalesDamage: ItemAttributeNamed<Number> = ItemAttributeNamed("accuracy scales damage")
+		context(attrs: IAttributeContainer)
+		open var accuracyScalesDamage: Number? 
+			get() = DamageAttributes.accuracyScalesDamage.get()
+			set(value) { DamageAttributes.accuracyScalesDamage.set(value) }
 	
 		override val damage: DamageAttributes = DamageAttributes()
 	
@@ -164,22 +216,55 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	}
 	
 	open class FiringAttributes : WeaponBaseAttributes.FiringAttributes() {
+		companion object : IBlockScoped 
+	
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
 		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() {
+			companion object : IBlockScoped {
+				/**
+				 * Multiplier applied to base fire delay for miniguns.
+				 * 
+				 * Checked on player.
+				 */
+				val halloweenFireRateBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("halloween fire rate bonus")
+	
+				/**
+				 * In-Game: "Fire rate increases as health decreases"
+				 * 
+				 * Used with the pre-Blue Moon Panic Attack.
+				 */
+				val fireRateBonusWithReducedHealth: ItemAttributeNamed<Number> = ItemAttributeNamed("fire rate bonus with reduced health")
+	
+				/**
+				 * In-Game: "Increased attack speed and smaller blast radius while blast jumping"
+				 * 
+				 * Multiplier to fire delay while player is blast-jumping.
+				 * 
+				 * If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80% of its normal range.
+				 */
+				val rocketjumpAttackrateBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("rocketjump attackrate bonus")
+			}
+	
 			/**
 			 * Multiplier applied to base fire delay for miniguns.
 			 * 
 			 * Checked on player.
 			 */
-			open val halloweenFireRateBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("halloween fire rate bonus")
+			context(attrs: IAttributeContainer)
+			open var halloweenFireRateBonus: Number? 
+				get() = FireRateAttributes.halloweenFireRateBonus.get()
+				set(value) { FireRateAttributes.halloweenFireRateBonus.set(value) }
 	
 			/**
 			 * In-Game: "Fire rate increases as health decreases"
 			 * 
 			 * Used with the pre-Blue Moon Panic Attack.
 			 */
-			open val fireRateBonusWithReducedHealth: ItemAttributeNamed<Number> = ItemAttributeNamed("fire rate bonus with reduced health")
+			context(attrs: IAttributeContainer)
+			open var fireRateBonusWithReducedHealth: Number? 
+				get() = FireRateAttributes.fireRateBonusWithReducedHealth.get()
+				set(value) { FireRateAttributes.fireRateBonusWithReducedHealth.set(value) }
 	
 			/**
 			 * In-Game: "Increased attack speed and smaller blast radius while blast jumping"
@@ -188,7 +273,10 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 			 * 
 			 * If set on anything that fires a rocket, the rocket assumes it was fired by the Air Strike and reduces blast radius to 80% of its normal range.
 			 */
-			open val rocketjumpAttackrateBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("rocketjump attackrate bonus")
+			context(attrs: IAttributeContainer)
+			open var rocketjumpAttackrateBonus: Number? 
+				get() = FireRateAttributes.rocketjumpAttackrateBonus.get()
+				set(value) { FireRateAttributes.rocketjumpAttackrateBonus.set(value) }
 	
 			override val fireRate: FireRateAttributes = FireRateAttributes()
 	
@@ -197,65 +285,138 @@ interface BaseGunAttributes : WeaponBaseAttributes {
 	}
 	
 	open class ProjectilesAttributes : WeaponBaseAttributes.ProjectilesAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "Overrides the projectile fired from the weapon. Takes values from 1 to 26, each representing a different projectile, and not all projectiles work on all weapons"
+			 * 
+			 * If unset, uses the weapon's default projectile type.
+			 */
+			val overrideProjectileType: ItemAttributeNamed<TFProjectileType> = ItemAttributeNamed("override projectile type")
+	
+			val projectileRange: BonusPenalty<Number> = BonusPenalty(
+				ItemAttributeNamed("Projectile range increased"),
+				ItemAttributeNamed("Projectile range decreased"),
+			)
+	
+			/**
+			 * Don't do tumble on tumbling projectiles.
+			 */
+			val grenadeNoSpin: ItemAttributeNamed<Boolean> = ItemAttributeNamed("grenade no spin")
+		}
+	
 		/**
 		 * In-Game: "Overrides the projectile fired from the weapon. Takes values from 1 to 26, each representing a different projectile, and not all projectiles work on all weapons"
 		 * 
 		 * If unset, uses the weapon's default projectile type.
 		 */
-		open val overrideProjectileType: ItemAttributeNamed<TFProjectileType> = ItemAttributeNamed("override projectile type")
+		context(attrs: IAttributeContainer)
+		open var overrideProjectileType: TFProjectileType? 
+			get() = ProjectilesAttributes.overrideProjectileType.get()
+			set(value) { ProjectilesAttributes.overrideProjectileType.set(value) }
 	
 		/**
 		 * In-Game: "+N degrees random projectile deviation"
 		 * 
 		 * Also applicable to stickies.
 		 */
-		override val projectileSpreadAnglePenalty: ItemAttributeNamed<Number> get() = super.projectileSpreadAnglePenalty
+		context(attrs: IAttributeContainer)
+		override var projectileSpreadAnglePenalty: Number? 
+			get() = super.projectileSpreadAnglePenalty
+			set(value) { super.projectileSpreadAnglePenalty = value }
 	
-		open val projectileRange: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("Projectile range increased"),
-			ItemAttributeNamed("Projectile range decreased"),
-		)
+		context(attrs: IAttributeContainer)
+		open var projectileRange: Number? 
+			get() = ProjectilesAttributes.projectileRange.get()
+			set(value) { ProjectilesAttributes.projectileRange.set(value) }
 	
 		/**
 		 * Don't do tumble on tumbling projectiles.
 		 */
-		open val grenadeNoSpin: ItemAttributeNamed<Boolean> = ItemAttributeNamed("grenade no spin")
+		context(attrs: IAttributeContainer)
+		open var grenadeNoSpin: Boolean? 
+			get() = ProjectilesAttributes.grenadeNoSpin.get()
+			set(value) { ProjectilesAttributes.grenadeNoSpin.set(value) }
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
 		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
 	
 		open class BulletsAttributes : WeaponBaseAttributes.ProjectilesAttributes.BulletsAttributes() {
-			open val weaponSpread: BonusPenalty<Number> = BonusPenalty(
-				ItemAttributeNamed("weapon spread bonus"),
-				ItemAttributeNamed("spread penalty"),
-			)
+			companion object : IBlockScoped {
+				val weaponSpread: BonusPenalty<Number> = BonusPenalty(
+					ItemAttributeNamed("weapon spread bonus"),
+					ItemAttributeNamed("spread penalty"),
+				)
+	
+				/**
+				 * In-Game: "Weapon spread increases as health decreases"
+				 * 
+				 * Multiplier applied to bullet spread as health gets lower.
+				 */
+				val multSpreadAsHealthDecreases: ItemAttributeNamed<Number> = ItemAttributeNamed("panic_attack_negative")
+	
+				/**
+				 * In-Game: "Successive shots become less accurate"
+				 * 
+				 * Scales weapon spread when firing consecutive shots, like the post-"Blue Moon" Panic Attack.
+				 */
+				val spreadIncreasesOnConsecutiveShots: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_spread_scales_consecutive")
+	
+				/**
+				 * By default, all guns have perfect accuracy on the first shot, unless this is set.
+				 */
+				val multSpreadScaleFirstShot: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_spread_scale_first_shot")
+	
+				/**
+				 * In-Game: "Fires a wide, fixed shot pattern"
+				 * 
+				 * Enables fixed weapon spread on the weapon as though `tf_use_fixed_weaponspreads` were set.
+				 */
+				val fixedWeaponSpread: ItemAttributeNamed<Boolean> = ItemAttributeNamed("fixed_shot_pattern")
+			}
+	
+			context(attrs: IAttributeContainer)
+			open var weaponSpread: Number? 
+				get() = BulletsAttributes.weaponSpread.get()
+				set(value) { BulletsAttributes.weaponSpread.set(value) }
 	
 			/**
 			 * In-Game: "Weapon spread increases as health decreases"
 			 * 
 			 * Multiplier applied to bullet spread as health gets lower.
 			 */
-			open val multSpreadAsHealthDecreases: ItemAttributeNamed<Number> = ItemAttributeNamed("panic_attack_negative")
+			context(attrs: IAttributeContainer)
+			open var multSpreadAsHealthDecreases: Number? 
+				get() = BulletsAttributes.multSpreadAsHealthDecreases.get()
+				set(value) { BulletsAttributes.multSpreadAsHealthDecreases.set(value) }
 	
 			/**
 			 * In-Game: "Successive shots become less accurate"
 			 * 
 			 * Scales weapon spread when firing consecutive shots, like the post-"Blue Moon" Panic Attack.
 			 */
-			open val spreadIncreasesOnConsecutiveShots: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_spread_scales_consecutive")
+			context(attrs: IAttributeContainer)
+			open var spreadIncreasesOnConsecutiveShots: Number? 
+				get() = BulletsAttributes.spreadIncreasesOnConsecutiveShots.get()
+				set(value) { BulletsAttributes.spreadIncreasesOnConsecutiveShots.set(value) }
 	
 			/**
 			 * By default, all guns have perfect accuracy on the first shot, unless this is set.
 			 */
-			open val multSpreadScaleFirstShot: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_spread_scale_first_shot")
+			context(attrs: IAttributeContainer)
+			open var multSpreadScaleFirstShot: Number? 
+				get() = BulletsAttributes.multSpreadScaleFirstShot.get()
+				set(value) { BulletsAttributes.multSpreadScaleFirstShot.set(value) }
 	
 			/**
 			 * In-Game: "Fires a wide, fixed shot pattern"
 			 * 
 			 * Enables fixed weapon spread on the weapon as though `tf_use_fixed_weaponspreads` were set.
 			 */
-			open val fixedWeaponSpread: ItemAttributeNamed<Boolean> = ItemAttributeNamed("fixed_shot_pattern")
+			context(attrs: IAttributeContainer)
+			open var fixedWeaponSpread: Boolean? 
+				get() = BulletsAttributes.fixedWeaponSpread.get()
+				set(value) { BulletsAttributes.fixedWeaponSpread.set(value) }
 		}
 	
 		open class ProjectilePenetrationAttributes : WeaponBaseAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 

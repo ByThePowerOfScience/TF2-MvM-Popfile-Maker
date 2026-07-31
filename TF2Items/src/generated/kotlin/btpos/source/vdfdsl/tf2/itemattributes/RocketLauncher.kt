@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface RocketLauncherAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
 		val ammo: AmmoAttributes = AmmoAttributes()
@@ -117,10 +115,20 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = RocketLauncherAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.).
+			 */
+			val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("rocket launch impulse")
+		}
+	
 		/**
 		 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.).
 		 */
-		open val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("rocket launch impulse")
+		context(attrs: IAttributeContainer)
+		open var canRocketJumpWithExplosion: Boolean? 
+			get() = ProjectilesAttributes.canRocketJumpWithExplosion.get()
+			set(value) { ProjectilesAttributes.canRocketJumpWithExplosion.set(value) }
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	

@@ -30,10 +30,10 @@
             </builds>
           </compositeBuild>
         </compositeConfiguration>
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/TF2ItemGeneration" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/TF2ItemGeneration" />
             <option value="$PROJECT_DIR$/TF2Items" />
             <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/vdf-modeling" />

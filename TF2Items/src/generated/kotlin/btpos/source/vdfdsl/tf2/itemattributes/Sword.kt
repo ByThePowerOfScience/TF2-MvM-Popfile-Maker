@@ -7,8 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-
-
 interface SwordAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
 		val crits: CritsAttributes = CritsAttributes()
@@ -117,6 +115,17 @@ interface SwordAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = SwordAttributes.disguise
 
 	open class OnKillAttributes : BaseMeleeAttributes.OnKillAttributes() {
+		companion object : IBlockScoped {
+			/**
+			 * In-Game: "N% damage penalty"
+			 * 
+			 * More like a boolean.	Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
+			 * 
+			 * If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
+			 */
+			val decapitateType: ItemAttributeNamed<Int> = ItemAttributeNamed("decapitate type")
+		}
+	
 		/**
 		 * In-Game: "N% damage penalty"
 		 * 
@@ -124,7 +133,10 @@ interface SwordAttributes : BaseMeleeAttributes {
 		 * 
 		 * If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
 		 */
-		open val decapitateType: ItemAttributeNamed<Int> = ItemAttributeNamed("decapitate type")
+		context(attrs: IAttributeContainer)
+		open var decapitateType: Int? 
+			get() = OnKillAttributes.decapitateType.get()
+			set(value) { OnKillAttributes.decapitateType.set(value) }
 	}
 	
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
