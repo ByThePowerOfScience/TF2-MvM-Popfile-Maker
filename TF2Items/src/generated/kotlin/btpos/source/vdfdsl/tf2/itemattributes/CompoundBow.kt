@@ -9,64 +9,55 @@ import kotlin.time.Duration
 
 interface CompoundBowAttributes : StickybombLauncherAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "+N% faster reload time"
-		 * 
-		 * Mult applied to reload speed.
-		 */
-		val fasterReloadRate: ItemAttributeNamed<Number> = ItemAttributeNamed("faster reload rate")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -74,7 +65,7 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	 * 
 	 * Mult applied to reload speed.
 	 */
-	val fasterReloadRate: ItemAttributeNamed<Number> get() = CompoundBowAttributes.fasterReloadRate
+	val fasterReloadRate: ItemAttributeNamed<Number> get() = CompoundBowAttributes.fasterReloadRate.get()
 	
 	override val ammo: AmmoAttributes get() = CompoundBowAttributes.ammo
 	
@@ -118,8 +109,6 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	
 	override val taunting: TauntingAttributes get() = CompoundBowAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = CompoundBowAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = CompoundBowAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = CompoundBowAttributes.whenHit
@@ -134,20 +123,12 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 		open class ClipSizeAttributes : StickybombLauncherAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : StickybombLauncherAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : StickybombLauncherAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : StickybombLauncherAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : StickybombLauncherAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : StickybombLauncherAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : StickybombLauncherAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : StickybombLauncherAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : StickybombLauncherAttributes.ProjectilesAttributes() {
@@ -164,11 +145,7 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	
 	open class BuildingsAttributes : StickybombLauncherAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : StickybombLauncherAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : StickybombLauncherAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : StickybombLauncherAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : StickybombLauncherAttributes.DemoChargeAttributes() 
 	
@@ -183,11 +160,15 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	open class MetaAttributes : StickybombLauncherAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : StickybombLauncherAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : StickybombLauncherAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : StickybombLauncherAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -225,8 +206,6 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	open class StatusEffectsAttributes : StickybombLauncherAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : StickybombLauncherAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : StickybombLauncherAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : StickybombLauncherAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

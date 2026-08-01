@@ -42,16 +42,12 @@ interface BaseEntityAttributes : IBlockScoped {
 		companion object : IBlockScoped {
 			/**
 			 * In-Game: "Normal disguises require (and consume) a full cloak meter"
-			 * 
-			 * If true, disguising requires and consumes an entire cloak meter.
 			 */
 			val disguiseConsumesCloak: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod_disguise_consumes_cloak")
 		}
 	
 		/**
 		 * In-Game: "Normal disguises require (and consume) a full cloak meter"
-		 * 
-		 * If true, disguising requires and consumes an entire cloak meter.
 		 */
 		context(attrs: IAttributeContainer)
 		open var disguiseConsumesCloak: Boolean? 
@@ -65,12 +61,26 @@ interface BaseEntityAttributes : IBlockScoped {
 	
 	open class DamageAttributes : IBlockScoped {
 		companion object : IBlockScoped {
+			/**
+			 * Bonus:
+			 * 
+			 * 	- In-Game: "N% splash damage fall off"
+			 * 
+			 * Penalty:
+			 */
 			val multDmgFalloff: BonusPenalty<Number> = BonusPenalty(
 				ItemAttributeNamed("dmg falloff decreased"),
 				ItemAttributeNamed("dmg falloff increased"),
 			)
 		}
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "N% splash damage fall off"
+		 * 
+		 * Penalty:
+		 */
 		context(attrs: IAttributeContainer)
 		open var multDmgFalloff: Number? 
 			get() = DamageAttributes.multDmgFalloff.get()
@@ -89,16 +99,16 @@ interface BaseEntityAttributes : IBlockScoped {
 				/**
 				 * If true, this item will get kill assist credit in the killfeed.
 				 */
-				val countsAsAssisterIsSomeKindOfPetThisUpdateIsGoingToBeAwesome: ItemAttributeNamed<Boolean> = ItemAttributeNamed("counts as assister is some kind of pet this update is going to be awesome")
+				val countsAsAssister: ItemAttributeNamed<Boolean> = ItemAttributeNamed("counts as assister is some kind of pet this update is going to be awesome")
 			}
 	
 			/**
 			 * If true, this item will get kill assist credit in the killfeed.
 			 */
 			context(attrs: IAttributeContainer)
-			open var countsAsAssisterIsSomeKindOfPetThisUpdateIsGoingToBeAwesome: Boolean? 
-				get() = KillfeedAttributes.countsAsAssisterIsSomeKindOfPetThisUpdateIsGoingToBeAwesome.get()
-				set(value) { KillfeedAttributes.countsAsAssisterIsSomeKindOfPetThisUpdateIsGoingToBeAwesome.set(value) }
+			open var countsAsAssister: Boolean? 
+				get() = KillfeedAttributes.countsAsAssister.get()
+				set(value) { KillfeedAttributes.countsAsAssister.set(value) }
 		}
 	}
 	
@@ -107,41 +117,41 @@ interface BaseEntityAttributes : IBlockScoped {
 			/**
 			 * In-Game: "Spawning and resupply do not affect the Gas meter"
 			 * 
-			 * If true, resupply cabinets and spawning do not fully recharge the meter for this item.	Instead, its "default charge meter value" is used.
+			 * If true, resupply cabinets and spawning do not fully recharge the meter for this item.  Instead, its "default charge meter value" is used.
 			 */
-			val resupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("item_meter_resupply_denied")
+			val itemMeterResupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("item_meter_resupply_denied")
 	
 			/**
 			 * If `TIME` or `COMBO`, checks the `mult_item_meter_charge_rate` attribute for passive recharge rate mult.
 			 * 
 			 * If `DAMAGE` or `COMBO`, checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
 			 */
-			val chargeType: ItemAttributeNamed<TFMeterRechargeType> = ItemAttributeNamed("item_meter_charge_type")
+			val itemMeterChargeType: ItemAttributeNamed<TFMeterRechargeType> = ItemAttributeNamed("item_meter_charge_type")
 	
 			/**
 			 * Amount of meter required to fully charge the item.
 			 * 
 			 * If negative, 0, or not set, does not attempt to fill the meter at all when dealing damage.
 			 */
-			val damageForFullCharge: ItemAttributeNamed<Number> = ItemAttributeNamed("item_meter_damage_for_full_charge")
+			val itemMeterDamageForFullCharge: ItemAttributeNamed<Number> = ItemAttributeNamed("item_meter_damage_for_full_charge")
 	
 			/**
 			 * In-Game: "N% faster recharge rate"
 			 * 
 			 * Scale factor for meter gained per second and/or meter gained on dealing damage.
 			 */
-			val multChargeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_item_meter_charge_rate")
+			val multItemMeterChargeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_item_meter_charge_rate")
 		}
 	
 		/**
 		 * In-Game: "Spawning and resupply do not affect the Gas meter"
 		 * 
-		 * If true, resupply cabinets and spawning do not fully recharge the meter for this item.	Instead, its "default charge meter value" is used.
+		 * If true, resupply cabinets and spawning do not fully recharge the meter for this item.  Instead, its "default charge meter value" is used.
 		 */
 		context(attrs: IAttributeContainer)
-		open var resupplyDenied: Boolean? 
-			get() = MeterAttributes.resupplyDenied.get()
-			set(value) { MeterAttributes.resupplyDenied.set(value) }
+		open var itemMeterResupplyDenied: Boolean? 
+			get() = MeterAttributes.itemMeterResupplyDenied.get()
+			set(value) { MeterAttributes.itemMeterResupplyDenied.set(value) }
 	
 		/**
 		 * If `TIME` or `COMBO`, checks the `mult_item_meter_charge_rate` attribute for passive recharge rate mult.
@@ -149,9 +159,9 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * If `DAMAGE` or `COMBO`, checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
 		 */
 		context(attrs: IAttributeContainer)
-		open var chargeType: TFMeterRechargeType? 
-			get() = MeterAttributes.chargeType.get()
-			set(value) { MeterAttributes.chargeType.set(value) }
+		open var itemMeterChargeType: TFMeterRechargeType? 
+			get() = MeterAttributes.itemMeterChargeType.get()
+			set(value) { MeterAttributes.itemMeterChargeType.set(value) }
 	
 		/**
 		 * Amount of meter required to fully charge the item.
@@ -159,9 +169,9 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * If negative, 0, or not set, does not attempt to fill the meter at all when dealing damage.
 		 */
 		context(attrs: IAttributeContainer)
-		open var damageForFullCharge: Number? 
-			get() = MeterAttributes.damageForFullCharge.get()
-			set(value) { MeterAttributes.damageForFullCharge.set(value) }
+		open var itemMeterDamageForFullCharge: Number? 
+			get() = MeterAttributes.itemMeterDamageForFullCharge.get()
+			set(value) { MeterAttributes.itemMeterDamageForFullCharge.set(value) }
 	
 		/**
 		 * In-Game: "N% faster recharge rate"
@@ -169,9 +179,9 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * Scale factor for meter gained per second and/or meter gained on dealing damage.
 		 */
 		context(attrs: IAttributeContainer)
-		open var multChargeRate: Number? 
-			get() = MeterAttributes.multChargeRate.get()
-			set(value) { MeterAttributes.multChargeRate.set(value) }
+		open var multItemMeterChargeRate: Number? 
+			get() = MeterAttributes.multItemMeterChargeRate.get()
+			set(value) { MeterAttributes.multItemMeterChargeRate.set(value) }
 	}
 	
 	open class KnockbackReceivedAttributes : IBlockScoped {
@@ -204,7 +214,7 @@ interface BaseEntityAttributes : IBlockScoped {
 			 * 
 			 * If on a weapon, reduces all backstab damage taken by the player for all backstabs without any cooldown. Performs identically to the Mannpower "Resistance" powerup in this respect.
 			 */
-			val backstabShield: ItemAttributeNamed<Boolean> = ItemAttributeNamed("backstab shield")
+			val blocksBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("backstab shield")
 		}
 	
 		/**
@@ -215,8 +225,8 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * If on a weapon, reduces all backstab damage taken by the player for all backstabs without any cooldown. Performs identically to the Mannpower "Resistance" powerup in this respect.
 		 */
 		context(attrs: IAttributeContainer)
-		open var backstabShield: Boolean? 
-			get() = ResistanceAttributes.backstabShield.get()
-			set(value) { ResistanceAttributes.backstabShield.set(value) }
+		open var blocksBackstab: Boolean? 
+			get() = ResistanceAttributes.blocksBackstab.get()
+			set(value) { ResistanceAttributes.blocksBackstab.set(value) }
 	}
 }

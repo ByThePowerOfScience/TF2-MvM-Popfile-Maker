@@ -9,71 +9,55 @@ import kotlin.time.Duration
 
 interface BatAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Alt-Fire: Launches a ball that slows opponents"
-		 * 
-		 * If 0, cannot create a ball.
-		 */
-		val batLaunchesBalls: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod bat launches balls", NumberSelectorCodec(1))
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		/**
-		 * In-Game: "Alt-Fire: Launches a festive ornament that shatters causing bleed"
-		 * 
-		 * If 0, cannot create a ball.
-		 */
-		val batLaunchesOrnaments: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod bat launches ornaments", NumberSelectorCodec(2))
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -81,14 +65,14 @@ interface BatAttributes : BaseMeleeAttributes {
 	 * 
 	 * If 0, cannot create a ball.
 	 */
-	val batLaunchesBalls: ItemAttributeNamed<Boolean> get() = BatAttributes.batLaunchesBalls
+	val batLaunchesBalls: ItemAttributeNamed<Boolean> get() = BatAttributes.batLaunchesBalls.get()
 	
 	/**
 	 * In-Game: "Alt-Fire: Launches a festive ornament that shatters causing bleed"
 	 * 
 	 * If 0, cannot create a ball.
 	 */
-	val batLaunchesOrnaments: ItemAttributeNamed<Boolean> get() = BatAttributes.batLaunchesOrnaments
+	val batLaunchesOrnaments: ItemAttributeNamed<Boolean> get() = BatAttributes.batLaunchesOrnaments.get()
 	
 	override val crits: CritsAttributes get() = BatAttributes.crits
 	
@@ -134,25 +118,15 @@ interface BatAttributes : BaseMeleeAttributes {
 	
 	override val taunting: TauntingAttributes get() = BatAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = BatAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = BatAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = BatAttributes.ragdolls
 	
 	override val disguise: DisguiseAttributes get() = BatAttributes.disguise
 
-	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -185,11 +159,7 @@ interface BatAttributes : BaseMeleeAttributes {
 	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() 
@@ -203,11 +173,15 @@ interface BatAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -245,8 +219,6 @@ interface BatAttributes : BaseMeleeAttributes {
 	open class StatusEffectsAttributes : BaseMeleeAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseMeleeAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	

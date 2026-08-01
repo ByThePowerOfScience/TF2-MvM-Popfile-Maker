@@ -9,68 +9,61 @@ import kotlin.time.Duration
 
 interface StickBombAttributes : BreakableMeleeAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Pumpkin Bombs"
-		 */
-		val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween pumpkin explosions")
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
 	 * In-Game: "Pumpkin Bombs"
 	 */
-	val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = StickBombAttributes.spellHalloweenPumpkinExplosions
+	val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = StickBombAttributes.spellHalloweenPumpkinExplosions.get()
 	
 	override val crits: CritsAttributes get() = StickBombAttributes.crits
 	
@@ -116,25 +109,15 @@ interface StickBombAttributes : BreakableMeleeAttributes {
 	
 	override val taunting: TauntingAttributes get() = StickBombAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = StickBombAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = StickBombAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = StickBombAttributes.ragdolls
 	
 	override val disguise: DisguiseAttributes get() = StickBombAttributes.disguise
 
-	open class CritsAttributes : BreakableMeleeAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : BreakableMeleeAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : BreakableMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BreakableMeleeAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BreakableMeleeAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BreakableMeleeAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BreakableMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -167,11 +150,7 @@ interface StickBombAttributes : BreakableMeleeAttributes {
 	open class FiringAttributes : BreakableMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BreakableMeleeAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BreakableMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BreakableMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BreakableMeleeAttributes.HealthAndHealingAttributes() 
@@ -185,11 +164,15 @@ interface StickBombAttributes : BreakableMeleeAttributes {
 	open class MetaAttributes : BreakableMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BreakableMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BreakableMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BreakableMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -227,8 +210,6 @@ interface StickBombAttributes : BreakableMeleeAttributes {
 	open class StatusEffectsAttributes : BreakableMeleeAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BreakableMeleeAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BreakableMeleeAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BreakableMeleeAttributes.WhenHitAttributes() 
 	

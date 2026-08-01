@@ -9,92 +9,55 @@ import kotlin.time.Duration
 
 interface ShovelAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Damage increases as the user becomes injured"
-		 * 
-		 * Used to specify "shovel type".
-		 * 
-		 * 0 = Standard.
-		 * 
-		 * 1 = Equalizer.
-		 * 
-		 * 2 = Escape Plan.
-		 * 
-		 * If not 0, DMG_TYPE is "Pickaxe", else "Shovel".
-		 */
-		val isEqualizer: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod shovel damage boost", NumberSelectorCodec(1))
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		/**
-		 * In-Game: "Move speed increases as the user becomes injured"
-		 * 
-		 * Used to specify "shovel type".
-		 * 
-		 * 0 = Standard.
-		 * 
-		 * 1 = Equalizer.
-		 * 
-		 * 2 = Escape Plan.
-		 * 
-		 * If not 0, DMG_TYPE is "Pickaxe", else "Shovel".
-		 */
-		val isEscapePlan: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod shovel speed boost", NumberSelectorCodec(2))
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		/**
-		 * On primary attack, send player flying in the direction they're facing.
-		 */
-		val airJumpOnAttack: ItemAttributeNamed<Boolean> = ItemAttributeNamed("air jump on attack")
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -110,7 +73,7 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	 * 
 	 * If not 0, DMG_TYPE is "Pickaxe", else "Shovel".
 	 */
-	val isEqualizer: ItemAttributeNamed<Boolean> get() = ShovelAttributes.isEqualizer
+	val isEqualizer: ItemAttributeNamed<Boolean> get() = ShovelAttributes.isEqualizer.get()
 	
 	/**
 	 * In-Game: "Move speed increases as the user becomes injured"
@@ -125,12 +88,12 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	 * 
 	 * If not 0, DMG_TYPE is "Pickaxe", else "Shovel".
 	 */
-	val isEscapePlan: ItemAttributeNamed<Boolean> get() = ShovelAttributes.isEscapePlan
+	val isEscapePlan: ItemAttributeNamed<Boolean> get() = ShovelAttributes.isEscapePlan.get()
 	
 	/**
 	 * On primary attack, send player flying in the direction they're facing.
 	 */
-	val airJumpOnAttack: ItemAttributeNamed<Boolean> get() = ShovelAttributes.airJumpOnAttack
+	val airJumpOnAttack: ItemAttributeNamed<Boolean> get() = ShovelAttributes.airJumpOnAttack.get()
 	
 	override val crits: CritsAttributes get() = ShovelAttributes.crits
 	
@@ -176,25 +139,15 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	
 	override val taunting: TauntingAttributes get() = ShovelAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = ShovelAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = ShovelAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = ShovelAttributes.ragdolls
 	
 	override val disguise: DisguiseAttributes get() = ShovelAttributes.disguise
 
-	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -227,11 +180,7 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() 
@@ -245,11 +194,15 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -287,8 +240,6 @@ interface ShovelAttributes : BaseMeleeAttributes {
 	open class StatusEffectsAttributes : BaseMeleeAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseMeleeAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	

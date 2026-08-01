@@ -9,62 +9,81 @@ import kotlin.time.Duration
 
 interface GrenadeLauncherAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		private val heads: HeadsAttributes = HeadsAttributes()
+	
+		private val onHit: OnHitAttributes = OnHitAttributes()
+	
+		private val onKill: OnKillAttributes = OnKillAttributes()
+	
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		private val taunting: TauntingAttributes = TauntingAttributes()
+	
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
 		/**
-		 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "+N% projectile speed"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% projectile speed"
+		 * 
+		 * Hidden:
+		 * 
+		 * 	- In-Game: "+N% projectile speed"
 		 */
-		val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> = ItemAttributeNamed("grenade launcher mortar mode")
+		val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+			ItemAttributeNamed<Number>("Projectile speed increased"),
+			ItemAttributeNamed<Number>("Projectile speed decreased"),
+			ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
+		)
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val firing: FiringAttributes = FiringAttributes()
-	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
-	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
-	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
-	
-		val crits: CritsAttributes = CritsAttributes()
-	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
-	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
-	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
-	
-		val meter: MeterAttributes = MeterAttributes()
-	
-		val movement: MovementAttributes = MovementAttributes()
-	
-		val heads: HeadsAttributes = HeadsAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val onKill: OnKillAttributes = OnKillAttributes()
-	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
-	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
-	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		/**
+		 * In-Game: "N% damage on grenades that explode on timer"
+		 * 
+		 * Flat multiplier applied to initial damage.
+		 */
+		val grenadeDetonationDamagePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("grenade detonation damage penalty")
 	}
 
 	override val projectiles: ProjectilesAttributes get() = GrenadeLauncherAttributes.projectiles
@@ -74,7 +93,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	/**
 	 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
 	 */
-	val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> get() = GrenadeLauncherAttributes.grenadeLauncherMortarMode
+	val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> get() = GrenadeLauncherAttributes.grenadeLauncherMortarMode.get()
 	
 	override val ammo: AmmoAttributes get() = GrenadeLauncherAttributes.ammo
 	
@@ -114,8 +133,6 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	
 	override val taunting: TauntingAttributes get() = GrenadeLauncherAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = GrenadeLauncherAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = GrenadeLauncherAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = GrenadeLauncherAttributes.whenHit
@@ -125,18 +142,25 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = GrenadeLauncherAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
-		companion object : IBlockScoped {
-			val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
-				ItemAttributeNamed<Number>("Projectile speed increased"),
-				ItemAttributeNamed<Number>("Projectile speed decreased"),
-				ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
-			)
-		}
+		companion object : IBlockScoped 
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "+N% projectile speed"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% projectile speed"
+		 * 
+		 * Hidden:
+		 * 
+		 * 	- In-Game: "+N% projectile speed"
+		 */
 		context(attrs: IAttributeContainer)
 		open var projectileSpeed: Number? 
-			get() = ProjectilesAttributes.projectileSpeed.get()
-			set(value) { ProjectilesAttributes.projectileSpeed.set(value) }
+			get() = GrenadeLauncherAttributes.projectileSpeed.get()
+			set(value) { GrenadeLauncherAttributes.projectileSpeed.set(value) }
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
@@ -148,14 +172,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	}
 	
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "N% damage on grenades that explode on timer"
-			 * 
-			 * Flat multiplier applied to initial damage.
-			 */
-			val grenadeDetonationDamagePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("grenade detonation damage penalty")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "N% damage on grenades that explode on timer"
@@ -164,12 +181,8 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var grenadeDetonationDamagePenalty: Number? 
-			get() = DamageAttributes.grenadeDetonationDamagePenalty.get()
-			set(value) { DamageAttributes.grenadeDetonationDamagePenalty.set(value) }
-	
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseGunAttributes.DamageAttributes.DamageAttributes() 
+			get() = GrenadeLauncherAttributes.grenadeDetonationDamagePenalty.get()
+			set(value) { GrenadeLauncherAttributes.grenadeDetonationDamagePenalty.set(value) }
 	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
@@ -181,22 +194,14 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class AfterburnAttributes : BaseGunAttributes.AfterburnAttributes() 
 	
 	open class BuildingsAttributes : BaseGunAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : BaseGunAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : BaseGunAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : BaseGunAttributes.DemoChargeAttributes() 
 	
@@ -211,11 +216,15 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseGunAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -253,8 +262,6 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	open class StatusEffectsAttributes : BaseGunAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseGunAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseGunAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : BaseGunAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

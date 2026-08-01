@@ -9,79 +9,62 @@ import kotlin.time.Duration
 
 interface MinigunAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Silent Killer: No barrel spin sound"
-		 */
-		val silentBarrel: ItemAttributeNamed<Boolean> = ItemAttributeNamed("minigun no spin sounds")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val minigunSpinupTime: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("minigun spinup time decreased"),
-			ItemAttributeNamed("minigun spinup time increased"),
-		)
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		private val heads: HeadsAttributes = HeadsAttributes()
+	
+		private val onHit: OnHitAttributes = OnHitAttributes()
+	
+		private val onKill: OnKillAttributes = OnKillAttributes()
+	
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		private val taunting: TauntingAttributes = TauntingAttributes()
+	
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		/**
-		 * In-Game: "Bullets destroy rockets and grenades in-flight.  Increased accuracy and frequency per-level."
+		 * In-Game: "Consumes an additional N ammo per second while spun up"
 		 * 
-		 * Overridden by "raid gamemode" to 1.
+		 * Amount of ammo drained per second.
 		 */
-		val attackProjectiles: ItemAttributeNamed<Boolean> = ItemAttributeNamed("attack projectiles")
-	
-		/**
-		 * In-Game: "Creates a ring of flames while spun up"
-		 */
-		val ringOfFireWhileAiming: ItemAttributeNamed<Int> = ItemAttributeNamed("ring of fire while aiming")
-	
-		val ammo: AmmoAttributes = AmmoAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val firing: FiringAttributes = FiringAttributes()
-	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
-	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
-	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
-	
-		val crits: CritsAttributes = CritsAttributes()
-	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
-	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
-	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
-	
-		val meter: MeterAttributes = MeterAttributes()
-	
-		val movement: MovementAttributes = MovementAttributes()
-	
-		val heads: HeadsAttributes = HeadsAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val onKill: OnKillAttributes = OnKillAttributes()
-	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
-	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
-	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		val spinupAmmoDrain: ItemAttributeNamed<Int> = ItemAttributeNamed("uses ammo while aiming")
 	}
 
 	override val ammo: AmmoAttributes get() = MinigunAttributes.ammo
@@ -89,21 +72,30 @@ interface MinigunAttributes : BaseGunAttributes {
 	/**
 	 * In-Game: "Silent Killer: No barrel spin sound"
 	 */
-	val silentBarrel: ItemAttributeNamed<Boolean> get() = MinigunAttributes.silentBarrel
+	val silentBarrel: ItemAttributeNamed<Boolean> get() = MinigunAttributes.silentBarrel.get()
 	
-	val minigunSpinupTime: BonusPenalty<Number> get() = MinigunAttributes.minigunSpinupTime
+	/**
+	 * Bonus:
+	 * 
+	 * 	- In-Game: "N% faster spin up time"
+	 * 
+	 * Penalty:
+	 * 
+	 * 	- In-Game: "N% slower spin up time"
+	 */
+	val minigunSpinupTime: BonusPenalty<Number> get() = MinigunAttributes.minigunSpinupTime.get()
 	
 	/**
 	 * In-Game: "Bullets destroy rockets and grenades in-flight.  Increased accuracy and frequency per-level."
 	 * 
 	 * Overridden by "raid gamemode" to 1.
 	 */
-	val attackProjectiles: ItemAttributeNamed<Boolean> get() = MinigunAttributes.attackProjectiles
+	val attackProjectiles: ItemAttributeNamed<Boolean> get() = MinigunAttributes.attackProjectiles.get()
 	
 	/**
 	 * In-Game: "Creates a ring of flames while spun up"
 	 */
-	val ringOfFireWhileAiming: ItemAttributeNamed<Int> get() = MinigunAttributes.ringOfFireWhileAiming
+	val ringOfFireWhileAiming: ItemAttributeNamed<Int> get() = MinigunAttributes.ringOfFireWhileAiming.get()
 	
 	override val damage: DamageAttributes get() = MinigunAttributes.damage
 	
@@ -145,8 +137,6 @@ interface MinigunAttributes : BaseGunAttributes {
 	
 	override val taunting: TauntingAttributes get() = MinigunAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = MinigunAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = MinigunAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = MinigunAttributes.whenHit
@@ -156,14 +146,7 @@ interface MinigunAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = MinigunAttributes.disguise
 
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "Consumes an additional N ammo per second while spun up"
-			 * 
-			 * Amount of ammo drained per second.
-			 */
-			val spinupAmmoDrain: ItemAttributeNamed<Int> = ItemAttributeNamed("uses ammo while aiming")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "Consumes an additional N ammo per second while spun up"
@@ -172,28 +155,20 @@ interface MinigunAttributes : BaseGunAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var spinupAmmoDrain: Int? 
-			get() = AmmoAttributes.spinupAmmoDrain.get()
-			set(value) { AmmoAttributes.spinupAmmoDrain.set(value) }
+			get() = MinigunAttributes.spinupAmmoDrain.get()
+			set(value) { MinigunAttributes.spinupAmmoDrain.set(value) }
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
 		open class ClipSizeAttributes : BaseGunAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseGunAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
@@ -210,11 +185,7 @@ interface MinigunAttributes : BaseGunAttributes {
 	
 	open class BuildingsAttributes : BaseGunAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : BaseGunAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : BaseGunAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : BaseGunAttributes.DemoChargeAttributes() 
 	
@@ -229,11 +200,15 @@ interface MinigunAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseGunAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -271,8 +246,6 @@ interface MinigunAttributes : BaseGunAttributes {
 	open class StatusEffectsAttributes : BaseGunAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseGunAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseGunAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : BaseGunAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

@@ -9,59 +9,57 @@ import kotlin.time.Duration
 
 interface ParachuteAttributes : BuffItemAttributes {
 	companion object : IBlockScoped {
-		val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val buffItems: BuffItemsAttributes get() = ParachuteAttributes.buffItems
@@ -110,31 +108,17 @@ interface ParachuteAttributes : BuffItemAttributes {
 	
 	override val taunting: TauntingAttributes get() = ParachuteAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = ParachuteAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = ParachuteAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = ParachuteAttributes.ragdolls
 	
 	override val disguise: DisguiseAttributes get() = ParachuteAttributes.disguise
 
-	open class BuffItemsAttributes : BuffItemAttributes.BuffItemsAttributes() {
-		override val buffType: BuffTypeAttributes = BuffTypeAttributes()
+	open class BuffItemsAttributes : BuffItemAttributes.BuffItemsAttributes() 
 	
-		open class BuffTypeAttributes : BuffItemAttributes.BuffItemsAttributes.BuffTypeAttributes() 
-	}
+	open class CritsAttributes : BuffItemAttributes.CritsAttributes() 
 	
-	open class CritsAttributes : BuffItemAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : BuffItemAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BuffItemAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BuffItemAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BuffItemAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BuffItemAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -167,11 +151,7 @@ interface ParachuteAttributes : BuffItemAttributes {
 	open class FiringAttributes : BuffItemAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BuffItemAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BuffItemAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BuffItemAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BuffItemAttributes.HealthAndHealingAttributes() 
@@ -185,11 +165,15 @@ interface ParachuteAttributes : BuffItemAttributes {
 	open class MetaAttributes : BuffItemAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BuffItemAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BuffItemAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BuffItemAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -227,8 +211,6 @@ interface ParachuteAttributes : BuffItemAttributes {
 	open class StatusEffectsAttributes : BuffItemAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BuffItemAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BuffItemAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BuffItemAttributes.WhenHitAttributes() 
 	

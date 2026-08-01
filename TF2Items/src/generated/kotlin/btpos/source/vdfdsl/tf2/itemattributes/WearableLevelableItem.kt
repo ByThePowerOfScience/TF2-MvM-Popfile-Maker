@@ -9,19 +9,19 @@ import kotlin.time.Duration
 
 interface WearableLevelableItemAttributes : WearableAttributes {
 	companion object : IBlockScoped {
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	}
 
 	override val resistance: ResistanceAttributes get() = WearableLevelableItemAttributes.resistance

@@ -8,20 +8,31 @@ import java.util.*
 import kotlin.time.Duration
 
 interface ProjectileFlareAttributes : BaseProjectileAttributes {
-	companion object : IBlockScoped {
-		val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
-			ItemAttributeNamed<Number>("Projectile speed increased"),
-			ItemAttributeNamed<Number>("Projectile speed decreased"),
-			ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
-		)
-	
-		val blastRadius: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("Blast radius increased"),
-			ItemAttributeNamed("Blast radius decreased"),
-		)
-	}
+	companion object : IBlockScoped 
 
-	val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> get() = ProjectileFlareAttributes.projectileSpeed
+	/**
+	 * Bonus:
+	 * 
+	 * 	- In-Game: "+N% projectile speed"
+	 * 
+	 * Penalty:
+	 * 
+	 * 	- In-Game: "N% projectile speed"
+	 * 
+	 * Hidden:
+	 * 
+	 * 	- In-Game: "+N% projectile speed"
+	 */
+	val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> get() = ProjectileFlareAttributes.projectileSpeed.get()
 	
-	val blastRadius: BonusPenalty<Number> get() = ProjectileFlareAttributes.blastRadius
+	/**
+	 * Bonus:
+	 * 
+	 * 	- In-Game: "+N% explosion radius"
+	 * 
+	 * Penalty:
+	 * 
+	 * 	- In-Game: "N% explosion radius"
+	 */
+	val blastRadius: BonusPenalty<Number> get() = ProjectileFlareAttributes.blastRadius.get()
 }

@@ -9,57 +9,55 @@ import kotlin.time.Duration
 
 interface ScoutPistolPrimaryAttributes : ScoutPistolAttributes {
 	companion object : IBlockScoped {
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val ammo: AmmoAttributes get() = ScoutPistolPrimaryAttributes.ammo
@@ -104,8 +102,6 @@ interface ScoutPistolPrimaryAttributes : ScoutPistolAttributes {
 	
 	override val taunting: TauntingAttributes get() = ScoutPistolPrimaryAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = ScoutPistolPrimaryAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = ScoutPistolPrimaryAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = ScoutPistolPrimaryAttributes.whenHit
@@ -120,20 +116,12 @@ interface ScoutPistolPrimaryAttributes : ScoutPistolAttributes {
 		open class ClipSizeAttributes : ScoutPistolAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : ScoutPistolAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : ScoutPistolAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : ScoutPistolAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : ScoutPistolAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : ScoutPistolAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : ScoutPistolAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : ScoutPistolAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : ScoutPistolAttributes.ProjectilesAttributes() {
@@ -150,11 +138,7 @@ interface ScoutPistolPrimaryAttributes : ScoutPistolAttributes {
 	
 	open class BuildingsAttributes : ScoutPistolAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : ScoutPistolAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : ScoutPistolAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : ScoutPistolAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : ScoutPistolAttributes.DemoChargeAttributes() 
 	
@@ -169,11 +153,15 @@ interface ScoutPistolPrimaryAttributes : ScoutPistolAttributes {
 	open class MetaAttributes : ScoutPistolAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : ScoutPistolAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : ScoutPistolAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : ScoutPistolAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -211,8 +199,6 @@ interface ScoutPistolPrimaryAttributes : ScoutPistolAttributes {
 	open class StatusEffectsAttributes : ScoutPistolAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : ScoutPistolAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : ScoutPistolAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : ScoutPistolAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

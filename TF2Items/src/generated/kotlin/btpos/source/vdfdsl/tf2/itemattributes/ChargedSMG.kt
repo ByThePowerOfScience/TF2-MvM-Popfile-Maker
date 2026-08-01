@@ -9,64 +9,55 @@ import kotlin.time.Duration
 
 interface ChargedSMGAttributes : SMGAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Secondary fire when charged grants mini-crits for N seconds."
-		 * 
-		 * Minicrit buff duration.
-		 */
-		val minicritBoostWhenCharged: ItemAttributeNamed<Number> = ItemAttributeNamed("minicrit_boost_when_charged")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -74,7 +65,7 @@ interface ChargedSMGAttributes : SMGAttributes {
 	 * 
 	 * Minicrit buff duration.
 	 */
-	val minicritBoostWhenCharged: ItemAttributeNamed<Number> get() = ChargedSMGAttributes.minicritBoostWhenCharged
+	val minicritBoostWhenCharged: ItemAttributeNamed<Number> get() = ChargedSMGAttributes.minicritBoostWhenCharged.get()
 	
 	override val ammo: AmmoAttributes get() = ChargedSMGAttributes.ammo
 	
@@ -118,8 +109,6 @@ interface ChargedSMGAttributes : SMGAttributes {
 	
 	override val taunting: TauntingAttributes get() = ChargedSMGAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = ChargedSMGAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = ChargedSMGAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = ChargedSMGAttributes.whenHit
@@ -134,20 +123,12 @@ interface ChargedSMGAttributes : SMGAttributes {
 		open class ClipSizeAttributes : SMGAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : SMGAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : SMGAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : SMGAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : SMGAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : SMGAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : SMGAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : SMGAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : SMGAttributes.ProjectilesAttributes() {
@@ -164,11 +145,7 @@ interface ChargedSMGAttributes : SMGAttributes {
 	
 	open class BuildingsAttributes : SMGAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : SMGAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : SMGAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : SMGAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : SMGAttributes.DemoChargeAttributes() 
 	
@@ -183,11 +160,15 @@ interface ChargedSMGAttributes : SMGAttributes {
 	open class MetaAttributes : SMGAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : SMGAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : SMGAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : SMGAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -225,8 +206,6 @@ interface ChargedSMGAttributes : SMGAttributes {
 	open class StatusEffectsAttributes : SMGAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : SMGAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : SMGAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : SMGAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

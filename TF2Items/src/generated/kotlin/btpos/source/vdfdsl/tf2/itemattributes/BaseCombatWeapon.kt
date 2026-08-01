@@ -11,19 +11,47 @@ interface BaseCombatWeaponAttributes : EconEntityAttributes {
 	companion object : IBlockScoped {
 		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		/**
+		 * In-Game: "Uses metal for ammo"
+		 * 
+		 * Reminder: non-engies start with 100 metal.
+		 */
+		val useMetalAmmoType: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod use metal ammo type")
+	
+		/**
+		 * In-Game: "No reload necessary"
+		 * 
+		 * In the "DoesReloadSingly" check, this _is_ actually checked, so it's actually _not_ "display-only".
+		 * 
+		 * If != 1.0 (if present), says the weapon "does not reload one shot at a time".
+		 */
+		val noReload_displayOnly: ItemAttributeNamed<Number> = ItemAttributeNamed("mod no reload DISPLAY ONLY")
+	
+		/**
+		 * Checked in `DoesReloadSingly`. If true, weapon does not reload one shot at a time. (e.g. FaN).
+		 * 
+		 * Note that for the most part, this logic is set inside the weapon itself. The scattergun attribute is the only way to control this with attributes.
+		 */
+		val scattergunNoReloadSingle: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun no reload single")
+	
+		/**
+		 * Overwrites the max clipsize to a flat value. Applied before other multipliers.
+		 */
+		val maxPrimaryClipOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("mod max primary clip override")
 	}
 
 	val ammo: AmmoAttributes get() = BaseCombatWeaponAttributes.ammo
@@ -44,29 +72,6 @@ interface BaseCombatWeaponAttributes : EconEntityAttributes {
 
 	open class AmmoAttributes : IBlockScoped {
 		companion object : IBlockScoped {
-			/**
-			 * In-Game: "Uses metal for ammo"
-			 * 
-			 * Reminder: non-engies start with 100 metal.
-			 */
-			val useMetalAmmoType: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod use metal ammo type")
-	
-			/**
-			 * In-Game: "No reload necessary"
-			 * 
-			 * In the "DoesReloadSingly" check, this _is_ actually checked, so it's actually _not_ "display-only".
-			 * 
-			 * If != 1.0 (if present), says the weapon "does not reload one shot at a time".
-			 */
-			val noReload_displayOnly: ItemAttributeNamed<Number> = ItemAttributeNamed("mod no reload DISPLAY ONLY")
-	
-			/**
-			 * Checked in the same place.	If true, weapon does not reload one shot at a time. (e.g. FaN).
-			 * 
-			 * Note that for the most part, this logic is set inside the weapon itself. The scattergun attribute is the only way to control this with attributes.
-			 */
-			val scattergunNoReloadSingle: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun no reload single")
-	
 			val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 		}
 	
@@ -77,8 +82,8 @@ interface BaseCombatWeaponAttributes : EconEntityAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var useMetalAmmoType: Boolean? 
-			get() = AmmoAttributes.useMetalAmmoType.get()
-			set(value) { AmmoAttributes.useMetalAmmoType.set(value) }
+			get() = BaseCombatWeaponAttributes.useMetalAmmoType.get()
+			set(value) { BaseCombatWeaponAttributes.useMetalAmmoType.set(value) }
 	
 		/**
 		 * In-Game: "No reload necessary"
@@ -89,36 +94,31 @@ interface BaseCombatWeaponAttributes : EconEntityAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var noReload_displayOnly: Number? 
-			get() = AmmoAttributes.noReload_displayOnly.get()
-			set(value) { AmmoAttributes.noReload_displayOnly.set(value) }
+			get() = BaseCombatWeaponAttributes.noReload_displayOnly.get()
+			set(value) { BaseCombatWeaponAttributes.noReload_displayOnly.set(value) }
 	
 		/**
-		 * Checked in the same place.	If true, weapon does not reload one shot at a time. (e.g. FaN).
+		 * Checked in `DoesReloadSingly`. If true, weapon does not reload one shot at a time. (e.g. FaN).
 		 * 
 		 * Note that for the most part, this logic is set inside the weapon itself. The scattergun attribute is the only way to control this with attributes.
 		 */
 		context(attrs: IAttributeContainer)
 		open var scattergunNoReloadSingle: Boolean? 
-			get() = AmmoAttributes.scattergunNoReloadSingle.get()
-			set(value) { AmmoAttributes.scattergunNoReloadSingle.set(value) }
+			get() = BaseCombatWeaponAttributes.scattergunNoReloadSingle.get()
+			set(value) { BaseCombatWeaponAttributes.scattergunNoReloadSingle.set(value) }
 	
 		open val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
 		open class ClipSizeAttributes : IBlockScoped {
-			companion object : IBlockScoped {
-				/**
-				 * Overwrites the max clipsize to a flat value. Applied before other multipliers.
-				 */
-				val maxPrimaryClipOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("mod max primary clip override")
-			}
+			companion object : IBlockScoped 
 	
 			/**
 			 * Overwrites the max clipsize to a flat value. Applied before other multipliers.
 			 */
 			context(attrs: IAttributeContainer)
 			open var maxPrimaryClipOverride: Int? 
-				get() = ClipSizeAttributes.maxPrimaryClipOverride.get()
-				set(value) { ClipSizeAttributes.maxPrimaryClipOverride.set(value) }
+				get() = BaseCombatWeaponAttributes.maxPrimaryClipOverride.get()
+				set(value) { BaseCombatWeaponAttributes.maxPrimaryClipOverride.set(value) }
 		}
 	}
 	

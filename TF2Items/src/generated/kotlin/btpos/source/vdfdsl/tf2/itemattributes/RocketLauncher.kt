@@ -9,57 +9,60 @@ import kotlin.time.Duration
 
 interface RocketLauncherAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		/**
+		 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.).
+		 */
+		val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("rocket launch impulse")
 	}
 
 	override val projectiles: ProjectilesAttributes get() = RocketLauncherAttributes.projectiles
@@ -104,8 +107,6 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	
 	override val taunting: TauntingAttributes get() = RocketLauncherAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = RocketLauncherAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = RocketLauncherAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = RocketLauncherAttributes.whenHit
@@ -115,20 +116,15 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = RocketLauncherAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.).
-			 */
-			val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("rocket launch impulse")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.).
 		 */
 		context(attrs: IAttributeContainer)
 		open var canRocketJumpWithExplosion: Boolean? 
-			get() = ProjectilesAttributes.canRocketJumpWithExplosion.get()
-			set(value) { ProjectilesAttributes.canRocketJumpWithExplosion.set(value) }
+			get() = RocketLauncherAttributes.canRocketJumpWithExplosion.get()
+			set(value) { RocketLauncherAttributes.canRocketJumpWithExplosion.set(value) }
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
@@ -145,31 +141,19 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 		open class ClipSizeAttributes : BaseGunAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseGunAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class AfterburnAttributes : BaseGunAttributes.AfterburnAttributes() 
 	
 	open class BuildingsAttributes : BaseGunAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : BaseGunAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : BaseGunAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : BaseGunAttributes.DemoChargeAttributes() 
 	
@@ -184,11 +168,15 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseGunAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -226,8 +214,6 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	open class StatusEffectsAttributes : BaseGunAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseGunAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseGunAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : BaseGunAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

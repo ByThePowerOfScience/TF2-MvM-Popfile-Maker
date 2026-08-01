@@ -9,57 +9,55 @@ import kotlin.time.Duration
 
 interface BatGiftwrapAttributes : BatWoodAttributes {
 	companion object : IBlockScoped {
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val crits: CritsAttributes get() = BatGiftwrapAttributes.crits
@@ -106,25 +104,15 @@ interface BatGiftwrapAttributes : BatWoodAttributes {
 	
 	override val taunting: TauntingAttributes get() = BatGiftwrapAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = BatGiftwrapAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = BatGiftwrapAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = BatGiftwrapAttributes.ragdolls
 	
 	override val disguise: DisguiseAttributes get() = BatGiftwrapAttributes.disguise
 
-	open class CritsAttributes : BatWoodAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : BatWoodAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : BatWoodAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BatWoodAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BatWoodAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BatWoodAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BatWoodAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -157,11 +145,7 @@ interface BatGiftwrapAttributes : BatWoodAttributes {
 	open class FiringAttributes : BatWoodAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BatWoodAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BatWoodAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BatWoodAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BatWoodAttributes.HealthAndHealingAttributes() 
@@ -175,11 +159,15 @@ interface BatGiftwrapAttributes : BatWoodAttributes {
 	open class MetaAttributes : BatWoodAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BatWoodAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BatWoodAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BatWoodAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -217,8 +205,6 @@ interface BatGiftwrapAttributes : BatWoodAttributes {
 	open class StatusEffectsAttributes : BatWoodAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BatWoodAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BatWoodAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BatWoodAttributes.WhenHitAttributes() 
 	

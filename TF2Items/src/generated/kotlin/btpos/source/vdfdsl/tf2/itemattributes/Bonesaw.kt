@@ -9,62 +9,67 @@ import kotlin.time.Duration
 
 interface BonesawAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val onHit: OnHitAttributes = OnHitAttributes()
+	
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		private val heads: HeadsAttributes = HeadsAttributes()
+	
+		private val onKill: OnKillAttributes = OnKillAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		private val taunting: TauntingAttributes = TauntingAttributes()
+	
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
 		/**
-		 * In-Game: "Collect the organs of people you hit"
+		 * In-Game: "Collect the organs of your victims"
+		 * 
+		 * On kill, take an organ (uses "heads" field like usual).
 		 */
-		val uberchargePreservedOnSpawnMax: ItemAttributeNamed<Number> = ItemAttributeNamed("ubercharge_preserved_on_spawn_max")
+		val addHeadOnKill: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add_head_on_kill")
 	
-		val crits: CritsAttributes = CritsAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
-	
-		val ammo: AmmoAttributes = AmmoAttributes()
-	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
-	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
-	
-		val firing: FiringAttributes = FiringAttributes()
-	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
-	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
-	
-		val meter: MeterAttributes = MeterAttributes()
-	
-		val movement: MovementAttributes = MovementAttributes()
-	
-		val heads: HeadsAttributes = HeadsAttributes()
-	
-		val onKill: OnKillAttributes = OnKillAttributes()
-	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
-	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
-	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
-	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		/**
+		 * If the player should take a "head" when dealing damage with a melee.
+		 */
+		val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
 	}
 
 	override val heads: HeadsAttributes get() = BonesawAttributes.heads
@@ -74,7 +79,7 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	/**
 	 * In-Game: "Collect the organs of people you hit"
 	 */
-	val uberchargePreservedOnSpawnMax: ItemAttributeNamed<Number> get() = BonesawAttributes.uberchargePreservedOnSpawnMax
+	val uberchargePreservedOnSpawnMax: ItemAttributeNamed<Number> get() = BonesawAttributes.uberchargePreservedOnSpawnMax.get()
 	
 	override val crits: CritsAttributes get() = BonesawAttributes.crits
 	
@@ -116,8 +121,6 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	
 	override val statusEffects: StatusEffectsAttributes get() = BonesawAttributes.statusEffects
 	
-	override val viewmodel: ViewmodelAttributes get() = BonesawAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = BonesawAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = BonesawAttributes.ragdolls
@@ -125,19 +128,7 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = BonesawAttributes.disguise
 
 	open class HeadsAttributes : BaseMeleeAttributes.HeadsAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "Collect the organs of your victims"
-			 * 
-			 * On kill, take an organ (uses "heads" field like usual).
-			 */
-			val addHeadOnKill: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add_head_on_kill")
-	
-			/**
-			 * If the player should take a "head" when dealing damage with a melee.
-			 */
-			val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "Collect the organs of your victims"
@@ -146,16 +137,16 @@ interface BonesawAttributes : BaseMeleeAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var addHeadOnKill: Boolean? 
-			get() = HeadsAttributes.addHeadOnKill.get()
-			set(value) { HeadsAttributes.addHeadOnKill.set(value) }
+			get() = BonesawAttributes.addHeadOnKill.get()
+			set(value) { BonesawAttributes.addHeadOnKill.set(value) }
 	
 		/**
 		 * If the player should take a "head" when dealing damage with a melee.
 		 */
 		context(attrs: IAttributeContainer)
 		open var addHeadOnHit: Boolean? 
-			get() = HeadsAttributes.addHeadOnHit.get()
-			set(value) { HeadsAttributes.addHeadOnHit.set(value) }
+			get() = BonesawAttributes.addHeadOnHit.get()
+			set(value) { BonesawAttributes.addHeadOnHit.set(value) }
 	}
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() {
@@ -170,17 +161,9 @@ interface BonesawAttributes : BaseMeleeAttributes {
 			set(value) { super.specialTaunt = value }
 	}
 	
-	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -213,11 +196,7 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() 
@@ -231,11 +210,15 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -269,8 +252,6 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
 	
 	open class StatusEffectsAttributes : BaseMeleeAttributes.StatusEffectsAttributes() 
-	
-	open class ViewmodelAttributes : BaseMeleeAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	

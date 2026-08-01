@@ -4,6 +4,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.SDKNotes
 import btpos.source.vdfdsl.tf2.filegeneration.hierarchiesByName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import kotlin.collections.map
 
@@ -65,44 +66,42 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 		
 		fun PropertyBuilder.isOverridden() = allParents.any { this in it }
 		
-		val attrProperties = attrs.map { it.propertyBuilder() }
-		
 		if (directParent == null) {
 			interfaceBuilder.parentInterfaces += "IBlockScoped"
 		} else {
 			interfaceBuilder.parentInterfaces += directParent.clsname
 		}
 		
-		interfaceBuilder.companionObject = ClassBuilder.newCompanionObject().apply {
+		interfaceBuilder.getOrCreateCompanionObject().apply {
 			addProperties(
-				(if (allParents.isEmpty())
-					attrProperties
-				else
-					attrProperties.filterNot { it.isOverridden() })
-					.map { it.copy() }
+				attrs.map { it.propertyBuilder() }.filterNot { it.isOverridden() }
 			)
 			parentInterfaces += "IBlockScoped"
 		}
 		
+		val attrToPropBuilder = attrs.map { it to it.propertyBuilder() }
+		
 		interfaceBuilder.addProperties(
-			if (allParents.isEmpty()) {
-				attrProperties.asSequence().map { it.copy() }.onEach {
-					it.modality = PropertyBuilder.Modality.OPEN
-				}
-			} else {
-				attrProperties.asSequence().map { prop ->
-					prop.copy().apply {
-						if (isOverridden()) {
-							modality = PropertyBuilder.Modality.OVERRIDE
-							delegatesToSuper = true
-						} else {
-							modality = PropertyBuilder.Modality.OPEN
-						}
+			attrToPropBuilder.asSequence().map { (attr, prop) ->
+				val prop = prop.copy()
+				if (attr is NamedAttribute) { // make the property a delegate to the attribute in the companion's get/set
+					prop.apply {
+						kType = attr.getKotlinType() + "?"
+						prop.usesGetter = true
+						prop.isVal = false
+						prop.initializer = interfaceBuilder.name + "." + attr.varName + ".get()"
+						prop.setter = interfaceBuilder.name + "." + attr.varName + ".set(value)"
+						prop.contextParams += "_" to "IAttributeContainer"
 					}
 				}
-			}.onEach {
-				it.usesGetter = true
-				it.initializer = interfaceBuilder.name + "." + it.name
+				
+				if (prop.isOverridden()) {
+					prop.modality = PropertyBuilder.Modality.OVERRIDE
+					prop.delegatesToSuper = true
+				} else {
+					prop.modality = PropertyBuilder.Modality.OPEN
+				}
+				prop
 			}.asIterable()
 		)
 		

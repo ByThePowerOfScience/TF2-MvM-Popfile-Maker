@@ -9,57 +9,55 @@ import kotlin.time.Duration
 
 interface RevolverSecondaryAttributes : RevolverAttributes {
 	companion object : IBlockScoped {
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val heads: HeadsAttributes get() = RevolverSecondaryAttributes.heads
@@ -104,8 +102,6 @@ interface RevolverSecondaryAttributes : RevolverAttributes {
 	
 	override val taunting: TauntingAttributes get() = RevolverSecondaryAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = RevolverSecondaryAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = RevolverSecondaryAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = RevolverSecondaryAttributes.whenHit
@@ -122,20 +118,12 @@ interface RevolverSecondaryAttributes : RevolverAttributes {
 		open class ClipSizeAttributes : RevolverAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : RevolverAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : RevolverAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : RevolverAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : RevolverAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : RevolverAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : RevolverAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : RevolverAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : RevolverAttributes.ProjectilesAttributes() {
@@ -152,11 +140,7 @@ interface RevolverSecondaryAttributes : RevolverAttributes {
 	
 	open class BuildingsAttributes : RevolverAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : RevolverAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : RevolverAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : RevolverAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : RevolverAttributes.DemoChargeAttributes() 
 	
@@ -171,11 +155,15 @@ interface RevolverSecondaryAttributes : RevolverAttributes {
 	open class MetaAttributes : RevolverAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : RevolverAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : RevolverAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : RevolverAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -211,8 +199,6 @@ interface RevolverSecondaryAttributes : RevolverAttributes {
 	open class StatusEffectsAttributes : RevolverAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : RevolverAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : RevolverAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : RevolverAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

@@ -11,11 +11,11 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttrib
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute.EffectType
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
+import btpos.source.vdfdsl.tf2.filegeneration.representations.dontMergeClassMembersIntoHierarchyCompanion
 import btpos.source.vdfdsl.tf2.filegeneration.representations.fabricateScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
-import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocess
 import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocessAllScopes
 import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromCamelCase
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
@@ -305,6 +305,11 @@ fun ClassBuilder.withParentScopes(thisScope: HierarchyNamedAttributeScope): Clas
 	val parentBuilder = parent.generateTopLevelType()
 	
 	patchWithParentOverridesRecursive(thisScope, this, parentBuilder, listOf())
+	
+	val ourCompanion = this.getOrCreateCompanionObject()
+	this.nestedClasses.values.forEach {
+		it.storeNestedPropertiesInCompanionFlat(thisScope.clsname) { ourCompanion.addProperty(it) }
+	}
 }
 
 
@@ -380,7 +385,6 @@ private fun ClassBuilder.ensureOverriddenPropertiesAreMarkedOverride(ourRootScop
 		.mapNotNull { it.getNestedScope(pathOfCurrentScope) }
 		.flatMap { it.attrs }
 		.map { it.varName }
-		.distinct()
 		.toSet()
 	
 	for (prop in this.properties.values) {
@@ -389,6 +393,37 @@ private fun ClassBuilder.ensureOverriddenPropertiesAreMarkedOverride(ourRootScop
 			if (prop.kType !in this.nestedClasses)
 				prop.delegatesToSuper = true
 		}
+	}
+}
+
+fun ClassBuilder.storeNestedPropertiesInCompanionFlat(companionName: String, addCompanionProperty: (PropertyBuilder) -> Unit) {
+	val compIter = (this.companionObject ?: return).properties.values.iterator()
+	
+	for (it in compIter) {
+		if (it.initializer.endsWith("Attributes()")) // ignore nested scopes
+			continue;
+		
+		addCompanionProperty(it.copy())
+		
+		it.usesGetter = true
+		it.initializer = companionName + "." + it.name
+		compIter.remove()
+		
+		this.properties[it.name]?.apply {
+			// change property to defer to the new location in the root scope
+			initializer = companionName + "." + name + ".get()"
+			usesGetter = true
+			if (setter != null) {
+				setter = companionName + "." + name + ".set(value)"
+			}
+		}
+	}
+	
+	this.nestedClasses.values.forEach {
+		if (it.name in dontMergeClassMembersIntoHierarchyCompanion)
+			return@forEach;
+		
+		it.storeNestedPropertiesInCompanionFlat(companionName, addCompanionProperty)
 	}
 }
 
@@ -439,10 +474,12 @@ fun ClassBuilder.redirectPropertiesToNewType(newType: ClassBuilder, ourParent: C
 			// add the backing field to the companion object,
 			// but make it private if it isn't part of the initial interface so we don't clutter the namespace
 			val companionObjectProp = ourCompanion.properties.computeIfAbsent(ourInterfaceProp.name) {
-				parentCompanion.properties[it]?.copy() ?: PropertyBuilder(it, ourInterfaceProp.kType) {
-					docComment += parentItfProperty.docComment
-					access = PropertyBuilder.AccessModifier.PRIVATE
-				}
+				(parentCompanion.properties[it]?.copy()
+					?: PropertyBuilder(it, ourInterfaceProp.kType) {
+						docComment += parentItfProperty.docComment
+					}).apply {
+						access = PropertyBuilder.AccessModifier.PRIVATE
+					}
 			}
 			
 			companionObjectProp.initializer = newType.name + "()"

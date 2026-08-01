@@ -9,19 +9,47 @@ import kotlin.time.Duration
 
 interface EconEntityAttributes : BaseEntityAttributes {
 	companion object : IBlockScoped {
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		/**
+		 * In-Game: "Festivized"
+		 * 
+		 * Attaches festivizer.
+		 */
+		val isFestivized: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is_festivized")
+	
+		/**
+		 * Attaches static particle, such as smoking a pipe.
+		 * 
+		 * Cosmetics can only have one.
+		 */
+		val attachParticleEffectStatic: ItemAttributeNamed<Int> = ItemAttributeNamed("attach particle effect static")
+	
+		/**
+		 * In-Game: "★ Unusual Effect: N"
+		 * 
+		 * Dynamic particle systems, such as unusuals.
+		 */
+		val attachParticleEffect: ItemAttributeNamed<Int> = ItemAttributeNamed("attach particle effect")
+	
+		/**
+		 * If false, attaches the `set_attached_particle` to the item itself.
+		 * 
+		 * If true, the particle only applies to the throwable particle trail.
+		 */
+		val throwableParticleTrailOnly: ItemAttributeNamed<Boolean> = ItemAttributeNamed("throwable particle trail only")
 	}
 
 	override val meta: MetaAttributes get() = EconEntityAttributes.meta
@@ -52,14 +80,7 @@ interface EconEntityAttributes : BaseEntityAttributes {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
 		open class ItemsAttributes : IBlockScoped {
-			companion object : IBlockScoped {
-				/**
-				 * In-Game: "Festivized"
-				 * 
-				 * Attaches festivizer.
-				 */
-				val isFestivized: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is_festivized")
-			}
+			companion object : IBlockScoped 
 	
 			/**
 			 * In-Game: "Festivized"
@@ -68,33 +89,12 @@ interface EconEntityAttributes : BaseEntityAttributes {
 			 */
 			context(attrs: IAttributeContainer)
 			open var isFestivized: Boolean? 
-				get() = ItemsAttributes.isFestivized.get()
-				set(value) { ItemsAttributes.isFestivized.set(value) }
+				get() = EconEntityAttributes.isFestivized.get()
+				set(value) { EconEntityAttributes.isFestivized.set(value) }
 		}
 	
 		open class ParticlesAttributes : IBlockScoped {
-			companion object : IBlockScoped {
-				/**
-				 * Attaches static particle, such as smoking a pipe.
-				 * 
-				 * Cosmetics can only have one.
-				 */
-				val attachParticleEffectStatic: ItemAttributeNamed<Int> = ItemAttributeNamed("attach particle effect static")
-	
-				/**
-				 * In-Game: "★ Unusual Effect: N"
-				 * 
-				 * Dynamic particle systems, such as unusuals.
-				 */
-				val attachParticleEffect: ItemAttributeNamed<Int> = ItemAttributeNamed("attach particle effect")
-	
-				/**
-				 * If false, attaches the `set_attached_particle` to the item itself.
-				 * 
-				 * If true, the particle only applies to the throwable particle trail.
-				 */
-				val throwableParticleTrailOnly: ItemAttributeNamed<Boolean> = ItemAttributeNamed("throwable particle trail only")
-			}
+			companion object : IBlockScoped 
 	
 			/**
 			 * Attaches static particle, such as smoking a pipe.
@@ -103,8 +103,8 @@ interface EconEntityAttributes : BaseEntityAttributes {
 			 */
 			context(attrs: IAttributeContainer)
 			open var attachParticleEffectStatic: Int? 
-				get() = ParticlesAttributes.attachParticleEffectStatic.get()
-				set(value) { ParticlesAttributes.attachParticleEffectStatic.set(value) }
+				get() = EconEntityAttributes.attachParticleEffectStatic.get()
+				set(value) { EconEntityAttributes.attachParticleEffectStatic.set(value) }
 	
 			/**
 			 * In-Game: "★ Unusual Effect: N"
@@ -113,8 +113,8 @@ interface EconEntityAttributes : BaseEntityAttributes {
 			 */
 			context(attrs: IAttributeContainer)
 			open var attachParticleEffect: Int? 
-				get() = ParticlesAttributes.attachParticleEffect.get()
-				set(value) { ParticlesAttributes.attachParticleEffect.set(value) }
+				get() = EconEntityAttributes.attachParticleEffect.get()
+				set(value) { EconEntityAttributes.attachParticleEffect.set(value) }
 	
 			/**
 			 * If false, attaches the `set_attached_particle` to the item itself.
@@ -123,8 +123,8 @@ interface EconEntityAttributes : BaseEntityAttributes {
 			 */
 			context(attrs: IAttributeContainer)
 			open var throwableParticleTrailOnly: Boolean? 
-				get() = ParticlesAttributes.throwableParticleTrailOnly.get()
-				set(value) { ParticlesAttributes.throwableParticleTrailOnly.set(value) }
+				get() = EconEntityAttributes.throwableParticleTrailOnly.get()
+				set(value) { EconEntityAttributes.throwableParticleTrailOnly.set(value) }
 		}
 	
 		open class KillfeedAttributes : BaseEntityAttributes.MetaAttributes.KillfeedAttributes() 

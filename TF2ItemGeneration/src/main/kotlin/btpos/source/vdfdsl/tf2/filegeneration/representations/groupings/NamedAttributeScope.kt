@@ -38,13 +38,6 @@ open class NamedAttributeScope(
 	
 	val clsname = scopeName + "Attributes"
 	
-	
-	fun generateDummyOverriddenTypes(alreadyPresent: List<List<String>>) {
-		attrs.asSequence().filterIsInstance<NamedAttributeScope>().forEach { scope ->
-			scope.generateDummyOverriddenTypes(alreadyPresent.filter { it.first() == scope.clsname })
-		}
-	}
-	
 	fun containsAttribute(varName: String): Boolean {
 		return this.attrs.any { it.varName == varName }
 	}

@@ -9,86 +9,70 @@ import kotlin.time.Duration
 
 interface ThrowableAttributes : JarAttributes {
 	companion object : IBlockScoped {
-		val throwableRechargeTime: ItemAttributeNamed<Number> = ItemAttributeNamed("throwable recharge time")
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val throwableDetonationTime: ItemAttributeNamed<Number> = ItemAttributeNamed("throwable detonation time")
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		/**
-		 * For timed explosions.
-		 */
-		val isThrowablePrimable: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is throwable primable")
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		/**
-		 * For things like distance/power increases.
-		 */
-		val isThrowableChargeable: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is throwable chargeable")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
-	val throwableRechargeTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableRechargeTime
+	val throwableRechargeTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableRechargeTime.get()
 	
-	val throwableDetonationTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableDetonationTime
+	val throwableDetonationTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableDetonationTime.get()
 	
 	/**
 	 * For timed explosions.
 	 */
-	val isThrowablePrimable: ItemAttributeNamed<Boolean> get() = ThrowableAttributes.isThrowablePrimable
+	val isThrowablePrimable: ItemAttributeNamed<Boolean> get() = ThrowableAttributes.isThrowablePrimable.get()
 	
 	/**
 	 * For things like distance/power increases.
 	 */
-	val isThrowableChargeable: ItemAttributeNamed<Boolean> get() = ThrowableAttributes.isThrowableChargeable
+	val isThrowableChargeable: ItemAttributeNamed<Boolean> get() = ThrowableAttributes.isThrowableChargeable.get()
 	
 	override val projectiles: ProjectilesAttributes get() = ThrowableAttributes.projectiles
 	
@@ -132,8 +116,6 @@ interface ThrowableAttributes : JarAttributes {
 	
 	override val taunting: TauntingAttributes get() = ThrowableAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = ThrowableAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = ThrowableAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = ThrowableAttributes.whenHit
@@ -170,31 +152,19 @@ interface ThrowableAttributes : JarAttributes {
 		open class ClipSizeAttributes : JarAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : JarAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : JarAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : JarAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : JarAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : JarAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : JarAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : JarAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class AfterburnAttributes : JarAttributes.AfterburnAttributes() 
 	
 	open class BuildingsAttributes : JarAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : JarAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : JarAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : JarAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : JarAttributes.DemoChargeAttributes() 
 	
@@ -209,11 +179,15 @@ interface ThrowableAttributes : JarAttributes {
 	open class MetaAttributes : JarAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : JarAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : JarAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : JarAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -239,8 +213,6 @@ interface ThrowableAttributes : JarAttributes {
 	open class StatusEffectsAttributes : JarAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : JarAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : JarAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : JarAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

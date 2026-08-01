@@ -9,19 +9,38 @@ import kotlin.time.Duration
 
 interface WearableAttributes : EconEntityAttributes {
 	companion object : IBlockScoped {
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		/**
+		 * In-Game: "Immune to the effects of afterburn."
+		 * 
+		 * For the base "`Wearable`", only checked on Sniper.
+		 */
+		val afterburnImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("afterburn immunity")
+	
+		/**
+		 * Overrides the skin used for the player. (e.g. Zombie).
+		 */
+		val playerSkinOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("player skin override")
+	
+		/**
+		 * In-Game: "Duck Power : N / 5"
+		 * 
+		 * Determines if ***BONUS DUCKSSSS*** should increment the badge level.
+		 */
+		val duckBadgeLevel: ItemAttributeNamed<Int> = ItemAttributeNamed("duck badge level")
 	}
 
 	override val resistance: ResistanceAttributes get() = WearableAttributes.resistance
@@ -39,14 +58,7 @@ interface WearableAttributes : EconEntityAttributes {
 	override val knockbackReceived: KnockbackReceivedAttributes get() = WearableAttributes.knockbackReceived
 
 	open class ResistanceAttributes : EconEntityAttributes.ResistanceAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "Immune to the effects of afterburn."
-			 * 
-			 * For the base "`Wearable`", only checked on Sniper.
-			 */
-			val afterburnImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("afterburn immunity")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "Immune to the effects of afterburn."
@@ -55,8 +67,8 @@ interface WearableAttributes : EconEntityAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var afterburnImmunity: Boolean? 
-			get() = ResistanceAttributes.afterburnImmunity.get()
-			set(value) { ResistanceAttributes.afterburnImmunity.set(value) }
+			get() = WearableAttributes.afterburnImmunity.get()
+			set(value) { WearableAttributes.afterburnImmunity.set(value) }
 	}
 	
 	open class MetaAttributes : EconEntityAttributes.MetaAttributes() {
@@ -73,31 +85,19 @@ interface WearableAttributes : EconEntityAttributes {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
 		open class PlayerAttributes : IBlockScoped {
-			companion object : IBlockScoped {
-				/**
-				 * Overrides the skin used for the player. (e.g. Zombie).
-				 */
-				val playerSkinOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("player skin override")
-			}
+			companion object : IBlockScoped 
 	
 			/**
 			 * Overrides the skin used for the player. (e.g. Zombie).
 			 */
 			context(attrs: IAttributeContainer)
 			open var playerSkinOverride: Int? 
-				get() = PlayerAttributes.playerSkinOverride.get()
-				set(value) { PlayerAttributes.playerSkinOverride.set(value) }
+				get() = WearableAttributes.playerSkinOverride.get()
+				set(value) { WearableAttributes.playerSkinOverride.set(value) }
 		}
 	
 		open class ItemsAttributes : EconEntityAttributes.MetaAttributes.ItemsAttributes() {
-			companion object : IBlockScoped {
-				/**
-				 * In-Game: "Duck Power : N / 5"
-				 * 
-				 * Determines if ***BONUS DUCKSSSS*** should increment the badge level.
-				 */
-				val duckBadgeLevel: ItemAttributeNamed<Int> = ItemAttributeNamed("duck badge level")
-			}
+			companion object : IBlockScoped 
 	
 			/**
 			 * In-Game: "Duck Power : N / 5"
@@ -106,8 +106,8 @@ interface WearableAttributes : EconEntityAttributes {
 			 */
 			context(attrs: IAttributeContainer)
 			open var duckBadgeLevel: Int? 
-				get() = ItemsAttributes.duckBadgeLevel.get()
-				set(value) { ItemsAttributes.duckBadgeLevel.set(value) }
+				get() = WearableAttributes.duckBadgeLevel.get()
+				set(value) { WearableAttributes.duckBadgeLevel.set(value) }
 		}
 	
 		open class ParticlesAttributes : EconEntityAttributes.MetaAttributes.ParticlesAttributes() 

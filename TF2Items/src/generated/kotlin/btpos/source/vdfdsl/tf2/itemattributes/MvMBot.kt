@@ -9,82 +9,67 @@ import kotlin.time.Duration
 
 interface MvMBotAttributes : PlayerAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * If true, spawns a rocketjump particle whenever the robot jumps.
-		 */
-		val customJumpParticle: ItemAttributeNamed<Boolean> = ItemAttributeNamed("bot custom jump particle")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		/**
-		 * Defaults to 50, I guess it's a percentage.
-		 */
-		val medicUberHealthThreshold: ItemAttributeNamed<Int> = ItemAttributeNamed("bot medic uber health threshold")
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
-		/**
-		 * Defaults to -1.
-		 */
-		val medicUberDeployDelayDuration: ItemAttributeNamed<Int> = ItemAttributeNamed("bot medic uber deploy delay duration")
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val cloak: CloakAttributes = CloakAttributes()
 	
-		val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val cloak: CloakAttributes = CloakAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val hud: HudAttributes = HudAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val hud: HudAttributes = HudAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
-	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	}
 
 	/**
 	 * If true, spawns a rocketjump particle whenever the robot jumps.
 	 */
-	val customJumpParticle: ItemAttributeNamed<Boolean> get() = MvMBotAttributes.customJumpParticle
+	val customJumpParticle: ItemAttributeNamed<Boolean> get() = MvMBotAttributes.customJumpParticle.get()
 	
 	/**
 	 * Defaults to 50, I guess it's a percentage.
 	 */
-	val medicUberHealthThreshold: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberHealthThreshold
+	val medicUberHealthThreshold: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberHealthThreshold.get()
 	
 	/**
 	 * Defaults to -1.
 	 */
-	val medicUberDeployDelayDuration: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberDeployDelayDuration
+	val medicUberDeployDelayDuration: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberDeployDelayDuration.get()
 	
 	override val ammo: AmmoAttributes get() = MvMBotAttributes.ammo
 	
@@ -138,11 +123,7 @@ interface MvMBotAttributes : PlayerAttributes {
 		open class MaxAmmoAttributes : PlayerAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuffItemsAttributes : PlayerAttributes.BuffItemsAttributes() {
-		override val buffType: BuffTypeAttributes = BuffTypeAttributes()
-	
-		open class BuffTypeAttributes : PlayerAttributes.BuffItemsAttributes.BuffTypeAttributes() 
-	}
+	open class BuffItemsAttributes : PlayerAttributes.BuffItemsAttributes() 
 	
 	open class BuildingsAttributes : PlayerAttributes.BuildingsAttributes() {
 		override val sentryGun: SentryGunAttributes = SentryGunAttributes()

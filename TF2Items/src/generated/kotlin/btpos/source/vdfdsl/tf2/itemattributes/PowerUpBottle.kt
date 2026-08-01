@@ -11,38 +11,44 @@ interface PowerUpBottleAttributes : WearableAttributes {
 	companion object : IBlockScoped {
 		val type: TypeAttributes = TypeAttributes()
 	
-		/**
-		 * In-Game: "Each charge lasts N seconds"
-		 */
-		val powerupDuration: ItemAttributeNamed<Number> = ItemAttributeNamed("powerup duration")
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
 		/**
-		 * In-Game: "Share Canteens with your heal target. +1 duration, -10 price per point (minimum cost: 5)"
-		 * 
-		 * Adds extra time to the base powerup duration based on level.
-		 * 
-		 * Checked on player.
+		 * In-Game: "Consumable: Become Crit Boosted for 5 seconds (and double your sentry's firing speed)"
 		 */
-		val canteenSpecialist: ItemAttributeNamed<Int> = ItemAttributeNamed("canteen specialist")
+		val critboost: ItemAttributeNamed<Boolean> = ItemAttributeNamed("critboost")
 	
 		/**
-		 * In-Game: "Holds a maximum of N charges"
+		 * In-Game: "Consumable: Become Übercharged for 5 seconds (and shield your sentry from damage)"
 		 */
-		val powerupMaxCharges: ItemAttributeNamed<Int> = ItemAttributeNamed("powerup max charges")
+		val ubercharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("ubercharge")
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		/**
+		 * In-Game: "Consumable: Instantly teleport to spawn"
+		 */
+		val recall: ItemAttributeNamed<Boolean> = ItemAttributeNamed("recall")
 	
-		val meta: MetaAttributes = MetaAttributes()
+		/**
+		 * In-Game: "Consumable: Instantly refill all weapon clips and ammo"
+		 */
+		val refillAmmo: ItemAttributeNamed<Boolean> = ItemAttributeNamed("refill_ammo")
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		val crits: CritsAttributes = CritsAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val meter: MeterAttributes = MeterAttributes()
-	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		/**
+		 * In-Game: "Consumable: Instantly upgrade all buildings to max level"
+		 */
+		val buildingInstantUpgrade: ItemAttributeNamed<Boolean> = ItemAttributeNamed("building instant upgrade")
 	}
 
 	val type: TypeAttributes get() = PowerUpBottleAttributes.type
@@ -50,7 +56,7 @@ interface PowerUpBottleAttributes : WearableAttributes {
 	/**
 	 * In-Game: "Each charge lasts N seconds"
 	 */
-	val powerupDuration: ItemAttributeNamed<Number> get() = PowerUpBottleAttributes.powerupDuration
+	val powerupDuration: ItemAttributeNamed<Number> get() = PowerUpBottleAttributes.powerupDuration.get()
 	
 	/**
 	 * In-Game: "Share Canteens with your heal target. +1 duration, -10 price per point (minimum cost: 5)"
@@ -59,12 +65,12 @@ interface PowerUpBottleAttributes : WearableAttributes {
 	 * 
 	 * Checked on player.
 	 */
-	val canteenSpecialist: ItemAttributeNamed<Int> get() = PowerUpBottleAttributes.canteenSpecialist
+	val canteenSpecialist: ItemAttributeNamed<Int> get() = PowerUpBottleAttributes.canteenSpecialist.get()
 	
 	/**
 	 * In-Game: "Holds a maximum of N charges"
 	 */
-	val powerupMaxCharges: ItemAttributeNamed<Int> get() = PowerUpBottleAttributes.powerupMaxCharges
+	val powerupMaxCharges: ItemAttributeNamed<Int> get() = PowerUpBottleAttributes.powerupMaxCharges.get()
 	
 	override val resistance: ResistanceAttributes get() = PowerUpBottleAttributes.resistance
 	
@@ -81,72 +87,47 @@ interface PowerUpBottleAttributes : WearableAttributes {
 	override val knockbackReceived: KnockbackReceivedAttributes get() = PowerUpBottleAttributes.knockbackReceived
 
 	open class TypeAttributes : IBlockScoped {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "Consumable: Become Crit Boosted for 5 seconds (and double your sentry's firing speed)"
-			 */
-			val critboost: ItemAttributeNamed<Boolean> = ItemAttributeNamed("critboost")
-	
-			/**
-			 * In-Game: "Consumable: Become Übercharged for 5 seconds (and shield your sentry from damage)"
-			 */
-			val ubercharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("ubercharge")
-	
-			/**
-			 * In-Game: "Consumable: Instantly teleport to spawn"
-			 */
-			val recall: ItemAttributeNamed<Boolean> = ItemAttributeNamed("recall")
-	
-			/**
-			 * In-Game: "Consumable: Instantly refill all weapon clips and ammo"
-			 */
-			val refillAmmo: ItemAttributeNamed<Boolean> = ItemAttributeNamed("refill_ammo")
-	
-			/**
-			 * In-Game: "Consumable: Instantly upgrade all buildings to max level"
-			 */
-			val buildingInstantUpgrade: ItemAttributeNamed<Boolean> = ItemAttributeNamed("building instant upgrade")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "Consumable: Become Crit Boosted for 5 seconds (and double your sentry's firing speed)"
 		 */
 		context(attrs: IAttributeContainer)
 		open var critboost: Boolean? 
-			get() = TypeAttributes.critboost.get()
-			set(value) { TypeAttributes.critboost.set(value) }
+			get() = PowerUpBottleAttributes.critboost.get()
+			set(value) { PowerUpBottleAttributes.critboost.set(value) }
 	
 		/**
 		 * In-Game: "Consumable: Become Übercharged for 5 seconds (and shield your sentry from damage)"
 		 */
 		context(attrs: IAttributeContainer)
 		open var ubercharge: Boolean? 
-			get() = TypeAttributes.ubercharge.get()
-			set(value) { TypeAttributes.ubercharge.set(value) }
+			get() = PowerUpBottleAttributes.ubercharge.get()
+			set(value) { PowerUpBottleAttributes.ubercharge.set(value) }
 	
 		/**
 		 * In-Game: "Consumable: Instantly teleport to spawn"
 		 */
 		context(attrs: IAttributeContainer)
 		open var recall: Boolean? 
-			get() = TypeAttributes.recall.get()
-			set(value) { TypeAttributes.recall.set(value) }
+			get() = PowerUpBottleAttributes.recall.get()
+			set(value) { PowerUpBottleAttributes.recall.set(value) }
 	
 		/**
 		 * In-Game: "Consumable: Instantly refill all weapon clips and ammo"
 		 */
 		context(attrs: IAttributeContainer)
 		open var refillAmmo: Boolean? 
-			get() = TypeAttributes.refillAmmo.get()
-			set(value) { TypeAttributes.refillAmmo.set(value) }
+			get() = PowerUpBottleAttributes.refillAmmo.get()
+			set(value) { PowerUpBottleAttributes.refillAmmo.set(value) }
 	
 		/**
 		 * In-Game: "Consumable: Instantly upgrade all buildings to max level"
 		 */
 		context(attrs: IAttributeContainer)
 		open var buildingInstantUpgrade: Boolean? 
-			get() = TypeAttributes.buildingInstantUpgrade.get()
-			set(value) { TypeAttributes.buildingInstantUpgrade.set(value) }
+			get() = PowerUpBottleAttributes.buildingInstantUpgrade.get()
+			set(value) { PowerUpBottleAttributes.buildingInstantUpgrade.set(value) }
 	}
 	
 	open class ResistanceAttributes : WearableAttributes.ResistanceAttributes() 

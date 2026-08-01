@@ -9,63 +9,61 @@ import kotlin.time.Duration
 
 interface DragonsFuryAttributes : FlamethrowerAttributes {
 	companion object : IBlockScoped {
-		val airblast: AirblastAttributes = AirblastAttributes()
+		private val airblast: AirblastAttributes = AirblastAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val buffType: BuffTypeAttributes = BuffTypeAttributes()
+		private val buffType: BuffTypeAttributes = BuffTypeAttributes()
 	
-		val flames: FlamesAttributes = FlamesAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val flames: FlamesAttributes = FlamesAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val airblast: AirblastAttributes get() = DragonsFuryAttributes.airblast
@@ -80,11 +78,11 @@ interface DragonsFuryAttributes : FlamethrowerAttributes {
 	
 	override val buffType: BuffTypeAttributes get() = DragonsFuryAttributes.buffType
 	
+	override val firing: FiringAttributes get() = DragonsFuryAttributes.firing
+	
 	override val flames: FlamesAttributes get() = DragonsFuryAttributes.flames
 	
 	override val damage: DamageAttributes get() = DragonsFuryAttributes.damage
-	
-	override val firing: FiringAttributes get() = DragonsFuryAttributes.firing
 	
 	override val projectiles: ProjectilesAttributes get() = DragonsFuryAttributes.projectiles
 	
@@ -116,8 +114,6 @@ interface DragonsFuryAttributes : FlamethrowerAttributes {
 	
 	override val taunting: TauntingAttributes get() = DragonsFuryAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = DragonsFuryAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = DragonsFuryAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = DragonsFuryAttributes.whenHit
@@ -128,11 +124,7 @@ interface DragonsFuryAttributes : FlamethrowerAttributes {
 
 	open class AirblastAttributes : FlamethrowerAttributes.AirblastAttributes() 
 	
-	open class CritsAttributes : FlamethrowerAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : FlamethrowerAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : FlamethrowerAttributes.CritsAttributes() 
 	
 	open class MovementAttributes : FlamethrowerAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
@@ -148,29 +140,17 @@ interface DragonsFuryAttributes : FlamethrowerAttributes {
 	
 	open class HealthAndHealingAttributes : FlamethrowerAttributes.HealthAndHealingAttributes() 
 	
-	open class BuffTypeAttributes : FlamethrowerAttributes.BuffTypeAttributes() {
-		override val buffType: BuffTypeAttributes = BuffTypeAttributes()
-	
-		open class BuffTypeAttributes : FlamethrowerAttributes.BuffTypeAttributes.BuffTypeAttributes() 
-	}
-	
-	open class FlamesAttributes : FlamethrowerAttributes.FlamesAttributes() 
-	
-	open class DamageAttributes : FlamethrowerAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : FlamethrowerAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class BuffTypeAttributes : FlamethrowerAttributes.BuffTypeAttributes() 
 	
 	open class FiringAttributes : FlamethrowerAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : FlamethrowerAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : FlamethrowerAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : FlamethrowerAttributes.FiringAttributes.FireRateAttributes() 
 	}
+	
+	open class FlamesAttributes : FlamethrowerAttributes.FlamesAttributes() 
+	
+	open class DamageAttributes : FlamethrowerAttributes.DamageAttributes() 
 	
 	open class ProjectilesAttributes : FlamethrowerAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
@@ -197,11 +177,15 @@ interface DragonsFuryAttributes : FlamethrowerAttributes {
 	open class MetaAttributes : FlamethrowerAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : FlamethrowerAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : FlamethrowerAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : FlamethrowerAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -233,8 +217,6 @@ interface DragonsFuryAttributes : FlamethrowerAttributes {
 	open class StatusEffectsAttributes : FlamethrowerAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : FlamethrowerAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : FlamethrowerAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : FlamethrowerAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

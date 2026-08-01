@@ -9,57 +9,55 @@ import kotlin.time.Duration
 
 interface SpellBookAttributes : ThrowableAttributes {
 	companion object : IBlockScoped {
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val projectiles: ProjectilesAttributes get() = SpellBookAttributes.projectiles
@@ -104,8 +102,6 @@ interface SpellBookAttributes : ThrowableAttributes {
 	
 	override val taunting: TauntingAttributes get() = SpellBookAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = SpellBookAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = SpellBookAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = SpellBookAttributes.whenHit
@@ -142,31 +138,19 @@ interface SpellBookAttributes : ThrowableAttributes {
 		open class ClipSizeAttributes : ThrowableAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : ThrowableAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : ThrowableAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : ThrowableAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : ThrowableAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : ThrowableAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : ThrowableAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : ThrowableAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class AfterburnAttributes : ThrowableAttributes.AfterburnAttributes() 
 	
 	open class BuildingsAttributes : ThrowableAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : ThrowableAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : ThrowableAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : ThrowableAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : ThrowableAttributes.DemoChargeAttributes() 
 	
@@ -181,11 +165,15 @@ interface SpellBookAttributes : ThrowableAttributes {
 	open class MetaAttributes : ThrowableAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : ThrowableAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : ThrowableAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : ThrowableAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -211,8 +199,6 @@ interface SpellBookAttributes : ThrowableAttributes {
 	open class StatusEffectsAttributes : ThrowableAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : ThrowableAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : ThrowableAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : ThrowableAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

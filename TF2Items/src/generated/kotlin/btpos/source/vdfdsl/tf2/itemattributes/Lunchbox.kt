@@ -9,84 +9,55 @@ import kotlin.time.Duration
 
 interface LunchboxAttributes : WeaponBaseAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Adds +50 max health for 30 seconds"
-		 * 
-		 * 0 = LUNCHBOX_STANDARD.
-		 * 
-		 * Used for both the bonk atomic punch or the sandvich.
-		 * 
-		 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
-		 */
-		val lunchboxAddsMaxhealthBonus: ItemAttributeNamed<Boolean> = ItemAttributeNamed("lunchbox adds maxhealth bonus", NumberSelectorCodec(1))
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		/**
-		 * In-Game: "Sets weapon mode #N"
-		 * 
-		 * 0 = LUNCHBOX_STANDARD.
-		 * 
-		 * Used for both the bonk atomic punch or the sandvich.
-		 * 
-		 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
-		 */
-		val lunchboxAddsMinicrits: ItemAttributeNamed<Boolean> = ItemAttributeNamed("lunchbox adds minicrits", NumberSelectorCodec(2))
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		/**
-		 * In-Game: "N% healing effect"
-		 */
-		val lunchboxHealingDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("lunchbox healing decreased")
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -98,7 +69,7 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	 * 
 	 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
 	 */
-	val lunchboxAddsMaxhealthBonus: ItemAttributeNamed<Boolean> get() = LunchboxAttributes.lunchboxAddsMaxhealthBonus
+	val lunchboxAddsMaxhealthBonus: ItemAttributeNamed<Boolean> get() = LunchboxAttributes.lunchboxAddsMaxhealthBonus.get()
 	
 	/**
 	 * In-Game: "Sets weapon mode #N"
@@ -109,12 +80,12 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	 * 
 	 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
 	 */
-	val lunchboxAddsMinicrits: ItemAttributeNamed<Boolean> get() = LunchboxAttributes.lunchboxAddsMinicrits
+	val lunchboxAddsMinicrits: ItemAttributeNamed<Boolean> get() = LunchboxAttributes.lunchboxAddsMinicrits.get()
 	
 	/**
 	 * In-Game: "N% healing effect"
 	 */
-	val lunchboxHealingDecreased: ItemAttributeNamed<Number> get() = LunchboxAttributes.lunchboxHealingDecreased
+	val lunchboxHealingDecreased: ItemAttributeNamed<Number> get() = LunchboxAttributes.lunchboxHealingDecreased.get()
 	
 	override val afterburn: AfterburnAttributes get() = LunchboxAttributes.afterburn
 	
@@ -158,8 +129,6 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	
 	override val taunting: TauntingAttributes get() = LunchboxAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = LunchboxAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = LunchboxAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = LunchboxAttributes.whenHit
@@ -178,28 +147,16 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	
 	open class BuildingsAttributes : WeaponBaseAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : WeaponBaseAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : WeaponBaseAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() 
 	
 	open class DemoChargeAttributes : WeaponBaseAttributes.DemoChargeAttributes() 
 	
 	open class FiringAttributes : WeaponBaseAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : WeaponBaseAttributes.HealthAndHealingAttributes() 
@@ -213,11 +170,15 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : WeaponBaseAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -265,8 +226,6 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	open class StatusEffectsAttributes : WeaponBaseAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : WeaponBaseAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : WeaponBaseAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : WeaponBaseAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

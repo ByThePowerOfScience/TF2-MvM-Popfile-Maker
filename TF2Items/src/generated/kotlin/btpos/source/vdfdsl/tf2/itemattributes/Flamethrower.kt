@@ -15,57 +15,91 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	
 		val flames: FlamesAttributes = FlamesAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		/**
+		 * In-Game: "100% critical hits from behind"
+		 */
+		val flamethrowerBackCrit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod flamethrower back crit")
+	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "N% flamethrower ammo consumed per second"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "+N% flamethrower ammo consumed per second"
+		 */
+		val flameAmmopersec: BonusPenalty<Number> = BonusPenalty(
+			ItemAttributeNamed("flame ammopersec decreased"),
+			ItemAttributeNamed("flame ammopersec increased"),
+		)
+	
+		/**
+		 * In-Game: "Extinguishing teammates restores N health"
+		 * 
+		 * How much health your extinguish restores.
+		 */
+		val extinguishRestoresHealth: ItemAttributeNamed<Int> = ItemAttributeNamed("extinguish restores health")
+	
+		/**
+		 * If greater than 0, enables Phlog crits on having full rage.
+		 */
+		val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
+	
+		/**
+		 * If greater than 0, enables Phlog crits on having full rage.
+		 */
+		val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
 	}
 
 	val airblast: AirblastAttributes get() = FlamethrowerAttributes.airblast
@@ -80,11 +114,11 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	
 	val buffType: BuffTypeAttributes get() = FlamethrowerAttributes.buffType
 	
+	override val firing: FiringAttributes get() = FlamethrowerAttributes.firing
+	
 	val flames: FlamesAttributes get() = FlamethrowerAttributes.flames
 	
 	override val damage: DamageAttributes get() = FlamethrowerAttributes.damage
-	
-	override val firing: FiringAttributes get() = FlamethrowerAttributes.firing
 	
 	override val projectiles: ProjectilesAttributes get() = FlamethrowerAttributes.projectiles
 	
@@ -116,8 +150,6 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	
 	override val taunting: TauntingAttributes get() = FlamethrowerAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = FlamethrowerAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = FlamethrowerAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = FlamethrowerAttributes.whenHit
@@ -142,6 +174,17 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 			 */
 			val chargedAirblast: ItemAttributeNamed<Boolean> = ItemAttributeNamed("charged airblast")
 	
+			/**
+			 * Bonus:
+			 * 
+			 * 	- In-Game: "N% airblast cost"
+			 * 
+			 * Penalty:
+			 * 
+			 * 	- In-Game: "+N% airblast cost"
+			 * 
+			 * Hidden:
+			 */
 			val airblastCost: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
 				ItemAttributeNamed<Number>("airblast cost decreased"),
 				ItemAttributeNamed<Number>("airblast cost increased"),
@@ -192,6 +235,17 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 			get() = AirblastAttributes.chargedAirblast.get()
 			set(value) { AirblastAttributes.chargedAirblast.set(value) }
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "N% airblast cost"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "+N% airblast cost"
+		 * 
+		 * Hidden:
+		 */
 		context(attrs: IAttributeContainer)
 		open var airblastCost: Number? 
 			get() = AirblastAttributes.airblastCost.get()
@@ -240,24 +294,15 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	}
 	
 	open class CritsAttributes : BaseGunAttributes.CritsAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "100% critical hits from behind"
-			 */
-			val flamethrowerBackCrit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod flamethrower back crit")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "100% critical hits from behind"
 		 */
 		context(attrs: IAttributeContainer)
 		open var flamethrowerBackCrit: Boolean? 
-			get() = CritsAttributes.flamethrowerBackCrit.get()
-			set(value) { CritsAttributes.flamethrowerBackCrit.set(value) }
-	
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
+			get() = FlamethrowerAttributes.flamethrowerBackCrit.get()
+			set(value) { FlamethrowerAttributes.flamethrowerBackCrit.set(value) }
 	}
 	
 	open class MovementAttributes : BaseGunAttributes.MovementAttributes() {
@@ -269,17 +314,21 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
-		companion object : IBlockScoped {
-			val flameAmmopersec: BonusPenalty<Number> = BonusPenalty(
-				ItemAttributeNamed("flame ammopersec decreased"),
-				ItemAttributeNamed("flame ammopersec increased"),
-			)
-		}
+		companion object : IBlockScoped 
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "N% flamethrower ammo consumed per second"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "+N% flamethrower ammo consumed per second"
+		 */
 		context(attrs: IAttributeContainer)
 		open var flameAmmopersec: Number? 
-			get() = AmmoAttributes.flameAmmopersec.get()
-			set(value) { AmmoAttributes.flameAmmopersec.set(value) }
+			get() = FlamethrowerAttributes.flameAmmopersec.get()
+			set(value) { FlamethrowerAttributes.flameAmmopersec.set(value) }
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
@@ -287,14 +336,7 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	}
 	
 	open class HealthAndHealingAttributes : BaseGunAttributes.HealthAndHealingAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "Extinguishing teammates restores N health"
-			 * 
-			 * How much health your extinguish restores.
-			 */
-			val extinguishRestoresHealth: ItemAttributeNamed<Int> = ItemAttributeNamed("extinguish restores health")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "Extinguishing teammates restores N health"
@@ -303,46 +345,36 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var extinguishRestoresHealth: Int? 
-			get() = HealthAndHealingAttributes.extinguishRestoresHealth.get()
-			set(value) { HealthAndHealingAttributes.extinguishRestoresHealth.set(value) }
+			get() = FlamethrowerAttributes.extinguishRestoresHealth.get()
+			set(value) { FlamethrowerAttributes.extinguishRestoresHealth.set(value) }
 	}
 	
 	open class BuffTypeAttributes : IBlockScoped {
-		companion object : IBlockScoped {
-			val buffType: BuffTypeAttributes = BuffTypeAttributes()
-		}
+		companion object : IBlockScoped 
 	
-		open val buffType: BuffTypeAttributes = BuffTypeAttributes()
+		/**
+		 * If greater than 0, enables Phlog crits on having full rage.
+		 */
+		context(attrs: IAttributeContainer)
+		open var soldierBuffType: Int? 
+			get() = FlamethrowerAttributes.soldierBuffType.get()
+			set(value) { FlamethrowerAttributes.soldierBuffType.set(value) }
 	
-		open class BuffTypeAttributes : IBlockScoped {
-			companion object : IBlockScoped {
-				/**
-				 * If greater than 0, enables Phlog crits on having full rage.
-				 */
-				val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
+		/**
+		 * If greater than 0, enables Phlog crits on having full rage.
+		 */
+		context(attrs: IAttributeContainer)
+		open var demoBuffType: Int? 
+			get() = FlamethrowerAttributes.demoBuffType.get()
+			set(value) { FlamethrowerAttributes.demoBuffType.set(value) }
+	}
 	
-				/**
-				 * If greater than 0, enables Phlog crits on having full rage.
-				 */
-				val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
-			}
+	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
+		companion object : IBlockScoped 
 	
-			/**
-			 * If greater than 0, enables Phlog crits on having full rage.
-			 */
-			context(attrs: IAttributeContainer)
-			open var soldierBuffType: Int? 
-				get() = BuffTypeAttributes.soldierBuffType.get()
-				set(value) { BuffTypeAttributes.soldierBuffType.set(value) }
+		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-			/**
-			 * If greater than 0, enables Phlog crits on having full rage.
-			 */
-			context(attrs: IAttributeContainer)
-			open var demoBuffType: Int? 
-				get() = BuffTypeAttributes.demoBuffType.get()
-				set(value) { BuffTypeAttributes.demoBuffType.set(value) }
-		}
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class FlamesAttributes : IBlockScoped {
@@ -351,6 +383,15 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	
 			val redirectedFlameSizeMult: ItemAttributeNamed<Number> = ItemAttributeNamed("redirected_flame_size_mult")
 	
+			/**
+			 * Bonus:
+			 * 
+			 * 	- In-Game: "+N% more flame spread area"
+			 * 
+			 * Penalty:
+			 * 
+			 * 	- In-Game: "N% less flame spread area"
+			 */
 			val flameSize: BonusPenalty<Number> = BonusPenalty(
 				ItemAttributeNamed("flame size bonus"),
 				ItemAttributeNamed("flame size penalty"),
@@ -380,6 +421,15 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	
 			val flameUpSpeed: ItemAttributeNamed<Number> = ItemAttributeNamed("flame_up_speed")
 	
+			/**
+			 * Bonus:
+			 * 
+			 * 	- In-Game: "+N% more flame distance"
+			 * 
+			 * Penalty:
+			 * 
+			 * 	- In-Game: "N% less flame distance"
+			 */
 			val flameLife: BonusPenalty<Number> = BonusPenalty(
 				ItemAttributeNamed("flame life bonus"),
 				ItemAttributeNamed("flame life penalty"),
@@ -401,6 +451,15 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 			get() = FlamesAttributes.redirectedFlameSizeMult.get()
 			set(value) { FlamesAttributes.redirectedFlameSizeMult.set(value) }
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "+N% more flame spread area"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% less flame spread area"
+		 */
 		context(attrs: IAttributeContainer)
 		open var flameSize: Number? 
 			get() = FlamesAttributes.flameSize.get()
@@ -466,6 +525,15 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 			get() = FlamesAttributes.flameUpSpeed.get()
 			set(value) { FlamesAttributes.flameUpSpeed.set(value) }
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "+N% more flame distance"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% less flame distance"
+		 */
 		context(attrs: IAttributeContainer)
 		open var flameLife: Number? 
 			get() = FlamesAttributes.flameLife.get()
@@ -480,21 +548,7 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 			set(value) { FlamesAttributes.spellHalloweenGreenFlames.set(value) }
 	}
 	
-	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseGunAttributes.DamageAttributes.DamageAttributes() 
-	}
-	
-	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
-		override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
-	}
+	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
 	
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
@@ -521,11 +575,15 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseGunAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -557,8 +615,6 @@ interface FlamethrowerAttributes : BaseGunAttributes {
 	open class StatusEffectsAttributes : BaseGunAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseGunAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseGunAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : BaseGunAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

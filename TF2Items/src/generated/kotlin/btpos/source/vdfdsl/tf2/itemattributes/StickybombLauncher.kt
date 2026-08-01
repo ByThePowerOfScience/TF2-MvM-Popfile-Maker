@@ -9,83 +9,55 @@ import kotlin.time.Duration
 
 interface StickybombLauncherAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Max charge time decreased by N%"
-		 * 
-		 * Not actually the "rate", rather the time it takes to fully charge a stickybomb launch when holding MOUSE1.
-		 */
-		val stickybombChargeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("stickybomb charge rate")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		/**
-		 * In-Game: "Able to destroy enemy stickybomb"
-		 * 
-		 * If 1, stickies destroy other stickies.
-		 */
-		val stickiesDetonateStickies: ItemAttributeNamed<Boolean> = ItemAttributeNamed("stickies detonate stickies")
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		/**
-		 * In-Game: "Up to +N% damage based on charge"
-		 * 
-		 * damage = `2*basedamage * (this - 1.0) * currentChargeProportion`.
-		 */
-		val stickybombChargeDamageIncrease: ItemAttributeNamed<Number> = ItemAttributeNamed("stickybomb_charge_damage_increase")
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val maxStickies: BonusPenalty<Int> = BonusPenalty(
-			ItemAttributeNamed("max pipebombs increased"),
-			ItemAttributeNamed("max pipebombs decreased"),
-		)
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -93,23 +65,32 @@ interface StickybombLauncherAttributes : BaseGunAttributes {
 	 * 
 	 * Not actually the "rate", rather the time it takes to fully charge a stickybomb launch when holding MOUSE1.
 	 */
-	val stickybombChargeRate: ItemAttributeNamed<Number> get() = StickybombLauncherAttributes.stickybombChargeRate
+	val stickybombChargeRate: ItemAttributeNamed<Number> get() = StickybombLauncherAttributes.stickybombChargeRate.get()
 	
 	/**
 	 * In-Game: "Able to destroy enemy stickybomb"
 	 * 
 	 * If 1, stickies destroy other stickies.
 	 */
-	val stickiesDetonateStickies: ItemAttributeNamed<Boolean> get() = StickybombLauncherAttributes.stickiesDetonateStickies
+	val stickiesDetonateStickies: ItemAttributeNamed<Boolean> get() = StickybombLauncherAttributes.stickiesDetonateStickies.get()
 	
 	/**
 	 * In-Game: "Up to +N% damage based on charge"
 	 * 
 	 * damage = `2*basedamage * (this - 1.0) * currentChargeProportion`.
 	 */
-	val stickybombChargeDamageIncrease: ItemAttributeNamed<Number> get() = StickybombLauncherAttributes.stickybombChargeDamageIncrease
+	val stickybombChargeDamageIncrease: ItemAttributeNamed<Number> get() = StickybombLauncherAttributes.stickybombChargeDamageIncrease.get()
 	
-	val maxStickies: BonusPenalty<Int> get() = StickybombLauncherAttributes.maxStickies
+	/**
+	 * Bonus:
+	 * 
+	 * 	- In-Game: "+N max stickybombs out"
+	 * 
+	 * Penalty:
+	 * 
+	 * 	- In-Game: "N max stickybombs out"
+	 */
+	val maxStickies: BonusPenalty<Int> get() = StickybombLauncherAttributes.maxStickies.get()
 	
 	override val ammo: AmmoAttributes get() = StickybombLauncherAttributes.ammo
 	
@@ -153,8 +134,6 @@ interface StickybombLauncherAttributes : BaseGunAttributes {
 	
 	override val taunting: TauntingAttributes get() = StickybombLauncherAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = StickybombLauncherAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = StickybombLauncherAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = StickybombLauncherAttributes.whenHit
@@ -169,20 +148,12 @@ interface StickybombLauncherAttributes : BaseGunAttributes {
 		open class ClipSizeAttributes : BaseGunAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseGunAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseGunAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
@@ -199,11 +170,7 @@ interface StickybombLauncherAttributes : BaseGunAttributes {
 	
 	open class BuildingsAttributes : BaseGunAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : BaseGunAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : BaseGunAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : BaseGunAttributes.DemoChargeAttributes() 
 	
@@ -218,11 +185,15 @@ interface StickybombLauncherAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseGunAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -260,8 +231,6 @@ interface StickybombLauncherAttributes : BaseGunAttributes {
 	open class StatusEffectsAttributes : BaseGunAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseGunAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseGunAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : BaseGunAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

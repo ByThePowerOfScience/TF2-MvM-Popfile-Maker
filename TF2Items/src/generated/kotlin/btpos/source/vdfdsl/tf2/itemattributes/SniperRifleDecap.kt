@@ -9,68 +9,62 @@ import kotlin.time.Duration
 
 interface SniperRifleDecapAttributes : SniperRifleAttributes {
 	companion object : IBlockScoped {
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val buffType: BuffTypeAttributes = BuffTypeAttributes()
+		private val sniperChargePerSec: SniperChargePerSecAttributes = SniperChargePerSecAttributes()
 	
-		val sniperChargePerSec: SniperChargePerSecAttributes = SniperChargePerSecAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val damage: DamageAttributes get() = SniperRifleDecapAttributes.damage
 	
 	override val onHit: OnHitAttributes get() = SniperRifleDecapAttributes.onHit
-	
-	override val buffType: BuffTypeAttributes get() = SniperRifleDecapAttributes.buffType
 	
 	override val sniperChargePerSec: SniperChargePerSecAttributes get() = SniperRifleDecapAttributes.sniperChargePerSec
 	
@@ -112,8 +106,6 @@ interface SniperRifleDecapAttributes : SniperRifleAttributes {
 	
 	override val taunting: TauntingAttributes get() = SniperRifleDecapAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = SniperRifleDecapAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = SniperRifleDecapAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = SniperRifleDecapAttributes.whenHit
@@ -122,11 +114,7 @@ interface SniperRifleDecapAttributes : SniperRifleAttributes {
 	
 	override val disguise: DisguiseAttributes get() = SniperRifleDecapAttributes.disguise
 
-	open class DamageAttributes : SniperRifleAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : SniperRifleAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : SniperRifleAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : SniperRifleAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -137,8 +125,6 @@ interface SniperRifleDecapAttributes : SniperRifleAttributes {
 	
 		open class GenerateRageOnDamageAttributes : SniperRifleAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
 	}
-	
-	open class BuffTypeAttributes : SniperRifleAttributes.BuffTypeAttributes() 
 	
 	open class SniperChargePerSecAttributes : SniperRifleAttributes.SniperChargePerSecAttributes() 
 	
@@ -151,11 +137,7 @@ interface SniperRifleDecapAttributes : SniperRifleAttributes {
 	open class FiringAttributes : SniperRifleAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : SniperRifleAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : SniperRifleAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : SniperRifleAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : SniperRifleAttributes.ProjectilesAttributes() {
@@ -172,11 +154,7 @@ interface SniperRifleDecapAttributes : SniperRifleAttributes {
 	
 	open class BuildingsAttributes : SniperRifleAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : SniperRifleAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : SniperRifleAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : SniperRifleAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : SniperRifleAttributes.DemoChargeAttributes() 
 	
@@ -191,11 +169,15 @@ interface SniperRifleDecapAttributes : SniperRifleAttributes {
 	open class MetaAttributes : SniperRifleAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : SniperRifleAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : SniperRifleAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : SniperRifleAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -223,8 +205,6 @@ interface SniperRifleDecapAttributes : SniperRifleAttributes {
 	open class StatusEffectsAttributes : SniperRifleAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : SniperRifleAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : SniperRifleAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : SniperRifleAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

@@ -11,19 +11,25 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	companion object : IBlockScoped {
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
+	
+		val chargeTime: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge time increased"), ItemAttributeNamed<Number>("charge time decreased"))
+	
+		val chargeImpactDamage: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge impact damage increased"), ItemAttributeNamed<Number>("charge impact damage decreased"))
 	}
 
 	val demoCharge: DemoChargeAttributes get() = WearableDemoShieldAttributes.demoCharge
@@ -43,28 +49,22 @@ interface WearableDemoShieldAttributes : WearableAttributes {
 	override val knockbackReceived: KnockbackReceivedAttributes get() = WearableDemoShieldAttributes.knockbackReceived
 
 	open class DemoChargeAttributes : IBlockScoped {
-		companion object : IBlockScoped {
-			val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
-	
-			val chargeTime: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge time increased"), ItemAttributeNamed<Number>("charge time decreased"))
-	
-			val chargeImpactDamage: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge impact damage increased"), ItemAttributeNamed<Number>("charge impact damage decreased"))
-		}
+		companion object : IBlockScoped 
 	
 		context(attrs: IAttributeContainer)
 		open var attackNotCancelCharge: Boolean? 
-			get() = DemoChargeAttributes.attackNotCancelCharge.get()
-			set(value) { DemoChargeAttributes.attackNotCancelCharge.set(value) }
+			get() = WearableDemoShieldAttributes.attackNotCancelCharge.get()
+			set(value) { WearableDemoShieldAttributes.attackNotCancelCharge.set(value) }
 	
 		context(attrs: IAttributeContainer)
 		open var chargeTime: Number? 
-			get() = DemoChargeAttributes.chargeTime.get()
-			set(value) { DemoChargeAttributes.chargeTime.set(value) }
+			get() = WearableDemoShieldAttributes.chargeTime.get()
+			set(value) { WearableDemoShieldAttributes.chargeTime.set(value) }
 	
 		context(attrs: IAttributeContainer)
 		open var chargeImpactDamage: Number? 
-			get() = DemoChargeAttributes.chargeImpactDamage.get()
-			set(value) { DemoChargeAttributes.chargeImpactDamage.set(value) }
+			get() = WearableDemoShieldAttributes.chargeImpactDamage.get()
+			set(value) { WearableDemoShieldAttributes.chargeImpactDamage.set(value) }
 	}
 	
 	open class ResistanceAttributes : WearableAttributes.ResistanceAttributes() {

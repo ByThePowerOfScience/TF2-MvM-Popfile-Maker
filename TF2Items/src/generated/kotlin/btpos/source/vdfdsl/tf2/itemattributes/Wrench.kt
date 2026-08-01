@@ -9,64 +9,96 @@ import kotlin.time.Duration
 
 interface WrenchAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val onHit: OnHitAttributes = OnHitAttributes()
+	
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		private val heads: HeadsAttributes = HeadsAttributes()
+	
+		private val onKill: OnKillAttributes = OnKillAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		private val taunting: TauntingAttributes = TauntingAttributes()
+	
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
 		/**
-		 * In-Game: "Press your reload key to choose to teleport to spawn or your exit teleporter"
+		 * Bonus:
 		 * 
-		 * If set, pressing reload shows the Eureka Effect teleport menu.
+		 * 	- In-Game: "Construction hit speed boost increased by N%"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "Construction hit speed boost decreased by N%"
 		 */
-		val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> = ItemAttributeNamed("alt fire teleport to spawn")
+		val constructionRate: BonusPenalty<Number> = BonusPenalty(
+			ItemAttributeNamed("Construction rate increased"),
+			ItemAttributeNamed("Construction rate decreased"),
+		)
 	
-		val crits: CritsAttributes = CritsAttributes()
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "N% faster repair rate"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% slower repair rate"
+		 */
+		val repairRate: BonusPenalty<Number> = BonusPenalty(
+			ItemAttributeNamed("Repair rate increased"),
+			ItemAttributeNamed("Repair rate decreased"),
+		)
 	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
-	
-		val ammo: AmmoAttributes = AmmoAttributes()
-	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
-	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
-	
-		val firing: FiringAttributes = FiringAttributes()
-	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
-	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
-	
-		val meter: MeterAttributes = MeterAttributes()
-	
-		val movement: MovementAttributes = MovementAttributes()
-	
-		val heads: HeadsAttributes = HeadsAttributes()
-	
-		val onKill: OnKillAttributes = OnKillAttributes()
-	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
-	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
-	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
-	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		/**
+		 * In-Game: "Replaces the Sentry with a Mini-Sentry"
+		 * 
+		 * Sentry built is a minisentry.
+		 * 
+		 * Detonates leveled sentries when equipping a wrench with this attribute.
+		 * 
+		 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute.
+		 * 
+		 * Removes engineer's glove on his model.
+		 */
+		val wrenchBuildsMinisentry: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod wrench builds minisentry")
 	}
 
 	override val buildings: BuildingsAttributes get() = WrenchAttributes.buildings
@@ -76,7 +108,7 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	 * 
 	 * If set, pressing reload shows the Eureka Effect teleport menu.
 	 */
-	val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> get() = WrenchAttributes.altFireTeleportToSpawn
+	val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> get() = WrenchAttributes.altFireTeleportToSpawn.get()
 	
 	override val crits: CritsAttributes get() = WrenchAttributes.crits
 	
@@ -120,8 +152,6 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	
 	override val taunting: TauntingAttributes get() = WrenchAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = WrenchAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = WrenchAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = WrenchAttributes.ragdolls
@@ -130,46 +160,41 @@ interface WrenchAttributes : BaseMeleeAttributes {
 
 	open class BuildingsAttributes : BaseMeleeAttributes.BuildingsAttributes() {
 		companion object : IBlockScoped {
-			val constructionRate: BonusPenalty<Number> = BonusPenalty(
-				ItemAttributeNamed("Construction rate increased"),
-				ItemAttributeNamed("Construction rate decreased"),
-			)
-	
-			val repairRate: BonusPenalty<Number> = BonusPenalty(
-				ItemAttributeNamed("Repair rate increased"),
-				ItemAttributeNamed("Repair rate decreased"),
-			)
-	
 			val sentryGun: SentryGunAttributes = SentryGunAttributes()
 		}
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "Construction hit speed boost increased by N%"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "Construction hit speed boost decreased by N%"
+		 */
 		context(attrs: IAttributeContainer)
 		open var constructionRate: Number? 
-			get() = BuildingsAttributes.constructionRate.get()
-			set(value) { BuildingsAttributes.constructionRate.set(value) }
+			get() = WrenchAttributes.constructionRate.get()
+			set(value) { WrenchAttributes.constructionRate.set(value) }
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "N% faster repair rate"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% slower repair rate"
+		 */
 		context(attrs: IAttributeContainer)
 		open var repairRate: Number? 
-			get() = BuildingsAttributes.repairRate.get()
-			set(value) { BuildingsAttributes.repairRate.set(value) }
+			get() = WrenchAttributes.repairRate.get()
+			set(value) { WrenchAttributes.repairRate.set(value) }
 	
 		open val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
 		open class SentryGunAttributes : IBlockScoped {
-			companion object : IBlockScoped {
-				/**
-				 * In-Game: "Replaces the Sentry with a Mini-Sentry"
-				 * 
-				 * Sentry built is a minisentry.
-				 * 
-				 * Detonates leveled sentries when equipping a wrench with this attribute.
-				 * 
-				 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute.
-				 * 
-				 * Removes engineer's glove on his model.
-				 */
-				val wrenchBuildsMinisentry: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod wrench builds minisentry")
-			}
+			companion object : IBlockScoped 
 	
 			/**
 			 * In-Game: "Replaces the Sentry with a Mini-Sentry"
@@ -184,22 +209,14 @@ interface WrenchAttributes : BaseMeleeAttributes {
 			 */
 			context(attrs: IAttributeContainer)
 			open var wrenchBuildsMinisentry: Boolean? 
-				get() = SentryGunAttributes.wrenchBuildsMinisentry.get()
-				set(value) { SentryGunAttributes.wrenchBuildsMinisentry.set(value) }
+				get() = WrenchAttributes.wrenchBuildsMinisentry.get()
+				set(value) { WrenchAttributes.wrenchBuildsMinisentry.set(value) }
 		}
 	}
 	
-	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -230,11 +247,7 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() 
@@ -248,11 +261,15 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -290,8 +307,6 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	open class StatusEffectsAttributes : BaseMeleeAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseMeleeAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	

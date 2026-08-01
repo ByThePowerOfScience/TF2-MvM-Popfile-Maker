@@ -9,136 +9,83 @@ import kotlin.time.Duration
 
 interface SniperRifleAttributes : BaseGunAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "No headshots"
-		 * 
-		 * 0: Normal.
-		 * 
-		 * 1: Sydney Sleeper.
-		 * 
-		 * 2: Machina.
-		 * 
-		 * 3: Classic.
-		 */
-		val cannotHeadshot: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sniper no headshots", NumberSelectorCodec(1))
-	
-		val buffType: BuffTypeAttributes = BuffTypeAttributes()
-	
 		val sniperChargePerSec: SniperChargePerSecAttributes = SniperChargePerSecAttributes()
 	
-		/**
-		 * In-Game: "+N% faster reload time"
-		 * 
-		 * Mult to zoom and unzoom delay on clipless weapons.
-		 * 
-		 * Fun fact: this is also affected by the Precision mannpower powerup.
-		 */
-		val fasterReloadRate: ItemAttributeNamed<Number> = ItemAttributeNamed("faster reload rate")
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		private val heads: HeadsAttributes = HeadsAttributes()
+	
+		private val onHit: OnHitAttributes = OnHitAttributes()
+	
+		private val onKill: OnKillAttributes = OnKillAttributes()
+	
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		private val taunting: TauntingAttributes = TauntingAttributes()
+	
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		/**
-		 * In-Game: "Cannot fire unless zoomed"
+		 * In-Game: "On Full Charge: +N% damage per shot"
+		 * 
+		 * If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge.
 		 */
-		val canOnlyFireWhenZoomed: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sniper only fire zoomed")
+		val fullChargeDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper full charge damage bonus")
 	
 		/**
-		 * In-Game: "On Full Charge: Projectiles penetrate players"
+		 * In-Game: "N% movement speed on targets"
+		 * 
+		 * Multiplier applied to target move-speed on hit.
+		 * 
+		 * Duration is equal to the rifle's `jarate_duration` attribute.
 		 */
-		val penetratesWhenFullyCharged: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sniper penetrate players when charged")
+		val appliesSnareEffect: ItemAttributeNamed<Number> = ItemAttributeNamed("applies snare effect")
 	
 		/**
-		 * In-Game: "No headshots when not fully charged"
+		 * In-Game: "N% faster power charge"
 		 */
-		val cannotHeadshotWithoutFullCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sniper no headshot without full charge")
+		val srifleChargeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate increased")
 	
 		/**
-		 * In-Game: "Charge and fire shots independent of zoom"
-		 * 
-		 * Whether the rifle can headshot without being zoomed.
-		 * 
-		 * Funnily enough, it checks if your FOV is lower than your default FOV to see if you're zoomed.
+		 * In-Game: "N% slower power charge"
 		 */
-		val canHeadshotUnscoped: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sniper crit no scope")
-	
-		/**
-		 * In-Game: "Increased headshot explosion radius and damage to nearby enemies"
-		 * 
-		 * Level of explosive headshot.
-		 * 
-		 * Checked on attacker.
-		 */
-		val explosiveHeadshotLevel: ItemAttributeNamed<Int> = ItemAttributeNamed("explosive sniper shot")
-	
-		/**
-		 * In-Game: "On Scoped Hit: Apply Jarate for 2 to N seconds based on charge level. Nature's Call: Scoped headshots always mini-crits and reduce the remaining cooldown of Jarate by 1 second."
-		 * 
-		 * If greater than 0:.
-		 * 
-		 * Makes weapon not eject brass.
-		 * 
-		 * Makes weapon only penetrate non-burning teammates, as opposed to penetrating all teammates.
-		 * 
-		 * Note: Not actually used in Sydney Sleeper Jarate calculation, as far as I could tell.
-		 */
-		val jarateDuration: ItemAttributeNamed<Number> = ItemAttributeNamed("jarate duration")
-	
-		/**
-		 * In-Game: "No flinching when aiming and fully charged"
-		 * 
-		 * Prevents flinching from damage when scoped and fully charged.
-		 */
-		val aimingNoFlinch: ItemAttributeNamed<Boolean> = ItemAttributeNamed("aiming no flinch")
-	
-		val ammo: AmmoAttributes = AmmoAttributes()
-	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val firing: FiringAttributes = FiringAttributes()
-	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
-	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
-	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
-	
-		val crits: CritsAttributes = CritsAttributes()
-	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
-	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
-	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
-	
-		val meter: MeterAttributes = MeterAttributes()
-	
-		val movement: MovementAttributes = MovementAttributes()
-	
-		val heads: HeadsAttributes = HeadsAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val onKill: OnKillAttributes = OnKillAttributes()
-	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
-	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
-	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		val srifleChargeRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate decreased")
 	}
 
 	override val damage: DamageAttributes get() = SniperRifleAttributes.damage
@@ -156,9 +103,17 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 * 
 	 * 3: Classic.
 	 */
-	val cannotHeadshot: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.cannotHeadshot
+	val cannotHeadshot: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.cannotHeadshot.get()
 	
-	val buffType: BuffTypeAttributes get() = SniperRifleAttributes.buffType
+	/**
+	 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
+	 */
+	val soldierBuffType: ItemAttributeNamed<Int> get() = SniperRifleAttributes.soldierBuffType.get()
+	
+	/**
+	 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
+	 */
+	val demoBuffType: ItemAttributeNamed<Int> get() = SniperRifleAttributes.demoBuffType.get()
 	
 	val sniperChargePerSec: SniperChargePerSecAttributes get() = SniperRifleAttributes.sniperChargePerSec
 	
@@ -169,22 +124,22 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 * 
 	 * Fun fact: this is also affected by the Precision mannpower powerup.
 	 */
-	val fasterReloadRate: ItemAttributeNamed<Number> get() = SniperRifleAttributes.fasterReloadRate
+	val fasterReloadRate: ItemAttributeNamed<Number> get() = SniperRifleAttributes.fasterReloadRate.get()
 	
 	/**
 	 * In-Game: "Cannot fire unless zoomed"
 	 */
-	val canOnlyFireWhenZoomed: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.canOnlyFireWhenZoomed
+	val canOnlyFireWhenZoomed: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.canOnlyFireWhenZoomed.get()
 	
 	/**
 	 * In-Game: "On Full Charge: Projectiles penetrate players"
 	 */
-	val penetratesWhenFullyCharged: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.penetratesWhenFullyCharged
+	val penetratesWhenFullyCharged: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.penetratesWhenFullyCharged.get()
 	
 	/**
 	 * In-Game: "No headshots when not fully charged"
 	 */
-	val cannotHeadshotWithoutFullCharge: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.cannotHeadshotWithoutFullCharge
+	val cannotHeadshotWithoutFullCharge: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.cannotHeadshotWithoutFullCharge.get()
 	
 	/**
 	 * In-Game: "Charge and fire shots independent of zoom"
@@ -193,7 +148,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 * 
 	 * Funnily enough, it checks if your FOV is lower than your default FOV to see if you're zoomed.
 	 */
-	val canHeadshotUnscoped: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.canHeadshotUnscoped
+	val canHeadshotUnscoped: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.canHeadshotUnscoped.get()
 	
 	/**
 	 * In-Game: "Increased headshot explosion radius and damage to nearby enemies"
@@ -202,7 +157,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 * 
 	 * Checked on attacker.
 	 */
-	val explosiveHeadshotLevel: ItemAttributeNamed<Int> get() = SniperRifleAttributes.explosiveHeadshotLevel
+	val explosiveHeadshotLevel: ItemAttributeNamed<Int> get() = SniperRifleAttributes.explosiveHeadshotLevel.get()
 	
 	/**
 	 * In-Game: "On Scoped Hit: Apply Jarate for 2 to N seconds based on charge level. Nature's Call: Scoped headshots always mini-crits and reduce the remaining cooldown of Jarate by 1 second."
@@ -215,14 +170,14 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	 * 
 	 * Note: Not actually used in Sydney Sleeper Jarate calculation, as far as I could tell.
 	 */
-	val jarateDuration: ItemAttributeNamed<Number> get() = SniperRifleAttributes.jarateDuration
+	val jarateDuration: ItemAttributeNamed<Number> get() = SniperRifleAttributes.jarateDuration.get()
 	
 	/**
 	 * In-Game: "No flinching when aiming and fully charged"
 	 * 
 	 * Prevents flinching from damage when scoped and fully charged.
 	 */
-	val aimingNoFlinch: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.aimingNoFlinch
+	val aimingNoFlinch: ItemAttributeNamed<Boolean> get() = SniperRifleAttributes.aimingNoFlinch.get()
 	
 	override val ammo: AmmoAttributes get() = SniperRifleAttributes.ammo
 	
@@ -262,8 +217,6 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	
 	override val taunting: TauntingAttributes get() = SniperRifleAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = SniperRifleAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = SniperRifleAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = SniperRifleAttributes.whenHit
@@ -273,14 +226,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = SniperRifleAttributes.disguise
 
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "On Full Charge: +N% damage per shot"
-			 * 
-			 * If greater than 1.0, weapon plays cool fully-charged-Machina railgun sound when firing at full charge.
-			 */
-			val fullChargeDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper full charge damage bonus")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "On Full Charge: +N% damage per shot"
@@ -289,25 +235,12 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var fullChargeDamageBonus: Number? 
-			get() = DamageAttributes.fullChargeDamageBonus.get()
-			set(value) { DamageAttributes.fullChargeDamageBonus.set(value) }
-	
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseGunAttributes.DamageAttributes.DamageAttributes() 
+			get() = SniperRifleAttributes.fullChargeDamageBonus.get()
+			set(value) { SniperRifleAttributes.fullChargeDamageBonus.set(value) }
 	}
 	
 	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "N% movement speed on targets"
-			 * 
-			 * Multiplier applied to target move-speed on hit.
-			 * 
-			 * Duration is equal to the rifle's `jarate_duration` attribute.
-			 */
-			val appliesSnareEffect: ItemAttributeNamed<Number> = ItemAttributeNamed("applies snare effect")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "N% movement speed on targets"
@@ -318,8 +251,8 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var appliesSnareEffect: Number? 
-			get() = OnHitAttributes.appliesSnareEffect.get()
-			set(value) { OnHitAttributes.appliesSnareEffect.set(value) }
+			get() = SniperRifleAttributes.appliesSnareEffect.get()
+			set(value) { SniperRifleAttributes.appliesSnareEffect.set(value) }
 	
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
@@ -330,77 +263,32 @@ interface SniperRifleAttributes : BaseGunAttributes {
 		open class GenerateRageOnDamageAttributes : BaseGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
 	}
 	
-	open class BuffTypeAttributes : IBlockScoped {
-		companion object : IBlockScoped {
-			/**
-			 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
-			 */
-			val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
-	
-			/**
-			 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
-			 */
-			val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
-		}
-	
-		/**
-		 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
-		 */
-		context(attrs: IAttributeContainer)
-		open var soldierBuffType: Int? 
-			get() = BuffTypeAttributes.soldierBuffType.get()
-			set(value) { BuffTypeAttributes.soldierBuffType.set(value) }
-	
-		/**
-		 * If greater than 0, activates rage buff when pressing reload and rage meter is full (or above full).
-		 */
-		context(attrs: IAttributeContainer)
-		open var demoBuffType: Int? 
-			get() = BuffTypeAttributes.demoBuffType.get()
-			set(value) { BuffTypeAttributes.demoBuffType.set(value) }
-	}
-	
 	open class SniperChargePerSecAttributes : IBlockScoped {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "+N% charge rate"
-			 */
-			val sniperChargePerSec: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper charge per sec")
-	
-			/**
-			 * In-Game: "N% faster power charge"
-			 */
-			val srifleChargeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate increased")
-	
-			/**
-			 * In-Game: "N% slower power charge"
-			 */
-			val srifleChargeRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SRifle Charge rate decreased")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "+N% charge rate"
 		 */
 		context(attrs: IAttributeContainer)
 		open var sniperChargePerSec: Number? 
-			get() = SniperChargePerSecAttributes.sniperChargePerSec.get()
-			set(value) { SniperChargePerSecAttributes.sniperChargePerSec.set(value) }
+			get() = SniperRifleAttributes.sniperChargePerSec.get()
+			set(value) { SniperRifleAttributes.sniperChargePerSec.set(value) }
 	
 		/**
 		 * In-Game: "N% faster power charge"
 		 */
 		context(attrs: IAttributeContainer)
 		open var srifleChargeRateIncreased: Number? 
-			get() = SniperChargePerSecAttributes.srifleChargeRateIncreased.get()
-			set(value) { SniperChargePerSecAttributes.srifleChargeRateIncreased.set(value) }
+			get() = SniperRifleAttributes.srifleChargeRateIncreased.get()
+			set(value) { SniperRifleAttributes.srifleChargeRateIncreased.set(value) }
 	
 		/**
 		 * In-Game: "N% slower power charge"
 		 */
 		context(attrs: IAttributeContainer)
 		open var srifleChargeRateDecreased: Number? 
-			get() = SniperChargePerSecAttributes.srifleChargeRateDecreased.get()
-			set(value) { SniperChargePerSecAttributes.srifleChargeRateDecreased.set(value) }
+			get() = SniperRifleAttributes.srifleChargeRateDecreased.get()
+			set(value) { SniperRifleAttributes.srifleChargeRateDecreased.set(value) }
 	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
@@ -412,11 +300,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	open class FiringAttributes : BaseGunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseGunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
@@ -433,11 +317,7 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	
 	open class BuildingsAttributes : BaseGunAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : BaseGunAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : BaseGunAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : BaseGunAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : BaseGunAttributes.DemoChargeAttributes() 
 	
@@ -452,11 +332,15 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	open class MetaAttributes : BaseGunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseGunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseGunAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseGunAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -484,8 +368,6 @@ interface SniperRifleAttributes : BaseGunAttributes {
 	open class StatusEffectsAttributes : BaseGunAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseGunAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseGunAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : BaseGunAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

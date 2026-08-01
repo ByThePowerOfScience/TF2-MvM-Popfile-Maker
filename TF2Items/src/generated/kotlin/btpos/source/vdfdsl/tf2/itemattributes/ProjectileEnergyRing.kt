@@ -8,19 +8,12 @@ import java.util.*
 import kotlin.time.Duration
 
 interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
-	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Projectile penetrates enemy targets"
-		 * 
-		 * Checked on owner.
-		 */
-		val energyWeaponPenetration: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon penetration")
-	}
+	companion object : IBlockScoped 
 
 	/**
 	 * In-Game: "Projectile penetrates enemy targets"
 	 * 
 	 * Checked on owner.
 	 */
-	val energyWeaponPenetration: ItemAttributeNamed<Boolean> get() = ProjectileEnergyRingAttributes.energyWeaponPenetration
+	val energyWeaponPenetration: ItemAttributeNamed<Boolean> get() = ProjectileEnergyRingAttributes.energyWeaponPenetration.get()
 }

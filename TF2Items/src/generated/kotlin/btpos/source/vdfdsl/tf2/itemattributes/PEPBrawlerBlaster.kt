@@ -9,57 +9,55 @@ import kotlin.time.Duration
 
 interface PEPBrawlerBlasterAttributes : ScattergunAttributes {
 	companion object : IBlockScoped {
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	override val onHit: OnHitAttributes get() = PEPBrawlerBlasterAttributes.onHit
@@ -104,8 +102,6 @@ interface PEPBrawlerBlasterAttributes : ScattergunAttributes {
 	
 	override val taunting: TauntingAttributes get() = PEPBrawlerBlasterAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = PEPBrawlerBlasterAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = PEPBrawlerBlasterAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = PEPBrawlerBlasterAttributes.whenHit
@@ -132,20 +128,12 @@ interface PEPBrawlerBlasterAttributes : ScattergunAttributes {
 		open class ClipSizeAttributes : ScattergunAttributes.AmmoAttributes.ClipSizeAttributes() 
 	}
 	
-	open class DamageAttributes : ScattergunAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : ScattergunAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : ScattergunAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : ScattergunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : ScattergunAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : ScattergunAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : ScattergunAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class ProjectilesAttributes : ScattergunAttributes.ProjectilesAttributes() {
@@ -162,11 +150,7 @@ interface PEPBrawlerBlasterAttributes : ScattergunAttributes {
 	
 	open class BuildingsAttributes : ScattergunAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : ScattergunAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : ScattergunAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : ScattergunAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : ScattergunAttributes.DemoChargeAttributes() 
 	
@@ -181,11 +165,15 @@ interface PEPBrawlerBlasterAttributes : ScattergunAttributes {
 	open class MetaAttributes : ScattergunAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : ScattergunAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : ScattergunAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : ScattergunAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -211,8 +199,6 @@ interface PEPBrawlerBlasterAttributes : ScattergunAttributes {
 	open class StatusEffectsAttributes : ScattergunAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : ScattergunAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : ScattergunAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : ScattergunAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

@@ -9,57 +9,60 @@ import kotlin.time.Duration
 
 interface RayGunAttributes : RocketLauncherAttributes {
 	companion object : IBlockScoped {
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		/**
+		 * Removes ammo requirement to fire weapon.
+		 */
+		val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
 	}
 
 	override val ammo: AmmoAttributes get() = RayGunAttributes.ammo
@@ -104,8 +107,6 @@ interface RayGunAttributes : RocketLauncherAttributes {
 	
 	override val taunting: TauntingAttributes get() = RayGunAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = RayGunAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = RayGunAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = RayGunAttributes.whenHit
@@ -115,20 +116,15 @@ interface RayGunAttributes : RocketLauncherAttributes {
 	override val disguise: DisguiseAttributes get() = RayGunAttributes.disguise
 
 	open class AmmoAttributes : RocketLauncherAttributes.AmmoAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * Removes ammo requirement to fire weapon.
-			 */
-			val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * Removes ammo requirement to fire weapon.
 		 */
 		context(attrs: IAttributeContainer)
 		open var energyWeaponNoDrain: Boolean? 
-			get() = AmmoAttributes.energyWeaponNoDrain.get()
-			set(value) { AmmoAttributes.energyWeaponNoDrain.set(value) }
+			get() = RayGunAttributes.energyWeaponNoDrain.get()
+			set(value) { RayGunAttributes.energyWeaponNoDrain.set(value) }
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
@@ -145,31 +141,19 @@ interface RayGunAttributes : RocketLauncherAttributes {
 		open class ProjectilePenetrationAttributes : RocketLauncherAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
 	}
 	
-	open class DamageAttributes : RocketLauncherAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : RocketLauncherAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : RocketLauncherAttributes.DamageAttributes() 
 	
 	open class FiringAttributes : RocketLauncherAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : RocketLauncherAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : RocketLauncherAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : RocketLauncherAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class AfterburnAttributes : RocketLauncherAttributes.AfterburnAttributes() 
 	
 	open class BuildingsAttributes : RocketLauncherAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : RocketLauncherAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : RocketLauncherAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : RocketLauncherAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : RocketLauncherAttributes.DemoChargeAttributes() 
 	
@@ -184,11 +168,15 @@ interface RayGunAttributes : RocketLauncherAttributes {
 	open class MetaAttributes : RocketLauncherAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : RocketLauncherAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : RocketLauncherAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : RocketLauncherAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -226,8 +214,6 @@ interface RayGunAttributes : RocketLauncherAttributes {
 	open class StatusEffectsAttributes : RocketLauncherAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : RocketLauncherAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : RocketLauncherAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : RocketLauncherAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

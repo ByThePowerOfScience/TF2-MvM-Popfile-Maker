@@ -9,64 +9,55 @@ import kotlin.time.Duration
 
 interface RocketPackAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Able to re-launch while already in-flight"
-		 * 
-		 * The MvM upgrade that lets you repeatedly launch without a cooldown.
-		 */
-		val thermalThrusterAirLaunch: ItemAttributeNamed<Boolean> = ItemAttributeNamed("thermal_thruster_air_launch")
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -74,7 +65,7 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 	 * 
 	 * The MvM upgrade that lets you repeatedly launch without a cooldown.
 	 */
-	val thermalThrusterAirLaunch: ItemAttributeNamed<Boolean> get() = RocketPackAttributes.thermalThrusterAirLaunch
+	val thermalThrusterAirLaunch: ItemAttributeNamed<Boolean> get() = RocketPackAttributes.thermalThrusterAirLaunch.get()
 	
 	override val crits: CritsAttributes get() = RocketPackAttributes.crits
 	
@@ -120,25 +111,15 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 	
 	override val taunting: TauntingAttributes get() = RocketPackAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = RocketPackAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = RocketPackAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = RocketPackAttributes.ragdolls
 	
 	override val disguise: DisguiseAttributes get() = RocketPackAttributes.disguise
 
-	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -171,11 +152,7 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() 
@@ -189,11 +166,15 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -231,8 +212,6 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 	open class StatusEffectsAttributes : BaseMeleeAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseMeleeAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	

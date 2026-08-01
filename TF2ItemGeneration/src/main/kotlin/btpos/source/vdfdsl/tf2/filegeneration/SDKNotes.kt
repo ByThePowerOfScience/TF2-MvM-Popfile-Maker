@@ -1084,10 +1084,13 @@ object SDKNotes {
 					- If greater than 0, enables Phlog crits on having full rage
 				""".trimIndent()
 			),
-			"""
-			- `mod_flamethrower_spinup_time`: Duration
-				- If not 0, how many seconds it should take between pressing `+attack` and the flames appearing, like revving up a minigun.
-			""".trimIndent(),
+			AttrClassScope(
+				FIRING,
+				"""
+				- `mod_flamethrower_spinup_time`: Duration
+					- If not 0, how long it should take between pressing `+attack` and the flames appearing, like revving up a minigun.
+				""".trimIndent(),
+			),
 			AttrClassScope(
 				FLAMES,
 				"""

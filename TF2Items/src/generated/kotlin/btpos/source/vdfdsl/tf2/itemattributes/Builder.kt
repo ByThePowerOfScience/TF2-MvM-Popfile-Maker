@@ -9,76 +9,55 @@ import kotlin.time.Duration
 
 interface BuilderAttributes : WeaponBaseAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * In-Game: "Self mark for death when hauling buildings"
-		 * 
-		 * Checked on owner.
-		 */
-		val markForDeathOnBuildingPickup: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mark for death on building pickup")
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		/**
-		 * If 1.0, it's a wheatley sapper.
-		 */
-		val sapperVoicePak: ItemAttributeNamed<Number> = ItemAttributeNamed("sapper voice pak")
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		/**
-		 * In-Game: "Increased robot Sapper radius and duration"
-		 * 
-		 * If greater than 0 on base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
-		 */
-		val roboSapper: ItemAttributeNamed<Int> = ItemAttributeNamed("robo sapper")
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val crits: CritsAttributes = CritsAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
 	/**
@@ -86,19 +65,19 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	 * 
 	 * Checked on owner.
 	 */
-	val markForDeathOnBuildingPickup: ItemAttributeNamed<Boolean> get() = BuilderAttributes.markForDeathOnBuildingPickup
+	val markForDeathOnBuildingPickup: ItemAttributeNamed<Boolean> get() = BuilderAttributes.markForDeathOnBuildingPickup.get()
 	
 	/**
 	 * If 1.0, it's a wheatley sapper.
 	 */
-	val sapperVoicePak: ItemAttributeNamed<Number> get() = BuilderAttributes.sapperVoicePak
+	val sapperVoicePak: ItemAttributeNamed<Number> get() = BuilderAttributes.sapperVoicePak.get()
 	
 	/**
 	 * In-Game: "Increased robot Sapper radius and duration"
 	 * 
 	 * If greater than 0 on base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
 	 */
-	val roboSapper: ItemAttributeNamed<Int> get() = BuilderAttributes.roboSapper
+	val roboSapper: ItemAttributeNamed<Int> get() = BuilderAttributes.roboSapper.get()
 	
 	override val afterburn: AfterburnAttributes get() = BuilderAttributes.afterburn
 	
@@ -142,8 +121,6 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	
 	override val taunting: TauntingAttributes get() = BuilderAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = BuilderAttributes.viewmodel
-	
 	override val swapWeapons: SwapWeaponsAttributes get() = BuilderAttributes.swapWeapons
 	
 	override val whenHit: WhenHitAttributes get() = BuilderAttributes.whenHit
@@ -162,28 +139,16 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	
 	open class BuildingsAttributes : WeaponBaseAttributes.BuildingsAttributes() 
 	
-	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : WeaponBaseAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : WeaponBaseAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() 
 	
 	open class DemoChargeAttributes : WeaponBaseAttributes.DemoChargeAttributes() 
 	
 	open class FiringAttributes : WeaponBaseAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : WeaponBaseAttributes.HealthAndHealingAttributes() 
@@ -197,11 +162,15 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : WeaponBaseAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -249,8 +218,6 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	open class StatusEffectsAttributes : WeaponBaseAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : WeaponBaseAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : WeaponBaseAttributes.ViewmodelAttributes() 
 	
 	open class SwapWeaponsAttributes : WeaponBaseAttributes.SwapWeaponsAttributes() {
 		override val deploy: DeployAttributes = DeployAttributes()

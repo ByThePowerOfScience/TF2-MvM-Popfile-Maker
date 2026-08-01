@@ -9,57 +9,64 @@ import kotlin.time.Duration
 
 interface SwordAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
-		val crits: CritsAttributes = CritsAttributes()
+		private val crits: CritsAttributes = CritsAttributes()
 	
-		val damage: DamageAttributes = DamageAttributes()
+		private val damage: DamageAttributes = DamageAttributes()
 	
-		val onHit: OnHitAttributes = OnHitAttributes()
+		private val onHit: OnHitAttributes = OnHitAttributes()
 	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
-		val ammo: AmmoAttributes = AmmoAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
-		val firing: FiringAttributes = FiringAttributes()
+		private val firing: FiringAttributes = FiringAttributes()
 	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
-		val meta: MetaAttributes = MetaAttributes()
+		private val meta: MetaAttributes = MetaAttributes()
 	
-		val meter: MeterAttributes = MeterAttributes()
+		private val meter: MeterAttributes = MeterAttributes()
 	
-		val movement: MovementAttributes = MovementAttributes()
+		private val movement: MovementAttributes = MovementAttributes()
 	
-		val heads: HeadsAttributes = HeadsAttributes()
+		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		val onKill: OnKillAttributes = OnKillAttributes()
+		private val onKill: OnKillAttributes = OnKillAttributes()
 	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		val taunting: TauntingAttributes = TauntingAttributes()
+		private val taunting: TauntingAttributes = TauntingAttributes()
 	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		/**
+		 * In-Game: "N% damage penalty"
+		 * 
+		 * More like a boolean.  Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
+		 * 
+		 * If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
+		 */
+		val decapitateType: ItemAttributeNamed<Int> = ItemAttributeNamed("decapitate type")
 	}
 
 	override val onKill: OnKillAttributes get() = SwordAttributes.onKill
@@ -106,8 +113,6 @@ interface SwordAttributes : BaseMeleeAttributes {
 	
 	override val taunting: TauntingAttributes get() = SwordAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = SwordAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = SwordAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = SwordAttributes.ragdolls
@@ -115,41 +120,24 @@ interface SwordAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = SwordAttributes.disguise
 
 	open class OnKillAttributes : BaseMeleeAttributes.OnKillAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "N% damage penalty"
-			 * 
-			 * More like a boolean.	Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
-			 * 
-			 * If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
-			 */
-			val decapitateType: ItemAttributeNamed<Int> = ItemAttributeNamed("decapitate type")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "N% damage penalty"
 		 * 
-		 * More like a boolean.	Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
+		 * More like a boolean.  Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
 		 * 
 		 * If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
 		 */
 		context(attrs: IAttributeContainer)
 		open var decapitateType: Int? 
-			get() = OnKillAttributes.decapitateType.get()
-			set(value) { OnKillAttributes.decapitateType.set(value) }
+			get() = SwordAttributes.decapitateType.get()
+			set(value) { SwordAttributes.decapitateType.set(value) }
 	}
 	
-	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
-		open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
-	
-	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() 
-	}
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
 	
 	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -182,11 +170,7 @@ interface SwordAttributes : BaseMeleeAttributes {
 	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() 
@@ -200,11 +184,15 @@ interface SwordAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -240,8 +228,6 @@ interface SwordAttributes : BaseMeleeAttributes {
 	open class StatusEffectsAttributes : BaseMeleeAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseMeleeAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	

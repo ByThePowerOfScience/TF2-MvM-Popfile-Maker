@@ -9,73 +9,80 @@ import kotlin.time.Duration
 
 interface KnifeAttributes : BaseMeleeAttributes {
 	companion object : IBlockScoped {
-		/**
-		 * 0: Stock.
-		 * 
-		 * 1: Your Eternal Reward.
-		 * 
-		 * 2: Cloak and Dagger (idk why).
-		 * 
-		 * 3: Spycicle.
-		 */
-		val setIcicleKnifeMode: ItemAttributeNamed<Boolean> = ItemAttributeNamed("set icicle knife mode", NumberSelectorCodec(3))
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val onHit: OnHitAttributes = OnHitAttributes()
+	
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		private val heads: HeadsAttributes = HeadsAttributes()
+	
+		private val onKill: OnKillAttributes = OnKillAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		private val taunting: TauntingAttributes = TauntingAttributes()
+	
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		/**
-		 * In-Game: "Melts in fire, regenerates in N seconds and by picking up ammo"
+		 * In-Game: "Increase backstab damage against Giant Robots by N%"
+		 * 
+		 * Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%.
+		 * 
+		 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.
+		 * 
+		 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
+		 * 
+		 * Checked on player.
 		 */
-		val meltsInFire: ItemAttributeNamed<Boolean> = ItemAttributeNamed("melts in fire")
+		val armorPiercing: ItemAttributeNamed<Number> = ItemAttributeNamed("armor piercing")
 	
-		val crits: CritsAttributes = CritsAttributes()
+		/**
+		 * In-Game: "On Backstab: Absorbs the health from your victim."
+		 * 
+		 * Gain health on backstab.
+		 */
+		val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
 	
-		val damage: DamageAttributes = DamageAttributes()
-	
-		val onHit: OnHitAttributes = OnHitAttributes()
-	
-		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
-	
-		val afterburn: AfterburnAttributes = AfterburnAttributes()
-	
-		val ammo: AmmoAttributes = AmmoAttributes()
-	
-		val buildings: BuildingsAttributes = BuildingsAttributes()
-	
-		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
-	
-		val firing: FiringAttributes = FiringAttributes()
-	
-		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
-	
-		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
-	
-		val meta: MetaAttributes = MetaAttributes()
-	
-		val meter: MeterAttributes = MeterAttributes()
-	
-		val movement: MovementAttributes = MovementAttributes()
-	
-		val heads: HeadsAttributes = HeadsAttributes()
-	
-		val onKill: OnKillAttributes = OnKillAttributes()
-	
-		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
-	
-		val reloading: ReloadingAttributes = ReloadingAttributes()
-	
-		val resistance: ResistanceAttributes = ResistanceAttributes()
-	
-		val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
-	
-		val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
-	
-		val taunting: TauntingAttributes = TauntingAttributes()
-	
-		val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
-	
-		val whenHit: WhenHitAttributes = WhenHitAttributes()
-	
-		val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		val disguise: DisguiseAttributes = DisguiseAttributes()
+		/**
+		 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
+		 */
+		val disguiseOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disguise on backstab")
 	}
 
 	override val damage: DamageAttributes get() = KnifeAttributes.damage
@@ -93,12 +100,12 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	 * 
 	 * 3: Spycicle.
 	 */
-	val setIcicleKnifeMode: ItemAttributeNamed<Boolean> get() = KnifeAttributes.setIcicleKnifeMode
+	val setIcicleKnifeMode: ItemAttributeNamed<Boolean> get() = KnifeAttributes.setIcicleKnifeMode.get()
 	
 	/**
 	 * In-Game: "Melts in fire, regenerates in N seconds and by picking up ammo"
 	 */
-	val meltsInFire: ItemAttributeNamed<Boolean> get() = KnifeAttributes.meltsInFire
+	val meltsInFire: ItemAttributeNamed<Boolean> get() = KnifeAttributes.meltsInFire.get()
 	
 	override val crits: CritsAttributes get() = KnifeAttributes.crits
 	
@@ -140,34 +147,41 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	
 	override val taunting: TauntingAttributes get() = KnifeAttributes.taunting
 	
-	override val viewmodel: ViewmodelAttributes get() = KnifeAttributes.viewmodel
-	
 	override val whenHit: WhenHitAttributes get() = KnifeAttributes.whenHit
 	
 	override val ragdolls: RagdollsAttributes get() = KnifeAttributes.ragdolls
 
 	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "Increase backstab damage against Giant Robots by N%"
-			 * 
-			 * Spy only does 25% damage against minibosses by default.	The number here is added to that percentage, up to a max of 100% + 25% = 125%.
-			 * 
-			 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:	`25.0`, `50.0`, up to `100.0`.
-			 * 
-			 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
-			 * 
-			 * Checked on player.
-			 */
-			val armorPiercing: ItemAttributeNamed<Number> = ItemAttributeNamed("armor piercing")
-		}
+		companion object : IBlockScoped 
+	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "+N% damage bonus"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% damage penalty"
+		 * 
+		 * Neutral:
+		 * 
+		 * 	- In-Game: "+N% damage bonus"
+		 * 
+		 * Hidden:
+		 * 
+		 * 	- In-Game: "+N% damage bonus"
+		 */
+		context(attrs: IAttributeContainer)
+		override var damage: Number? 
+			get() = super.damage
+			set(value) { super.damage = value }
 	
 		/**
 		 * In-Game: "Increase backstab damage against Giant Robots by N%"
 		 * 
-		 * Spy only does 25% damage against minibosses by default.	The number here is added to that percentage, up to a max of 100% + 25% = 125%.
+		 * Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%.
 		 * 
-		 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:	`25.0`, `50.0`, up to `100.0`.
+		 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.
 		 * 
 		 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
 		 * 
@@ -175,65 +189,12 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var armorPiercing: Number? 
-			get() = DamageAttributes.armorPiercing.get()
-			set(value) { DamageAttributes.armorPiercing.set(value) }
-	
-		override val damage: DamageAttributes = DamageAttributes()
-	
-		open class DamageAttributes : BaseMeleeAttributes.DamageAttributes.DamageAttributes() {
-			companion object : IBlockScoped 
-	
-			/**
-			 * In-Game: "N% damage penalty"
-			 * 
-			 * Base backstab damage against minibosses is 250 * this proportion.
-			 */
-			context(attrs: IAttributeContainer)
-			override var damagePenalty: Number? 
-				get() = super.damagePenalty
-				set(value) { super.damagePenalty = value }
-	
-			/**
-			 * In-Game: "+N% damage bonus"
-			 * 
-			 * Base backstab damage against minibosses is 250 * this proportion.
-			 */
-			context(attrs: IAttributeContainer)
-			override var damageBonus: Number? 
-				get() = super.damageBonus
-				set(value) { super.damageBonus = value }
-	
-			/**
-			 * In-Game: "+N% damage bonus"
-			 * 
-			 * Base backstab damage against minibosses is 250 * this proportion.
-			 */
-			context(attrs: IAttributeContainer)
-			override var damageBonusHidden: Number? 
-				get() = super.damageBonusHidden
-				set(value) { super.damageBonusHidden = value }
-	
-			/**
-			 * In-Game: "+N% damage bonus"
-			 * 
-			 * Base backstab damage against minibosses is 250 * this proportion.
-			 */
-			context(attrs: IAttributeContainer)
-			override var cardDamageBonus: Number? 
-				get() = super.cardDamageBonus
-				set(value) { super.cardDamageBonus = value }
-		}
+			get() = KnifeAttributes.armorPiercing.get()
+			set(value) { KnifeAttributes.armorPiercing.set(value) }
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "On Backstab: Absorbs the health from your victim."
-			 * 
-			 * Gain health on backstab.
-			 */
-			val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "On Backstab: Absorbs the health from your victim."
@@ -242,32 +203,23 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		 */
 		context(attrs: IAttributeContainer)
 		open var gainHealthOnBackstab: Boolean? 
-			get() = HealthAndHealingAttributes.gainHealthOnBackstab.get()
-			set(value) { HealthAndHealingAttributes.gainHealthOnBackstab.set(value) }
+			get() = KnifeAttributes.gainHealthOnBackstab.get()
+			set(value) { KnifeAttributes.gainHealthOnBackstab.set(value) }
 	}
 	
 	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() {
-		companion object : IBlockScoped {
-			/**
-			 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
-			 */
-			val disguiseOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disguise on backstab")
-		}
+		companion object : IBlockScoped 
 	
 		/**
 		 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
 		 */
 		context(attrs: IAttributeContainer)
 		open var disguiseOnBackstab: Boolean? 
-			get() = DisguiseAttributes.disguiseOnBackstab.get()
-			set(value) { DisguiseAttributes.disguiseOnBackstab.set(value) }
+			get() = KnifeAttributes.disguiseOnBackstab.get()
+			set(value) { KnifeAttributes.disguiseOnBackstab.set(value) }
 	}
 	
-	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() {
-		override val critVsBurningPlayers: CritVsBurningPlayersAttributes = CritVsBurningPlayersAttributes()
-	
-		open class CritVsBurningPlayersAttributes : BaseMeleeAttributes.CritsAttributes.CritVsBurningPlayersAttributes() 
-	}
+	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
 	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
@@ -300,11 +252,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
 	
-		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() {
-			override val fireRate: FireRateAttributes = FireRateAttributes()
-	
-			open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes.FireRateAttributes() 
-		}
+		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
 	open class KnockbackReceivedAttributes : BaseMeleeAttributes.KnockbackReceivedAttributes() {
@@ -316,11 +264,15 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	open class MetaAttributes : BaseMeleeAttributes.MetaAttributes() {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
 		override val items: ItemsAttributes = ItemsAttributes()
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : BaseMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
 	
 		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
@@ -358,8 +310,6 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	open class StatusEffectsAttributes : BaseMeleeAttributes.StatusEffectsAttributes() 
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() 
-	
-	open class ViewmodelAttributes : BaseMeleeAttributes.ViewmodelAttributes() 
 	
 	open class WhenHitAttributes : BaseMeleeAttributes.WhenHitAttributes() 
 	
