@@ -73,12 +73,13 @@ data class PenaltyBonus(
 			initializer = "${classType.first}(\n" +
 			                "\t" + classType.second.joinToString(",\n\t") { it.propertyBuilder().initializer } + ",\n" +
 			              ")"
+			
+			docComment += innateDescription
 		}
 	}
 	override fun propertyBuilder(): PropertyBuilder {
 		return propertyBuilder
 	}
-	
 	
 	override fun generateTopLevelMembers(): List<String> {
 		return classType.second.flatMap { it.generateTopLevelMembers() }
@@ -111,5 +112,9 @@ data class PenaltyBonus(
 	
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {
 		list.forEach { it.setCodec(codec) }
+	}
+	
+	override fun contains(attrName: String): Boolean {
+		return list.any { attrName in it }
 	}
 }

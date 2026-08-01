@@ -40,4 +40,8 @@ class LongAttributeHiLo(
 	}
 	
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {}
+	
+	override fun contains(attrName: String): Boolean {
+		return attrName in lo || attrName in hi
+	}
 }

@@ -35,11 +35,3 @@ buildConfig {
 	buildConfigField("String", "POPFILETEMPLATE_LOCATION", "\"$basePackage.templates.PopFileTemplate\"")
 	buildConfigField("String", "POPFILETEMPLATE_CTOR", "\"PopFileTemplate({NAME}, {BASE})\"")
 }
-
-tasks.register<JavaExec>("genAttributes") {
-	group = "generate"
-	description = "Generate vanilla item attributes"
-	workingDir = project.projectDir
-	mainClass = "$basePackage.filegeneration.GenerateItemAttributesKt"
-//	standardInput = "".byteInputStream() // TODO
-}

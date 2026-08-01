@@ -14,9 +14,9 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.fabricateScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
-import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.PenaltyBonus
-import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Vis
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
+import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocess
+import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocessAllScopes
 import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromCamelCase
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
 import java.io.File
@@ -172,94 +172,25 @@ fun generateItemAttributes(
 	val namedAttributeScopesByClassName: Map<String, List<ISortedNamedAttribute>> =
 			allNamedAttributes
 				.asSequence()
-			.filter { it.className.isNotBlank() && it.className != "set_detonate_mode" } // doing these by hand in additionalWeaponModes.kt
-			.onEach {
-				when (it.attrName) {
-					"medigun charge is crit boost" -> it.setCodec { selectorCodec(1) }
-					"medigun charge is resists" -> it.setCodec { selectorCodec(3) }
+				.filter { it.className.isNotBlank() && it.className != "set_detonate_mode" } // doing these by hand in additionalWeaponModes.kt
+				.onEach {
+					when (it.attrName) {
+						"medigun charge is crit boost" -> it.setCodec { selectorCodec(1) }
+						"medigun charge is resists" -> it.setCodec { selectorCodec(3) } // TODO change this to resistancetype
+					}
 				}
-			}
-			.groupBy { it.className }
-			.mapValues<_, _, List<ISortedNamedAttribute>> { (clsName, attrsForThisAttrClass) ->
-				if (clsName == "set_weapon_mode")
-					return@mapValues attrsForThisAttrClass // dump them all separately
-				
-				if (attrsForThisAttrClass.size == 1) {
-					return@mapValues attrsForThisAttrClass // just the one
-				}
-				
-				val isPos = 0; val isNeg = 1; val isNeu = 2; val isHidden = 3
-				val groupedByPosNegNeutral = attrsForThisAttrClass.groupBy {
+				.groupBy { it.className }
+				.mapValues<_, _, List<ISortedNamedAttribute>> { (clsName, attrsForThisAttrClass) ->
 					when {
-						it.isHidden == true -> isHidden
-						else -> when (it.effectType) {
-							EffectType.Positive -> isPos
-							EffectType.Negative -> isNeg
-							EffectType.Neutral -> isNeu
+						clsName == "set_weapon_mode" -> attrsForThisAttrClass // dump them all separately
+						attrsForThisAttrClass.size == 1 -> {
+							attrsForThisAttrClass // just the one
 						}
+						else -> fabricateScope(clsName, attrsForThisAttrClass)
 					}
+				}.onEach { (_, attrs) ->
+					postprocessAllScopes(attrs)
 				}
-				
-				// If we have multiple bonuses or multiple penalties and they're not just hidden, we should just assign a custom scope
-				if (groupedByPosNegNeutral.size == 1 || groupedByPosNegNeutral.any { it.key != isHidden && it.value.size > 1 }) {
-					return@mapValues fabricateScope(clsName, attrsForThisAttrClass)
-				}
-				
-				fun groupHiddenItemsIntoPenaltyBonus(allHidden: List<NamedAttribute>): ISortedNamedAttribute {
-					return when (allHidden.size) {
-						1 -> allHidden.single()
-						// Make hidden items into a nested PenaltyBonus
-						else -> allHidden.groupBy { it.effectType }.let {
-							it.values.firstOrNull { it.size > 1 }?.let {
-								error("Too many values: $it")
-							}
-							PenaltyBonus(
-								penalty=it[EffectType.Negative]?.single(),
-								bonus=it[EffectType.Positive]?.single(),
-								neutral=it[EffectType.Neutral]?.single(),
-							)
-						}
-					}
-				}
-				
-				
-				/*
-				Variants:
-				- If there's only 1 attribute in the class, just return that attribute
-				- If there's only 1 positive/negative/neutral + some hiddens -> Vis
-				- Else if there's some combination of positive, negative, neutral, hidden, make it a PenaltyBonus
-					- If there are multiple hidden, make the hidden ALSO a PenaltyBonus
-				 */
-				when (groupedByPosNegNeutral.size) {
-					1 -> attrsForThisAttrClass // if they're all one type, just do them separately
-					2 -> {
-						if (isHidden in groupedByPosNegNeutral) { // if there's just a hidden and a visible, do Vis
-							val notHidden = groupedByPosNegNeutral.entries.first { it.key != isHidden }.value.single()
-							val hidden = groupedByPosNegNeutral[isHidden]!!.let { allHidden ->
-								groupHiddenItemsIntoPenaltyBonus(allHidden)
-							}
-							
-							return@mapValues listOf(Vis(notHidden, hidden, clsName))
-						}
-						// Else it's a custom PenaltyBonus
-						return@mapValues listOf(PenaltyBonus(
-							groupedByPosNegNeutral[isNeg]?.single(),
-							groupedByPosNegNeutral[isPos]?.single(),
-							groupedByPosNegNeutral[isNeu]?.single(),
-						))
-					}
-					else -> {
-						listOf(
-							PenaltyBonus(
-								groupedByPosNegNeutral[isNeg]?.single(),
-								groupedByPosNegNeutral[isPos]?.single(),
-								groupedByPosNegNeutral[isNeu]?.single(),
-								groupedByPosNegNeutral[isHidden]?.let { groupHiddenItemsIntoPenaltyBonus(it) }
-							)
-						)
-					}
-				}
-			}
 	
 
 	

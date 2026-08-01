@@ -43,4 +43,6 @@ interface ISortedNamedAttribute {
 	fun getKotlinType(): String
 	
 	fun setCodec(codec: (NamedAttribute) -> FakeCodec?)
+	
+	operator fun contains(attrName: String): Boolean
 }

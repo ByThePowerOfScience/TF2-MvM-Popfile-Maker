@@ -40,7 +40,7 @@ private const val BODY = "Body"
 
 private const val META = "Meta"
 
-private const val VIEWMODEL = "Viewmodel"
+private const val META_VIEWMODEL = "Viewmodel"
 
 private const val RESISTANCE = "Resistance"
 
@@ -317,7 +317,6 @@ object SDKNotes {
 				DISGUISE,
 				"""
 					- `mod_disguise_consumes_cloak`: Boolean
-						- If true, disguising requires and consumes an entire cloak meter
 				""".trimIndent()
 			),
 			AttrClassScope(
@@ -345,7 +344,7 @@ object SDKNotes {
 				METER,
 				"""
 					- `item_meter_resupply_denied`: Boolean
-						- If true, resupply cabinets and spawning do not fully recharge the meter for this item.	Instead, its "default charge meter value" is used.
+						- If true, resupply cabinets and spawning do not fully recharge the meter for this item.  Instead, its "default charge meter value" is used.
 					- `item_meter_charge_type`: TFMeterRechargeType
 						- If `TIME` or `COMBO`, checks the `mult_item_meter_charge_rate` attribute for passive recharge rate mult.
 						- If `DAMAGE` or `COMBO`, checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
@@ -384,7 +383,7 @@ object SDKNotes {
 						- In the "DoesReloadSingly" check, this _is_ actually checked, so it's actually _not_ "display-only".
 						- If != 1.0 (if present), says the weapon "does not reload one shot at a time".
 					- `set_scattergun_no_reload_single`: Boolean
-						- Checked in the same place.	If true, weapon does not reload one shot at a time. (e.g. FaN)
+						- Checked in `DoesReloadSingly`. If true, weapon does not reload one shot at a time. (e.g. FaN)
 						- Note that for the most part, this logic is set inside the weapon itself. The scattergun attribute is the only way to control this with attributes.
 				""".trimIndent(),
 				AttrClassScope(
@@ -531,7 +530,7 @@ object SDKNotes {
 					FIRING_FIRINGSPEED,
 					"""
 					- `mult_postfiredelay`: Float
-						- After firing, you wait a bit before you can fire again. That's the "delay".
+						- Multiplier applied to the cooldown time between shots. Values less than 1.0 increase firing speed, and values greater reduce it.
 					""".trimIndent()
 				),
 				
@@ -540,7 +539,7 @@ object SDKNotes {
 				HEALTH,
 				"""
 				- `weapon_blocks_healing`: Boolean
-					- Prevents mediguns from latching onto you.
+					- Prevents mediguns/dispensers from targeting you and crossbow bolts from healing you while the weapon is active.
 				- `active_item_health_regen`: Int
 					- Amount of health restored per heal tick while this weapon is active.
 				- `mult_uberchargerate_for_healer`: Float
@@ -590,7 +589,14 @@ object SDKNotes {
 						- Kills will not show up in the killfeed.
 					""".trimIndent()
 				),
-				
+				AttrClassScope(
+					META_VIEWMODEL,
+					"""
+					- `weapon_allow_inspect`: Boolean
+					- `weapon_stattrak_module_scale`: Float
+					- `min_viewmodel_offset`: String
+					""".trimIndent()
+				),
 				notes= listOf("Related to the killfeed, scoreboard, and other non-gameplay elements.")
 			),
 			AttrClassScope(
@@ -802,7 +808,7 @@ object SDKNotes {
 				STATUSEFFECTS,
 				"""
 				- `explode_on_ignite`: Boolean
-					- Applies when *any weapon* with this attribute is in the second loadout slot of the player who covered someone in gas.	This attribute does not specifically check for the Gas Passer.	For example, if a Soldier has a rocket launcher that applies `TF_COND_GAS` and their shotgun in their secondary has this attribute, they'll still explode on ignite.
+					- Applies when *any weapon* with this attribute is in the second loadout slot of the player who covered someone in gas.  This attribute does not specifically check for the Gas Passer.  For example, if a Soldier has a rocket launcher that applies `TF_COND_GAS` and their shotgun in their secondary has this attribute, they'll still explode on ignite.
 					- Only the afterburn specifically checks for the Gas Passer.
 				
 				""".trimIndent()
@@ -817,14 +823,7 @@ object SDKNotes {
 					- If true, prevents holiday taunts from being used.
 				""".trimIndent()
 			),
-			AttrClassScope(
-				VIEWMODEL,
-				"""
-				- `weapon_allow_inspect`: Boolean
-				- `weapon_stattrak_module_scale`: Float
-				- `min_viewmodel_offset`: String
-				""".trimIndent()
-			),
+			
 			
 			AttrClassScope(
 				WEAPONSWITCH,
@@ -977,14 +976,12 @@ object SDKNotes {
 			AttrClassScope(
 				ONHIT,
 				"""
-				- `set_dmg_apply_to_sapper`: Int
-					- Damage sappers with swing
 				- `speed_buff_ally`: Boolean
-					- Applies speed boost cond to yourself and the teammate you hit
+					- Applies speed boost condition to yourself and the teammate you hit
 				- `add_give_health_to_teammate_on_hit`: Int
-					- Transfer some amount of health from yourself to your teammate on hitting them.
-				- `speed_boost_on_hit_enemy`: Float
-					- Used as arg to addcond speedboost
+					- Transfer this amount of health from yourself to your teammate on hitting them.
+				- `speed_boost_on_hit_enemy`: Duration
+					- Value is how long the speed boost condition should be applied.
 				- `tickle_enemies_wielding_same_weapon`: Boolean
 					- Force enemies to laugh if they're also wielding this weapon.
 				
@@ -995,10 +992,11 @@ object SDKNotes {
 				WEAPONSWITCH,
 				"""
 				- `self_mark_for_death`: Boolean
-					- Mark self for death when switching to this weapon
 				""".trimIndent()
 			),
 			"""
+				- `set_dmg_apply_to_sapper`: Boolean
+					- Damage applies to hit sappers.  The amount of damage dealt is determined by [DamageAttributes.multDmgVsBuildings].
 				- `is_a_sword`: Boolean
 					- If true, set swing range to 72, else 48
 					- If true, make weapon deploy and holster 75% slower. (This part can be used on all weapons.  See $WEAPONSWITCH.$WEAPONSWITCH_DEPLOY)
@@ -1007,7 +1005,6 @@ object SDKNotes {
 				- `melee_cleave_attack`: Int
 					- If greater than 0, hit all targets in swing instead of just the first valid one.
 				- `hit_self_on_miss`: Boolean
-					- Idiot.
 			""".trimIndent(),
 			applicableWeapons = listOf(
 				"Frying Pan, Saxxy, The Conscientious Objector, The Freedom Staff, The Bat Outta Hell, Memory Maker, The Ham Shank, Gold Frying Pan, Necro Smasher, The Crossing Guard, Powerup Strength, Powerup Haste, Powerup Regen, Powerup Resist, Powerup Vampire, Powerup Reflect, Powerup Precision, Powerup Agility, Powerup Knockout, Powerup King, Powerup Plague, Powerup Supernova, Prinny Machete",
@@ -1035,7 +1032,7 @@ object SDKNotes {
 						- 8 = PUSHBACK_STUN (requires PUSHBACK)
 						- 16 = PUSHBACK_VIEW_PUNCH (requires PUSHBACK)
 				- `airblast_dashes`: Boolean
-					- If true, fly into the direction you're looking when you airblast.	Will not reflect projectiles.
+					- If true, fly into the direction you're looking when you airblast.  Will not reflect projectiles.
 				- `mult_airblast_refire_time`: Float
 					- Multiplier for how long after airblasting until you can fire a primary OR secondary attack
 					- Secondary attack delay = 0.75 * this
@@ -1428,7 +1425,7 @@ object SDKNotes {
 			),
 			"""
 			- `set_detonate_mode`: Int
-				- If 2 (airburst mode), makes pills shatter on surfaces.	No other values implemented.
+				- If 2 (airburst mode), makes pills shatter on surfaces.  No other values implemented.
 			- `grenade_launcher_mortar_mode`: Duration
 				- "Mortar" (loose cannon) detonation time length
 			""".trimIndent(),
@@ -1532,8 +1529,8 @@ object SDKNotes {
 					- `mult_dmg`: Float
 						- Base backstab damage against minibosses is 250 * this proportion.
 					- On player: `armor_piercing`: Float (**PERCENTAGE**)
-						- Spy only does 25% damage against minibosses by default.	The number here is added to that percentage, up to a max of 100% + 25% = 125%
-						- Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:	`25.0`, `50.0`, up to `100.0`.
+						- Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%
+						- Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.
 						- Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
 				""".trimIndent()
 			),
@@ -1567,7 +1564,7 @@ object SDKNotes {
 				ONKILL,
 				"""
 					- `decapitate_type`: Int
-						- More like a boolean.	Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
+						- More like a boolean.  Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
 						- If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
 				""".trimIndent()
 			),
@@ -1993,7 +1990,7 @@ object SDKNotes {
 					- `weapon_blocks_healing`: Boolean
 						- If set, this player may not be targeted by heal-beams or healed from Crossbow impacts.
 					- `add_health_regen`: Float
-						- Amount of health regenerated per regen tick.	Scales by the amount of time since the player last took damage in non-MvM modes.
+						- Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
 					- `add_maxhealth_nonbuffed`: Int
 						- Additive maximum health increase. See also: [addMaxHealth]
 					- `add_maxhealth`: Int
@@ -2186,7 +2183,7 @@ object SDKNotes {
 				- `kill_forces_attacker_to_laugh`: Boolean
 					- On killing an enemy, schadenfreude
 				- `decapitate_type`: Int
-					- More like a boolean.	Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
+					- More like a boolean.  Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
 					- Checked on all hitscan attacks, including melee swings.
 				- `add_cloak_on_kill`: Int
 					- Value: amount of cloak gained on kill.
@@ -2413,7 +2410,7 @@ object SDKNotes {
 				AttrClassScope(
 					META_PARTICLES,
 					"""
-				        - `set_attached_particle_static`: Int (index into ItemSchema AttributeControlledParticleSystem)
+						- `set_attached_particle_static`: Int (index into ItemSchema AttributeControlledParticleSystem)
 							- Attaches static particle, such as smoking a pipe
 							- Cosmetics can only have one.
 						- `set_attached_particle`: Int (index into ItemSchema AttributeControlledParticleSystem)

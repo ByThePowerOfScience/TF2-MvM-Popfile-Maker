@@ -2,40 +2,33 @@ package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder.Type
-import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideScopeName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideScopeMemberNames
 import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
-import btpos.source.vdfdsl.tf2.filegeneration.representations.removeBonusPenaltyHiddenStuff
+import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocess
 import kotlin.properties.Delegates.notNull
 
 /**
  * Scopes are all top-level object declarations. Any properties just reference them with getters.
  */
 open class NamedAttributeScope(
-	val _scopeName: String,
+	var scopeName: String,
 	vararg attrs: ISortedNamedAttribute,
 	override val innateDescription: List<String> = emptyList(),
 	val _varName: String? = null,
 ) : ISortedNamedAttribute {
-	val scopeName = _scopeName.removeBonusPenaltyHiddenStuff().overrideScopeName()
 	
 	
 	
-	override var varName: String = (_varName?.overrideScopeName() ?: this.scopeName).decapitalize().overrideVarName()
+	override var varName: String = (_varName ?: this.scopeName).decapitalize().overrideVarName()
 	
 	override fun clone(): ISortedNamedAttribute {
-		return NamedAttributeScope(this._scopeName, attrs=attrs.map { it.clone() }.toTypedArray(), innateDescription = innateDescription, _varName=_varName)
+		return NamedAttributeScope(this.scopeName, attrs=attrs.map { it.clone() }.toTypedArray(), innateDescription = innateDescription, _varName=_varName)
 	}
 	
 	val attrs = attrs.distinct()
-	
-	init {
-		overrideScopeMemberNames(scopeName, this.attrs)
-	}
 	
 	override fun propertyBuilder(): PropertyBuilder {
 		return PropertyBuilder(varName, getKotlinType()) {
@@ -184,6 +177,10 @@ open class NamedAttributeScope(
 	
 	override fun toString(): String {
 		return "NamedAttributeScope(scopeName='$scopeName', attrs=$attrs, notes=$notes)"
+	}
+	
+	override fun contains(attrName: String): Boolean {
+		return attrs.any { attrName in it }
 	}
 	
 	

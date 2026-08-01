@@ -30,7 +30,7 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 	}
 	
 	override fun clone(): ISortedNamedAttribute {
-		return HierarchyNamedAttributeScope(_scopeName, extendsFrom, attrs=attrs.map { it.clone() }.toTypedArray(), notes)
+		return HierarchyNamedAttributeScope(scopeName, extendsFrom, attrs=attrs.map { it.clone() }.toTypedArray(), notes)
 	}
 	
 	override fun generateNestedTypes(baseHierarchyItem: HierarchyNamedAttributeScope, currentPath: List<String>): List<ClassBuilder> {

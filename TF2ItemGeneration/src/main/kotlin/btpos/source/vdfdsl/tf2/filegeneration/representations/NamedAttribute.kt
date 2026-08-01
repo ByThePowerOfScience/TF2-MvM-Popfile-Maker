@@ -90,5 +90,7 @@ data class NamedAttribute(
 		return "NamedAttribute(attrName='$attrName', attrType='$attrType', clsName='$className')"
 	}
 	
-	
+	override fun contains(attrName: String): Boolean {
+		return attrName == this.attrName
+	}
 }

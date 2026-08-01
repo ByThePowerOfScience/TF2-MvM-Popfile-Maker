@@ -65,4 +65,8 @@ class Vis(
 		hidden.setCodec(codec)
 		visible.setCodec(codec)
 	}
+	
+	override fun contains(attrName: String): Boolean {
+		return attrName in visible || attrName in hidden
+	}
 }
