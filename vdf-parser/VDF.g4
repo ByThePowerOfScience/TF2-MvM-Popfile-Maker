@@ -1,9 +1,9 @@
 
 grammar VDF;
 
-root : lines+=line (NL lines+=line)*;
+root : lines+=line*;
 
-line : keyvalue? COMMENT?;
+line : keyvalue | COMMENT | keyvalue COMMENT;
 
 keyvalue : keyvalue_strings
    | keyvalue_table
@@ -12,17 +12,17 @@ keyvalue : keyvalue_strings
 keyable : LITERAL | STRING;
 keyvalue_strings : (key=keyable CONDITIONAL value=keyable) | (key=keyable value=keyable CONDITIONAL?);
 keyvalue_table :
-                key=keyable CONDITIONAL? ((keyEOLComment+=COMMENT NL) | NL)*
+                key=keyable CONDITIONAL? keyEOLComment+=COMMENT*
                  value=table
                 ;
 
 table : OPENBRACE tableLBracketComment=COMMENT?
-        (NL lines+=line)+
+        lines+=line*
         CLOSEBRACE;
 
 
 
-COMMENT : COMMENT_START ~('\r' | '\n')* ;
+COMMENT : COMMENT_START .*? NL ;
 
 WS: [\p{Zs}\t]+ -> skip;
 
@@ -39,7 +39,7 @@ COMMENT_START : '//';
 
 fragment STRING_ELEMENT : '\\"' | ~'"';
 
-NL: '\r'? '\n';
+NL: '\r'? '\n' -> skip;
 
 //fragment WORDCHAR: [\p{L}\p{N}\-_.#];
 
