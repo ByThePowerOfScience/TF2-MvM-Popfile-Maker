@@ -1,9 +1,11 @@
 [versions]
 	kotlin = "2.3.21"
+	kotlinpoet = "2.3.0"
 
 
 [libraries]
 	datafixerupper = { module="blank:datafixerupper", version="10.0.0-SNAPSHOT" }
+	kotlinpoet = { module="com.squareup:kotlinpoet", version.ref="kotlinpoet" }
 
 [plugins]
 	kotlin-jvm = { id="org.jetbrains.kotlin.jvm", version.ref="kotlin" }
