@@ -1,18 +1,18 @@
 package btpos.source.vdfdsl.tf2.items.weapons
 
-import btpos.source.vdfdsl.tf2.items.TFItemFactory
+import btpos.source.vdfdsl.tf2.items.TFItemFactories
 
 object MannpowerPowerups {
-	val POWERUP_STRENGTH = TFItemFactory.BASE_MELEE("Powerup Strength")
-	val POWERUP_HASTE = TFItemFactory.BASE_MELEE("Powerup Haste")
-	val POWERUP_REGEN = TFItemFactory.BASE_MELEE("Powerup Regen")
-	val POWERUP_RESIST = TFItemFactory.BASE_MELEE("Powerup Resist")
-	val POWERUP_VAMPIRE = TFItemFactory.BASE_MELEE("Powerup Vampire")
-	val POWERUP_REFLECT = TFItemFactory.BASE_MELEE("Powerup Reflect")
-	val POWERUP_PRECISION = TFItemFactory.BASE_MELEE("Powerup Precision")
-	val POWERUP_AGILITY = TFItemFactory.BASE_MELEE("Powerup Agility")
-	val POWERUP_KNOCKOUT = TFItemFactory.BASE_MELEE("Powerup Knockout")
-	val POWERUP_KING = TFItemFactory.BASE_MELEE("Powerup King")
-	val POWERUP_PLAGUE = TFItemFactory.BASE_MELEE("Powerup Plague")
-	val POWERUP_SUPERNOVA = TFItemFactory.BASE_MELEE("Powerup Supernova")
+	val POWERUP_STRENGTH = TFItemFactories.BASEMELEE("Powerup Strength")
+	val POWERUP_HASTE = TFItemFactories.BASEMELEE("Powerup Haste")
+	val POWERUP_REGEN = TFItemFactories.BASEMELEE("Powerup Regen")
+	val POWERUP_RESIST = TFItemFactories.BASEMELEE("Powerup Resist")
+	val POWERUP_VAMPIRE = TFItemFactories.BASEMELEE("Powerup Vampire")
+	val POWERUP_REFLECT = TFItemFactories.BASEMELEE("Powerup Reflect")
+	val POWERUP_PRECISION = TFItemFactories.BASEMELEE("Powerup Precision")
+	val POWERUP_AGILITY = TFItemFactories.BASEMELEE("Powerup Agility")
+	val POWERUP_KNOCKOUT = TFItemFactories.BASEMELEE("Powerup Knockout")
+	val POWERUP_KING = TFItemFactories.BASEMELEE("Powerup King")
+	val POWERUP_PLAGUE = TFItemFactories.BASEMELEE("Powerup Plague")
+	val POWERUP_SUPERNOVA = TFItemFactories.BASEMELEE("Powerup Supernova")
 }

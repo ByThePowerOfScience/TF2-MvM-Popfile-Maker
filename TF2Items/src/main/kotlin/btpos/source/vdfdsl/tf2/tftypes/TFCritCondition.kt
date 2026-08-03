@@ -1,16 +1,12 @@
-@file:Suppress("unused")
-
-package btpos.source.vdfdsl.tf2.itemattributes
+package btpos.source.vdfdsl.tf2.tftypes
 
 import btpos.source.vdfdsl.tf2.itemattributes.impl.IEnumCustomValue
-import java.util.EnumSet
-
 
 enum class TFCritCondition : IEnumCustomValue {
 	/**
 	 * Currently on fire, whether or not they experience afterburn damage. (Includes Pyros currently caught in flames.)
 	 *
-	 * [TF_COND_BURNING][btpos.source.vdfdsl.tf2.tftypes.TFCondition.Burning]
+	 * [TF_COND_BURNING][TFCondition.Burning]
 	 */
 	Burning,
 	
@@ -157,4 +153,3 @@ enum class TFCritCondition : IEnumCustomValue {
 	override val value: Int
 		get() = 1 shl this.ordinal
 }
-

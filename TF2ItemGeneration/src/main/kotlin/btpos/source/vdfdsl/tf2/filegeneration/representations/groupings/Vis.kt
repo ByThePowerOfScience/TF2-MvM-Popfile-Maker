@@ -1,29 +1,34 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
-import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
-import btpos.source.vdfdsl.tf2.filegeneration.sanitize
+import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
+import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
+import btpos.source.vdfdsl.tf2.filegeneration.representations.removeBonusPenaltyHiddenStuff
 
 class Vis(
-	val visible: NamedAttribute,
-	val hidden: NamedAttribute,
-	val additionalItems: List<NamedAttribute>,
+	val visible: ISortedNamedAttribute,
+	val hidden: ISortedNamedAttribute,
 	val _varName: String
 ) : ISortedNamedAttribute {
+	init {
+		require(visible.getKotlinType() == hidden.getKotlinType()) {
+			"Visible and hidden don't share a type\n" +
+			"Visible (${visible.getKotlinType()}): $visible\n" +
+			"Hidden (${hidden.getKotlinType()}): $hidden"
+		}
+	}
+	
 	override fun toString(): String {
-		return """Vis($visible, $hidden, listOf(${additionalItems.joinToString(", ")}), "$varName")"""
+		return """Vis($visible, $hidden, "$varName")"""
 	}
 	
 	override fun clone(): ISortedNamedAttribute {
-		return Vis(visible.clone() as NamedAttribute, hidden.clone() as NamedAttribute, additionalItems.map { it.clone() } as List<NamedAttribute>, _varName)
+		return Vis(visible.clone(), hidden.clone(), _varName)
 	}
 	
-	override val varName: String =  visible.varName.sanitize().overrideVarName()
-	
-	
-	constructor(visible: NamedAttribute, hidden: NamedAttribute, vararg additionalItems: NamedAttribute, varName: String = visible.varName) : this(visible, hidden, additionalItems.asList(), varName)
+	override var varName: String =  visible.varName.removeBonusPenaltyHiddenStuff().overrideVarName()
 	
 	override val innateDescription: List<String> = buildList {
 		add("Visible:")
@@ -31,11 +36,6 @@ class Vis(
 		add("")
 		add("Hidden:")
 		addAll(hidden.innateDescription.filter { it.isNotBlank() }.map { "\t- $it" })
-		for (item in additionalItems) {
-			add("")
-			add(item.varName.capitalize() + ":")
-			addAll(item.innateDescription.filter { it.isNotBlank() }.map { "\t- $it" })
-		}
 	}
 	
 	
@@ -44,52 +44,25 @@ class Vis(
 			field = value
 			visible.notes = value
 			hidden.notes = value
-			additionalItems.forEach { it.notes = value }
 		}
 	
-	val customClassName = if (additionalItems.isNotEmpty()) {
-		varName.capitalize() + "Attributes"
-	} else null
 	
-	
-	fun inheritedTemplate(): String {
-		val attrsInBody = additionalItems.joinToString("\n\n") {
-			ISortedNamedAttribute.buildComment(it.innateDescription) + "\n" + it.propertyString(false)
-		}
-		
-		return """class $customClassName<VIS : Any, HIDDEN : Any>(vis_attrName: String, hidden_attrName: String) : VisHidden<VIS, HIDDEN>(vis_attrName, hidden_attrName) {
-${attrsInBody.prependIndent("\t")}
-}"""
-	}
-	
-	
-	override fun propertyString(isOverridden: Boolean): String {
-		if (isOverridden)
-			return "override val $varName get() = super.$varName"
-		return "val $varName get() = ${propertyValue()}"
-	}
-	
-	override fun propertyValue(): String {
-		return "${getKotlinType()}(\"${visible.attrName}\", \"${hidden.attrName}\")"
-	}
-	
-	override fun generateTopLevelMembers(): List<String> {
-		return (visible.generateTopLevelMembers() + hidden.generateTopLevelMembers() + additionalItems.flatMap { it.generateTopLevelMembers() }).let {
-			if (customClassName != null)
-				it + inheritedTemplate()
-			else
-				it
+	override fun propertyBuilder(): PropertyBuilder {
+		return PropertyBuilder(varName, "VisHidden<${getKotlinType()}>") {
+			initializer = "VisHidden(${visible.propertyBuilder().initializer}, ${hidden.propertyBuilder().initializer})"
 		}
 	}
 	
 	override fun getKotlinType(): String {
-		return "${customClassName ?: "VisHidden"}<${visible.getKotlinType()}, ${hidden.getKotlinType()}>"
+		return visible.getKotlinType()
 	}
 	
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {
 		hidden.setCodec(codec)
 		visible.setCodec(codec)
-		additionalItems.forEach { it.setCodec(codec) }
 	}
 	
+	override fun contains(attrName: String): Boolean {
+		return attrName in visible || attrName in hidden
+	}
 }

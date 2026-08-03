@@ -3,21 +3,22 @@ package btpos.source.vdfdsl.tf2.items
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
-import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.modeling.AttributesContainer
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.tf2.PopFileDSL
+import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerImpl
+import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerSubtreeSerializable
+import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
+import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.items.weapons.Weapons
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsMelee
 
 @PopFileDSL
 class TFItem<ATTR : Any>(
 	val name: String,
-	val attributes: AttributesContainer? = null,
+	val attributes: AttributeContainerSubtreeSerializable? = null,
 	val scopedAttributeFunctions: ATTR,
 	private val conditional: String? = null
-)
-	: IVDFRepresentableKeyValue
+) : IVDFRepresentableKeyValue
 {
 	val namePrimitive = VDFPrimitive(name)
 	
@@ -36,8 +37,8 @@ class TFItem<ATTR : Any>(
 	/**
 	 * Create a new instance of this item with the provided attributes added.
 	 */
-	inline fun withAttributes(attributesScope: context(IKeyValueMap) ATTR.() -> Unit): TFItem<ATTR> {
-		val attrs = attributes?.copy() ?: AttributesContainer()
+	inline fun withAttributes(attributesScope: context(IAttributeContainer) ATTR.() -> Unit): TFItem<ATTR> {
+		val attrs = attributes?.copy() ?: AttributeContainerSubtreeSerializable()
 		configureAttributes(attrs, attributesScope)
 		return this.copy(attributes=attrs)
 	}
@@ -45,7 +46,7 @@ class TFItem<ATTR : Any>(
 	/**
 	 * Create a copy of this item with the provided attributes added.
 	 */
-	inline operator fun invoke(attributesScope: context(IKeyValueMap) ATTR.() -> Unit) = withAttributes(attributesScope)
+	inline operator fun invoke(attributesScope: context(IAttributeContainer) ATTR.() -> Unit) = withAttributes(attributesScope)
 	
 	/**
 	 * Just configure an attributes map in the _context_ of an item's allowed attributes, without creating a new TFItem object for it.
@@ -54,10 +55,10 @@ class TFItem<ATTR : Any>(
 	 *
 	 * @param configure A block scope to allow you to easily access the attributes defined in the items [ATTR] parameter.
 	 */
-	inline fun <MAP : IKeyValueMap> configureAttributes(map: MAP, configure: context(MAP) ATTR.() -> Unit): MAP {
+	inline fun <MAP : IAttributeContainer> configureAttributes(map: MAP, configure: context(MAP) ATTR.() -> Unit): MAP {
 		return map.apply {
 			scopedAttributeFunctions.configure()
-			this.setNullable("ItemName", this@TFItem.name)
+			this.set(ATTR_NAME, this@TFItem.name)
 		}
 	}
 	
@@ -68,11 +69,11 @@ class TFItem<ATTR : Any>(
 	 *
 	 * @param configurationScope A block scope to allow you to easily access the attributes that are valid for this item.
 	 */
-	inline fun configureAttributes(configurationScope: context(AttributesContainer) ATTR.() -> Unit): AttributesContainer {
-		return configureAttributes(AttributesContainer(), configurationScope)
+	inline fun configureAttributes(configurationScope: context(AttributeContainerImpl) ATTR.() -> Unit): AttributeContainerImpl {
+		return configureAttributes(AttributeContainerImpl(), configurationScope)
 	}
 	
-	fun copy(name: String = this.name, attributes: AttributesContainer? = this.attributes?.copy(), conditional: String? = this.conditional): TFItem<ATTR> {
+	fun copy(name: String = this.name, attributes: AttributeContainerSubtreeSerializable? = this.attributes?.copy(), conditional: String? = this.conditional): TFItem<ATTR> {
 		return TFItem(name, attributes, this.scopedAttributeFunctions, conditional)
 	}
 	
@@ -83,5 +84,7 @@ class TFItem<ATTR : Any>(
 		val WeaponsByName get() = Weapons
 		
 		val MeleeWeapons get() = WeaponsMelee
+		
+		val ATTR_NAME = ItemAttributeNamed<String>("ItemName")
 	}
 }

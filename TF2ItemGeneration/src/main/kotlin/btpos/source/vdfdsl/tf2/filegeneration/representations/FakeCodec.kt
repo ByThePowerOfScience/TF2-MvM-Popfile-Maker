@@ -7,5 +7,3 @@ class FakeCodec(val visibleType: String, val codecIdentifier: String) {
 		return """FakeCodec("$visibleType", "$codecIdentifier")"""
 	}
 }
-
-val bool = FakeCodec("Boolean", "BinaryIntCodec")

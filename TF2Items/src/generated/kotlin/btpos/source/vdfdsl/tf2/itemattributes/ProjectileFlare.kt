@@ -3,52 +3,69 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
-/**
- * Items: The Flare Gun, The Detonator, The Manmelter, The Scorch Shot
- */
-interface ProjectileFlareAttributes : BaseProjectileAttributes, IBlockScoped {
-	companion object : ProjectileFlareAttributes
+interface ProjectileFlareAttributes : IBlockScoped, BaseProjectileAttributes {
+	companion object : IBlockScoped {
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "+N% projectile speed"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% projectile speed"
+		 * 
+		 * Hidden:
+		 * 
+		 * 	- In-Game: "+N% projectile speed"
+		 */
+		val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+			ItemAttributeNamed<Number>("Projectile speed increased"),
+			ItemAttributeNamed<Number>("Projectile speed decreased"),
+			ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
+		)
 	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "+N% explosion radius"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% explosion radius"
+		 */
+		val blastRadius: BonusPenalty<Number> = BonusPenalty(
+			ItemAttributeNamed("Blast radius increased"),
+			ItemAttributeNamed("Blast radius decreased"),
+		)
+	}
+
 	/**
 	 * Bonus:
-	 *
-	 * 	- Visible:
-	 *
-	 * 		- In-Game: "+N% projectile speed"
-	 *
-	 * 	- Hidden:
-	 *
-	 * 		- In-Game: "+N% projectile speed"
-	 *
 	 * 
-	 *
+	 * 	- In-Game: "+N% projectile speed"
+	 * 
 	 * Penalty:
-	 *
+	 * 
 	 * 	- In-Game: "N% projectile speed"
-	 *
 	 * 
-	 *
-	 * Checked on launcher.
+	 * Hidden:
+	 * 
+	 * 	- In-Game: "+N% projectile speed"
 	 */
-	val projectileSpeed get() = BonusPenalty_BonusNested<VisHidden<Number, Number>, Number>(VisHidden<Number, Number>("Projectile speed increased", "Projectile speed increased HIDDEN"), "Projectile speed decreased")
+	val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> get() = ProjectileFlareAttributes.projectileSpeed
 	
 	/**
 	 * Bonus:
-	 *
+	 * 
 	 * 	- In-Game: "+N% explosion radius"
-	 *
 	 * 
-	 *
 	 * Penalty:
-	 *
-	 * 	- In-Game: "N% explosion radius"
-	 *
 	 * 
-	 *
-	 * Checked on launcher.
+	 * 	- In-Game: "N% explosion radius"
 	 */
-	val blastRadius get() = BonusPenalty<Number, Number>("Blast radius increased", "Blast radius decreased")
+	val blastRadius: BonusPenalty<Number> get() = ProjectileFlareAttributes.blastRadius
 }
-

@@ -3,58 +3,102 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
+interface BaseCombatWeaponAttributes : IBlockScoped, EconEntityAttributes {
+	companion object : IBlockScoped {
+		val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	}
 
-interface BaseCombatWeaponAttributes : BaseEntityAttributes, IBlockScoped {
-	companion object : BaseCombatWeaponAttributes
+	val ammo: AmmoAttributes get() = BaseCombatWeaponAttributes.ammo
 	
-	/**
-	 * In-Game: "Uses metal for ammo"
-	 *
-	 * 
-	 *
-	 * Reminder: non-engies start with 100 metal.
-	 */
-	context(attrs: IKeyValueMap)
-	var useMetalAmmoType: Boolean?
-		get() = attrs.getTyped("mod use metal ammo type", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod use metal ammo type", value, BinaryIntCodec)
+	override val meta: MetaAttributes get() = BaseCombatWeaponAttributes.meta
 	
-	/**
-	 * 
-	 *
-	 * Overwrites the max clipsize to a flat value. Applied before other multipliers.
-	 */
-	context(attrs: IKeyValueMap)
-	var maxPrimaryClipOverride: Int?
-		get() = attrs.getTyped("mod max primary clip override")
-		set(value) = attrs.setNullable("mod max primary clip override", value)
+	override val disguise: DisguiseAttributes get() = BaseCombatWeaponAttributes.disguise
 	
-	/**
-	 * In-Game: "No reload necessary"
-	 *
-	 * 
-	 *
-	 * In the "DoesReloadSingly" check, this _is_ actually checked, so it's actually _not_ "display-only".
-	 *
-	 * If != 1.0 (if present), says the weapon "does not reload one shot at a time".
-	 */
-	context(attrs: IKeyValueMap)
-	var noReload_displayOnly: Int?
-		get() = attrs.getTyped("mod no reload DISPLAY ONLY")
-		set(value) = attrs.setNullable("mod no reload DISPLAY ONLY", value)
+	override val crits: CritsAttributes get() = BaseCombatWeaponAttributes.crits
 	
-	/**
-	 * 
-	 *
-	 * Checked in the same place.  If true, weapon does not reload one shot at a time. (e.g. FaN).
-	 *
-	 * Note that for the most part, this logic is set inside the weapon itself. The scattergun thing is weirdly the only way to control this with attributes.
-	 */
-	context(attrs: IKeyValueMap)
-	var scattergunNoReloadSingle: Boolean?
-		get() = attrs.getTyped("scattergun no reload single", BinaryIntCodec)
-		set(value) = attrs.setNullable("scattergun no reload single", value, BinaryIntCodec)
+	override val damage: DamageAttributes get() = BaseCombatWeaponAttributes.damage
+	
+	override val meter: MeterAttributes get() = BaseCombatWeaponAttributes.meter
+	
+	override val knockbackReceived: KnockbackReceivedAttributes get() = BaseCombatWeaponAttributes.knockbackReceived
+	
+	override val resistance: ResistanceAttributes get() = BaseCombatWeaponAttributes.resistance
+
+	open class AmmoAttributes : IBlockScoped {
+		/**
+		 * In-Game: "Uses metal for ammo"
+		 * 
+		 * Reminder: non-engies start with 100 metal.
+		 */
+		open val useMetalAmmoType: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod use metal ammo type")
+	
+		/**
+		 * In-Game: "No reload necessary"
+		 * 
+		 * In the "DoesReloadSingly" check, this _is_ actually checked, so it's actually _not_ "display-only".
+		 * 
+		 * If != 1.0 (if present), says the weapon "does not reload one shot at a time".
+		 */
+		open val noReload_displayOnly: ItemAttributeNamed<Number> = ItemAttributeNamed("mod no reload DISPLAY ONLY")
+	
+		/**
+		 * Checked in `DoesReloadSingly`. If true, weapon does not reload one shot at a time. (e.g. FaN).
+		 * 
+		 * Note that for the most part, this logic is set inside the weapon itself. The scattergun attribute is the only way to control this with attributes.
+		 */
+		open val scattergunNoReloadSingle: ItemAttributeNamed<Boolean> = ItemAttributeNamed("scattergun no reload single")
+		
+		open val clipSize: ClipSizeAttributes = ClipSizeAttributes()
+	
+		open class ClipSizeAttributes : IBlockScoped {
+			/**
+			 * Overwrites the max clipsize to a flat value. Applied before other multipliers.
+			 */
+			open val maxPrimaryClipOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("mod max primary clip override")
+		}
+	}
+	
+	open class MetaAttributes : EconEntityAttributes.MetaAttributes() {
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		open class ItemsAttributes : EconEntityAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : EconEntityAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class KillfeedAttributes : EconEntityAttributes.MetaAttributes.KillfeedAttributes() 
+	}
+	
+	open class DisguiseAttributes : EconEntityAttributes.DisguiseAttributes() 
+	
+	open class CritsAttributes : EconEntityAttributes.CritsAttributes() 
+	
+	open class DamageAttributes : EconEntityAttributes.DamageAttributes() 
+	
+	open class MeterAttributes : EconEntityAttributes.MeterAttributes() 
+	
+	open class KnockbackReceivedAttributes : EconEntityAttributes.KnockbackReceivedAttributes() 
+	
+	open class ResistanceAttributes : EconEntityAttributes.ResistanceAttributes() 
 }
-

@@ -3,164 +3,319 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
-/**
- * Items: Frying Pan, Saxxy, The Conscientious Objector, The Freedom Staff, The Bat Outta Hell, Memory Maker, The Ham Shank, Gold Frying Pan, Necro Smasher, The Crossing Guard, Powerup Strength, Powerup Haste, Powerup Regen, Powerup Resist, Powerup Vampire, Powerup Reflect, Powerup Precision, Powerup Agility, Powerup Knockout, Powerup King, Powerup Plague, Powerup Supernova, Prinny Machete, The Hot Hand, Kukri, The Tribalman's Shiv, The Bushwacka, The Shahanshah
- */
-interface BaseMeleeAttributes : WeaponBaseAttributes, IBlockScoped {
-	companion object : BaseMeleeAttributes
+interface BaseMeleeAttributes : IBlockScoped, WeaponBaseAttributes {
+	companion object : IBlockScoped {
+		val crits: CritsAttributes = CritsAttributes()
 	
-	/**
-	 * In-Game: "You are Marked-For-Death while active, and for short period after switching weapons"
-	 *
-	 * 
-	 *
-	 * Marked for death when switching to weapon.
-	 */
-	context(attrs: IKeyValueMap)
-	var selfMarkForDeath: Boolean?
-		get() = attrs.getTyped("self mark for death", BinaryIntCodec)
-		set(value) = attrs.setNullable("self mark for death", value, BinaryIntCodec)
+		val damage: DamageAttributes = DamageAttributes()
 	
-	/**
-	 * In-Game: "This Weapon has a large melee range and deploys and holsters slower"
-	 *
-	 * 
-	 *
-	 * If true, make weapon deploy and holster 75% slower.
-	 *
-	 * If 1, set swing range to 72, else 48.
-	 */
-	context(attrs: IKeyValueMap)
-	override var isASword: Boolean?
-		get() = super.isASword
-		set(value) { super.isASword = value }
+		val onHit: OnHitAttributes = OnHitAttributes()
 	
-	/**
-	 * 
-	 *
-	 * Multiplier applied to the bounding box of the swing to detect if a player is inside it.
-	 *
-	 * Yes, it DOES use a bounding box. I think. That's what this implies, I guess.
-	 */
-	context(attrs: IKeyValueMap)
-	var meleeBoundsMultiplier: Number?
-		get() = attrs.getTyped("melee bounds multiplier")
-		set(value) = attrs.setNullable("melee bounds multiplier", value)
+		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		/**
+		 * In-Game: "Damage removes Sappers"
+		 * 
+		 * Damage applies to hit sappers.  The amount of damage dealt is determined by [DamageAttributes.dmgVsBuildings].
+		 */
+		val canDamageSappers: ItemAttributeNamed<Boolean> = ItemAttributeNamed("damage applies to sappers")
+	
+		/**
+		 * In-Game: "This Weapon has a large melee range and deploys and holsters slower"
+		 * 
+		 * If true, set swing range to 72, else 48.
+		 * 
+		 * If true, make weapon deploy and holster 75% slower. (This part can be used on all weapons. See SwapWeapons.Deploy).
+		 */
+		val isASword: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is_a_sword")
+	
+		/**
+		 * Multiplier applied to the bounding box of the swing to detect if a player is inside it.
+		 */
+		val meleeBoundsMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("melee bounds multiplier")
+	
+		/**
+		 * In-Game: "On Miss: Hit yourself. Idiot."
+		 */
+		val hitSelfOnMiss: ItemAttributeNamed<Boolean> = ItemAttributeNamed("hit self on miss")
+	
+		private val afterburn: AfterburnAttributes = AfterburnAttributes()
+	
+		private val ammo: AmmoAttributes = AmmoAttributes()
+	
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meta: MetaAttributes = MetaAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		private val heads: HeadsAttributes = HeadsAttributes()
+	
+		private val onKill: OnKillAttributes = OnKillAttributes()
+	
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		private val reloading: ReloadingAttributes = ReloadingAttributes()
+	
+		private val resistance: ResistanceAttributes = ResistanceAttributes()
+	
+		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
+	
+		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
+	
+		private val taunting: TauntingAttributes = TauntingAttributes()
+	
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	}
+
+	override val crits: CritsAttributes get() = BaseMeleeAttributes.crits
+	
+	override val damage: DamageAttributes get() = BaseMeleeAttributes.damage
+	
+	override val onHit: OnHitAttributes get() = BaseMeleeAttributes.onHit
+	
+	override val swapWeapons: SwapWeaponsAttributes get() = BaseMeleeAttributes.swapWeapons
 	
 	/**
 	 * In-Game: "Damage removes Sappers"
-	 *
 	 * 
-	 *
-	 * Damage sappers with swing.
+	 * Damage applies to hit sappers.  The amount of damage dealt is determined by [DamageAttributes.dmgVsBuildings].
 	 */
-	context(attrs: IKeyValueMap)
-	var damageAppliesToSappers: Int?
-		get() = attrs.getTyped("damage applies to sappers")
-		set(value) = attrs.setNullable("damage applies to sappers", value)
+	val canDamageSappers: ItemAttributeNamed<Boolean> get() = BaseMeleeAttributes.canDamageSappers
 	
 	/**
-	 * In-Game: "On Hit Teammate: Boosts both players' speed for several seconds"
-	 *
+	 * In-Game: "This Weapon has a large melee range and deploys and holsters slower"
 	 * 
-	 *
-	 * Applies speed boost cond to yourself and the teammate you hit.
+	 * If true, set swing range to 72, else 48.
+	 * 
+	 * If true, make weapon deploy and holster 75% slower. (This part can be used on all weapons. See SwapWeapons.Deploy).
 	 */
-	context(attrs: IKeyValueMap)
-	var speedBuffAlly: Boolean?
-		get() = attrs.getTyped("speed buff ally", BinaryIntCodec)
-		set(value) = attrs.setNullable("speed buff ally", value, BinaryIntCodec)
+	override val isASword: ItemAttributeNamed<Boolean> get() = super.isASword
+	
+	/**
+	 * Multiplier applied to the bounding box of the swing to detect if a player is inside it.
+	 */
+	val meleeBoundsMultiplier: ItemAttributeNamed<Number> get() = BaseMeleeAttributes.meleeBoundsMultiplier
 	
 	/**
 	 * In-Game: "On Miss: Hit yourself. Idiot."
-	 *
-	 * 
-	 *
-	 * Idiot.
 	 */
-	context(attrs: IKeyValueMap)
-	var hitSelfOnMiss: Boolean?
-		get() = attrs.getTyped("hit self on miss", BinaryIntCodec)
-		set(value) = attrs.setNullable("hit self on miss", value, BinaryIntCodec)
+	val hitSelfOnMiss: ItemAttributeNamed<Boolean> get() = BaseMeleeAttributes.hitSelfOnMiss
 	
-	/**
-	 * In-Game: "Gain a speed boost when you hit an enemy player"
-	 *
-	 * 
-	 *
-	 * Used as arg to addcond speedboost.
-	 */
-	context(attrs: IKeyValueMap)
-	var speedBoostOnHitEnemy: Int?
-		get() = attrs.getTyped("speed_boost_on_hit_enemy")
-		set(value) = attrs.setNullable("speed_boost_on_hit_enemy", value)
+	override val afterburn: AfterburnAttributes get() = BaseMeleeAttributes.afterburn
 	
-	/**
-	 * In-Game: "Always critical hit from behind"
-	 *
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var critFromBehind: Boolean?
-		get() = attrs.getTyped("crit from behind", BinaryIntCodec)
-		set(value) = attrs.setNullable("crit from behind", value, BinaryIntCodec)
+	override val ammo: AmmoAttributes get() = BaseMeleeAttributes.ammo
 	
-	/**
-	 * In-Game: "Critical hit forces victim to laugh"
-	 *
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var critForcesVictimToLaugh: Boolean?
-		get() = attrs.getTyped("crit forces victim to laugh", BinaryIntCodec)
-		set(value) = attrs.setNullable("crit forces victim to laugh", value, BinaryIntCodec)
+	override val buildings: BuildingsAttributes get() = BaseMeleeAttributes.buildings
 	
-	/**
-	 * In-Game: "On Hit: Force enemies to laugh who are also wearing this item"
-	 *
-	 * 
-	 *
-	 * Force enemies to laugh if they're also wielding this weapon.
-	 */
-	context(attrs: IKeyValueMap)
-	var tickleEnemiesWieldingSameWeapon: Boolean?
-		get() = attrs.getTyped("tickle enemies wielding same weapon", BinaryIntCodec)
-		set(value) = attrs.setNullable("tickle enemies wielding same weapon", value, BinaryIntCodec)
+	override val demoCharge: DemoChargeAttributes get() = BaseMeleeAttributes.demoCharge
 	
-	/**
-	 * In-Game: "Critical hits do no damage"
-	 *
-	 * 
-	 */
-	context(attrs: IKeyValueMap)
-	var critDoesNoDamage: Boolean?
-		get() = attrs.getTyped("crit does no damage", BinaryIntCodec)
-		set(value) = attrs.setNullable("crit does no damage", value, BinaryIntCodec)
+	override val firing: FiringAttributes get() = BaseMeleeAttributes.firing
 	
-	/**
-	 * In-Game: "N% increase in damage when health <50% of max"
-	 *
-	 * 
-	 *
-	 * If health < 50%, apply mult.
-	 */
-	context(attrs: IKeyValueMap)
-	var dmgBonusWhileHalfDead: Number?
-		get() = attrs.getTyped("dmg bonus while half dead")
-		set(value) = attrs.setNullable("dmg bonus while half dead", value)
+	override val healthAndHealing: HealthAndHealingAttributes get() = BaseMeleeAttributes.healthAndHealing
 	
-	/**
-	 * In-Game: "N% decrease in damage when health >50% of max"
-	 *
-	 * 
-	 *
-	 * If health >= 50%, apply mult.
-	 */
-	context(attrs: IKeyValueMap)
-	var dmgPenaltyWhileHalfAlive: Number?
-		get() = attrs.getTyped("dmg penalty while half alive")
-		set(value) = attrs.setNullable("dmg penalty while half alive", value)
-}
+	override val knockbackReceived: KnockbackReceivedAttributes get() = BaseMeleeAttributes.knockbackReceived
+	
+	override val meta: MetaAttributes get() = BaseMeleeAttributes.meta
+	
+	override val meter: MeterAttributes get() = BaseMeleeAttributes.meter
+	
+	override val movement: MovementAttributes get() = BaseMeleeAttributes.movement
+	
+	override val heads: HeadsAttributes get() = BaseMeleeAttributes.heads
+	
+	override val onKill: OnKillAttributes get() = BaseMeleeAttributes.onKill
+	
+	override val projectiles: ProjectilesAttributes get() = BaseMeleeAttributes.projectiles
+	
+	override val reloading: ReloadingAttributes get() = BaseMeleeAttributes.reloading
+	
+	override val resistance: ResistanceAttributes get() = BaseMeleeAttributes.resistance
+	
+	override val revengeCrits: RevengeCritsAttributes get() = BaseMeleeAttributes.revengeCrits
+	
+	override val statusEffects: StatusEffectsAttributes get() = BaseMeleeAttributes.statusEffects
+	
+	override val taunting: TauntingAttributes get() = BaseMeleeAttributes.taunting
+	
+	override val whenHit: WhenHitAttributes get() = BaseMeleeAttributes.whenHit
+	
+	override val ragdolls: RagdollsAttributes get() = BaseMeleeAttributes.ragdolls
+	
+	override val disguise: DisguiseAttributes get() = BaseMeleeAttributes.disguise
 
+	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() {
+		/**
+		 * In-Game: "Always critical hit from behind"
+		 */
+		open val critFromBehind: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit from behind")
+	
+		/**
+		 * In-Game: "Critical hit forces victim to laugh"
+		 */
+		open val critForcesVictimToLaugh: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit forces victim to laugh")
+	
+		/**
+		 * In-Game: "Critical hits do no damage"
+		 */
+		open val critDoesNoDamage: ItemAttributeNamed<Boolean> = ItemAttributeNamed("crit does no damage")
+	}
+	
+	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() {
+		/**
+		 * In-Game: "N% increase in damage when health <50% of max"
+		 * 
+		 * If health < 50%, apply mult.
+		 */
+		open val multDmgWhileHalfDead: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg bonus while half dead")
+	
+		/**
+		 * In-Game: "N% decrease in damage when health >50% of max"
+		 * 
+		 * If health >= 50%, apply mult.
+		 */
+		open val multDmgWhileHalfAlive: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg penalty while half alive")
+	}
+	
+	open class OnHitAttributes : WeaponBaseAttributes.OnHitAttributes() {
+		/**
+		 * In-Game: "On Hit Teammate: Boosts both players' speed for several seconds"
+		 * 
+		 * Applies speed boost condition to yourself and the teammate you hit.
+		 */
+		open val speedBuffAlly: ItemAttributeNamed<Boolean> = ItemAttributeNamed("speed buff ally")
+	
+		/**
+		 * In-Game: "Gain a speed boost when you hit an enemy player"
+		 * 
+		 * Value is how long the speed boost condition should be applied.
+		 */
+		open val speedBoostOnHitEnemy: ItemAttributeNamed<Duration> = ItemAttributeNamed("speed_boost_on_hit_enemy")
+	
+		/**
+		 * In-Game: "On Hit: Force enemies to laugh who are also wearing this item"
+		 * 
+		 * Force enemies to laugh if they're also wielding this weapon.
+		 */
+		open val tickleEnemiesWieldingSameWeapon: ItemAttributeNamed<Boolean> = ItemAttributeNamed("tickle enemies wielding same weapon")
+	
+		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+	
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class HealOnHitForRapidfireAttributes : WeaponBaseAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+	
+		open class GenerateRageOnDamageAttributes : WeaponBaseAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	open class SwapWeaponsAttributes : WeaponBaseAttributes.SwapWeaponsAttributes() {
+		/**
+		 * In-Game: "You are Marked-For-Death while active, and for short period after switching weapons"
+		 */
+		open val selfMarkForDeath: ItemAttributeNamed<Boolean> = ItemAttributeNamed("self mark for death")
+	
+		override val deploy: DeployAttributes = DeployAttributes()
+	
+		open class DeployAttributes : WeaponBaseAttributes.SwapWeaponsAttributes.DeployAttributes() 
+	}
+	
+	open class AfterburnAttributes : WeaponBaseAttributes.AfterburnAttributes() 
+	
+	open class AmmoAttributes : WeaponBaseAttributes.AmmoAttributes() {
+		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
+	
+		open class ClipSizeAttributes : WeaponBaseAttributes.AmmoAttributes.ClipSizeAttributes() 
+	}
+	
+	open class BuildingsAttributes : WeaponBaseAttributes.BuildingsAttributes() 
+	
+	open class DemoChargeAttributes : WeaponBaseAttributes.DemoChargeAttributes() 
+	
+	open class FiringAttributes : WeaponBaseAttributes.FiringAttributes() {
+		override val fireRate: FireRateAttributes = FireRateAttributes()
+	
+		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : WeaponBaseAttributes.HealthAndHealingAttributes() 
+	
+	open class KnockbackReceivedAttributes : WeaponBaseAttributes.KnockbackReceivedAttributes() {
+		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
+	
+		open class DamageForceReductionAttributes : WeaponBaseAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
+	}
+	
+	open class MetaAttributes : WeaponBaseAttributes.MetaAttributes() {
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		override val viewmodel: ViewmodelAttributes = ViewmodelAttributes()
+	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
+		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class ViewmodelAttributes : WeaponBaseAttributes.MetaAttributes.ViewmodelAttributes() 
+	
+		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
+	
+		open class ParticlesAttributes : WeaponBaseAttributes.MetaAttributes.ParticlesAttributes() 
+	}
+	
+	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 
+	
+	open class MovementAttributes : WeaponBaseAttributes.MovementAttributes() {
+		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+		open class MoveSpeedAttributes : WeaponBaseAttributes.MovementAttributes.MoveSpeedAttributes() 
+	}
+	
+	open class HeadsAttributes : WeaponBaseAttributes.HeadsAttributes() 
+	
+	open class OnKillAttributes : WeaponBaseAttributes.OnKillAttributes() 
+	
+	open class ProjectilesAttributes : WeaponBaseAttributes.ProjectilesAttributes() {
+		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+	
+		override val bullets: BulletsAttributes = BulletsAttributes()
+	
+		open class ProjectilePenetrationAttributes : WeaponBaseAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
+	
+		open class BulletsAttributes : WeaponBaseAttributes.ProjectilesAttributes.BulletsAttributes() 
+	}
+	
+	open class ReloadingAttributes : WeaponBaseAttributes.ReloadingAttributes() 
+	
+	open class ResistanceAttributes : WeaponBaseAttributes.ResistanceAttributes() 
+	
+	open class RevengeCritsAttributes : WeaponBaseAttributes.RevengeCritsAttributes() 
+	
+	open class StatusEffectsAttributes : WeaponBaseAttributes.StatusEffectsAttributes() 
+	
+	open class TauntingAttributes : WeaponBaseAttributes.TauntingAttributes() 
+	
+	open class WhenHitAttributes : WeaponBaseAttributes.WhenHitAttributes() 
+	
+	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
+	
+	open class DisguiseAttributes : WeaponBaseAttributes.DisguiseAttributes() 
+}

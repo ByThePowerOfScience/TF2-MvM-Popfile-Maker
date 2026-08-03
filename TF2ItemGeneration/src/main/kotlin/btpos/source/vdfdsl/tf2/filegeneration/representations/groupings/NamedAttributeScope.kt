@@ -1,53 +1,86 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 
-import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideScopeName
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder.Type
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
-import btpos.source.vdfdsl.tf2.filegeneration.sanitize
+import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
+import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
+import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocess
+import btpos.source.vdfdsl.tf2.filegeneration.representations.toSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.TypeSpec
+import kotlin.properties.Delegates.notNull
 
 /**
  * Scopes are all top-level object declarations. Any properties just reference them with getters.
  */
 open class NamedAttributeScope(
-	val _scopeName: String,
+	var scopeName: String,
 	vararg attrs: ISortedNamedAttribute,
 	override val innateDescription: List<String> = emptyList(),
 	val _varName: String? = null,
 ) : ISortedNamedAttribute {
-	val scopeName = _scopeName.sanitize().overrideScopeName()
-	
-	override val varName: String = (_varName?.overrideScopeName() ?: this.scopeName).decapitalize()
-	
+	override var varName: String = (_varName ?: this.scopeName).decapitalize().overrideVarName()
 	
 	override fun clone(): ISortedNamedAttribute {
-		return NamedAttributeScope(this._scopeName, attrs=attrs.map { it.clone() }.toTypedArray(), innateDescription = innateDescription, _varName=_varName)
+		return NamedAttributeScope(this.scopeName, attrs=attrs.map { it.clone() }.toTypedArray(), innateDescription = innateDescription, _varName=_varName)
 	}
 	
 	val attrs = attrs.distinct()
 	
-	override fun propertyValue(): String {
-		return clsname
+	override fun propertyBuilder(): PropertyBuilder {
+		return PropertyBuilder(varName, getKotlinType()) {
+			initializer = "$clsname()"
+		}
 	}
 	
 	val clsname = scopeName + "Attributes"
 	
-	override fun generateTopLevelMembers(): List<String> {
-		val attrsInBody = attrs.joinToString("\n\n") {
-			ISortedNamedAttribute.buildComment(it.innateDescription) + "\n" + it.propertyString(false)
-		}.prependIndent("\t")
+	fun containsAttribute(varName: String): Boolean {
+		return this.attrs.any { it.varName == varName }
+	}
+	
+	operator fun contains(attr: ISortedNamedAttribute) = this.attrs.any { it.varName == attr.varName }
+	
+	
+	/**
+	 * Just generate a class representing this scope, not worrying about overrides or extensions or anything at all.
+	 *
+	 * Let the hierarchy handle overrides.
+	 */
+	override fun generateType(): ClassBuilder {
+		return ClassBuilder(this.clsname, Type.CLASS) {
+			parentInterfaces += "IBlockScoped"
+			
+			for (attr in attrs) {
+				addProperty(attr.propertyBuilder())
+				
+				attr.generateType()?.let {
+					addNestedClass(it)
+				}
+			}
+		}
+	}
+	
+	
+	override fun getNestedScope(scopePath: List<String>): NamedAttributeScope? {
+		if (scopePath.isEmpty())
+			return this;
 		
+		val currItem = scopePath.first()
+		val found = attrs.firstOrNull { it is NamedAttributeScope && it.clsname == currItem } as NamedAttributeScope?
 		
-		return listOf(
-			ISortedNamedAttribute.buildComment(innateDescription) + "\n" + """object $clsname {
-	inline operator fun invoke(scope: $clsname.() -> Unit) {
-		this.apply(scope)
-	}""" + "\n" + attrsInBody + "\n}"
-		) + attrs.flatMap { it.generateTopLevelMembers() }
+		if (scopePath.size == 1) { // this was the last unit of the path
+			return found
+		} else {
+			return found?.getNestedScope(scopePath.drop(1))
+		}
 	}
 	
 	override fun getKotlinType(): String {
-		return scopeName
+		return clsname
 	}
 	
 	override var notes = listOf<String>()
@@ -63,9 +96,78 @@ open class NamedAttributeScope(
 		}
 	}
 	
-	override fun propertyString(isOverridden: Boolean): String {
-		if (isOverridden)
-			return "override val $varName get() = super.$varName"
-		return "val $varName get() = ${propertyValue()}"
+	override fun toString(): String {
+		return "NamedAttributeScope(scopeName='$scopeName', attrs=$attrs, notes=$notes)"
+	}
+	
+	override fun contains(attrName: String): Boolean {
+		return attrs.any { attrName in it }
+	}
+	
+	
+	protected fun PropertyBuilder.getSetAttrFromCompanion(clsName: String, attr: ISortedNamedAttribute) {
+		this.isVal = false
+		this.usesGetter = true
+		this.initializer = "$clsName.${this.name}.get()"
+		this.setter = "$clsName.${this.name}.set(value)"
+		this.contextParams += "attrs" to "IAttributeContainer"
+		this.kType = attr.getKotlinType() + "?"
 	}
 }
+
+/*
+My goal is to have overridable nested scopes, so like this:
+
+BaseEntity
+	open val projectileAttributes: BaseEntityProjectileAttributes = BaseEntityProjectileAttributes()
+	
+	
+BaseGun
+	override val projectileAttributes: BaseGunProjectileAttributes
+	
+BaseEntityProjectileAttributes
+BaseGunProjectileAttributes : BaseEntityProjectileAttributes
+
+and so on and so forth, so each nested scope can LATER have extensions like:
+
+// projectile-related attributes but ONLY FOR GUNS:
+val BaseGunProjectileAttributes.gunThing = ItemAttribute("whatever")
+
+so it shows up when doing:
+BaseGunAttributes.projectiles {
+	gunThing
+}
+
+but not when doing:
+BaseEntityAttributes.projectiles {
+	gunThing // <-- ERROR
+}
+
+
+to do this, I need to inform it of the parent attribute so it knows what scope to override
+I guess????? the name could be implicit, like assume everything is defined as such:
+BaseEntityAttributes {
+	open class Projectiles : IBlockScoped {
+	
+	}
+	
+	open val projectiles = Projectiles()
+}
+
+so then we just do, knowing the name of the parent:
+BaseGunAttributes {
+	open class Projectiles : WeaponBaseAttributes.Projectiles() {
+		// anything inside this nested scope, if applicable
+	}
+	
+	override val projectiles = Projectiles()
+}
+
+hmmmm but this does raise the question: how does it know what scopes have yet to be created....
+I guess we could go over them again? or just check the nested scopes to see if there's a scope in there already by that name, so we don't autogenerate it again
+
+
+Alright so, the big thing is: nested scopes are no longer top-level members OR EVEN OBJECTS. So generateTopLevelMembers is out.
+Now it should just be "generateMembersInScope", or we could even add a new method for that.
+
+ */

@@ -3,24 +3,24 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
-/**
- * Items: The Righteous Bison, The Pomson 6000
- */
-interface ProjectileEnergyRingAttributes : BaseProjectileAttributes, IBlockScoped {
-	companion object : ProjectileEnergyRingAttributes
-	
+interface ProjectileEnergyRingAttributes : IBlockScoped, BaseProjectileAttributes {
+	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Projectile penetrates enemy targets"
+		 * 
+		 * Checked on owner.
+		 */
+		val energyWeaponPenetration: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon penetration")
+	}
+
 	/**
 	 * In-Game: "Projectile penetrates enemy targets"
-	 *
 	 * 
-	 *
 	 * Checked on owner.
 	 */
-	context(attrs: IKeyValueMap)
-	var energyWeaponPenetration: Boolean?
-		get() = attrs.getTyped("energy weapon penetration", BinaryIntCodec)
-		set(value) = attrs.setNullable("energy weapon penetration", value, BinaryIntCodec)
+	val energyWeaponPenetration: ItemAttributeNamed<Boolean> get() = ProjectileEnergyRingAttributes.energyWeaponPenetration
 }
-

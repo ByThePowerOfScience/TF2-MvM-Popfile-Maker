@@ -1,24 +1,30 @@
 package btpos.source.vdfdsl.tf2.itemattributes.impl
 
-import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.serialization.codecs.Codec
+import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
+import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 
-open class VisHidden<VIS : Any, HIDDEN : Any>(private val visible_attrName: String, private val hidden_attrName: String, private val visibleCodec: Codec<VIS, Any> = Codec.Companion.identity(), private val hiddenCodec: Codec<HIDDEN, Any> = Codec.Companion.identity()) {
-	context(attrs: IKeyValueMap)
-	var visible: VIS?
-	    get() = attrs.getTyped(visible_attrName, visibleCodec)
-	    set(value) = attrs.setNullable(visible_attrName, value, visibleCodec)
+data class VisHidden<T : Any>(
+	/**
+	 * The version of this attribute that has an entry in the item's description.
+	 */
+	val visible: ItemAttribute<T>,
 	
-	context(attrs: IKeyValueMap)
-	var hidden: HIDDEN?
-	    get() = attrs.getTyped(hidden_attrName, hiddenCodec)
-	    set(value) = attrs.setNullable(hidden_attrName, value, hiddenCodec)
+	/**
+	 * The version of this attribute that will not have an entry in the item's description.
+	 */
+	val hidden: ItemAttribute<T>
+) : ItemAttribute<T> {
+	/**
+	 * Overloaded assignment operator to implicitly set the visible one
+	 */
+	context(attrs: IAttributeContainer)
+	override fun set(value: T?) {
+		this.visible.set(value)
+	}
+	
+	context(attrs: IAttributeContainer)
+	override fun get(): T? {
+		return this.visible.get()
+	}
 }
 
-/**
- * Overloaded assignment operator to implicitly set the visible one if you have that compiler plugin.
- */
-context(attrs: IKeyValueMap)
-fun <VIS : Any> VisHidden<VIS, *>.assign(value: VIS?) {
-	this.visible = value
-}

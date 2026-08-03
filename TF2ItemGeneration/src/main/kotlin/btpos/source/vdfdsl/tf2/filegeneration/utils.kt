@@ -4,3 +4,5 @@ context(appendable: Appendable)
 operator fun String.unaryPlus() = appendable.append(this)
 
 operator fun Appendable.plus(other: String) = append(other)
+
+val RE_WHITESPACE = Regex("\\s+")

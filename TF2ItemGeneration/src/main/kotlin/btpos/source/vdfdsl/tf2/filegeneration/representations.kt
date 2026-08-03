@@ -1,23 +1,22 @@
 package btpos.source.vdfdsl.tf2.filegeneration
 
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
-import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromPBName
-import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromThing
 
 private val spaceUnderscore = Regex("[_\\s\\-]+")
+
 fun String.camelCase(): String {
 	val split = this.lowercase().split(spaceUnderscore)
-	if (split.size == 1) {
-		return this.replaceFirstChar { it.lowercaseChar() }
-	}
-	val camelCase = split.joinToString("") { it.replaceFirstChar { it.uppercaseChar() } }.replaceFirstChar { it.lowercaseChar() }
 	
-	return camelCase
+	val camelCased = when (split.size) {
+		1 -> this
+		else -> split.joinToString("") { it.replaceFirstChar { it.uppercaseChar() } }
+	}
+	
+	return camelCased.replaceFirstChar { it.lowercaseChar() }
 }
 
 
 class ArmoryDesc(val all: List<String>) {
-	
 	companion object {
 	    operator fun invoke(item: String?): ArmoryDesc? {
 	        return item?.let { it.split(' ') }?.let { ArmoryDesc(it) }
@@ -33,9 +32,5 @@ class ArmoryDesc(val all: List<String>) {
 
 
 val hierarchiesByName = mutableMapOf<String, HierarchyNamedAttributeScope>()
-
-fun String.sanitize(): String {
-	return (removeFromPBName + removeFromThing).fold(this) { it, re -> it.replace(re, "") }
-}
 
 

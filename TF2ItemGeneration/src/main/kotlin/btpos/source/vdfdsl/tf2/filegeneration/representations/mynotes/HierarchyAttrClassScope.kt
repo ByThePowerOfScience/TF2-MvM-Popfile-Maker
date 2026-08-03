@@ -1,26 +1,27 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes
 
-import btpos.source.vdfdsl.tf2.filegeneration.MyNotesFormatted
+import btpos.source.vdfdsl.tf2.filegeneration.SDKNotes
 import btpos.source.vdfdsl.tf2.filegeneration.notesToAttrClassUsages
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.attrToSelector
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
 
-class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAttrThing> = listOf(), applicableWeapons: List<Any> = listOf()) : AttrClassScope(name, attrClassesOrNestedScopes, applicableWeapons) {
+class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAttrThing> = listOf(), applicableWeapons: List<Any> = listOf(), notes: List<String> = emptyList()) : IAttrClassScope(name, attrClassesOrNestedScopes, applicableWeapons, notes) {
 	constructor(name: String, vararg attrClassesOrNestedScopes: Any, applicableWeapons: List<Any> = listOf()) : this(
 		name,
 		attrClassesOrNestedScopes.fold(mutableListOf()) { list, it ->
 		when (it) {
 			is String -> list.addAll(it.notesToAttrClassUsages())
 			is IAttrThing -> list.add(it)
+			is List<*> -> list.addAll(it.flatMap { (it as? IAttrThing)?.let(::listOf) ?: (it as? String)?.notesToAttrClassUsages() ?: emptyList() })
 			else -> error("Expected either string or attrs")
 		}
 		list
 	}, applicableWeapons)
 	
 	init {
-		require(name in MyNotesFormatted.hierarchy || MyNotesFormatted.hierarchy.values.any { name in it }) { "Name $name not found in hierarchy" }
+		require(name in SDKNotes.hierarchy) { "Name $name not found in hierarchy" }
 	}
 	
 	override fun absorb(classToNamed: Map<String, List<ISortedNamedAttribute>>): List<ISortedNamedAttribute> {
@@ -38,10 +39,12 @@ class HierarchyAttrClassScope(name: String, attrClassesOrNestedScopes: List<IAtt
 		val mapped = attrClassesOrNestedScopes.flatMap { it.absorb(classToNamed) }
 		return listOf(
 			HierarchyNamedAttributeScope(
-				this.name, MyNotesFormatted.getParent(this.name), *mapped.toTypedArray(), _note = applicableWeapons.takeIf { it.isNotEmpty() }
-					?.flatten()
+				this.name,
+				SDKNotes.getParent(this.name),
+				*mapped.toTypedArray(),
+				notes=listOfNotNull(applicableWeapons.takeIf { it.isNotEmpty() }
 					?.joinToString(", ")
-					?.let { "Items: $it" })
+					?.let { "Items: $it" }) + extraNotes)
 		)
 	}
 	

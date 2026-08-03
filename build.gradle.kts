@@ -1,8 +1,11 @@
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.`maven-publish`
 import org.jetbrains.kotlin.gradle.utils.extendsFrom
 
 plugins {
 	id("general-convention")
 	kotlin("plugin.allopen") version libs.versions.kotlin
+	kotlin("plugin.assignment") version libs.versions.kotlin
 //	alias(libs.plugins.shadow)
 	`maven-publish`
 }
@@ -45,6 +48,10 @@ artifacts {
 // make every single thing extensible so people can add as many utilities as they want
 allOpen {
 	annotation("btpos.source.vdfdsl.tf2.PopFileDSL")
+}
+
+assignment {
+	annotation("btpos.source.vdfdsl.tf2.itemattributes.SupportsCustomAssignment")
 }
 //
 //publishing {

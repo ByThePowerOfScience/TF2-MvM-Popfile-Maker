@@ -3,46 +3,87 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
-/**
- * Items: Cosmetics, The Manntreads, The Gunboats, The Razorback, Darwin's Danger Shield, The Cozy Camper, Ali Baba's Wee Booties, The Bootlegger
- */
-interface WearableAttributes : BaseEntityAttributes, IBlockScoped {
-	companion object : WearableAttributes
+interface WearableAttributes : IBlockScoped, EconEntityAttributes {
+	companion object : IBlockScoped {
+		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
-	/**
-	 * In-Game: "Immune to the effects of afterburn."
-	 *
-	 * 
-	 *
-	 * For the base "`Wearable`", only checked on Sniper.
-	 */
-	context(attrs: IKeyValueMap)
-	var afterburnImmunity: Boolean?
-		get() = attrs.getTyped("afterburn immunity", BinaryIntCodec)
-		set(value) = attrs.setNullable("afterburn immunity", value, BinaryIntCodec)
+		val meta: MetaAttributes = MetaAttributes()
 	
-	/**
-	 * In-Game: "Duck Power : N / 5"
-	 *
-	 * 
-	 *
-	 * Determines if ***BONUS DUCKSSSS*** should increment the badge level.
-	 */
-	context(attrs: IKeyValueMap)
-	var duckBadgeLevel: Int?
-		get() = attrs.getTyped("duck badge level")
-		set(value) = attrs.setNullable("duck badge level", value)
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
-	/**
-	 * 
-	 *
-	 * Overrides the skin used for the player. (e.g. Zombie).
-	 */
-	context(attrs: IKeyValueMap)
-	var playerSkinOverride: Int?
-		get() = attrs.getTyped("player skin override")
-		set(value) = attrs.setNullable("player skin override", value)
+		private val crits: CritsAttributes = CritsAttributes()
+	
+		private val damage: DamageAttributes = DamageAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	}
+
+	override val resistance: ResistanceAttributes get() = WearableAttributes.resistance
+	
+	override val meta: MetaAttributes get() = WearableAttributes.meta
+	
+	override val disguise: DisguiseAttributes get() = WearableAttributes.disguise
+	
+	override val crits: CritsAttributes get() = WearableAttributes.crits
+	
+	override val damage: DamageAttributes get() = WearableAttributes.damage
+	
+	override val meter: MeterAttributes get() = WearableAttributes.meter
+	
+	override val knockbackReceived: KnockbackReceivedAttributes get() = WearableAttributes.knockbackReceived
+
+	open class ResistanceAttributes : EconEntityAttributes.ResistanceAttributes() {
+		/**
+		 * In-Game: "Immune to the effects of afterburn."
+		 * 
+		 * For the base "`Wearable`", only checked on Sniper.
+		 */
+		open val afterburnImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("afterburn immunity")
+	}
+	
+	open class MetaAttributes : EconEntityAttributes.MetaAttributes() {
+		open val player: PlayerAttributes = PlayerAttributes()
+	
+		override val items: ItemsAttributes = ItemsAttributes()
+	
+		override val particles: ParticlesAttributes = ParticlesAttributes()
+	
+		override val killfeed: KillfeedAttributes = KillfeedAttributes()
+	
+		open class PlayerAttributes : IBlockScoped {
+			/**
+			 * Overrides the skin used for the player. (e.g. Zombie).
+			 */
+			open val playerSkinOverride: ItemAttributeNamed<Int> = ItemAttributeNamed("player skin override")
+		}
+	
+		open class ItemsAttributes : EconEntityAttributes.MetaAttributes.ItemsAttributes() {
+			/**
+			 * In-Game: "Duck Power : N / 5"
+			 * 
+			 * Determines if ***BONUS DUCKSSSS*** should increment the badge level.
+			 */
+			open val duckBadgeLevel: ItemAttributeNamed<Int> = ItemAttributeNamed("duck badge level")
+		}
+	
+		open class ParticlesAttributes : EconEntityAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class KillfeedAttributes : EconEntityAttributes.MetaAttributes.KillfeedAttributes() 
+	}
+	
+	open class DisguiseAttributes : EconEntityAttributes.DisguiseAttributes() 
+	
+	open class CritsAttributes : EconEntityAttributes.CritsAttributes() 
+	
+	open class DamageAttributes : EconEntityAttributes.DamageAttributes() 
+	
+	open class MeterAttributes : EconEntityAttributes.MeterAttributes() 
+	
+	open class KnockbackReceivedAttributes : EconEntityAttributes.KnockbackReceivedAttributes() 
 }
-

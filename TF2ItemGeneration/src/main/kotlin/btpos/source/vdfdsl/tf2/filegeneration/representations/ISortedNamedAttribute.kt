@@ -1,7 +1,10 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
+import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
+import org.jetbrains.annotations.Contract
+
 interface ISortedNamedAttribute {
-	val varName: String
+	var varName: String
 	
 	/**
 	 * In-game descs and sorted in-game descs of contained attributes
@@ -16,39 +19,25 @@ interface ISortedNamedAttribute {
 	fun clone(): ISortedNamedAttribute
 	
 	/**
-	 * Some property reference to this object, assuming it's given the opportunity to name its own property.
-	 *
-	 * Should include the comment. Use [buildComment] to convert a list of strings into
+	 * Create a basic property builder with the varname, type, doc comment, and initializer,
+	 * that can be modified later to add modality, overriding, etc.
 	 */
-	fun propertyString(isOverridden: Boolean): String
+	@Contract("_->new", pure = true)
+	fun propertyBuilder(): PropertyBuilder
+	
+	fun generateType(): ClassBuilder? = null
 	
 	/**
-	 * If this value is not an [NamedAttribute], it'll be some kind of object. This is a reference to that object.
+	 * For nested-scope inheritance: returns whether this attribute already has a nested scope by that name
 	 */
-	fun propertyValue(): String
+	fun getNestedScope(scopePath: List<String>): NamedAttributeScope? = null
 	
 	/**
-	 * will be called before [propertyString]
-	 */
-	fun generateTopLevelMembers(): List<String> = emptyList()
-	
-	/**
-	 * Get the type of the resulting object
+	 * Get the type of the attribute
 	 */
 	fun getKotlinType(): String
 	
 	fun setCodec(codec: (NamedAttribute) -> FakeCodec?)
 	
-	companion object {
-		/**
-		 * Formats a list of strings into a single block comment, prepending `\n<indent> * ` to each line
-		 */
-		fun buildComment(comments: List<String>): String {
-			return comments.takeIf { it.isNotEmpty() }
-				       ?.run {
-					       "/**${joinToString("\n *") { "\n * $it" }}\n */"
-				       } ?: ""
-		}
-	}
-	
+	operator fun contains(attrName: String): Boolean
 }

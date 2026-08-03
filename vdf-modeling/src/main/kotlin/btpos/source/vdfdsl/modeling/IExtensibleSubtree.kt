@@ -56,7 +56,7 @@ interface IExtensibleSubtree {
 	 * ```
 	 */
 	object Serializers {
-		typealias Serializer<T> = (T) -> IVDFRepresentableValue
+		typealias Serializer<T> = (T) -> Any
 		
 		/**
 		 * Transform the input before [this] serializer reaches it.

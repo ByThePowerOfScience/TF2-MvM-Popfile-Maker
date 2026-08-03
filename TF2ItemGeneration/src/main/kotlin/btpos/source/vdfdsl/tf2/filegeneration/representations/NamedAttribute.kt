@@ -12,10 +12,19 @@ data class NamedAttribute(
 	val attrType: String,
 	val className: String,
 	val inGameDesc: String?,
+	val isHidden: Boolean?,
 	/** positive, negative, or null */
-	val effectType: String? = null,
+	val effectType: EffectType = EffectType.Neutral,
 	val armory_desc: ArmoryDesc? = null
 ) : ISortedNamedAttribute {
+	enum class EffectType {
+		Positive,
+		Negative,
+		Neutral;
+	}
+	
+	
+	
 	override fun clone(): ISortedNamedAttribute {
 		return this.copy().also {
 			it.forceType = forceType
@@ -28,24 +37,19 @@ data class NamedAttribute(
 	
 	var codec: FakeCodec? = null
 	
-	override var varName: String = attrName.replace(Regex("^mod[ _]"), "").replace("SPELL", "spell").replace(":", " ").camelCase().overrideVarName()
-	
+	override var varName: String = attrName.sanitizeNamedAttributeName().camelCase().overrideVarName()
+
 	override val innateDescription: List<String> = listOfNotNull(inGameDesc).map { "In-Game: \"$it\"" }
 	
 	override var notes: List<String> = listOf()
 	
-	
-	val positiveOrNegative get() = when (effectType) {
-		"positive" -> true
-		"negative" -> false
-		else -> null
-	}
-	
 	override fun getKotlinType(): String {
-		if (codec != null)
-			return codec!!.visibleType
-		else if (forceType != null)
-			return forceType!!
+		codec?.let { // trust codecs over attribute class notes
+			return it.visibleType
+		}
+		forceType?.let {
+			return it.takeIf { it != "Float" && it != "Double" } ?: "Number"
+		}
 		
 		if ("percentage" in attrType)
 			return "Number"
@@ -65,29 +69,28 @@ data class NamedAttribute(
 		}
 	}
 	
-	
-	
 	override fun setCodec(codec: (NamedAttribute) -> FakeCodec?) {
 		this.codec = codec(this)
 	}
 	
-	override fun propertyString(isOverridden: Boolean): String {
+	override fun propertyBuilder(): PropertyBuilder {
 		val codec = codec?.codecIdentifier?.let { ", $it" } ?: ""
-		val (getter, setter) = if (isOverridden) {
-			"get() = super.${varName}" to "set(value) { super.${varName} = value }"
-		} else {
-			"""get() = attrs.getTyped("$attrName"$codec)""" to """set(value) = attrs.setNullable("$attrName", value$codec)"""
+		return PropertyBuilder(varName, "ItemAttributeNamed<${getKotlinType()}>") {
+			initializer = "ItemAttributeNamed<${getKotlinType()}>(\"${attrName}\"$codec)"
+			docComment += innateDescription
+			if (attrName == "set_weapon_node" && "NumberSelectorCodec" in codec) {
+				// don't add notes since we're autoselecting the number
+			} else {
+				docComment += notes
+			}
 		}
-		return """
-			context(attrs: IKeyValueMap)
-			${if (isOverridden) "override " else ""}var $varName: ${getKotlinType()}?
-				$getter
-				$setter
-		""".trimIndent()
 	}
 	
-	override fun propertyValue(): String {
-		error("Shouldn't be called")
+	override fun toString(): String {
+		return "NamedAttribute(attrName='$attrName', attrType='$attrType', clsName='$className')"
 	}
 	
+	override fun contains(attrName: String): Boolean {
+		return attrName == this.attrName
+	}
 }
