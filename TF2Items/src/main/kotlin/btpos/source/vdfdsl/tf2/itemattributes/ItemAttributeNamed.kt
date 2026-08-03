@@ -17,7 +17,7 @@ open class ItemAttributeNamed<T : Any>(
 	
 	override fun equals(other: Any?) = key == other
 	
-	operator fun getValue(_self: Any?, _prop: KProperty<*>): ItemAttribute<T> = this
+	operator fun getValue(_self: Any?, _prop: KProperty<*>): ItemAttributeNamed<T> = this
 	
 	override fun serialize(value: T?): IVDFRepresentableKeyValue {
 		if (value == null)
