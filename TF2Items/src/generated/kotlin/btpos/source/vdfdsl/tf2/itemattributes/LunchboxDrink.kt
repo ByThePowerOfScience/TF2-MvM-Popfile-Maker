@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface LunchboxDrinkAttributes : LunchboxAttributes {
+interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 	companion object : IBlockScoped {
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	

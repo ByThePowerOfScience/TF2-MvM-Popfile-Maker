@@ -1,6 +1,11 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
 import btpos.source.vdfdsl.tf2.filegeneration.RE_WHITESPACE
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassNames.classNameFor
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
+import kotlin.time.Duration
 
 class PropertyBuilder(var name: String, var kType: String) {
 	companion object {
@@ -128,3 +133,35 @@ class PropertyBuilder(var name: String, var kType: String) {
 		return "PropertyBuilder($name, $kType)"
 	}
 }
+
+sealed class Expression {
+	abstract fun build(): String
+}
+
+
+class ObjectInstantiation : Expression() {
+	lateinit var type: String
+	
+	val args: MutableList<Expression> = mutableListOf()
+	
+	override fun build(): String {
+		return "$type(${args.joinToString()})"
+	}
+}
+
+object ClassNames {
+	val DURATION = ClassName("kotlin.time", "Duration")
+	val INT = ClassName("kotlin", "Int")
+	val NUMBER = ClassName("java.lang", "Number")
+	
+	fun classNameFor(kType: String): ClassName? {
+		return when (kType) {
+			"Int" -> INT
+			"Duration" -> DURATION
+			"Number" -> NUMBER
+			else -> null
+		}
+	}
+}
+
+fun PropertyBuilder.toSpec(pkg: String, pathToHere: Array<String>) = PropertySpec.builder(name, classNameFor(kType) ?: ClassName(pkg, *pathToHere, kType))

@@ -7,6 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileEnergyBallAttributes : BaseRocketAttributes {
+interface ProjectileEnergyBallAttributes : IBlockScoped, BaseRocketAttributes {
 	companion object : IBlockScoped 
 }

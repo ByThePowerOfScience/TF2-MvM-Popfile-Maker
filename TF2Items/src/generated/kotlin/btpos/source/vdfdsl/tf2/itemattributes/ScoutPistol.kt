@@ -7,8 +7,13 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ScoutPistolAttributes : PistolAttributes {
+interface ScoutPistolAttributes : IBlockScoped, PistolAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * If true, can headshot when behind an enemy.
+		 */
+		val backHeadshot: ItemAttributeNamed<Boolean> = ItemAttributeNamed("back headshot")
+	
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -63,7 +68,7 @@ interface ScoutPistolAttributes : PistolAttributes {
 	/**
 	 * If true, can headshot when behind an enemy.
 	 */
-	val backHeadshot: ItemAttributeNamed<Boolean> get() = ScoutPistolAttributes.backHeadshot.get()
+	val backHeadshot: ItemAttributeNamed<Boolean> get() = ScoutPistolAttributes.backHeadshot
 	
 	override val ammo: AmmoAttributes get() = ScoutPistolAttributes.ammo
 	

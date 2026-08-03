@@ -81,10 +81,6 @@ data class PenaltyBonus(
 		return propertyBuilder
 	}
 	
-	override fun generateTopLevelMembers(): List<String> {
-		return classType.second.flatMap { it.generateTopLevelMembers() }
-	}
-	
 	override val innateDescription: List<String>
 		get() = buildList {
 			fun doThing(name: String, it: ISortedNamedAttribute?) {

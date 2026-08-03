@@ -3,9 +3,10 @@ package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 import btpos.source.vdfdsl.tf2.filegeneration.SDKNotes
 import btpos.source.vdfdsl.tf2.filegeneration.hierarchiesByName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
+import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder.Type
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
-import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
+import com.squareup.kotlinpoet.TypeSpec
 import kotlin.collections.map
 
 class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, vararg attrs: ISortedNamedAttribute, notes: List<String> = emptyList())
@@ -34,85 +35,65 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 		return HierarchyNamedAttributeScope(scopeName, extendsFrom, attrs=attrs.map { it.clone() }.toTypedArray(), notes)
 	}
 	
-	override fun generateNestedTypes(baseHierarchyItem: HierarchyNamedAttributeScope, currentPath: List<String>): List<ClassBuilder> {
-		return emptyList()
-	}
 	
 	private var cacheTopLevelMember: ClassBuilder? = null
 	
-	override fun generateTopLevelType(): ClassBuilder {
+	override fun generateType(): ClassBuilder {
 		cacheTopLevelMember?.let {
 			return it;
 		}
 		
-		// what do I need to do here?
+		val allParentAttributes = getParentsRecursive().map { it.varName }.toList()
 		
-		/*
-		1. Make sure any attributes that are base-level are JUST overridden with additional documentation
-			and NOT actually given new items
-		2. Store all custom attributes in the companion object
-		3. Make the interface extend its parent, and include getters that wire to the items in the companion
-		4. Put any nested types in here
-		5. For the entire tree of nested classes coming from here, make sure that any type that exists in
-			the parent version of this is extended by this subclass's nested version
-		 */
+		fun PropertyBuilder.isOverridden() = allParentAttributes.any { this.name == it }
 		
-		
-		
-		val interfaceBuilder = ClassBuilder(clsname, ClassBuilder.Type.INTERFACE)
-		
-		val directParent = getParent()
-		val allParents = getParentsRecursive().map { it.generateTopLevelType() }.toList()
-		
-		fun PropertyBuilder.isOverridden() = allParents.any { this in it }
-		
-		if (directParent == null) {
-			interfaceBuilder.parentInterfaces += "IBlockScoped"
-		} else {
-			interfaceBuilder.parentInterfaces += directParent.clsname
-		}
-		
-		interfaceBuilder.getOrCreateCompanionObject().apply {
-			addProperties(
-				attrs.map { it.propertyBuilder() }.filterNot { it.isOverridden() }
-			)
-			parentInterfaces += "IBlockScoped"
-		}
-		
-		val attrToPropBuilder = attrs.map { it to it.propertyBuilder() }
-		
-		interfaceBuilder.addProperties(
-			attrToPropBuilder.asSequence().map { (attr, prop) ->
-				val prop = prop.copy()
-				if (attr is NamedAttribute) { // make the property a delegate to the attribute in the companion's get/set
-					prop.apply {
-						kType = attr.getKotlinType() + "?"
-						prop.usesGetter = true
-						prop.isVal = false
-						prop.initializer = interfaceBuilder.name + "." + attr.varName + ".get()"
-						prop.setter = interfaceBuilder.name + "." + attr.varName + ".set(value)"
-						prop.contextParams += "_" to "IAttributeContainer"
-					}
+		val cb = super.generateType().apply {
+			properties.values.forEach {
+				if (it.isOverridden()) {
+					it.modality = PropertyBuilder.Modality.OVERRIDE
 				}
-				
-				if (prop.isOverridden()) {
-					prop.modality = PropertyBuilder.Modality.OVERRIDE
-					prop.delegatesToSuper = true
-				} else {
-					prop.modality = PropertyBuilder.Modality.OPEN
-				}
-				prop
-			}.asIterable()
-		)
-		
-		interfaceBuilder.addNestedClasses(attrs.asSequence().filterIsInstance<NamedAttributeScope>().flatMap {
-			it.generateNestedTypes(this, emptyList())
-		}.map { it.copy() }.asIterable())
-		
-		return interfaceBuilder.also {
-			cacheTopLevelMember = it
+			}
 		}
+		
+		cacheTopLevelMember = cb
+		
+		return cb;
+	}
+}
+
+/**
+ * Cache each property in the companion object, and make each instance property instead delegate to that companion object.
+ *
+ * Before:
+ * ```kotlin
+ * class Foo {
+ *   val x = Bar()
+ * }
+ * ```
+ *
+ * After:
+ * ```kotlin
+ * class Foo {
+ *   companion object {
+ *     val x = Bar()
+ *   }
+ *
+ *   val x get() = Foo.x
+ * }
+ * ```
+ */
+fun ClassBuilder.cachePropertiesInCompanion() {
+	val companion = getOrCreateCompanionObject().apply {
+		parentInterfaces += "IBlockScoped"
 	}
 	
-	
+	for (prop in properties.values) {
+		companion.addProperty(prop.copy())
+		
+		prop.usesGetter = true
+		prop.initializer = "${this.name}.${prop.name}"
+		if (!prop.isVal) {
+			prop.setter = "${this.name}.${prop.name} = value"
+		}
+	}
 }

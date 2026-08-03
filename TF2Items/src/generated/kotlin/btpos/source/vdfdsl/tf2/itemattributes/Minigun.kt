@@ -7,9 +7,40 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface MinigunAttributes : BaseGunAttributes {
+interface MinigunAttributes : IBlockScoped, BaseGunAttributes {
 	companion object : IBlockScoped {
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
+	
+		/**
+		 * In-Game: "Silent Killer: No barrel spin sound"
+		 */
+		val silentBarrel: ItemAttributeNamed<Boolean> = ItemAttributeNamed("minigun no spin sounds")
+	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "N% faster spin up time"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% slower spin up time"
+		 */
+		val minigunSpinupTime: BonusPenalty<Number> = BonusPenalty(
+			ItemAttributeNamed("minigun spinup time decreased"),
+			ItemAttributeNamed("minigun spinup time increased"),
+		)
+	
+		/**
+		 * In-Game: "Bullets destroy rockets and grenades in-flight.  Increased accuracy and frequency per-level."
+		 * 
+		 * Overridden by "raid gamemode" to 1.
+		 */
+		val attackProjectiles: ItemAttributeNamed<Boolean> = ItemAttributeNamed("attack projectiles")
+	
+		/**
+		 * In-Game: "Creates a ring of flames while spun up"
+		 */
+		val ringOfFireWhileAiming: ItemAttributeNamed<Int> = ItemAttributeNamed("ring of fire while aiming")
 	
 		private val damage: DamageAttributes = DamageAttributes()
 	
@@ -58,13 +89,6 @@ interface MinigunAttributes : BaseGunAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * In-Game: "Consumes an additional N ammo per second while spun up"
-		 * 
-		 * Amount of ammo drained per second.
-		 */
-		val spinupAmmoDrain: ItemAttributeNamed<Int> = ItemAttributeNamed("uses ammo while aiming")
 	}
 
 	override val ammo: AmmoAttributes get() = MinigunAttributes.ammo
@@ -72,7 +96,7 @@ interface MinigunAttributes : BaseGunAttributes {
 	/**
 	 * In-Game: "Silent Killer: No barrel spin sound"
 	 */
-	val silentBarrel: ItemAttributeNamed<Boolean> get() = MinigunAttributes.silentBarrel.get()
+	val silentBarrel: ItemAttributeNamed<Boolean> get() = MinigunAttributes.silentBarrel
 	
 	/**
 	 * Bonus:
@@ -83,19 +107,19 @@ interface MinigunAttributes : BaseGunAttributes {
 	 * 
 	 * 	- In-Game: "N% slower spin up time"
 	 */
-	val minigunSpinupTime: BonusPenalty<Number> get() = MinigunAttributes.minigunSpinupTime.get()
+	val minigunSpinupTime: BonusPenalty<Number> get() = MinigunAttributes.minigunSpinupTime
 	
 	/**
 	 * In-Game: "Bullets destroy rockets and grenades in-flight.  Increased accuracy and frequency per-level."
 	 * 
 	 * Overridden by "raid gamemode" to 1.
 	 */
-	val attackProjectiles: ItemAttributeNamed<Boolean> get() = MinigunAttributes.attackProjectiles.get()
+	val attackProjectiles: ItemAttributeNamed<Boolean> get() = MinigunAttributes.attackProjectiles
 	
 	/**
 	 * In-Game: "Creates a ring of flames while spun up"
 	 */
-	val ringOfFireWhileAiming: ItemAttributeNamed<Int> get() = MinigunAttributes.ringOfFireWhileAiming.get()
+	val ringOfFireWhileAiming: ItemAttributeNamed<Int> get() = MinigunAttributes.ringOfFireWhileAiming
 	
 	override val damage: DamageAttributes get() = MinigunAttributes.damage
 	
@@ -146,17 +170,12 @@ interface MinigunAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = MinigunAttributes.disguise
 
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "Consumes an additional N ammo per second while spun up"
 		 * 
 		 * Amount of ammo drained per second.
 		 */
-		context(attrs: IAttributeContainer)
-		open var spinupAmmoDrain: Int? 
-			get() = MinigunAttributes.spinupAmmoDrain.get()
-			set(value) { MinigunAttributes.spinupAmmoDrain.set(value) }
+		open val spinupAmmoDrain: ItemAttributeNamed<Int> = ItemAttributeNamed("uses ammo while aiming")
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	

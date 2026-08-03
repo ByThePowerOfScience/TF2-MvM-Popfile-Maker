@@ -7,8 +7,15 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface RocketPackAttributes : BaseMeleeAttributes {
+interface RocketPackAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Able to re-launch while already in-flight"
+		 * 
+		 * The MvM upgrade that lets you repeatedly launch without a cooldown.
+		 */
+		val thermalThrusterAirLaunch: ItemAttributeNamed<Boolean> = ItemAttributeNamed("thermal_thruster_air_launch")
+	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -65,7 +72,7 @@ interface RocketPackAttributes : BaseMeleeAttributes {
 	 * 
 	 * The MvM upgrade that lets you repeatedly launch without a cooldown.
 	 */
-	val thermalThrusterAirLaunch: ItemAttributeNamed<Boolean> get() = RocketPackAttributes.thermalThrusterAirLaunch.get()
+	val thermalThrusterAirLaunch: ItemAttributeNamed<Boolean> get() = RocketPackAttributes.thermalThrusterAirLaunch
 	
 	override val crits: CritsAttributes get() = RocketPackAttributes.crits
 	

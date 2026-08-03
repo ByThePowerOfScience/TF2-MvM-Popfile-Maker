@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface CleaverAttributes : JarAttributes {
+interface CleaverAttributes : IBlockScoped, JarAttributes {
 	companion object : IBlockScoped {
 		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	

@@ -7,8 +7,27 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface BuilderAttributes : WeaponBaseAttributes {
+interface BuilderAttributes : IBlockScoped, WeaponBaseAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Self mark for death when hauling buildings"
+		 * 
+		 * Checked on owner.
+		 */
+		val markForDeathOnBuildingPickup: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mark for death on building pickup")
+	
+		/**
+		 * If 1.0, it's a wheatley sapper.
+		 */
+		val sapperVoicePak: ItemAttributeNamed<Number> = ItemAttributeNamed("sapper voice pak")
+	
+		/**
+		 * In-Game: "Increased robot Sapper radius and duration"
+		 * 
+		 * If greater than 0 on base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
+		 */
+		val roboSapper: ItemAttributeNamed<Int> = ItemAttributeNamed("robo sapper")
+	
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
 		private val ammo: AmmoAttributes = AmmoAttributes()
@@ -65,19 +84,19 @@ interface BuilderAttributes : WeaponBaseAttributes {
 	 * 
 	 * Checked on owner.
 	 */
-	val markForDeathOnBuildingPickup: ItemAttributeNamed<Boolean> get() = BuilderAttributes.markForDeathOnBuildingPickup.get()
+	val markForDeathOnBuildingPickup: ItemAttributeNamed<Boolean> get() = BuilderAttributes.markForDeathOnBuildingPickup
 	
 	/**
 	 * If 1.0, it's a wheatley sapper.
 	 */
-	val sapperVoicePak: ItemAttributeNamed<Number> get() = BuilderAttributes.sapperVoicePak.get()
+	val sapperVoicePak: ItemAttributeNamed<Number> get() = BuilderAttributes.sapperVoicePak
 	
 	/**
 	 * In-Game: "Increased robot Sapper radius and duration"
 	 * 
 	 * If greater than 0 on base builder: If building an OBJ_ATTACHMENT_SAPPER on a mode that allows upgrades and it's built on a player (or MvM bot), gives the sapper a radius instead of being single-target.
 	 */
-	val roboSapper: ItemAttributeNamed<Int> get() = BuilderAttributes.roboSapper.get()
+	val roboSapper: ItemAttributeNamed<Int> get() = BuilderAttributes.roboSapper
 	
 	override val afterburn: AfterburnAttributes get() = BuilderAttributes.afterburn
 	

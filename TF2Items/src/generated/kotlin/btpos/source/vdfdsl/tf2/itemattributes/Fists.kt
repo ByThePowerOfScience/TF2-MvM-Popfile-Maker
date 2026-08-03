@@ -7,8 +7,13 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface FistsAttributes : BaseMeleeAttributes {
+interface FistsAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * Note that despite being present in the item schema, this is explicitly COMMENTED OUT of the code, and has no gameplay effects at least.
+		 */
+		val breadglovesProperties: ItemAttributeNamed<Boolean> = ItemAttributeNamed("breadgloves properties")
+	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -63,7 +68,7 @@ interface FistsAttributes : BaseMeleeAttributes {
 	/**
 	 * Note that despite being present in the item schema, this is explicitly COMMENTED OUT of the code, and has no gameplay effects at least.
 	 */
-	val breadglovesProperties: ItemAttributeNamed<Boolean> get() = FistsAttributes.breadglovesProperties.get()
+	val breadglovesProperties: ItemAttributeNamed<Boolean> get() = FistsAttributes.breadglovesProperties
 	
 	override val crits: CritsAttributes get() = FistsAttributes.crits
 	

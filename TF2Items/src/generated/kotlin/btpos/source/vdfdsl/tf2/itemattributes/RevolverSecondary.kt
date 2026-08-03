@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface RevolverSecondaryAttributes : RevolverAttributes {
+interface RevolverSecondaryAttributes : IBlockScoped, RevolverAttributes {
 	companion object : IBlockScoped {
 		private val heads: HeadsAttributes = HeadsAttributes()
 	

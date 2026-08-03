@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ParachuteAttributes : BuffItemAttributes {
+interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 	companion object : IBlockScoped {
 		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	

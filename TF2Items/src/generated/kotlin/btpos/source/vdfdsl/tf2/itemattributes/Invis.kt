@@ -7,8 +7,22 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface InvisAttributes : WeaponBaseAttributes {
+interface InvisAttributes : IBlockScoped, WeaponBaseAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Cloak Type: Feign Death. Leave a fake corpse on taking damage and temporarily gain invisibility, speed, and damage resistance."
+		 * 
+		 * Used to specify "invis type".
+		 */
+		val setCloakIsFeignDeath: ItemAttributeNamed<Boolean> = ItemAttributeNamed("set cloak is feign death", NumberSelectorCodec(2))
+	
+		/**
+		 * In-Game: "Cloak Type: Motion Sensitive. Alt-fire: Turn invisible. Cannot attack while invisible. Bumping in to enemies will make you slightly visible to enemies. Cloak drain rate based on movement speed."
+		 * 
+		 * Used to specify "invis type".
+		 */
+		val setCloakIsMovementBased: ItemAttributeNamed<Boolean> = ItemAttributeNamed("set cloak is movement based", NumberSelectorCodec(1))
+	
 		val cloak: CloakAttributes = CloakAttributes()
 	
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
@@ -60,74 +74,6 @@ interface InvisAttributes : WeaponBaseAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * How many seconds it takes to decloak.
-		 * 
-		 * Note that values less than or equal to 0 become 1 second.
-		 */
-		val multDecloakRate: ItemAttributeNamed<Duration> = ItemAttributeNamed("mult decloak rate")
-	
-		/**
-		 * Disallows ammo boxes from affecting the cloak meter.
-		 */
-		val cloakNoRegenFromItems: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod_cloak_no_regen_from_items")
-	
-		/**
-		 * In-Game: "No cloak meter from ammo boxes when invisible"
-		 * 
-		 * If true, cannot receive cloak while cloaked.
-		 */
-		val noCloakWhenCloaked: ItemAttributeNamed<Boolean> = ItemAttributeNamed("NoCloakWhenCloaked")
-	
-		/**
-		 * In-Game: "N% cloak meter from ammo boxes"
-		 * 
-		 * Multiplier applied to cloak gained from ammo boxes.
-		 */
-		val reducedCloakFromAmmo: ItemAttributeNamed<Number> = ItemAttributeNamed("ReducedCloakFromAmmo")
-	
-		/**
-		 * In-Game: "+N% cloak drain rate"
-		 * 
-		 * Multiply cloak consumed per second by this value.
-		 * 
-		 * Checked on player.
-		 */
-		val multCloakMeterConsumeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult cloak meter consume rate")
-	
-		/**
-		 * In-Game: "-N% cloak duration"
-		 * 
-		 * Multiply cloak consumed per second by this value.
-		 * 
-		 * Checked on player.
-		 */
-		val cloakConsumeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak consume rate increased")
-	
-		/**
-		 * In-Game: "+N% cloak duration"
-		 * 
-		 * Multiply cloak consumed per second by this value.
-		 * 
-		 * Checked on player.
-		 */
-		val cloakConsumeRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak consume rate decreased")
-	
-		/**
-		 * In-Game: "+N% cloak regen rate"
-		 */
-		val multCloakMeterRegenRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult cloak meter regen rate")
-	
-		/**
-		 * In-Game: "+N% cloak regeneration rate"
-		 */
-		val cloakRegenRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak regen rate increased")
-	
-		/**
-		 * In-Game: "N% cloak regeneration rate"
-		 */
-		val cloakRegenRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak regen rate decreased")
 	}
 
 	/**
@@ -135,14 +81,14 @@ interface InvisAttributes : WeaponBaseAttributes {
 	 * 
 	 * Used to specify "invis type".
 	 */
-	val setCloakIsFeignDeath: ItemAttributeNamed<Boolean> get() = InvisAttributes.setCloakIsFeignDeath.get()
+	val setCloakIsFeignDeath: ItemAttributeNamed<Boolean> get() = InvisAttributes.setCloakIsFeignDeath
 	
 	/**
 	 * In-Game: "Cloak Type: Motion Sensitive. Alt-fire: Turn invisible. Cannot attack while invisible. Bumping in to enemies will make you slightly visible to enemies. Cloak drain rate based on movement speed."
 	 * 
 	 * Used to specify "invis type".
 	 */
-	val setCloakIsMovementBased: ItemAttributeNamed<Boolean> get() = InvisAttributes.setCloakIsMovementBased.get()
+	val setCloakIsMovementBased: ItemAttributeNamed<Boolean> get() = InvisAttributes.setCloakIsMovementBased
 	
 	val cloak: CloakAttributes get() = InvisAttributes.cloak
 	
@@ -197,57 +143,37 @@ interface InvisAttributes : WeaponBaseAttributes {
 	override val disguise: DisguiseAttributes get() = InvisAttributes.disguise
 
 	open class CloakAttributes : IBlockScoped {
-		companion object : IBlockScoped {
-			val multCloakMeterConsumeRate: MultCloakMeterConsumeRateAttributes = MultCloakMeterConsumeRateAttributes()
-	
-			val multCloakMeterRegenRate: MultCloakMeterRegenRateAttributes = MultCloakMeterRegenRateAttributes()
-		}
-	
 		/**
 		 * How many seconds it takes to decloak.
 		 * 
 		 * Note that values less than or equal to 0 become 1 second.
 		 */
-		context(attrs: IAttributeContainer)
-		open var multDecloakRate: Duration? 
-			get() = InvisAttributes.multDecloakRate.get()
-			set(value) { InvisAttributes.multDecloakRate.set(value) }
+		open val multDecloakRate: ItemAttributeNamed<Duration> = ItemAttributeNamed("mult decloak rate")
+	
+		open val multCloakMeterConsumeRate: MultCloakMeterConsumeRateAttributes = MultCloakMeterConsumeRateAttributes()
+	
+		open val multCloakMeterRegenRate: MultCloakMeterRegenRateAttributes = MultCloakMeterRegenRateAttributes()
 	
 		/**
 		 * Disallows ammo boxes from affecting the cloak meter.
 		 */
-		context(attrs: IAttributeContainer)
-		open var cloakNoRegenFromItems: Boolean? 
-			get() = InvisAttributes.cloakNoRegenFromItems.get()
-			set(value) { InvisAttributes.cloakNoRegenFromItems.set(value) }
+		open val cloakNoRegenFromItems: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod_cloak_no_regen_from_items")
 	
 		/**
 		 * In-Game: "No cloak meter from ammo boxes when invisible"
 		 * 
 		 * If true, cannot receive cloak while cloaked.
 		 */
-		context(attrs: IAttributeContainer)
-		open var noCloakWhenCloaked: Boolean? 
-			get() = InvisAttributes.noCloakWhenCloaked.get()
-			set(value) { InvisAttributes.noCloakWhenCloaked.set(value) }
+		open val noCloakWhenCloaked: ItemAttributeNamed<Boolean> = ItemAttributeNamed("NoCloakWhenCloaked")
 	
 		/**
 		 * In-Game: "N% cloak meter from ammo boxes"
 		 * 
 		 * Multiplier applied to cloak gained from ammo boxes.
 		 */
-		context(attrs: IAttributeContainer)
-		open var reducedCloakFromAmmo: Number? 
-			get() = InvisAttributes.reducedCloakFromAmmo.get()
-			set(value) { InvisAttributes.reducedCloakFromAmmo.set(value) }
-	
-		open val multCloakMeterConsumeRate: MultCloakMeterConsumeRateAttributes = MultCloakMeterConsumeRateAttributes()
-	
-		open val multCloakMeterRegenRate: MultCloakMeterRegenRateAttributes = MultCloakMeterRegenRateAttributes()
+		open val reducedCloakFromAmmo: ItemAttributeNamed<Number> = ItemAttributeNamed("ReducedCloakFromAmmo")
 	
 		open class MultCloakMeterConsumeRateAttributes : IBlockScoped {
-			companion object : IBlockScoped 
-	
 			/**
 			 * In-Game: "+N% cloak drain rate"
 			 * 
@@ -255,10 +181,7 @@ interface InvisAttributes : WeaponBaseAttributes {
 			 * 
 			 * Checked on player.
 			 */
-			context(attrs: IAttributeContainer)
-			open var multCloakMeterConsumeRate: Number? 
-				get() = InvisAttributes.multCloakMeterConsumeRate.get()
-				set(value) { InvisAttributes.multCloakMeterConsumeRate.set(value) }
+			open val multCloakMeterConsumeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult cloak meter consume rate")
 	
 			/**
 			 * In-Game: "-N% cloak duration"
@@ -267,10 +190,7 @@ interface InvisAttributes : WeaponBaseAttributes {
 			 * 
 			 * Checked on player.
 			 */
-			context(attrs: IAttributeContainer)
-			open var cloakConsumeRateIncreased: Number? 
-				get() = InvisAttributes.cloakConsumeRateIncreased.get()
-				set(value) { InvisAttributes.cloakConsumeRateIncreased.set(value) }
+			open val cloakConsumeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak consume rate increased")
 	
 			/**
 			 * In-Game: "+N% cloak duration"
@@ -279,38 +199,24 @@ interface InvisAttributes : WeaponBaseAttributes {
 			 * 
 			 * Checked on player.
 			 */
-			context(attrs: IAttributeContainer)
-			open var cloakConsumeRateDecreased: Number? 
-				get() = InvisAttributes.cloakConsumeRateDecreased.get()
-				set(value) { InvisAttributes.cloakConsumeRateDecreased.set(value) }
+			open val cloakConsumeRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak consume rate decreased")
 		}
 	
 		open class MultCloakMeterRegenRateAttributes : IBlockScoped {
-			companion object : IBlockScoped 
-	
 			/**
 			 * In-Game: "+N% cloak regen rate"
 			 */
-			context(attrs: IAttributeContainer)
-			open var multCloakMeterRegenRate: Number? 
-				get() = InvisAttributes.multCloakMeterRegenRate.get()
-				set(value) { InvisAttributes.multCloakMeterRegenRate.set(value) }
+			open val multCloakMeterRegenRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult cloak meter regen rate")
 	
 			/**
 			 * In-Game: "+N% cloak regeneration rate"
 			 */
-			context(attrs: IAttributeContainer)
-			open var cloakRegenRateIncreased: Number? 
-				get() = InvisAttributes.cloakRegenRateIncreased.get()
-				set(value) { InvisAttributes.cloakRegenRateIncreased.set(value) }
+			open val cloakRegenRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak regen rate increased")
 	
 			/**
 			 * In-Game: "N% cloak regeneration rate"
 			 */
-			context(attrs: IAttributeContainer)
-			open var cloakRegenRateDecreased: Number? 
-				get() = InvisAttributes.cloakRegenRateDecreased.get()
-				set(value) { InvisAttributes.cloakRegenRateDecreased.set(value) }
+			open val cloakRegenRateDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("cloak regen rate decreased")
 		}
 	}
 	

@@ -7,8 +7,35 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface LunchboxAttributes : WeaponBaseAttributes {
+interface LunchboxAttributes : IBlockScoped, WeaponBaseAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Adds +50 max health for 30 seconds"
+		 * 
+		 * 0 = LUNCHBOX_STANDARD.
+		 * 
+		 * Used for both the bonk atomic punch or the sandvich.
+		 * 
+		 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
+		 */
+		val lunchboxAddsMaxhealthBonus: ItemAttributeNamed<Boolean> = ItemAttributeNamed("lunchbox adds maxhealth bonus", NumberSelectorCodec(1))
+	
+		/**
+		 * In-Game: "Sets weapon mode #N"
+		 * 
+		 * 0 = LUNCHBOX_STANDARD.
+		 * 
+		 * Used for both the bonk atomic punch or the sandvich.
+		 * 
+		 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
+		 */
+		val lunchboxAddsMinicrits: ItemAttributeNamed<Boolean> = ItemAttributeNamed("lunchbox adds minicrits", NumberSelectorCodec(2))
+	
+		/**
+		 * In-Game: "N% healing effect"
+		 */
+		val lunchboxHealingDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("lunchbox healing decreased")
+	
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
 		private val ammo: AmmoAttributes = AmmoAttributes()
@@ -69,7 +96,7 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	 * 
 	 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
 	 */
-	val lunchboxAddsMaxhealthBonus: ItemAttributeNamed<Boolean> get() = LunchboxAttributes.lunchboxAddsMaxhealthBonus.get()
+	val lunchboxAddsMaxhealthBonus: ItemAttributeNamed<Boolean> get() = LunchboxAttributes.lunchboxAddsMaxhealthBonus
 	
 	/**
 	 * In-Game: "Sets weapon mode #N"
@@ -80,12 +107,12 @@ interface LunchboxAttributes : WeaponBaseAttributes {
 	 * 
 	 * Fun fact: LUNCHBOX_ADDS_AMMO is fully implemented.
 	 */
-	val lunchboxAddsMinicrits: ItemAttributeNamed<Boolean> get() = LunchboxAttributes.lunchboxAddsMinicrits.get()
+	val lunchboxAddsMinicrits: ItemAttributeNamed<Boolean> get() = LunchboxAttributes.lunchboxAddsMinicrits
 	
 	/**
 	 * In-Game: "N% healing effect"
 	 */
-	val lunchboxHealingDecreased: ItemAttributeNamed<Number> get() = LunchboxAttributes.lunchboxHealingDecreased.get()
+	val lunchboxHealingDecreased: ItemAttributeNamed<Number> get() = LunchboxAttributes.lunchboxHealingDecreased
 	
 	override val afterburn: AfterburnAttributes get() = LunchboxAttributes.afterburn
 	

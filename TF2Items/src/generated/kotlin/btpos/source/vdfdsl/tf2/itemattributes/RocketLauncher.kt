@@ -7,15 +7,15 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface RocketLauncherAttributes : BaseGunAttributes {
+interface RocketLauncherAttributes : IBlockScoped, BaseGunAttributes {
 	companion object : IBlockScoped {
+		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
 	
 		private val firing: FiringAttributes = FiringAttributes()
-	
-		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
@@ -58,11 +58,6 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.).
-		 */
-		val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("rocket launch impulse")
 	}
 
 	override val projectiles: ProjectilesAttributes get() = RocketLauncherAttributes.projectiles
@@ -116,15 +111,10 @@ interface RocketLauncherAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = RocketLauncherAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * Allows the player to rocket jump with the projectile. (note that "rocket launcher" is the base for most projectile launchers, including the Crossbow.).
 		 */
-		context(attrs: IAttributeContainer)
-		open var canRocketJumpWithExplosion: Boolean? 
-			get() = RocketLauncherAttributes.canRocketJumpWithExplosion.get()
-			set(value) { RocketLauncherAttributes.canRocketJumpWithExplosion.set(value) }
+		open val canRocketJumpWithExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("rocket launch impulse")
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	

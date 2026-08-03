@@ -7,8 +7,22 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ThrowableAttributes : JarAttributes {
+interface ThrowableAttributes : IBlockScoped, JarAttributes {
 	companion object : IBlockScoped {
+		val throwableRechargeTime: ItemAttributeNamed<Number> = ItemAttributeNamed("throwable recharge time")
+	
+		val throwableDetonationTime: ItemAttributeNamed<Number> = ItemAttributeNamed("throwable detonation time")
+	
+		/**
+		 * For timed explosions.
+		 */
+		val isThrowablePrimable: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is throwable primable")
+	
+		/**
+		 * For things like distance/power increases.
+		 */
+		val isThrowableChargeable: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is throwable chargeable")
+	
 		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
 		private val meter: MeterAttributes = MeterAttributes()
@@ -60,19 +74,19 @@ interface ThrowableAttributes : JarAttributes {
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	}
 
-	val throwableRechargeTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableRechargeTime.get()
+	val throwableRechargeTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableRechargeTime
 	
-	val throwableDetonationTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableDetonationTime.get()
+	val throwableDetonationTime: ItemAttributeNamed<Number> get() = ThrowableAttributes.throwableDetonationTime
 	
 	/**
 	 * For timed explosions.
 	 */
-	val isThrowablePrimable: ItemAttributeNamed<Boolean> get() = ThrowableAttributes.isThrowablePrimable.get()
+	val isThrowablePrimable: ItemAttributeNamed<Boolean> get() = ThrowableAttributes.isThrowablePrimable
 	
 	/**
 	 * For things like distance/power increases.
 	 */
-	val isThrowableChargeable: ItemAttributeNamed<Boolean> get() = ThrowableAttributes.isThrowableChargeable.get()
+	val isThrowableChargeable: ItemAttributeNamed<Boolean> get() = ThrowableAttributes.isThrowableChargeable
 	
 	override val projectiles: ProjectilesAttributes get() = ThrowableAttributes.projectiles
 	

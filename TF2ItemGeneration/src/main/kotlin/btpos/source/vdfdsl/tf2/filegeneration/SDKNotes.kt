@@ -996,10 +996,10 @@ object SDKNotes {
 			),
 			"""
 				- `set_dmg_apply_to_sapper`: Boolean
-					- Damage applies to hit sappers.  The amount of damage dealt is determined by [DamageAttributes.multDmgVsBuildings].
+					- Damage applies to hit sappers.  The amount of damage dealt is determined by [DamageAttributes.dmgVsBuildings].
 				- `is_a_sword`: Boolean
 					- If true, set swing range to 72, else 48
-					- If true, make weapon deploy and holster 75% slower. (This part can be used on all weapons.  See $WEAPONSWITCH.$WEAPONSWITCH_DEPLOY)
+					- If true, make weapon deploy and holster 75% slower. (This part can be used on all weapons. See $WEAPONSWITCH.$WEAPONSWITCH_DEPLOY)
 				- `melee_bounds_multiplier`: Float
 					- Multiplier applied to the bounding box of the swing to detect if a player is inside it.
 				- `melee_cleave_attack`: Int

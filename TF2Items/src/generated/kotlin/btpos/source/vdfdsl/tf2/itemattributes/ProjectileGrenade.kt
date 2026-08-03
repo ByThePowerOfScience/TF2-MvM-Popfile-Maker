@@ -7,8 +7,41 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
+interface ProjectileGrenadeAttributes : IBlockScoped, WeaponBaseAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * Checked on launcher.
+		 */
+		val useLargeSmokeExplosion: ItemAttributeNamed<Boolean> = ItemAttributeNamed("use large smoke explosion")
+	
+		/**
+		 * In-Game: "Pumpkin Bombs"
+		 * 
+		 * Checked on launcher.
+		 */
+		val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween pumpkin explosions")
+	
+		/**
+		 * Bonus:
+		 * 
+		 * 	- In-Game: "+N% explosion radius"
+		 * 
+		 * Penalty:
+		 * 
+		 * 	- In-Game: "N% explosion radius"
+		 */
+		val blastRadius: BonusPenalty<Number> = BonusPenalty(
+			ItemAttributeNamed("Blast radius increased"),
+			ItemAttributeNamed("Blast radius decreased"),
+		)
+	
+		/**
+		 * In-Game: "N% fuse time on grenades"
+		 * 
+		 * Checked on owner.
+		 */
+		val fuseBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("fuse bonus")
+	
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
 		private val ammo: AmmoAttributes = AmmoAttributes()
@@ -63,14 +96,14 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	/**
 	 * Checked on launcher.
 	 */
-	val useLargeSmokeExplosion: ItemAttributeNamed<Boolean> get() = ProjectileGrenadeAttributes.useLargeSmokeExplosion.get()
+	val useLargeSmokeExplosion: ItemAttributeNamed<Boolean> get() = ProjectileGrenadeAttributes.useLargeSmokeExplosion
 	
 	/**
 	 * In-Game: "Pumpkin Bombs"
 	 * 
 	 * Checked on launcher.
 	 */
-	val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = ProjectileGrenadeAttributes.spellHalloweenPumpkinExplosions.get()
+	val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = ProjectileGrenadeAttributes.spellHalloweenPumpkinExplosions
 	
 	/**
 	 * Bonus:
@@ -81,14 +114,14 @@ interface ProjectileGrenadeAttributes : WeaponBaseAttributes {
 	 * 
 	 * 	- In-Game: "N% explosion radius"
 	 */
-	val blastRadius: BonusPenalty<Number> get() = ProjectileGrenadeAttributes.blastRadius.get()
+	val blastRadius: BonusPenalty<Number> get() = ProjectileGrenadeAttributes.blastRadius
 	
 	/**
 	 * In-Game: "N% fuse time on grenades"
 	 * 
 	 * Checked on owner.
 	 */
-	val fuseBonus: ItemAttributeNamed<Number> get() = ProjectileGrenadeAttributes.fuseBonus.get()
+	val fuseBonus: ItemAttributeNamed<Number> get() = ProjectileGrenadeAttributes.fuseBonus
 	
 	override val afterburn: AfterburnAttributes get() = ProjectileGrenadeAttributes.afterburn
 	

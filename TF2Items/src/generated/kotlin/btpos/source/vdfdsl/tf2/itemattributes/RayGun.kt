@@ -7,11 +7,11 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface RayGunAttributes : RocketLauncherAttributes {
+interface RayGunAttributes : IBlockScoped, RocketLauncherAttributes {
 	companion object : IBlockScoped {
-		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+		val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val ammo: AmmoAttributes = AmmoAttributes()
+		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
 	
@@ -58,11 +58,6 @@ interface RayGunAttributes : RocketLauncherAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * Removes ammo requirement to fire weapon.
-		 */
-		val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
 	}
 
 	override val ammo: AmmoAttributes get() = RayGunAttributes.ammo
@@ -116,15 +111,10 @@ interface RayGunAttributes : RocketLauncherAttributes {
 	override val disguise: DisguiseAttributes get() = RayGunAttributes.disguise
 
 	open class AmmoAttributes : RocketLauncherAttributes.AmmoAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * Removes ammo requirement to fire weapon.
 		 */
-		context(attrs: IAttributeContainer)
-		open var energyWeaponNoDrain: Boolean? 
-			get() = RayGunAttributes.energyWeaponNoDrain.get()
-			set(value) { RayGunAttributes.energyWeaponNoDrain.set(value) }
+		open val energyWeaponNoDrain: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon no drain")
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	

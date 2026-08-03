@@ -7,6 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileSpellSpawnZombieAttributes : ProjectileSpellBatsAttributes {
+interface ProjectileSpellSpawnZombieAttributes : IBlockScoped, ProjectileSpellBatsAttributes {
 	companion object : IBlockScoped 
 }

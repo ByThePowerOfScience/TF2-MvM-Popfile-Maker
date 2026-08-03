@@ -7,8 +7,15 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileRocketAttributes : BaseRocketAttributes {
-	companion object : IBlockScoped 
+interface ProjectileRocketAttributes : IBlockScoped, BaseRocketAttributes {
+	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Pumpkin Bombs"
+		 * 
+		 * Checks on owner or sentry's owner.
+		 */
+		val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween pumpkin explosions")
+	}
 
 	/**
 	 * In-Game: "Pumpkin Bombs"

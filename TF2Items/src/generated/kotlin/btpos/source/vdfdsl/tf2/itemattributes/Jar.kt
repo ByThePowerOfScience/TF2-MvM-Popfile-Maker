@@ -7,15 +7,19 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface JarAttributes : BaseGunAttributes {
+interface JarAttributes : IBlockScoped, BaseGunAttributes {
 	companion object : IBlockScoped {
+		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		val meter: MeterAttributes = MeterAttributes()
+	
+		val onHit: OnHitAttributes = OnHitAttributes()
+	
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
 	
 		private val firing: FiringAttributes = FiringAttributes()
-	
-		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
@@ -31,13 +35,9 @@ interface JarAttributes : BaseGunAttributes {
 	
 		private val meta: MetaAttributes = MetaAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
-	
 		private val movement: MovementAttributes = MovementAttributes()
 	
 		private val heads: HeadsAttributes = HeadsAttributes()
-	
-		private val onHit: OnHitAttributes = OnHitAttributes()
 	
 		private val onKill: OnKillAttributes = OnKillAttributes()
 	
@@ -58,22 +58,6 @@ interface JarAttributes : BaseGunAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * In-Game: "Extinguishing teammates reduces cooldown by N%"
-		 * 
-		 * Subtracts this value from the cooldown.
-		 */
-		val extinguishReducesCooldown: ItemAttributeNamed<Number> = ItemAttributeNamed("extinguish reduces cooldown")
-	
-		/**
-		 * In-Game: "N% movement speed on targets"
-		 * 
-		 * If NOT `1.0`, stun the victim.
-		 * 
-		 * Checked on player.
-		 */
-		val appliesSnareEffect: ItemAttributeNamed<Number> = ItemAttributeNamed("applies snare effect")
 	}
 
 	override val projectiles: ProjectilesAttributes get() = JarAttributes.projectiles
@@ -127,8 +111,6 @@ interface JarAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = JarAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "Overrides the projectile fired from the weapon. Takes values from 1 to 26, each representing a different projectile, and not all projectiles work on all weapons"
 		 * 
@@ -138,10 +120,7 @@ interface JarAttributes : BaseGunAttributes {
 		 * 
 		 * Otherwise uses default for its class.
 		 */
-		context(attrs: IAttributeContainer)
-		override var overrideProjectileType: TFProjectileType? 
-			get() = super.overrideProjectileType
-			set(value) { super.overrideProjectileType = value }
+		override val overrideProjectileType: ItemAttributeNamed<TFProjectileType> get() = super.overrideProjectileType
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
@@ -153,22 +132,15 @@ interface JarAttributes : BaseGunAttributes {
 	}
 	
 	open class MeterAttributes : BaseGunAttributes.MeterAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "Extinguishing teammates reduces cooldown by N%"
 		 * 
 		 * Subtracts this value from the cooldown.
 		 */
-		context(attrs: IAttributeContainer)
-		open var extinguishReducesCooldown: Number? 
-			get() = JarAttributes.extinguishReducesCooldown.get()
-			set(value) { JarAttributes.extinguishReducesCooldown.set(value) }
+		open val extinguishReducesCooldown: ItemAttributeNamed<Number> = ItemAttributeNamed("extinguish reduces cooldown")
 	}
 	
 	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "N% movement speed on targets"
 		 * 
@@ -176,10 +148,7 @@ interface JarAttributes : BaseGunAttributes {
 		 * 
 		 * Checked on player.
 		 */
-		context(attrs: IAttributeContainer)
-		open var appliesSnareEffect: Number? 
-			get() = JarAttributes.appliesSnareEffect.get()
-			set(value) { JarAttributes.appliesSnareEffect.set(value) }
+		open val appliesSnareEffect: ItemAttributeNamed<Number> = ItemAttributeNamed("applies snare effect")
 	
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	

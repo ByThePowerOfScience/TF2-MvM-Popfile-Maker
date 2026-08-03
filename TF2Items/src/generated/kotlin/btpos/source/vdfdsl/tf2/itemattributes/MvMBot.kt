@@ -7,8 +7,23 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface MvMBotAttributes : PlayerAttributes {
+interface MvMBotAttributes : IBlockScoped, PlayerAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * If true, spawns a rocketjump particle whenever the robot jumps.
+		 */
+		val customJumpParticle: ItemAttributeNamed<Boolean> = ItemAttributeNamed("bot custom jump particle")
+	
+		/**
+		 * Defaults to 50, I guess it's a percentage.
+		 */
+		val medicUberHealthThreshold: ItemAttributeNamed<Int> = ItemAttributeNamed("bot medic uber health threshold")
+	
+		/**
+		 * Defaults to -1.
+		 */
+		val medicUberDeployDelayDuration: ItemAttributeNamed<Int> = ItemAttributeNamed("bot medic uber deploy delay duration")
+	
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
@@ -59,17 +74,17 @@ interface MvMBotAttributes : PlayerAttributes {
 	/**
 	 * If true, spawns a rocketjump particle whenever the robot jumps.
 	 */
-	val customJumpParticle: ItemAttributeNamed<Boolean> get() = MvMBotAttributes.customJumpParticle.get()
+	val customJumpParticle: ItemAttributeNamed<Boolean> get() = MvMBotAttributes.customJumpParticle
 	
 	/**
 	 * Defaults to 50, I guess it's a percentage.
 	 */
-	val medicUberHealthThreshold: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberHealthThreshold.get()
+	val medicUberHealthThreshold: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberHealthThreshold
 	
 	/**
 	 * Defaults to -1.
 	 */
-	val medicUberDeployDelayDuration: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberDeployDelayDuration.get()
+	val medicUberDeployDelayDuration: ItemAttributeNamed<Int> get() = MvMBotAttributes.medicUberDeployDelayDuration
 	
 	override val ammo: AmmoAttributes get() = MvMBotAttributes.ammo
 	

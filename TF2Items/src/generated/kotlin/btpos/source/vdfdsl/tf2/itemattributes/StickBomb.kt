@@ -7,8 +7,13 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface StickBombAttributes : BreakableMeleeAttributes {
+interface StickBombAttributes : IBlockScoped, BreakableMeleeAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Pumpkin Bombs"
+		 */
+		val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween pumpkin explosions")
+	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -63,7 +68,7 @@ interface StickBombAttributes : BreakableMeleeAttributes {
 	/**
 	 * In-Game: "Pumpkin Bombs"
 	 */
-	val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = StickBombAttributes.spellHalloweenPumpkinExplosions.get()
+	val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = StickBombAttributes.spellHalloweenPumpkinExplosions
 	
 	override val crits: CritsAttributes get() = StickBombAttributes.crits
 	

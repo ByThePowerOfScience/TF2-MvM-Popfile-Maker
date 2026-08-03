@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface PDAAttributes : WeaponBaseAttributes {
+interface PDAAttributes : IBlockScoped, WeaponBaseAttributes {
 	companion object : IBlockScoped {
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	

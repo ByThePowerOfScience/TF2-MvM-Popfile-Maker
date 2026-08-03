@@ -8,6 +8,9 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocess
+import btpos.source.vdfdsl.tf2.filegeneration.representations.toSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.TypeSpec
 import kotlin.properties.Delegates.notNull
 
 /**
@@ -19,9 +22,6 @@ open class NamedAttributeScope(
 	override val innateDescription: List<String> = emptyList(),
 	val _varName: String? = null,
 ) : ISortedNamedAttribute {
-	
-	
-	
 	override var varName: String = (_varName ?: this.scopeName).decapitalize().overrideVarName()
 	
 	override fun clone(): ISortedNamedAttribute {
@@ -45,101 +45,29 @@ open class NamedAttributeScope(
 	operator fun contains(attr: ISortedNamedAttribute) = this.attrs.any { it.varName == attr.varName }
 	
 	
-	private var cacheNestedTypes: List<ClassBuilder> by notNull()
-	
-	
-	
 	/**
-	 * Anything that this class needs to generate will go inside the object
+	 * Just generate a class representing this scope, not worrying about overrides or extensions or anything at all.
+	 *
+	 * Let the hierarchy handle overrides.
 	 */
-	open fun generateNestedTypes(baseHierarchyItem: HierarchyNamedAttributeScope, currentPath: List<String>): List<ClassBuilder> {
-		val currentScopePath = currentPath + this.clsname
-		
-		val parent = baseHierarchyItem.getParent()
-		val parentVersionOfThisScope = parent?.getNestedScope(currentScopePath)
-		
-		val allParents = baseHierarchyItem.getParentsRecursive().mapNotNull { it.getNestedScope(currentScopePath) }.toList()
-		
-		fun PropertyBuilder.isOverridden() = allParents.isNotEmpty() && allParents.any { it.containsAttribute(this.name) }
-		
-		
-		val cb = ClassBuilder(this.clsname, Type.CLASS) {
-			isOpen = true
-		}
-		
-		val attrProperties = attrs.map { it.propertyBuilder() }
-		
-		when {
-			parentVersionOfThisScope == null -> cb.parentInterfaces += "IBlockScoped"
-			else -> cb.baseClass += parentVersionOfThisScope.clsname
-		}
-		
-		// change it to be an interface, with stuff stored in the companion
-		cb.getOrCreateCompanionObject().apply {
-			addProperties(
-				(if (allParents.isEmpty()) attrProperties else attrProperties.filterNot { it.isOverridden() })
-					.map { it.copy() }
-			)
+	override fun generateType(): ClassBuilder {
+		return ClassBuilder(this.clsname, Type.CLASS) {
 			parentInterfaces += "IBlockScoped"
-		}
-		
-		cb.addProperties(
-			attrs.groupBy { it is NamedAttributeScope }.let {
-				(it[false]?.asSequence()
-					 .orEmpty()
-					 .map { it to it.propertyBuilder() }
-					 .onEach {
-						 it.second.getSetAttrFromCompanion(cb.name, it.first)
-					 }
-					 .map { (attr, prop) ->
-						 prop.copy()
-							 .apply {
-								 if (isOverridden()) {
-									 modality = PropertyBuilder.Modality.OVERRIDE
-									 delegatesToSuper = true
-								 } else {
-									 modality = PropertyBuilder.Modality.OPEN
-								 }
-							 }
-					 } +
-				 it[true]?.asSequence()
-					 .orEmpty()
-					 .map {
-						 it.propertyBuilder()
-							 .apply {
-								 if (isOverridden()) {
-									 modality = PropertyBuilder.Modality.OVERRIDE
-									 delegatesToSuper = true
-								 } else {
-									 modality = PropertyBuilder.Modality.OPEN
-								 }
-							 }
-					 }).asIterable()
-			}
-		)
-		
-		attrs.asSequence()
-			.filterIsInstance<NamedAttributeScope>()
-			.forEach { attr ->
-				cb += attr.generateNestedTypes(baseHierarchyItem, currentScopePath)
+			
+			for (attr in attrs) {
+				addProperty(attr.propertyBuilder())
 				
-				cb.addProperty(attr.propertyBuilder().apply {
-					modality = when {
-						parentVersionOfThisScope != null && parentVersionOfThisScope.containsAttribute(attr.varName) ->
-							PropertyBuilder.Modality.OVERRIDE
-						else -> PropertyBuilder.Modality.OPEN
-					}
-				})
+				attr.generateType()?.let {
+					addNestedClass(it)
+				}
 			}
-		
-		return listOf(cb).also {
-			cacheNestedTypes = it
 		}
 	}
 	
+	
 	override fun getNestedScope(scopePath: List<String>): NamedAttributeScope? {
 		if (scopePath.isEmpty())
-			return null;
+			return this;
 		
 		val currItem = scopePath.first()
 		val found = attrs.firstOrNull { it is NamedAttributeScope && it.clsname == currItem } as NamedAttributeScope?

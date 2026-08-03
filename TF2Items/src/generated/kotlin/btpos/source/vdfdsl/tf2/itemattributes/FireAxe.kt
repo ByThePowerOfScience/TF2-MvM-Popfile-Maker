@@ -7,8 +7,15 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface FireAxeAttributes : BaseMeleeAttributes {
+interface FireAxeAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "On Hit: target is engulfed in flames"
+		 * 
+		 * Ignite enemies on hit.
+		 */
+		val setDamagetypeIgnite: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Set DamageType Ignite")
+	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -65,7 +72,7 @@ interface FireAxeAttributes : BaseMeleeAttributes {
 	 * 
 	 * Ignite enemies on hit.
 	 */
-	val setDamagetypeIgnite: ItemAttributeNamed<Boolean> get() = FireAxeAttributes.setDamagetypeIgnite.get()
+	val setDamagetypeIgnite: ItemAttributeNamed<Boolean> get() = FireAxeAttributes.setDamagetypeIgnite
 	
 	override val crits: CritsAttributes get() = FireAxeAttributes.crits
 	

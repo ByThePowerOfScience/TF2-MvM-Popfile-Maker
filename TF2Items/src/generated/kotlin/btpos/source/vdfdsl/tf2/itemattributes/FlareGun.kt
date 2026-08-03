@@ -7,8 +7,21 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface FlareGunAttributes : BaseGunAttributes {
+interface FlareGunAttributes : IBlockScoped, BaseGunAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Flare knocks back target on hit and explodes when it hits the ground. Increased knock back on burning players"
+		 * 
+		 * 0: Normal.
+		 * 
+		 * 1: Detonator.
+		 * 
+		 * 2: Manmelter.
+		 * 
+		 * 3: Scorch Shot.
+		 */
+		val flaregunFiresPelletsWithKnockback: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod flaregun fires pellets with knockback", NumberSelectorCodec(3))
+	
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -71,7 +84,7 @@ interface FlareGunAttributes : BaseGunAttributes {
 	 * 
 	 * 3: Scorch Shot.
 	 */
-	val flaregunFiresPelletsWithKnockback: ItemAttributeNamed<Boolean> get() = FlareGunAttributes.flaregunFiresPelletsWithKnockback.get()
+	val flaregunFiresPelletsWithKnockback: ItemAttributeNamed<Boolean> get() = FlareGunAttributes.flaregunFiresPelletsWithKnockback
 	
 	override val ammo: AmmoAttributes get() = FlareGunAttributes.ammo
 	

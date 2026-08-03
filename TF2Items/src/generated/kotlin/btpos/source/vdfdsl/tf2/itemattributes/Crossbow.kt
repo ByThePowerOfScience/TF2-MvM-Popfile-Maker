@@ -7,8 +7,10 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface CrossbowAttributes : RocketLauncherAttributes {
+interface CrossbowAttributes : IBlockScoped, RocketLauncherAttributes {
 	companion object : IBlockScoped {
+		val reloading: ReloadingAttributes = ReloadingAttributes()
+	
 		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
 		private val ammo: AmmoAttributes = AmmoAttributes()
@@ -40,8 +42,6 @@ interface CrossbowAttributes : RocketLauncherAttributes {
 		private val onHit: OnHitAttributes = OnHitAttributes()
 	
 		private val onKill: OnKillAttributes = OnKillAttributes()
-	
-		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
 		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
@@ -111,8 +111,6 @@ interface CrossbowAttributes : RocketLauncherAttributes {
 	override val disguise: DisguiseAttributes get() = CrossbowAttributes.disguise
 
 	open class ReloadingAttributes : RocketLauncherAttributes.ReloadingAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * Bonus:
 		 * 
@@ -122,26 +120,17 @@ interface CrossbowAttributes : RocketLauncherAttributes {
 		 * 
 		 * 	- In-Game: "N% slower reload time"
 		 */
-		context(attrs: IAttributeContainer)
-		override var reloadTime: Number? 
-			get() = super.reloadTime
-			set(value) { super.reloadTime = value }
+		override val reloadTime: BonusPenalty<Number> get() = super.reloadTime
 	
 		/**
 		 * In-Game: "N% slower reload time"
 		 */
-		context(attrs: IAttributeContainer)
-		override var reloadTimeIncreasedHidden: Number? 
-			get() = super.reloadTimeIncreasedHidden
-			set(value) { super.reloadTimeIncreasedHidden = value }
+		override val reloadTimeIncreasedHidden: ItemAttributeNamed<Number> get() = super.reloadTimeIncreasedHidden
 	
 		/**
 		 * In-Game: "+N% faster reload time"
 		 */
-		context(attrs: IAttributeContainer)
-		override var fasterReloadRate: Number? 
-			get() = super.fasterReloadRate
-			set(value) { super.fasterReloadRate = value }
+		override val fasterReloadRate: ItemAttributeNamed<Number> get() = super.fasterReloadRate
 	}
 	
 	open class ProjectilesAttributes : RocketLauncherAttributes.ProjectilesAttributes() {

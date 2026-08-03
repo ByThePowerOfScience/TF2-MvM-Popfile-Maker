@@ -7,8 +7,30 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface SapperAttributes : BuilderAttributes {
+interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Reverses enemy building construction"
+		 * 
+		 * How fast the building should reverse construction.
+		 * 
+		 * Checked on player.
+		 */
+		val sapperDegeneratesBuildings: ItemAttributeNamed<Number> = ItemAttributeNamed("sapper degenerates buildings")
+	
+		/**
+		 * In-Game: "Increased robot Sapper radius and duration"
+		 * 
+		 * When the sapper is applied to a player (including MvM bots):.
+		 * 
+		 * 2 - stun time is 5.5 seconds, radius is 225 hammer units.
+		 * 
+		 * 3 - stuns for 7 seconds, radius is 250 hammer units.
+		 * 
+		 * else stuns for 4 seconds and radius is 200 HU.
+		 */
+		val roboSapper: ItemAttributeNamed<Int> = ItemAttributeNamed("robo sapper")
+	
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
 		private val ammo: AmmoAttributes = AmmoAttributes()
@@ -67,7 +89,7 @@ interface SapperAttributes : BuilderAttributes {
 	 * 
 	 * Checked on player.
 	 */
-	val sapperDegeneratesBuildings: ItemAttributeNamed<Number> get() = SapperAttributes.sapperDegeneratesBuildings.get()
+	val sapperDegeneratesBuildings: ItemAttributeNamed<Number> get() = SapperAttributes.sapperDegeneratesBuildings
 	
 	/**
 	 * In-Game: "Increased robot Sapper radius and duration"

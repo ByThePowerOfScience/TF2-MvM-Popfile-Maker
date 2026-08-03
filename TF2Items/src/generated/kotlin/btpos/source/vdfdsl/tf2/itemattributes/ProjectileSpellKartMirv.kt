@@ -7,6 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileSpellKartMirvAttributes : ProjectileSpellMirvAttributes {
+interface ProjectileSpellKartMirvAttributes : IBlockScoped, ProjectileSpellMirvAttributes {
 	companion object : IBlockScoped 
 }

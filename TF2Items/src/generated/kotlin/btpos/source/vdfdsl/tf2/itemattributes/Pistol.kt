@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface PistolAttributes : BaseGunAttributes {
+interface PistolAttributes : IBlockScoped, BaseGunAttributes {
 	companion object : IBlockScoped {
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	

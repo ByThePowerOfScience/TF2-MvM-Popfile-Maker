@@ -15,6 +15,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.dontMergeClassMemb
 import btpos.source.vdfdsl.tf2.filegeneration.representations.fabricateScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.HierarchyNamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
+import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.cachePropertiesInCompanion
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocessAllScopes
 import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromCamelCase
@@ -237,20 +238,13 @@ fun generateItemAttributes(
 				writer.write("package ${targetPackage}\n\n")
 				writer.append(imports).append("\n\n")
 				
-				scope.generateTopLevelType()?.also {
+				scope.generateType().also {
 					if (scope is HierarchyNamedAttributeScope) {
 						it.withParentScopes(scope)
 					}
-				}?.let {
+					
 					writer.write(it.build())
 				}
-				
-				scope.generateTopLevelMembers()
-					.forEach { topLevel ->
-						writer.write(topLevel)
-						writer.newLine()
-						writer.newLine()
-					}
 			}
 	}
 	
@@ -299,17 +293,44 @@ fun generateItemAttributes(
 	}
 }
 
+
+fun ClassBuilder.makeNestedClassesOpen() {
+	this.nestedClasses.values.forEach { nested ->
+		nested.isOpen = true
+		
+		nested.properties.values.forEach { prop ->
+			if (prop.modality == PropertyBuilder.Modality.FINAL)
+				prop.modality = PropertyBuilder.Modality.OPEN
+		}
+		
+		nested.makeNestedClassesOpen()
+	}
+}
+
 fun ClassBuilder.withParentScopes(thisScope: HierarchyNamedAttributeScope): ClassBuilder = apply {
-	val parent = thisScope.getParent() ?: return@apply;
+	type = Type.INTERFACE
 	
-	val parentBuilder = parent.generateTopLevelType()
+	cachePropertiesInCompanion()
+	
+	val parent = thisScope.getParent() ?: run {
+		makeNestedClassesOpen()
+		return@apply;
+	}
+	
+	parentInterfaces += parent.clsname
+	
+	val parentBuilder = parent.generateType()
 	
 	patchWithParentOverridesRecursive(thisScope, this, parentBuilder, listOf())
+	ensureOverriddenPropertiesAreMarkedOverride(thisScope, listOf())
 	
-	val ourCompanion = this.getOrCreateCompanionObject()
-	this.nestedClasses.values.forEach {
-		it.storeNestedPropertiesInCompanionFlat(thisScope.clsname) { ourCompanion.addProperty(it) }
-	}
+	makeNestedClassesOpen()
+	
+//	val ourCompanion = this.getOrCreateCompanionObject()
+//	this.nestedClasses.values.forEach {
+//		it.storeNestedPropertiesInCompanionFlat(thisScope.clsname) { ourCompanion.addProperty(it) }
+//	}
+
 }
 
 
@@ -353,6 +374,7 @@ fun patchWithParentOverridesRecursive(
 	parentVersionOfOurClass: ClassBuilder,
 	pathFromRootToHere: List<String>
 ) {
+	ourClass.isOpen = true
 	// for each nested class in the parent, add a copy of it to ours if it isn't there already, but configure both
 	for ((nestedClassName, parentNestedClass) in parentVersionOfOurClass.nestedClasses) {
 		val ourNestedClass = ourClass.nestedClasses.computeIfAbsent(nestedClassName) {
@@ -392,6 +414,8 @@ private fun ClassBuilder.ensureOverriddenPropertiesAreMarkedOverride(ourRootScop
 			prop.modality = PropertyBuilder.Modality.OVERRIDE
 			if (prop.kType !in this.nestedClasses)
 				prop.delegatesToSuper = true
+		} else {
+			prop.modality = PropertyBuilder.Modality.OPEN
 		}
 	}
 }

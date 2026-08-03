@@ -7,49 +7,21 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface EconEntityAttributes : BaseEntityAttributes {
+interface EconEntityAttributes : IBlockScoped, BaseEntityAttributes {
 	companion object : IBlockScoped {
+		val meta: MetaAttributes = MetaAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
 	
-		private val meta: MetaAttributes = MetaAttributes()
-	
 		private val meter: MeterAttributes = MeterAttributes()
 	
 		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
 		private val resistance: ResistanceAttributes = ResistanceAttributes()
-	
-		/**
-		 * In-Game: "Festivized"
-		 * 
-		 * Attaches festivizer.
-		 */
-		val isFestivized: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is_festivized")
-	
-		/**
-		 * Attaches static particle, such as smoking a pipe.
-		 * 
-		 * Cosmetics can only have one.
-		 */
-		val attachParticleEffectStatic: ItemAttributeNamed<Int> = ItemAttributeNamed("attach particle effect static")
-	
-		/**
-		 * In-Game: "★ Unusual Effect: N"
-		 * 
-		 * Dynamic particle systems, such as unusuals.
-		 */
-		val attachParticleEffect: ItemAttributeNamed<Int> = ItemAttributeNamed("attach particle effect")
-	
-		/**
-		 * If false, attaches the `set_attached_particle` to the item itself.
-		 * 
-		 * If true, the particle only applies to the throwable particle trail.
-		 */
-		val throwableParticleTrailOnly: ItemAttributeNamed<Boolean> = ItemAttributeNamed("throwable particle trail only")
 	}
 
 	override val meta: MetaAttributes get() = EconEntityAttributes.meta
@@ -67,12 +39,6 @@ interface EconEntityAttributes : BaseEntityAttributes {
 	override val resistance: ResistanceAttributes get() = EconEntityAttributes.resistance
 
 	open class MetaAttributes : BaseEntityAttributes.MetaAttributes() {
-		companion object : IBlockScoped {
-			val items: ItemsAttributes = ItemsAttributes()
-	
-			val particles: ParticlesAttributes = ParticlesAttributes()
-		}
-	
 		open val items: ItemsAttributes = ItemsAttributes()
 	
 		open val particles: ParticlesAttributes = ParticlesAttributes()
@@ -80,51 +46,35 @@ interface EconEntityAttributes : BaseEntityAttributes {
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
 		open class ItemsAttributes : IBlockScoped {
-			companion object : IBlockScoped 
-	
 			/**
 			 * In-Game: "Festivized"
 			 * 
 			 * Attaches festivizer.
 			 */
-			context(attrs: IAttributeContainer)
-			open var isFestivized: Boolean? 
-				get() = EconEntityAttributes.isFestivized.get()
-				set(value) { EconEntityAttributes.isFestivized.set(value) }
+			open val isFestivized: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is_festivized")
 		}
 	
 		open class ParticlesAttributes : IBlockScoped {
-			companion object : IBlockScoped 
-	
 			/**
 			 * Attaches static particle, such as smoking a pipe.
 			 * 
 			 * Cosmetics can only have one.
 			 */
-			context(attrs: IAttributeContainer)
-			open var attachParticleEffectStatic: Int? 
-				get() = EconEntityAttributes.attachParticleEffectStatic.get()
-				set(value) { EconEntityAttributes.attachParticleEffectStatic.set(value) }
+			open val attachParticleEffectStatic: ItemAttributeNamed<Int> = ItemAttributeNamed("attach particle effect static")
 	
 			/**
 			 * In-Game: "★ Unusual Effect: N"
 			 * 
 			 * Dynamic particle systems, such as unusuals.
 			 */
-			context(attrs: IAttributeContainer)
-			open var attachParticleEffect: Int? 
-				get() = EconEntityAttributes.attachParticleEffect.get()
-				set(value) { EconEntityAttributes.attachParticleEffect.set(value) }
+			open val attachParticleEffect: ItemAttributeNamed<Int> = ItemAttributeNamed("attach particle effect")
 	
 			/**
 			 * If false, attaches the `set_attached_particle` to the item itself.
 			 * 
 			 * If true, the particle only applies to the throwable particle trail.
 			 */
-			context(attrs: IAttributeContainer)
-			open var throwableParticleTrailOnly: Boolean? 
-				get() = EconEntityAttributes.throwableParticleTrailOnly.get()
-				set(value) { EconEntityAttributes.throwableParticleTrailOnly.set(value) }
+			open val throwableParticleTrailOnly: ItemAttributeNamed<Boolean> = ItemAttributeNamed("throwable particle trail only")
 		}
 	
 		open class KillfeedAttributes : BaseEntityAttributes.MetaAttributes.KillfeedAttributes() 

@@ -7,8 +7,15 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ChargedSMGAttributes : SMGAttributes {
+interface ChargedSMGAttributes : IBlockScoped, SMGAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Secondary fire when charged grants mini-crits for N seconds."
+		 * 
+		 * Minicrit buff duration.
+		 */
+		val minicritBoostWhenCharged: ItemAttributeNamed<Number> = ItemAttributeNamed("minicrit_boost_when_charged")
+	
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -65,7 +72,7 @@ interface ChargedSMGAttributes : SMGAttributes {
 	 * 
 	 * Minicrit buff duration.
 	 */
-	val minicritBoostWhenCharged: ItemAttributeNamed<Number> get() = ChargedSMGAttributes.minicritBoostWhenCharged.get()
+	val minicritBoostWhenCharged: ItemAttributeNamed<Number> get() = ChargedSMGAttributes.minicritBoostWhenCharged
 	
 	override val ammo: AmmoAttributes get() = ChargedSMGAttributes.ammo
 	

@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface BuffItemAttributes : BaseMeleeAttributes {
+interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
 		val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
@@ -60,30 +60,6 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * Sets which banner is used.
-		 * 
-		 * 0 = Buff Banner.
-		 * 
-		 * 1 = Battalion's Backup.
-		 * 
-		 * 2 = Concheror.
-		 */
-		val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
-	
-		/**
-		 * Sets which banner is used.
-		 * 
-		 * 0 = Buff Banner.
-		 * 
-		 * 1 = Battalion's Backup.
-		 * 
-		 * 2 = Concheror.
-		 */
-		val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
-	
-		val buffDuration: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("increase buff duration"), ItemAttributeNamed<Number>("increase buff duration HIDDEN"))
 	}
 
 	val buffItems: BuffItemsAttributes get() = BuffItemAttributes.buffItems
@@ -139,7 +115,16 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = BuffItemAttributes.disguise
 
 	open class BuffItemsAttributes : IBlockScoped {
-		companion object : IBlockScoped 
+		/**
+		 * Sets which banner is used.
+		 * 
+		 * 0 = Buff Banner.
+		 * 
+		 * 1 = Battalion's Backup.
+		 * 
+		 * 2 = Concheror.
+		 */
+		open val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
 	
 		/**
 		 * Sets which banner is used.
@@ -150,29 +135,9 @@ interface BuffItemAttributes : BaseMeleeAttributes {
 		 * 
 		 * 2 = Concheror.
 		 */
-		context(attrs: IAttributeContainer)
-		open var soldierBuffType: Int? 
-			get() = BuffItemAttributes.soldierBuffType.get()
-			set(value) { BuffItemAttributes.soldierBuffType.set(value) }
+		open val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
 	
-		/**
-		 * Sets which banner is used.
-		 * 
-		 * 0 = Buff Banner.
-		 * 
-		 * 1 = Battalion's Backup.
-		 * 
-		 * 2 = Concheror.
-		 */
-		context(attrs: IAttributeContainer)
-		open var demoBuffType: Int? 
-			get() = BuffItemAttributes.demoBuffType.get()
-			set(value) { BuffItemAttributes.demoBuffType.set(value) }
-	
-		context(attrs: IAttributeContainer)
-		open var buffDuration: Number? 
-			get() = BuffItemAttributes.buffDuration.get()
-			set(value) { BuffItemAttributes.buffDuration.set(value) }
+		open val buffDuration: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("increase buff duration"), ItemAttributeNamed<Number>("increase buff duration HIDDEN"))
 	}
 	
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 

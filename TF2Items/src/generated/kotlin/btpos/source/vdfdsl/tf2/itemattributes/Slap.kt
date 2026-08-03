@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface SlapAttributes : BaseMeleeAttributes {
+interface SlapAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
 		private val crits: CritsAttributes = CritsAttributes()
 	

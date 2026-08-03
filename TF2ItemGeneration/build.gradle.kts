@@ -20,6 +20,7 @@ dependencies {
 	
 	implementation("btpos.source.vdfdsl.vdf:vdf-parser:${Constants.PROJECT_VERSION}")
 	testImplementation(kotlin("test"))
+	implementation(libs.kotlinpoet)
 }
 
 val basePackage = Constants.Groups.TF2

@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface RobotArmAttributes : WrenchAttributes {
+interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 	companion object : IBlockScoped {
 		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	

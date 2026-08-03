@@ -7,13 +7,20 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileEnergyRingAttributes : BaseProjectileAttributes {
-	companion object : IBlockScoped 
+interface ProjectileEnergyRingAttributes : IBlockScoped, BaseProjectileAttributes {
+	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Projectile penetrates enemy targets"
+		 * 
+		 * Checked on owner.
+		 */
+		val energyWeaponPenetration: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon penetration")
+	}
 
 	/**
 	 * In-Game: "Projectile penetrates enemy targets"
 	 * 
 	 * Checked on owner.
 	 */
-	val energyWeaponPenetration: ItemAttributeNamed<Boolean> get() = ProjectileEnergyRingAttributes.energyWeaponPenetration.get()
+	val energyWeaponPenetration: ItemAttributeNamed<Boolean> get() = ProjectileEnergyRingAttributes.energyWeaponPenetration
 }

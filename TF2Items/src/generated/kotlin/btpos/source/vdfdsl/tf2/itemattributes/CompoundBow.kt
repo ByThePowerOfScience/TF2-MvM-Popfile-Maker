@@ -7,8 +7,15 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface CompoundBowAttributes : StickybombLauncherAttributes {
+interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "+N% faster reload time"
+		 * 
+		 * Mult applied to reload speed.
+		 */
+		val fasterReloadRate: ItemAttributeNamed<Number> = ItemAttributeNamed("faster reload rate")
+	
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -65,7 +72,7 @@ interface CompoundBowAttributes : StickybombLauncherAttributes {
 	 * 
 	 * Mult applied to reload speed.
 	 */
-	val fasterReloadRate: ItemAttributeNamed<Number> get() = CompoundBowAttributes.fasterReloadRate.get()
+	val fasterReloadRate: ItemAttributeNamed<Number> get() = CompoundBowAttributes.fasterReloadRate
 	
 	override val ammo: AmmoAttributes get() = CompoundBowAttributes.ammo
 	

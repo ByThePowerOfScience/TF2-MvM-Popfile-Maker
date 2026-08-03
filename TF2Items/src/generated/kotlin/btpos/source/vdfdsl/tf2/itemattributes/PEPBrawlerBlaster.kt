@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface PEPBrawlerBlasterAttributes : ScattergunAttributes {
+interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	companion object : IBlockScoped {
 		private val onHit: OnHitAttributes = OnHitAttributes()
 	

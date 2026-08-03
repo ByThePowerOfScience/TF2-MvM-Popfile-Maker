@@ -7,8 +7,17 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface WrenchAttributes : BaseMeleeAttributes {
+interface WrenchAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		/**
+		 * In-Game: "Press your reload key to choose to teleport to spawn or your exit teleporter"
+		 * 
+		 * If set, pressing reload shows the Eureka Effect teleport menu.
+		 */
+		val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> = ItemAttributeNamed("alt fire teleport to spawn")
+	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -20,8 +29,6 @@ interface WrenchAttributes : BaseMeleeAttributes {
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
 		private val ammo: AmmoAttributes = AmmoAttributes()
-	
-		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
 		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
@@ -58,47 +65,6 @@ interface WrenchAttributes : BaseMeleeAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * Bonus:
-		 * 
-		 * 	- In-Game: "Construction hit speed boost increased by N%"
-		 * 
-		 * Penalty:
-		 * 
-		 * 	- In-Game: "Construction hit speed boost decreased by N%"
-		 */
-		val constructionRate: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("Construction rate increased"),
-			ItemAttributeNamed("Construction rate decreased"),
-		)
-	
-		/**
-		 * Bonus:
-		 * 
-		 * 	- In-Game: "N% faster repair rate"
-		 * 
-		 * Penalty:
-		 * 
-		 * 	- In-Game: "N% slower repair rate"
-		 */
-		val repairRate: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("Repair rate increased"),
-			ItemAttributeNamed("Repair rate decreased"),
-		)
-	
-		/**
-		 * In-Game: "Replaces the Sentry with a Mini-Sentry"
-		 * 
-		 * Sentry built is a minisentry.
-		 * 
-		 * Detonates leveled sentries when equipping a wrench with this attribute.
-		 * 
-		 * If not in MvM (player is not on team "PVE_DEFENDERS"), detonate minis when unequipping a wrench with this attribute.
-		 * 
-		 * Removes engineer's glove on his model.
-		 */
-		val wrenchBuildsMinisentry: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod wrench builds minisentry")
 	}
 
 	override val buildings: BuildingsAttributes get() = WrenchAttributes.buildings
@@ -108,7 +74,7 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	 * 
 	 * If set, pressing reload shows the Eureka Effect teleport menu.
 	 */
-	val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> get() = WrenchAttributes.altFireTeleportToSpawn.get()
+	val altFireTeleportToSpawn: ItemAttributeNamed<Boolean> get() = WrenchAttributes.altFireTeleportToSpawn
 	
 	override val crits: CritsAttributes get() = WrenchAttributes.crits
 	
@@ -159,10 +125,6 @@ interface WrenchAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = WrenchAttributes.disguise
 
 	open class BuildingsAttributes : BaseMeleeAttributes.BuildingsAttributes() {
-		companion object : IBlockScoped {
-			val sentryGun: SentryGunAttributes = SentryGunAttributes()
-		}
-	
 		/**
 		 * Bonus:
 		 * 
@@ -172,10 +134,10 @@ interface WrenchAttributes : BaseMeleeAttributes {
 		 * 
 		 * 	- In-Game: "Construction hit speed boost decreased by N%"
 		 */
-		context(attrs: IAttributeContainer)
-		open var constructionRate: Number? 
-			get() = WrenchAttributes.constructionRate.get()
-			set(value) { WrenchAttributes.constructionRate.set(value) }
+		open val constructionRate: BonusPenalty<Number> = BonusPenalty(
+			ItemAttributeNamed("Construction rate increased"),
+			ItemAttributeNamed("Construction rate decreased"),
+		)
 	
 		/**
 		 * Bonus:
@@ -186,16 +148,14 @@ interface WrenchAttributes : BaseMeleeAttributes {
 		 * 
 		 * 	- In-Game: "N% slower repair rate"
 		 */
-		context(attrs: IAttributeContainer)
-		open var repairRate: Number? 
-			get() = WrenchAttributes.repairRate.get()
-			set(value) { WrenchAttributes.repairRate.set(value) }
+		open val repairRate: BonusPenalty<Number> = BonusPenalty(
+			ItemAttributeNamed("Repair rate increased"),
+			ItemAttributeNamed("Repair rate decreased"),
+		)
 	
 		open val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
 		open class SentryGunAttributes : IBlockScoped {
-			companion object : IBlockScoped 
-	
 			/**
 			 * In-Game: "Replaces the Sentry with a Mini-Sentry"
 			 * 
@@ -207,10 +167,7 @@ interface WrenchAttributes : BaseMeleeAttributes {
 			 * 
 			 * Removes engineer's glove on his model.
 			 */
-			context(attrs: IAttributeContainer)
-			open var wrenchBuildsMinisentry: Boolean? 
-				get() = WrenchAttributes.wrenchBuildsMinisentry.get()
-				set(value) { WrenchAttributes.wrenchBuildsMinisentry.set(value) }
+			open val wrenchBuildsMinisentry: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod wrench builds minisentry")
 		}
 	}
 	

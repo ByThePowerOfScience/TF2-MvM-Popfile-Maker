@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface PDAExpansionTeleporterAttributes : WearableAttributes {
+interface PDAExpansionTeleporterAttributes : IBlockScoped, WearableAttributes {
 	companion object : IBlockScoped {
 		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	

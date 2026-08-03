@@ -53,10 +53,6 @@ class Vis(
 		}
 	}
 	
-	override fun generateTopLevelMembers(): List<String> {
-		return (visible.generateTopLevelMembers() + hidden.generateTopLevelMembers())
-	}
-	
 	override fun getKotlinType(): String {
 		return visible.getKotlinType()
 	}

@@ -7,15 +7,20 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface GrenadeLauncherAttributes : BaseGunAttributes {
+interface GrenadeLauncherAttributes : IBlockScoped, BaseGunAttributes {
 	companion object : IBlockScoped {
+		val projectiles: ProjectilesAttributes = ProjectilesAttributes()
+	
+		val damage: DamageAttributes = DamageAttributes()
+	
+		/**
+		 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
+		 */
+		val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> = ItemAttributeNamed("grenade launcher mortar mode")
+	
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
-	
 		private val firing: FiringAttributes = FiringAttributes()
-	
-		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
@@ -58,32 +63,6 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * Bonus:
-		 * 
-		 * 	- In-Game: "+N% projectile speed"
-		 * 
-		 * Penalty:
-		 * 
-		 * 	- In-Game: "N% projectile speed"
-		 * 
-		 * Hidden:
-		 * 
-		 * 	- In-Game: "+N% projectile speed"
-		 */
-		val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
-			ItemAttributeNamed<Number>("Projectile speed increased"),
-			ItemAttributeNamed<Number>("Projectile speed decreased"),
-			ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
-		)
-	
-		/**
-		 * In-Game: "N% damage on grenades that explode on timer"
-		 * 
-		 * Flat multiplier applied to initial damage.
-		 */
-		val grenadeDetonationDamagePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("grenade detonation damage penalty")
 	}
 
 	override val projectiles: ProjectilesAttributes get() = GrenadeLauncherAttributes.projectiles
@@ -93,7 +72,7 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	/**
 	 * In-Game: "Cannonballs have a fuse time of 1 second; fuses can be primed to explode earlier by holding down the fire key."
 	 */
-	val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> get() = GrenadeLauncherAttributes.grenadeLauncherMortarMode.get()
+	val grenadeLauncherMortarMode: ItemAttributeNamed<Duration> get() = GrenadeLauncherAttributes.grenadeLauncherMortarMode
 	
 	override val ammo: AmmoAttributes get() = GrenadeLauncherAttributes.ammo
 	
@@ -142,8 +121,6 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	override val disguise: DisguiseAttributes get() = GrenadeLauncherAttributes.disguise
 
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * Bonus:
 		 * 
@@ -157,10 +134,11 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 		 * 
 		 * 	- In-Game: "+N% projectile speed"
 		 */
-		context(attrs: IAttributeContainer)
-		open var projectileSpeed: Number? 
-			get() = GrenadeLauncherAttributes.projectileSpeed.get()
-			set(value) { GrenadeLauncherAttributes.projectileSpeed.set(value) }
+		open val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+			ItemAttributeNamed<Number>("Projectile speed increased"),
+			ItemAttributeNamed<Number>("Projectile speed decreased"),
+			ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
+		)
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
@@ -172,17 +150,12 @@ interface GrenadeLauncherAttributes : BaseGunAttributes {
 	}
 	
 	open class DamageAttributes : BaseGunAttributes.DamageAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "N% damage on grenades that explode on timer"
 		 * 
 		 * Flat multiplier applied to initial damage.
 		 */
-		context(attrs: IAttributeContainer)
-		open var grenadeDetonationDamagePenalty: Number? 
-			get() = GrenadeLauncherAttributes.grenadeDetonationDamagePenalty.get()
-			set(value) { GrenadeLauncherAttributes.grenadeDetonationDamagePenalty.set(value) }
+		open val grenadeDetonationDamagePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("grenade detonation damage penalty")
 	}
 	
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {

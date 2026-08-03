@@ -7,8 +7,10 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface SwordAttributes : BaseMeleeAttributes {
+interface SwordAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		val onKill: OnKillAttributes = OnKillAttributes()
+	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -39,8 +41,6 @@ interface SwordAttributes : BaseMeleeAttributes {
 	
 		private val heads: HeadsAttributes = HeadsAttributes()
 	
-		private val onKill: OnKillAttributes = OnKillAttributes()
-	
 		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
 		private val reloading: ReloadingAttributes = ReloadingAttributes()
@@ -58,15 +58,6 @@ interface SwordAttributes : BaseMeleeAttributes {
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * In-Game: "N% damage penalty"
-		 * 
-		 * More like a boolean.  Doesn't actually determine any kind of decapitation, just if it CAN decapitate.
-		 * 
-		 * If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
-		 */
-		val decapitateType: ItemAttributeNamed<Int> = ItemAttributeNamed("decapitate type")
 	}
 
 	override val onKill: OnKillAttributes get() = SwordAttributes.onKill
@@ -120,8 +111,6 @@ interface SwordAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = SwordAttributes.disguise
 
 	open class OnKillAttributes : BaseMeleeAttributes.OnKillAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "N% damage penalty"
 		 * 
@@ -129,10 +118,7 @@ interface SwordAttributes : BaseMeleeAttributes {
 		 * 
 		 * If greater than 0 on Demoman, reduces max health gained from the Knockout rune to 20.
 		 */
-		context(attrs: IAttributeContainer)
-		open var decapitateType: Int? 
-			get() = SwordAttributes.decapitateType.get()
-			set(value) { SwordAttributes.decapitateType.set(value) }
+		open val decapitateType: ItemAttributeNamed<Int> = ItemAttributeNamed("decapitate type")
 	}
 	
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 

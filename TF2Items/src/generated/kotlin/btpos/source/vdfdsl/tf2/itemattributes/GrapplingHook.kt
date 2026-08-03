@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface GrapplingHookAttributes : RocketLauncherAttributes {
+interface GrapplingHookAttributes : IBlockScoped, RocketLauncherAttributes {
 	companion object : IBlockScoped {
 		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	

@@ -7,8 +7,22 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface BatAttributes : BaseMeleeAttributes {
+interface BatAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * In-Game: "Alt-Fire: Launches a ball that slows opponents"
+		 * 
+		 * If 0, cannot create a ball.
+		 */
+		val batLaunchesBalls: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod bat launches balls", NumberSelectorCodec(1))
+	
+		/**
+		 * In-Game: "Alt-Fire: Launches a festive ornament that shatters causing bleed"
+		 * 
+		 * If 0, cannot create a ball.
+		 */
+		val batLaunchesOrnaments: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod bat launches ornaments", NumberSelectorCodec(2))
+	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -65,14 +79,14 @@ interface BatAttributes : BaseMeleeAttributes {
 	 * 
 	 * If 0, cannot create a ball.
 	 */
-	val batLaunchesBalls: ItemAttributeNamed<Boolean> get() = BatAttributes.batLaunchesBalls.get()
+	val batLaunchesBalls: ItemAttributeNamed<Boolean> get() = BatAttributes.batLaunchesBalls
 	
 	/**
 	 * In-Game: "Alt-Fire: Launches a festive ornament that shatters causing bleed"
 	 * 
 	 * If 0, cannot create a ball.
 	 */
-	val batLaunchesOrnaments: ItemAttributeNamed<Boolean> get() = BatAttributes.batLaunchesOrnaments.get()
+	val batLaunchesOrnaments: ItemAttributeNamed<Boolean> get() = BatAttributes.batLaunchesOrnaments
 	
 	override val crits: CritsAttributes get() = BatAttributes.crits
 	

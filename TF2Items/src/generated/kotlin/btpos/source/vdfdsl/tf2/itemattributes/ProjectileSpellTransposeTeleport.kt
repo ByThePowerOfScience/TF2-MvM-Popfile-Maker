@@ -7,6 +7,6 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileSpellTransposeTeleportAttributes : ProjectileSpellBatsAttributes {
+interface ProjectileSpellTransposeTeleportAttributes : IBlockScoped, ProjectileSpellBatsAttributes {
 	companion object : IBlockScoped 
 }

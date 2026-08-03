@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface WearableRazorbackAttributes : WearableAttributes {
+interface WearableRazorbackAttributes : IBlockScoped, WearableAttributes {
 	companion object : IBlockScoped {
 		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	

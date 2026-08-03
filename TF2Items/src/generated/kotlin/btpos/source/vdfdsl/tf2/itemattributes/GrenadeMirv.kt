@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface GrenadeMirvAttributes : WeaponBaseGrenadeAttributes {
+interface GrenadeMirvAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 	companion object : IBlockScoped {
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	

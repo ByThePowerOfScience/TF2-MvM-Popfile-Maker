@@ -7,11 +7,31 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface KnifeAttributes : BaseMeleeAttributes {
+interface KnifeAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
-		private val crits: CritsAttributes = CritsAttributes()
+		val damage: DamageAttributes = DamageAttributes()
 	
-		private val damage: DamageAttributes = DamageAttributes()
+		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		/**
+		 * 0: Stock.
+		 * 
+		 * 1: Your Eternal Reward.
+		 * 
+		 * 2: Cloak and Dagger (idk why).
+		 * 
+		 * 3: Spycicle.
+		 */
+		val setIcicleKnifeMode: ItemAttributeNamed<Boolean> = ItemAttributeNamed("set icicle knife mode", NumberSelectorCodec(3))
+	
+		/**
+		 * In-Game: "Melts in fire, regenerates in N seconds and by picking up ammo"
+		 */
+		val meltsInFire: ItemAttributeNamed<Boolean> = ItemAttributeNamed("melts in fire")
+	
+		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val onHit: OnHitAttributes = OnHitAttributes()
 	
@@ -26,8 +46,6 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
 		private val firing: FiringAttributes = FiringAttributes()
-	
-		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
 		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
@@ -56,33 +74,6 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
-	
-		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * In-Game: "Increase backstab damage against Giant Robots by N%"
-		 * 
-		 * Spy only does 25% damage against minibosses by default.  The number here is added to that percentage, up to a max of 100% + 25% = 125%.
-		 * 
-		 * Note that this is an actual PERCENTAGE of armor penetrated, not a proportion:  `25.0`, `50.0`, up to `100.0`.
-		 * 
-		 * Also, with max armor penetration, you apparently do 25% *more* damage against minibosses than you do against regular bots.
-		 * 
-		 * Checked on player.
-		 */
-		val armorPiercing: ItemAttributeNamed<Number> = ItemAttributeNamed("armor piercing")
-	
-		/**
-		 * In-Game: "On Backstab: Absorbs the health from your victim."
-		 * 
-		 * Gain health on backstab.
-		 */
-		val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
-	
-		/**
-		 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
-		 */
-		val disguiseOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disguise on backstab")
 	}
 
 	override val damage: DamageAttributes get() = KnifeAttributes.damage
@@ -100,12 +91,12 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	 * 
 	 * 3: Spycicle.
 	 */
-	val setIcicleKnifeMode: ItemAttributeNamed<Boolean> get() = KnifeAttributes.setIcicleKnifeMode.get()
+	val setIcicleKnifeMode: ItemAttributeNamed<Boolean> get() = KnifeAttributes.setIcicleKnifeMode
 	
 	/**
 	 * In-Game: "Melts in fire, regenerates in N seconds and by picking up ammo"
 	 */
-	val meltsInFire: ItemAttributeNamed<Boolean> get() = KnifeAttributes.meltsInFire.get()
+	val meltsInFire: ItemAttributeNamed<Boolean> get() = KnifeAttributes.meltsInFire
 	
 	override val crits: CritsAttributes get() = KnifeAttributes.crits
 	
@@ -152,8 +143,6 @@ interface KnifeAttributes : BaseMeleeAttributes {
 	override val ragdolls: RagdollsAttributes get() = KnifeAttributes.ragdolls
 
 	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * Bonus:
 		 * 
@@ -171,10 +160,7 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		 * 
 		 * 	- In-Game: "+N% damage bonus"
 		 */
-		context(attrs: IAttributeContainer)
-		override var damage: Number? 
-			get() = super.damage
-			set(value) { super.damage = value }
+		override val damage: BonusPenaltyNeutralHidden<Number, ItemAttributeNamed<Number>> get() = super.damage
 	
 		/**
 		 * In-Game: "Increase backstab damage against Giant Robots by N%"
@@ -187,36 +173,23 @@ interface KnifeAttributes : BaseMeleeAttributes {
 		 * 
 		 * Checked on player.
 		 */
-		context(attrs: IAttributeContainer)
-		open var armorPiercing: Number? 
-			get() = KnifeAttributes.armorPiercing.get()
-			set(value) { KnifeAttributes.armorPiercing.set(value) }
+		open val armorPiercing: ItemAttributeNamed<Number> = ItemAttributeNamed("armor piercing")
 	}
 	
 	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "On Backstab: Absorbs the health from your victim."
 		 * 
 		 * Gain health on backstab.
 		 */
-		context(attrs: IAttributeContainer)
-		open var gainHealthOnBackstab: Boolean? 
-			get() = KnifeAttributes.gainHealthOnBackstab.get()
-			set(value) { KnifeAttributes.gainHealthOnBackstab.set(value) }
+		open val gainHealthOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("sanguisuge")
 	}
 	
 	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "Upon a successful backstab against a human target, you rapidly disguise as your victim"
 		 */
-		context(attrs: IAttributeContainer)
-		open var disguiseOnBackstab: Boolean? 
-			get() = KnifeAttributes.disguiseOnBackstab.get()
-			set(value) { KnifeAttributes.disguiseOnBackstab.set(value) }
+		open val disguiseOnBackstab: ItemAttributeNamed<Boolean> = ItemAttributeNamed("disguise on backstab")
 	}
 	
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 

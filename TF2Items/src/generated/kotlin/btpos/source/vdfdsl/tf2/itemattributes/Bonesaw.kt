@@ -7,8 +7,17 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface BonesawAttributes : BaseMeleeAttributes {
+interface BonesawAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
+		val heads: HeadsAttributes = HeadsAttributes()
+	
+		val taunting: TauntingAttributes = TauntingAttributes()
+	
+		/**
+		 * In-Game: "Collect the organs of people you hit"
+		 */
+		val uberchargePreservedOnSpawnMax: ItemAttributeNamed<Number> = ItemAttributeNamed("ubercharge_preserved_on_spawn_max")
+	
 		private val crits: CritsAttributes = CritsAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
@@ -37,8 +46,6 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	
 		private val movement: MovementAttributes = MovementAttributes()
 	
-		private val heads: HeadsAttributes = HeadsAttributes()
-	
 		private val onKill: OnKillAttributes = OnKillAttributes()
 	
 		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
@@ -51,25 +58,11 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	
 		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
-		private val taunting: TauntingAttributes = TauntingAttributes()
-	
 		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
-	
-		/**
-		 * In-Game: "Collect the organs of your victims"
-		 * 
-		 * On kill, take an organ (uses "heads" field like usual).
-		 */
-		val addHeadOnKill: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add_head_on_kill")
-	
-		/**
-		 * If the player should take a "head" when dealing damage with a melee.
-		 */
-		val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
 	}
 
 	override val heads: HeadsAttributes get() = BonesawAttributes.heads
@@ -79,7 +72,7 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	/**
 	 * In-Game: "Collect the organs of people you hit"
 	 */
-	val uberchargePreservedOnSpawnMax: ItemAttributeNamed<Number> get() = BonesawAttributes.uberchargePreservedOnSpawnMax.get()
+	val uberchargePreservedOnSpawnMax: ItemAttributeNamed<Number> get() = BonesawAttributes.uberchargePreservedOnSpawnMax
 	
 	override val crits: CritsAttributes get() = BonesawAttributes.crits
 	
@@ -128,37 +121,24 @@ interface BonesawAttributes : BaseMeleeAttributes {
 	override val disguise: DisguiseAttributes get() = BonesawAttributes.disguise
 
 	open class HeadsAttributes : BaseMeleeAttributes.HeadsAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * In-Game: "Collect the organs of your victims"
 		 * 
 		 * On kill, take an organ (uses "heads" field like usual).
 		 */
-		context(attrs: IAttributeContainer)
-		open var addHeadOnKill: Boolean? 
-			get() = BonesawAttributes.addHeadOnKill.get()
-			set(value) { BonesawAttributes.addHeadOnKill.set(value) }
+		open val addHeadOnKill: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add_head_on_kill")
 	
 		/**
 		 * If the player should take a "head" when dealing damage with a melee.
 		 */
-		context(attrs: IAttributeContainer)
-		open var addHeadOnHit: Boolean? 
-			get() = BonesawAttributes.addHeadOnHit.get()
-			set(value) { BonesawAttributes.addHeadOnHit.set(value) }
+		open val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
 	}
 	
 	open class TauntingAttributes : BaseMeleeAttributes.TauntingAttributes() {
-		companion object : IBlockScoped 
-	
 		/**
 		 * If set, the player will taunt on right click.
 		 */
-		context(attrs: IAttributeContainer)
-		override var specialTaunt: Boolean? 
-			get() = super.specialTaunt
-			set(value) { super.specialTaunt = value }
+		override val specialTaunt: ItemAttributeNamed<Boolean> get() = super.specialTaunt
 	}
 	
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 

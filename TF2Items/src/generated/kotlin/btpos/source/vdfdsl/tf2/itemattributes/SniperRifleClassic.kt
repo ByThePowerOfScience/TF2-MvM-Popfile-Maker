@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface SniperRifleClassicAttributes : SniperRifleAttributes {
+interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 	companion object : IBlockScoped {
 		private val damage: DamageAttributes = DamageAttributes()
 	

@@ -25,12 +25,7 @@ interface ISortedNamedAttribute {
 	@Contract("_->new", pure = true)
 	fun propertyBuilder(): PropertyBuilder
 	
-	/**
-	 * Generate types or functions that should be at the root of the given file.
-	 */
-	fun generateTopLevelMembers(): List<String> = emptyList()
-	
-	fun generateTopLevelType(): ClassBuilder? = null
+	fun generateType(): ClassBuilder? = null
 	
 	/**
 	 * For nested-scope inheritance: returns whether this attribute already has a nested scope by that name

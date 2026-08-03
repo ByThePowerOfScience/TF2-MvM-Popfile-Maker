@@ -98,7 +98,7 @@ class ClassBuilder(var name: String, var type: Type) {
 		else "$classType $name"
 		
 		
-		val modalityString = if (isOpen) "open " else ""
+		val modalityString = if (isOpen && type.let { it != Type.ABSTRACT_CLASS && it != Type.INTERFACE }) "open " else ""
 		
 		
 		val docCommentString = if (docComment.isNotEmpty()) "/**\n" +

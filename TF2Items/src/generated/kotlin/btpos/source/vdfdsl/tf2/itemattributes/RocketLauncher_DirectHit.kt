@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface RocketLauncher_DirectHitAttributes : RocketLauncherAttributes {
+interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttributes {
 	companion object : IBlockScoped {
 		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	

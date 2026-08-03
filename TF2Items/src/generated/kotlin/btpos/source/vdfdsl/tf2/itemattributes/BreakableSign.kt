@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface BreakableSignAttributes : BreakableMeleeAttributes {
+interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 	companion object : IBlockScoped {
 		private val crits: CritsAttributes = CritsAttributes()
 	
