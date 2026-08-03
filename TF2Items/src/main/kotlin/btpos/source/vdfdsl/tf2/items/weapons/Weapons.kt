@@ -26,7 +26,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.ROCKET_LAUNCHER
 	 */
 	val STOCK_ROCKET_LAUNCHER = TFItemFactories.ROCKETLAUNCHER("Upgradeable TF_WEAPON_ROCKETLAUNCHER")
 	val STOCK_ROCKET_LAUNCHER_FESTIVE = TFItemFactories.ROCKETLAUNCHER("Festive Rocket Launcher 2011")
@@ -53,7 +53,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.FLAMETHROWER
 	 */
 	val STOCK_FLAMETHROWER = TFItemFactories.FLAMETHROWER("Upgradeable TF_WEAPON_FLAMETHROWER")
 	val STOCK_FLAMETHROWER_FESTIVE = TFItemFactories.FLAMETHROWER("Festive Flamethrower 2011")
@@ -83,7 +83,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.GRENADE_LAUNCHER
 	 */
 	val STOCK_GRENADE_LAUNCHER = TFItemFactories.GRENADELAUNCHER("Upgradeable TF_WEAPON_GRENADELAUNCHER")
 	val LOCHNLOAD = TFItemFactories.GRENADELAUNCHER("The Loch-n-Load")
@@ -95,7 +95,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.MINIGUN
 	 */
 	val STOCK_MINIGUN = TFItemFactories.MINIGUN("Upgradeable TF_WEAPON_MINIGUN")
 	val BRASS_BEAST = TFItemFactories.MINIGUN("The Brass Beast")
@@ -157,7 +157,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock.STICKYBOMBLAUNCHER
+	 * @see TrueStock.STICKYBOMB_LAUNCHER
 	 */
 	val STOCK_STICKYBOMB_LAUNCHER = TFItemFactories.STICKYBOMBLAUNCHER("Upgradeable TF_WEAPON_PIPEBOMBLAUNCHER")
 	val STICKYBOMB_LAUNCHER_FESTIVE = TFItemFactories.STICKYBOMBLAUNCHER("Festive Stickybomb Launcher 2011")
@@ -188,7 +188,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.INVIS
 	 */
 	val STOCK_INVIS_WATCH = TFItemFactories.INVIS("Upgradeable TF_WEAPON_INVIS")
 	val QUACKENBIRDT = TFItemFactories.INVIS("The Quackenbirdt")
@@ -277,7 +277,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.MEDIGUN
 	 */
 	val STOCK_MEDIGUN = TFItemFactories.MEDIGUN("Upgradeable TF_WEAPON_MEDIGUN")
 	val QUICKFIX = TFItemFactories.MEDIGUN("The Quick-Fix")
@@ -290,7 +290,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.SNIPER_RIFLE
 	 */
 	val STOCK_SNIPER_RIFLE = TFItemFactories.SNIPERRIFLE("Upgradeable TF_WEAPON_SNIPERRIFLE")
 	val STOCK_SNIPER_RIFLE_FESTIVE = TFItemFactories.SNIPERRIFLE("Festive Sniper Rifle 2011")
@@ -316,7 +316,7 @@ object Weapons {
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 	 *
-	 * @see TrueStock
+	 * @see TrueStock.REVOLVER
 	 */
 	val STOCK_REVOLVER = TFItemFactories.REVOLVER("Upgradeable TF_WEAPON_REVOLVER")
 	val STOCK_REVOLVER_FESTIVE = TFItemFactories.REVOLVER("Festive Revolver 2014")
@@ -332,7 +332,12 @@ object Weapons {
 	val DISGUISE_KIT = TFItemFactories.WEAPONBASE("TF_WEAPON_PDA_SPY")
 	
 	
-	val TF_WEAPON_BUILDER = TFItemFactories.BUILDER("TF_WEAPON_BUILDER")
+	/**
+	 * The toolbox that the Engineer holds while moving or planning to build a building.
+	 *
+	 * Shows a blueprint on the floor while the active weapon.
+	 */
+	val TOOLBOX = TFItemFactories.BUILDER("TF_WEAPON_BUILDER")
 	
 	/**
 	 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
@@ -495,15 +500,15 @@ object Weapons {
 		/**
 		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
 		 */
-		val STICKYBOMBLAUNCHER = TFItemFactories.STICKYBOMBLAUNCHER("TF_WEAPON_PIPEBOMBLAUNCHER")
+		val STICKYBOMB_LAUNCHER = TFItemFactories.STICKYBOMBLAUNCHER("TF_WEAPON_PIPEBOMBLAUNCHER")
 		/**
 		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
 		 */
-		val GRENADELAUNCHER = TFItemFactories.GRENADELAUNCHER("TF_WEAPON_GRENADELAUNCHER")
+		val GRENADE_LAUNCHER = TFItemFactories.GRENADELAUNCHER("TF_WEAPON_GRENADELAUNCHER")
 		/**
 		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
 		 */
-		val ROCKETLAUNCHER = TFItemFactories.ROCKETLAUNCHER("TF_WEAPON_ROCKETLAUNCHER")
+		val ROCKET_LAUNCHER = TFItemFactories.ROCKETLAUNCHER("TF_WEAPON_ROCKETLAUNCHER")
 		/**
 		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
 		 */
@@ -511,7 +516,7 @@ object Weapons {
 		/**
 		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
 		 */
-		val SNIPERRIFLE = TFItemFactories.SNIPERRIFLE("TF_WEAPON_SNIPERRIFLE")
+		val SNIPER_RIFLE = TFItemFactories.SNIPERRIFLE("TF_WEAPON_SNIPERRIFLE")
 		/**
 		 * The grey "stock weapon" that exists when you don't have any other item in that slot.
 		 */

@@ -80,7 +80,7 @@ object WeaponsByClass {
 			/**
 			 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 			 *
-			 * @see Weapons.TrueStock.ROCKETLAUNCHER
+			 * @see Weapons.TrueStock.ROCKET_LAUNCHER
 			 */
 			val STOCK_ROCKET_LAUNCHER get() = Weapons.STOCK_ROCKET_LAUNCHER
 			val BLACK_BOX get() = Weapons.BLACK_BOX
@@ -225,7 +225,7 @@ object WeaponsByClass {
 			/**
 			 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 			 *
-			 * @see Weapons.TrueStock.GRENADELAUNCHER
+			 * @see Weapons.TrueStock.GRENADE_LAUNCHER
 			 */
 			val STOCK_GRENADE_LAUNCHER get() = Weapons.STOCK_GRENADE_LAUNCHER
 			val LOCHNLOAD get() = Weapons.LOCHNLOAD
@@ -488,7 +488,7 @@ object WeaponsByClass {
 			/**
 			 * A version of stock that can have qualities like "unique", "strange", "killstreak", etc.
 			 *
-			 * @see Weapons.TrueStock.SNIPERRIFLE
+			 * @see Weapons.TrueStock.SNIPER_RIFLE
 			 */
 			val STOCK_SNIPER_RIFLE get() = Weapons.STOCK_SNIPER_RIFLE
 			val SYDNEY_SLEEPER get() = Weapons.SYDNEY_SLEEPER
