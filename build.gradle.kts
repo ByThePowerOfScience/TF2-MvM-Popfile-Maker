@@ -6,7 +6,6 @@ plugins {
 	id("general-convention")
 	kotlin("plugin.allopen") version libs.versions.kotlin
 	kotlin("plugin.assignment") version libs.versions.kotlin
-//	alias(libs.plugins.shadow)
 	`maven-publish`
 }
 
@@ -61,6 +60,10 @@ assignment {
 //		}
 //	}
 //}
+
+assignment {
+	annotations("btpos.source.vdfdsl.SupportsCustomAssignment")
+}
 
 
 tasks.publishToMavenLocal {

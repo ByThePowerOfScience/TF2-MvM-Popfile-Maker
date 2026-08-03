@@ -1,28 +1,17 @@
 package btpos.source.vdfdsl.tf2.itemattributes.impl
 
-import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 
 open class BonusPenalty<T : Any>(
 	override val bonus: ItemAttributeNamed<T>,
 	override val penalty: ItemAttributeNamed<T>,
-) : BPBonus<T>, BPPenalty<T>, ItemAttribute<T> {
-	context(attrs: IAttributeContainer)
-	override fun set(value: T?) {
-		bonus.set(value)
-	}
-	
-	context(attrs: IAttributeContainer)
-	override fun get(): T? {
-		return bonus.get()
-	}
-}
+) : BPBonus<T>, BPPenalty<T>, ItemAttribute<T> by bonus
 
 open class BonusNeutral<T : Any>(
 	override val bonus: ItemAttributeNamed<T>,
 	override val neutral: ItemAttributeNamed<T>
-) : BPBonus<T>, BPNeutral<T>
+) : BPBonus<T>, BPNeutral<T>, ItemAttribute<T> by bonus
 
 open class BonusPenaltyNeutral<T : Any>(
 	bonus: ItemAttributeNamed<T>,
@@ -31,20 +20,20 @@ open class BonusPenaltyNeutral<T : Any>(
 ) : BonusPenalty<T>(bonus, penalty), BPNeutral<T>
 
 
-class BonusPenaltyHidden<T : Any, HIDDEN : ItemAttribute<T>>(
+open class BonusPenaltyHidden<T : Any, HIDDEN : ItemAttribute<T>>(
 	bonus: ItemAttributeNamed<T>,
 	penalty: ItemAttributeNamed<T>,
 	override val hidden: HIDDEN
 ) : BonusPenalty<T>(bonus, penalty), BPHidden<T, HIDDEN>
 
 
-class BonusNeutralHidden<T : Any, HIDDEN : ItemAttribute<T>>(
+open class BonusNeutralHidden<T : Any, HIDDEN : ItemAttribute<T>>(
 	bonus: ItemAttributeNamed<T>,
 	neutral: ItemAttributeNamed<T>,
 	override val hidden: HIDDEN
 ) : BonusNeutral<T>(bonus, neutral), BPHidden<T, HIDDEN>
 
-class BonusPenaltyNeutralHidden<T : Any, HIDDEN : ItemAttribute<T>>(
+open class BonusPenaltyNeutralHidden<T : Any, HIDDEN : ItemAttribute<T>>(
 	bonus: ItemAttributeNamed<T>,
 	penalty: ItemAttributeNamed<T>,
 	neutral: ItemAttributeNamed<T>,
@@ -54,10 +43,10 @@ class BonusPenaltyNeutralHidden<T : Any, HIDDEN : ItemAttribute<T>>(
 open class PenaltyNeutral<T : Any>(
 	override val penalty: ItemAttributeNamed<T>,
 	override val neutral: ItemAttributeNamed<T>
-) : BPPenalty<T>, BPNeutral<T>
+) : BPPenalty<T>, BPNeutral<T>, ItemAttribute<T> by penalty
 
 
-class PenaltyNeutralHidden<T : Any, HIDDEN : ItemAttribute<T>>(
+open class PenaltyNeutralHidden<T : Any, HIDDEN : ItemAttribute<T>>(
 	penalty: ItemAttributeNamed<T>,
 	neutral: ItemAttributeNamed<T>,
 	override val hidden: HIDDEN

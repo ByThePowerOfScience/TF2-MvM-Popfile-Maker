@@ -17,6 +17,10 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 	}
 	
 	companion object {
+		fun notInterned(value: String): VDFPrimitive {
+			return VDFPrimitive(stringValue = value)
+		}
+		
 		@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "RemoveRedundantQualifierName") // Int::class.java => int.class instead of Integer.class
 		private val PRIMITIVE_SERIALIZERS = mapOf<Class<*>, (Any) -> VDFPrimitive>(
 			java.lang.String::class.java to { VDFPrimitive(s=it as String) },
@@ -44,6 +48,7 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 		
 		val TRUE = VDFPrimitive(s="1")
 		val FALSE = VDFPrimitive(s="0")
+		val EMPTY = VDFPrimitive(s="")
 		
 	    operator fun invoke(bool: Boolean): VDFPrimitive {
 	        return if (bool) TRUE else FALSE

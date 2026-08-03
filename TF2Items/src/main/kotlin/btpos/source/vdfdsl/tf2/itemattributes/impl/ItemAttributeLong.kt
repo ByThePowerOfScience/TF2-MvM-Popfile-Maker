@@ -1,27 +1,27 @@
 package btpos.source.vdfdsl.tf2.itemattributes.impl
 
-import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 
-class ItemAttributeLong(
-	private val lowBits: ItemAttribute<Int>,
-	private val highBits: ItemAttribute<Int>
+private const val INT_BITMASK: Long = (1L shl 33) - 1L
+
+open class ItemAttributeLong(
+	protected val lowBits: ItemAttribute<Int>,
+	protected val highBits: ItemAttribute<Int>
 ) : ItemAttribute<Long> {
-	context(attrs: IAttributeContainer)
-	override fun set(value: Long?) {
-		if (value == null) {
-			lowBits.set(null)
-			highBits.set(null)
-		} else {
-			highBits.set((value shr 32).toInt())
-			lowBits.set((value and ((1 shl 33) - 1)).toInt())
-		}
-	}
 	
-	context(attrs: IAttributeContainer)
-	override fun get(): Long? {
-		val lo = lowBits.get() ?: return null
-		val hi = highBits.get() ?: return null
-		return (hi.toLong() shl 32) or lo.toLong()
+	
+	override fun serialize(value: Long?): IVDFRepresentableKeyValue {
+		val higher = value?.shl(32)?.and(INT_BITMASK)?.toInt()
+		val lower = value?.and(INT_BITMASK)?.toInt()
+		val lowBits = lowBits.serialize(lower)
+		val highBits = highBits.serialize(higher)
+		return IVDFRepresentableKeyValue { parent ->
+			lowBits._serializeInto(parent)
+			highBits._serializeInto(parent)
+		}
+		
 	}
 }

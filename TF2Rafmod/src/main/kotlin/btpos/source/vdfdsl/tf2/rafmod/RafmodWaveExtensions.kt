@@ -5,9 +5,11 @@ import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.compose
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
-import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.modeling.KeyValueMapImpl
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
+import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerImpl
+import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerSubtreeSerializable
+import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.data.Vec3
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
@@ -62,7 +64,7 @@ abstract class RafmodWaveExtensions {
 	 *
 	 * @see playerAttributes
 	 */
-	open var WavePopulator.playerAttributes: KeyValueMapImpl? by addField("PlayerAttributes", conditional = SIGSEGV)
+	open var WavePopulator.playerAttributes: IAttributeContainer? by addField("PlayerAttributes", conditional = SIGSEGV, serializer = ::AttributeContainerSubtreeSerializable)
 	
 	
 	/**
@@ -70,9 +72,9 @@ abstract class RafmodWaveExtensions {
 	 *
 	 * @see btpos.source.vdfdsl.tf2.itemattributes
 	 */
-	open fun WavePopulator.playerAttributes(scope: context (IKeyValueMap) () -> Unit) {
+	open fun WavePopulator.playerAttributes(scope: context (IAttributeContainer) () -> Unit) {
 		val attrs = this.playerAttributes ?: run {
-			KeyValueMapImpl().also {
+			AttributeContainerImpl().also {
 				this.playerAttributes = it
 			}
 		}
@@ -91,7 +93,7 @@ abstract class RafmodWaveExtensions {
 	 * }
 	 * ```
 	 */
-	open var WavePopulator.itemAttributes: List<KeyValueMapImpl> by addField("ItemAttributes", conditional = SIGSEGV, serializer = flatListWithKey(), initialValue = ::listOf)
+	open var WavePopulator.itemAttributes: List<IAttributeContainer> by addField("ItemAttributes", conditional = SIGSEGV, serializer = flatListWithKey<AttributeContainerSubtreeSerializable>().mapEach(::AttributeContainerSubtreeSerializable), initialValue = ::listOf)
 	
 	/**
 	 * Add this condition to players when the wave starts.
@@ -102,8 +104,6 @@ abstract class RafmodWaveExtensions {
 	 * ```
 	 */
 	open var WavePopulator.playerAddCond: Int? by addField("PlayerAddCond", conditional = SIGSEGV)
-	
-	// TODO add a TFCondition enum
 	
 	/**
 	 * Spawn these templates at these positions once the mission starts.
