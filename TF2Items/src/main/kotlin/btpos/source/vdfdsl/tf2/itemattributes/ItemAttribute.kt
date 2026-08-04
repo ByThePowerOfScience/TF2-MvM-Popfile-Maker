@@ -20,10 +20,10 @@ interface ItemAttribute<T : Any> {
 	}
 	
 	fun serialize(value: T?): IVDFRepresentableKeyValue
+	
+	context(attrs: IAttributeContainer)
+	fun assign(value: T?) = set(value)
 }
-
-context(attrs: IAttributeContainer)
-fun <T : Any> ItemAttribute<T>.assign(value: T?) = set(value)
 
 
 context(_: IAttributeContainer)
