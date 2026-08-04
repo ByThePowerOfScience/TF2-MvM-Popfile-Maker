@@ -29,9 +29,9 @@ open class AttributeContainerImpl(protected val map: MutableMap<ItemAttribute<An
 	}
 	
 	override fun copy() = AttributeContainerImpl(map.toMutableMap())
-	
-	
 }
+
+inline fun AttributeContainer(configure: AttributeContainerImpl.() -> Unit) = AttributeContainerImpl().apply(configure)
 
 fun IAttributeContainer.collectToSubtree(subtree: VDFSubtree) {
 	iterator().forEach { (attr, value) ->

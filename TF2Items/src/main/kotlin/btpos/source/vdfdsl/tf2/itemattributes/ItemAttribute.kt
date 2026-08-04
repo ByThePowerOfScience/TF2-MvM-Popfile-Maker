@@ -26,3 +26,22 @@ context(attrs: IAttributeContainer)
 fun <T : Any> ItemAttribute<T>.assign(value: T?) = set(value)
 
 
+context(_: IAttributeContainer)
+operator fun <T> ItemAttribute<List<T>>.plusAssign(item: T) {
+	this.set((this.get() ?: emptyList()) + item)
+}
+
+context(_: IAttributeContainer)
+operator fun <T> ItemAttribute<Set<T>>.plusAssign(item: T) {
+	this.set((this.get() ?: emptySet()) + item)
+}
+
+context(_: IAttributeContainer)
+operator fun <T> ItemAttribute<List<T>>.plusAssign(items: Iterable<T>) {
+	this.set((this.get() ?: emptyList()) + items)
+}
+
+context(_: IAttributeContainer)
+operator fun <T> ItemAttribute<Set<T>>.plusAssign(items: Iterable<T>) {
+	this.set((this.get() ?: emptySet()) + items)
+}

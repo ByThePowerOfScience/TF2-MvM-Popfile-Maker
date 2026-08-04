@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.rafmod
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.selector
+import btpos.source.vdfdsl.tf2.rafmod.data.Rot3
 import btpos.source.vdfdsl.tf2.rafmod.data.Vec3
 import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
 import btpos.source.vdfdsl.tf2.rafmod.types.PointTemplate
@@ -9,6 +10,8 @@ object RafmodSerializers {
 	@JvmField val BOOL_SER_INVERT = Boolean::not
 	
 	@JvmField val COORD3D = { it: Vec3 -> "${it.x} ${it.y} ${it.z}" }
+	
+	@JvmField val ROT3 = { it: Rot3 -> COORD3D(it.vec) }
 	
 	@JvmField val TFTEAM_NUMBER = { it: TFTeam -> when (it) {
 		TFTeam.RED -> 2

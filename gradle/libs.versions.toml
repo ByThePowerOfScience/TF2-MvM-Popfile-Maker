@@ -12,3 +12,4 @@
 	buildconfig = { id = "com.github.gmazzo.buildconfig",  version = "6.0.10" }
 	clojure = { id = "dev.clojurephant.clojure", version = "0.9.1" }
 	shadow = { id = "com.gradleup.shadow", version = "9.5.1" }
+	vanniktech = { id = "com.vanniktech.maven.publish", version = "0.37.0" }

@@ -12,16 +12,24 @@ repositories {
 	}
 }
 
+fun PluginDependency.asDep(): String {
+	return "${pluginId}:${pluginId}.gradle.plugin:${version}"
+}
+
 dependencies {
 	val kotlin = libs.plugins.kotlin.jvm.get()
 
-	implementation("${kotlin.pluginId}:${kotlin.pluginId}.gradle.plugin:${kotlin.version}")
+	implementation(kotlin.asDep())
 
 	val buildconfig = libs.plugins.buildconfig.get()
-	implementation("${buildconfig.pluginId}:${buildconfig.pluginId}.gradle.plugin:${buildconfig.version}")
+	implementation(buildconfig.asDep())
 	
 	
-	val clojure = libs.plugins.clojure.get()
-	implementation("${clojure.pluginId}:${clojure.pluginId}.gradle.plugin:${clojure.version}")
+	val vanniktech = libs.plugins.vanniktech.get()
+	implementation(vanniktech.asDep())
 	
+	
+//	val clojure = libs.plugins.clojure.get()
+//	implementation("${clojure.pluginId}:${clojure.pluginId}.gradle.plugin:${clojure.version}")
+//
 }

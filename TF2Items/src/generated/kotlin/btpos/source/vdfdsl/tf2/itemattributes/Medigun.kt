@@ -1,11 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
-import btpos.source.vdfdsl.modeling.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
-import btpos.source.vdfdsl.tf2.tftypes.*
-import java.util.*
-import kotlin.time.Duration
 
 interface MedigunAttributes : IBlockScoped, BaseGunAttributes {
 	companion object : IBlockScoped {
@@ -289,7 +285,7 @@ interface MedigunAttributes : IBlockScoped, BaseGunAttributes {
 	
 	override val disguise: DisguiseAttributes get() = MedigunAttributes.disguise
 
-	open class GiveCritsAttributes : IBlockScoped {
+	open class GiveCritsAttributes : IBlockScoped { // TODO
 		/**
 		 * In-Game: "ÜberCharge grants 100% critical chance"
 		 * 
