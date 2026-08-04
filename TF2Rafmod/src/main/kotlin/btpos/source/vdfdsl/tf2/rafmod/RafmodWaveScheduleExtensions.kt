@@ -63,8 +63,8 @@ abstract class RafmodWaveScheduleExtensions {
 		RafmodTeleporters.INSTANCE.configure()
 	}
 	
-	open fun upgradeStation(configure: RafmodBotBehavior.() -> Unit) {
-		RafmodBotBehavior.INSTANCE.configure()
+	open fun upgradeStation(configure: RafmodUpgradeStation.() -> Unit) {
+		RafmodUpgradeStation.INSTANCE.configure()
 	}
 	
 	
