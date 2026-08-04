@@ -3,6 +3,8 @@ package btpos.source.vdfdsl.tf2.rafmod
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.durationInSeconds
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
+import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
+import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers.BOOL_SER_INVERT
 import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodBomb
@@ -15,8 +17,10 @@ import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodMovement
 import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodPrecache
 import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodReverseMvM
 import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodTeleporters
+import btpos.source.vdfdsl.tf2.rafmod.waveschedule.RafmodUpgradeStation
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.time.Duration
+
 
 abstract class RafmodWaveScheduleExtensions {
 	companion object {
@@ -66,6 +70,12 @@ abstract class RafmodWaveScheduleExtensions {
 	open fun upgradeStation(configure: RafmodUpgradeStation.() -> Unit) {
 		RafmodUpgradeStation.INSTANCE.configure()
 	}
+	
+	
+	/**
+	 * If true, robots will not wear Romevision cosmetics when a player is wearing the Hardy Laurel, unless said cosmetics are directly added to their [items][btpos.source.vdfdsl.types.spawners.TFBotSpawner.items].
+	 */
+	open var WaveSchedule.disableRomevision: Boolean? by addField("NoRomevisionCosmetics", conditional = SIGSEGV)
 	
 	
 	/**
@@ -171,7 +181,7 @@ abstract class RafmodWaveScheduleExtensions {
 	/**
 	 * If true, disables the `!missioninfo` command. (Default: false)
 	 */
-	open var WaveSchedule.disableMissionInfo: Boolean? by addField("NoMissionInfo", conditional = SIGSEGV)
+	open var WaveSchedule.noMissionInfo: Boolean? by addField("NoMissionInfo", conditional = SIGSEGV)
 	
 	/**
 	 * The maximum number of Skeletons that may be alive at any given time. (Default: 30)
@@ -254,6 +264,11 @@ abstract class RafmodWaveScheduleExtensions {
 	open var WaveSchedule.negativeDamageHealsTargets: Boolean? by addField("RestoreNegativeDamageHealing", conditional = SIGSEGV)
 	
 	/**
+	 * If true, hitting a target for negative damage will heal them up to the overheal cap.
+	 */
+	open var WaveSchedule.negativeDamageOverhealsTargets: Boolean? by addField("RestoreNegativeDamageOverheal", conditional = SIGSEGV)
+	
+	/**
 	 * If true, disables "turbo physics", but allows players to interact with physics objects like vehicles.
 	 */
 	open var WaveSchedule.disableTurboPhysics: Boolean? by addField("TurboPhysics", conditional = SIGSEGV, serializer = BOOL_SER_INVERT)
@@ -274,11 +289,19 @@ abstract class RafmodWaveScheduleExtensions {
 	 * Set to false if you are reading m_iName or m_iClassname from datamaps directly and expecting uppercase letters (with `$getdata` or `$setdata` input for example).
 	 */
 	open var WaveSchedule.useFastEntityNameLookup: Boolean? by addField("FastEntityNameLookup", conditional = SIGSEGV)
-	
-	
 }
 
 @Suppress("UnusedReceiverParameter")
 inline fun WaveSchedule.rafmod(scope: RafmodWaveScheduleExtensions.() -> Unit) {
 	RafmodWaveScheduleExtensions.INSTANCE.scope()
 }
+
+/**
+ * Set item attributes for weapons.
+ */
+var WaveSchedule.itemAttributes: List<TFItem<*>> by addField("ItemAttributes", serializer = flatListWithKey(), initialValue = ::listOf)
+
+/**
+ * Set item attributes for weapons similar to (i.e. share a class with) this weapon.
+ */
+var WaveSchedule.itemAttributesForSimilar: List<TFItem<*>> by addField("ItemAttributes", serializer = flatListWithKey(), initialValue = ::listOf)

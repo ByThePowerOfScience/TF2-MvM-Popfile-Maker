@@ -24,11 +24,6 @@ abstract class RafmodBotBehavior : IBlockScoped {
 	open var WaveSchedule.canPlayersStandOnRobotHeads: Boolean? by addField("StandableHeads", conditional = SIGSEGV)
 	
 	/**
-	 * If true, robots will not wear Romevision cosmetics when a player is wearing the Hardy Laurel, unless said cosmetics are directly added to their [items][btpos.source.vdfdsl.types.spawners.TFBotSpawner.items].
-	 */
-	open var WaveSchedule.disableRomevision: Boolean? by addField("NoRomevisionCosmetics", conditional = SIGSEGV)
-	
-	/**
 	 * If true, robots' weapons can randomly crit.
 	 *
 	 * Use the [crit mod disabled][btpos.source.vdfdsl.tf2.itemattributes.WeaponBaseAttributes.critModDisabled] attribute to control crit chance per bot.
