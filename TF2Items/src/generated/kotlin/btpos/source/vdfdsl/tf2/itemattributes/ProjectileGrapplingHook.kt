@@ -9,6 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileGrapplingHookAttributes : IBlockScoped, ProjectileArrowAttributes {
 	companion object : IBlockScoped 
-
+	
 	object Inherited : ProjectileGrapplingHookAttributes 
 }

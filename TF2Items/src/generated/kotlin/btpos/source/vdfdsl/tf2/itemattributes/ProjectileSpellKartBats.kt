@@ -9,6 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileSpellKartBatsAttributes : IBlockScoped, ProjectileSpellBatsAttributes {
 	companion object : IBlockScoped 
-
+	
 	object Inherited : ProjectileSpellKartBatsAttributes 
 }

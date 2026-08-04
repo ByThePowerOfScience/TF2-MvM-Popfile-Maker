@@ -8,6 +8,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.TF2ItemGeneration.BuildConfig
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder.Type
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.Modality
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute.EffectType
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
@@ -17,7 +18,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.Hierarch
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.NamedAttributeScope
 import btpos.source.vdfdsl.tf2.filegeneration.representations.groupings.cachePropertiesInCompanion
 import btpos.source.vdfdsl.tf2.filegeneration.representations.mynotes.IAttrClassScope
-import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocessAllScopes
+import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocessRecursive
 import btpos.source.vdfdsl.tf2.filegeneration.representations.removeFromCamelCase
 import btpos.source.vdfdsl.tf2.filegeneration.representations.selectorCodec
 import java.io.File
@@ -189,8 +190,6 @@ fun generateItemAttributes(
 						}
 						else -> fabricateScope(clsName, attrsForThisAttrClass)
 					}
-				}.onEach { (_, attrs) ->
-					postprocessAllScopes(attrs)
 				}
 	
 
@@ -203,6 +202,9 @@ fun generateItemAttributes(
 	attrClassUsagesByBaseClass.forEach { baseClassScope ->
 		val absorbed = baseClassScope.absorb(namedAttributeScopesByClassName)
 			               .singleOrNull() as? NamedAttributeScope?
+		
+		absorbed?.postprocessRecursive()
+		
 		when (absorbed) {
 			null -> {}
 			is HierarchyNamedAttributeScope -> hierarchyScopes.add(absorbed)
@@ -322,8 +324,8 @@ fun ClassBuilder.makeNestedClassesOpen() {
 		nested.isOpen = true
 		
 		nested.properties.values.forEach { prop ->
-			if (prop.modality == PropertyBuilder.Modality.FINAL)
-				prop.modality = PropertyBuilder.Modality.OPEN
+			if (prop.modality == Modality.FINAL)
+				prop.modality = Modality.OPEN
 		}
 		
 		nested.makeNestedClassesOpen()
@@ -435,11 +437,11 @@ private fun ClassBuilder.ensureOverriddenPropertiesAreMarkedOverride(ourRootScop
 	
 	for (prop in this.properties.values) {
 		if (prop.name in allInheritedProperties) {
-			prop.modality = PropertyBuilder.Modality.OVERRIDE
+			prop.modality = Modality.OVERRIDE
 			if (prop.kType !in this.nestedClasses)
 				prop.delegatesToSuper = true
 		} else {
-			prop.modality = PropertyBuilder.Modality.OPEN
+			prop.modality = Modality.OPEN
 		}
 	}
 }
@@ -513,7 +515,7 @@ fun ClassBuilder.redirectPropertiesToNewType(newType: ClassBuilder, ourParent: C
 				parentItfProperty.copy()
 			}
 			
-			ourInterfaceProp.modality = PropertyBuilder.Modality.OVERRIDE
+			ourInterfaceProp.modality = Modality.OVERRIDE
 			ourInterfaceProp.delegatesToSuper = false
 			ourInterfaceProp.usesGetter = true
 			ourInterfaceProp.initializer = this.name + "." + ourInterfaceProp.name

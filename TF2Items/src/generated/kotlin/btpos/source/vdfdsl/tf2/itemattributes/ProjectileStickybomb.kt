@@ -33,8 +33,8 @@ interface ProjectileStickybombAttributes : IBlockScoped, BaseGrenadeProjectileAt
 		 * 	- In-Game: "N sec slower bomb arm time"
 		 */
 		val stickyArmTime: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("sticky arm time bonus"),
-			ItemAttributeNamed("sticky arm time penalty"),
+		    ItemAttributeNamed("sticky arm time bonus"),
+		    ItemAttributeNamed("sticky arm time penalty"),
 		)
 	
 		/**
@@ -44,7 +44,7 @@ interface ProjectileStickybombAttributes : IBlockScoped, BaseGrenadeProjectileAt
 		 */
 		val grenadeDamageReductionOnWorldContact: ItemAttributeNamed<Number> = ItemAttributeNamed("grenade damage reduction on world contact")
 	}
-
+	
 	/**
 	 * In-Game: "Stickybombs fizzle N seconds after landing"
 	 * 
@@ -76,6 +76,6 @@ interface ProjectileStickybombAttributes : IBlockScoped, BaseGrenadeProjectileAt
 	 * Checked on launcher.
 	 */
 	val grenadeDamageReductionOnWorldContact: ItemAttributeNamed<Number> get() = ProjectileStickybombAttributes.grenadeDamageReductionOnWorldContact
-
+	
 	object Inherited : ProjectileStickybombAttributes 
 }

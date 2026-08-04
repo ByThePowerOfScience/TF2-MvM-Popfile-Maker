@@ -33,9 +33,9 @@ interface BaseRocketAttributes : IBlockScoped, BaseProjectileAttributes {
 		 * 	- In-Game: "+N% projectile speed"
 		 */
 		val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
-			ItemAttributeNamed<Number>("Projectile speed increased"),
-			ItemAttributeNamed<Number>("Projectile speed decreased"),
-			ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
+		    ItemAttributeNamed<Number>("Projectile speed increased"),
+		    ItemAttributeNamed<Number>("Projectile speed decreased"),
+		    ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
 		)
 	
 		/**
@@ -65,11 +65,11 @@ interface BaseRocketAttributes : IBlockScoped, BaseProjectileAttributes {
 		 * 	- In-Game: "N% explosion radius"
 		 */
 		val blastRadius: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("Blast radius increased"),
-			ItemAttributeNamed("Blast radius decreased"),
+		    ItemAttributeNamed("Blast radius increased"),
+		    ItemAttributeNamed("Blast radius decreased"),
 		)
 	}
-
+	
 	/**
 	 * Uses the "mini rockets" model.
 	 */
@@ -122,6 +122,6 @@ interface BaseRocketAttributes : IBlockScoped, BaseProjectileAttributes {
 	 * 	- In-Game: "N% explosion radius"
 	 */
 	val blastRadius: BonusPenalty<Number> get() = BaseRocketAttributes.blastRadius
-
+	
 	object Inherited : BaseRocketAttributes 
 }

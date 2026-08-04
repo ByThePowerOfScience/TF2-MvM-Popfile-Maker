@@ -1867,11 +1867,12 @@ object SDKNotes {
 						- Prevents player from picking up buildings.
 					- `building_cost_reduction`: Int
 						- Sets the cost to construct any building type to this value.
-					- `sentry_build_rate_multiplier`: Float
+					
 				""".trimIndent(),
 				AttrClassScope(
 					BUILDINGS_SENTRY,
 					"""
+						- `sentry_build_rate_multiplier`: Float
 						- `mvm_sentry_ammo`: Float
 							- Multiplier to max ammo
 						- `mult_sentry_range`: Float

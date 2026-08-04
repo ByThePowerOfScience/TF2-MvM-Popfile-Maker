@@ -15,6 +15,9 @@ private val _spellSpawnHorde = object : ProjectileSpellSpawnHordeAttributes {}
 val BaseGunAttributes.ProjectilesAttributes.spellSpawnHorde: ProjectileSpellSpawnHordeAttributes get() = _spellSpawnHorde
 
 private val _energyRing = object : ProjectileEnergyRingAttributes {}
+/**
+ * Items: The Righteous Bison, The Pomson 6000
+ */
 val BaseGunAttributes.ProjectilesAttributes.energyRing: ProjectileEnergyRingAttributes get() = _energyRing
 
 private val _spellMirv = object : ProjectileSpellMirvAttributes {}
@@ -36,6 +39,9 @@ private val _spellFireball = object : ProjectileSpellFireballAttributes {}
 val BaseGunAttributes.ProjectilesAttributes.spellFireball: ProjectileSpellFireballAttributes get() = _spellFireball
 
 private val _grenade = object : ProjectileGrenadeAttributes {}
+/**
+ * Items: Stock Grenade Launcher, The Iron Bomber, The Loose Cannon
+ */
 val BaseGunAttributes.ProjectilesAttributes.grenade: ProjectileGrenadeAttributes get() = _grenade
 
 private val _spellBats = object : ProjectileSpellBatsAttributes {}
@@ -84,9 +90,15 @@ private val _spellKartBats = object : ProjectileSpellKartBatsAttributes {}
 val BaseGunAttributes.ProjectilesAttributes.spellKartBats: ProjectileSpellKartBatsAttributes get() = _spellKartBats
 
 private val _arrow = object : ProjectileArrowAttributes {}
+/**
+ * Items: The Huntsman, The Crusader's Crossbow, The Rescue Ranger
+ */
 val BaseGunAttributes.ProjectilesAttributes.arrow: ProjectileArrowAttributes get() = _arrow
 
 private val _flare = object : ProjectileFlareAttributes {}
+/**
+ * Items: The Flare Gun, The Detonator, The Manmelter, The Scorch Shot
+ */
 val BaseGunAttributes.ProjectilesAttributes.flare: ProjectileFlareAttributes get() = _flare
 
 private val _spellKartMirv = object : ProjectileSpellKartMirvAttributes {}

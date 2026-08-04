@@ -9,99 +9,245 @@ import kotlin.time.Duration
 
 interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * Attributes related to max ammo, clip-size, and resupply.
+		 */
 		val ammo: AmmoAttributes = AmmoAttributes()
 	
 		val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
+		/**
+		 * Attributes related to moving, constructing, and interacting with the Engineer's buildings.
+		 */
 		val buildings: BuildingsAttributes = BuildingsAttributes()
 	
 		val cloak: CloakAttributes = CloakAttributes()
 	
+		/**
+		 * Multipliers governing the damage you deal to different targets.
+		 * 
+		 * For damage _taken_, see [resistance].
+		 */
 		val damage: DamageAttributes = DamageAttributes()
 	
+		/**
+		 * Attributes governing the Demoknight's shield-charge.
+		 * 
+		 * Some of these attributes are hardcoded to only work on the Demoman. These are noted in their documentation.
+		 */
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
+		/**
+		 * Attributes related to disguising.
+		 */
 		val disguise: DisguiseAttributes = DisguiseAttributes()
 	
+		/**
+		 * Attributes governing rate-of-fire.
+		 */
 		val firing: FiringAttributes = FiringAttributes()
 	
+		/**
+		 * Attributes related to the collection and passive effects of "heads".
+		 * 
+		 * While originally made for the Eyelander, this stat is used by many other weapons that track players hit or killed: the Vita-Saw, the Bazaar Bargain, etc.
+		 * 
+		 * For "revenge crits", like the Frontier Justice, Manmelter, and Diamondback, see [revengeCrits].
+		 */
 		val heads: HeadsAttributes = HeadsAttributes()
 	
+		/**
+		 * Attributes related to the player's HP stat and healing players.
+		 */
 		val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
 		val hud: HudAttributes = HudAttributes()
 	
+		/**
+		 * Attributes governing how much you are pushed when hit by different push sources.
+		 */
 		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
+		/**
+		 * Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)
+		 */
 		val meta: MetaAttributes = MetaAttributes()
 	
+		/**
+		 * Attributes related to rage and items that recharge on a meter/timer.
+		 */
 		val meter: MeterAttributes = MeterAttributes()
 	
+		/**
+		 * Attributes governing the player's move-speed, jump height, swimming, air-strafing capabilities, and all things mobility-related.
+		 */
 		val movement: MovementAttributes = MovementAttributes()
 	
+		/**
+		 * Attributes governing what happens when you hit another player, such as applying conditions or debuffs.
+		 * 
+		 * @see onKill
+		 */
 		val onHit: OnHitAttributes = OnHitAttributes()
 	
+		/**
+		 * Attributes governing what happens when you kill another player, usually applying bonuses to yourself.
+		 * 
+		 * @see onHit
+		 */
 		val onKill: OnKillAttributes = OnKillAttributes()
 	
+		/**
+		 * Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.
+		 * 
+		 * For outgoing damage, see [damage].
+		 */
 		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
+		/**
+		 * Attributes governing taunt speed and the effects of taunts.
+		 */
 		val taunting: TauntingAttributes = TauntingAttributes()
 	
+		/**
+		 * Attributes governing weapon deploy/holster speed, things that activate when a weapon is deployed, and whether a player can swap weapons at all.
+		 */
 		val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
+		/**
+		 * Attributes governing what happens when this player is hit by an enemy.
+		 * 
+		 * For what happens when _this player_ hits an enemy, see [onHit] and [onKill].
+		 */
 		val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	
+		/**
+		 * Attributes related to dealing or preventing critical hits and mini-crits.
+		 */
 		private val crits: CritsAttributes = CritsAttributes()
 	}
-
+	
+	/**
+	 * Attributes related to max ammo, clip-size, and resupply.
+	 */
 	val ammo: AmmoAttributes get() = PlayerAttributes.ammo
 	
 	val buffItems: BuffItemsAttributes get() = PlayerAttributes.buffItems
 	
+	/**
+	 * Attributes related to moving, constructing, and interacting with the Engineer's buildings.
+	 */
 	val buildings: BuildingsAttributes get() = PlayerAttributes.buildings
 	
 	val cloak: CloakAttributes get() = PlayerAttributes.cloak
 	
+	/**
+	 * Multipliers governing the damage you deal to different targets.
+	 * 
+	 * For damage _taken_, see [resistance].
+	 */
 	override val damage: DamageAttributes get() = PlayerAttributes.damage
 	
+	/**
+	 * Attributes governing the Demoknight's shield-charge.
+	 * 
+	 * Some of these attributes are hardcoded to only work on the Demoman. These are noted in their documentation.
+	 */
 	val demoCharge: DemoChargeAttributes get() = PlayerAttributes.demoCharge
 	
+	/**
+	 * Attributes related to disguising.
+	 */
 	override val disguise: DisguiseAttributes get() = PlayerAttributes.disguise
 	
+	/**
+	 * Attributes governing rate-of-fire.
+	 */
 	val firing: FiringAttributes get() = PlayerAttributes.firing
 	
+	/**
+	 * Attributes related to the collection and passive effects of "heads".
+	 * 
+	 * While originally made for the Eyelander, this stat is used by many other weapons that track players hit or killed: the Vita-Saw, the Bazaar Bargain, etc.
+	 * 
+	 * For "revenge crits", like the Frontier Justice, Manmelter, and Diamondback, see [revengeCrits].
+	 */
 	val heads: HeadsAttributes get() = PlayerAttributes.heads
 	
+	/**
+	 * Attributes related to the player's HP stat and healing players.
+	 */
 	val healthAndHealing: HealthAndHealingAttributes get() = PlayerAttributes.healthAndHealing
 	
 	val hud: HudAttributes get() = PlayerAttributes.hud
 	
+	/**
+	 * Attributes governing how much you are pushed when hit by different push sources.
+	 */
 	override val knockbackReceived: KnockbackReceivedAttributes get() = PlayerAttributes.knockbackReceived
 	
+	/**
+	 * Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)
+	 */
 	override val meta: MetaAttributes get() = PlayerAttributes.meta
 	
+	/**
+	 * Attributes related to rage and items that recharge on a meter/timer.
+	 */
 	override val meter: MeterAttributes get() = PlayerAttributes.meter
 	
+	/**
+	 * Attributes governing the player's move-speed, jump height, swimming, air-strafing capabilities, and all things mobility-related.
+	 */
 	val movement: MovementAttributes get() = PlayerAttributes.movement
 	
+	/**
+	 * Attributes governing what happens when you hit another player, such as applying conditions or debuffs.
+	 * 
+	 * @see onKill
+	 */
 	val onHit: OnHitAttributes get() = PlayerAttributes.onHit
 	
+	/**
+	 * Attributes governing what happens when you kill another player, usually applying bonuses to yourself.
+	 * 
+	 * @see onHit
+	 */
 	val onKill: OnKillAttributes get() = PlayerAttributes.onKill
 	
+	/**
+	 * Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.
+	 * 
+	 * For outgoing damage, see [damage].
+	 */
 	override val resistance: ResistanceAttributes get() = PlayerAttributes.resistance
 	
+	/**
+	 * Attributes governing taunt speed and the effects of taunts.
+	 */
 	val taunting: TauntingAttributes get() = PlayerAttributes.taunting
 	
+	/**
+	 * Attributes governing weapon deploy/holster speed, things that activate when a weapon is deployed, and whether a player can swap weapons at all.
+	 */
 	val swapWeapons: SwapWeaponsAttributes get() = PlayerAttributes.swapWeapons
 	
+	/**
+	 * Attributes governing what happens when this player is hit by an enemy.
+	 * 
+	 * For what happens when _this player_ hits an enemy, see [onHit] and [onKill].
+	 */
 	val whenHit: WhenHitAttributes get() = PlayerAttributes.whenHit
 	
 	val spyOnly: SpyOnlyAttributes get() = PlayerAttributes.spyOnly
 	
+	/**
+	 * Attributes related to dealing or preventing critical hits and mini-crits.
+	 */
 	override val crits: CritsAttributes get() = PlayerAttributes.crits
-
+	
 	open class AmmoAttributes : IBlockScoped {
 		open val grenades1ResupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("grenades1_resupply_denied")
 	
@@ -130,7 +276,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 */
 		open val metalRegen: ItemAttributeNamed<Int> = ItemAttributeNamed("metal regen")
 	
-		open val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		open val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class MaxAmmoAttributes : IBlockScoped {
 			/**
@@ -144,10 +290,10 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * Hidden:
 			 */
-			open val maxammoPrimaryReduced: BonusPenaltyHidden<Int, ItemAttributeNamed<Int>> = BonusPenaltyHidden(
-				ItemAttributeNamed<Int>("maxammo primary increased"),
-				ItemAttributeNamed<Int>("maxammo primary reduced"),
-				ItemAttributeNamed<Int>("hidden primary max ammo bonus"),
+			open val primary: BonusPenaltyHidden<Int, ItemAttributeNamed<Int>> = BonusPenaltyHidden(
+			    ItemAttributeNamed<Int>("maxammo primary increased"),
+			    ItemAttributeNamed<Int>("maxammo primary reduced"),
+			    ItemAttributeNamed<Int>("hidden primary max ammo bonus"),
 			)
 	
 			/**
@@ -161,10 +307,10 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * Hidden:
 			 */
-			open val maxammoSecondaryReduced: BonusPenaltyHidden<Int, ItemAttributeNamed<Int>> = BonusPenaltyHidden(
-				ItemAttributeNamed<Int>("maxammo secondary increased"),
-				ItemAttributeNamed<Int>("maxammo secondary reduced"),
-				ItemAttributeNamed<Int>("hidden secondary max ammo penalty"),
+			open val secondary: BonusPenaltyHidden<Int, ItemAttributeNamed<Int>> = BonusPenaltyHidden(
+			    ItemAttributeNamed<Int>("maxammo secondary increased"),
+			    ItemAttributeNamed<Int>("maxammo secondary reduced"),
+			    ItemAttributeNamed<Int>("hidden secondary max ammo penalty"),
 			)
 	
 			/**
@@ -176,9 +322,9 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * 	- In-Game: "N% max metal on wearer"
 			 */
-			open val maxammoMetalReduced: BonusPenalty<Int> = BonusPenalty(
-				ItemAttributeNamed("maxammo metal increased"),
-				ItemAttributeNamed("maxammo metal reduced"),
+			open val metal: BonusPenalty<Int> = BonusPenalty(
+			    ItemAttributeNamed("maxammo metal increased"),
+			    ItemAttributeNamed("maxammo metal reduced"),
 			)
 	
 			/**
@@ -186,7 +332,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * Only used for bat balls.
 			 */
-			open val maxammoGrenades1Increased: ItemAttributeNamed<Int> = ItemAttributeNamed("maxammo grenades1 increased")
+			open val batBalls: ItemAttributeNamed<Int> = ItemAttributeNamed("maxammo grenades1 increased")
 		}
 	}
 	
@@ -219,14 +365,14 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Recall that all players have 100 hidden metal.
 		 */
-		open val upgradeRateDecrease: ItemAttributeNamed<Int> = ItemAttributeNamed("upgrade rate decrease")
+		open val metalAddedPerHit: ItemAttributeNamed<Int> = ItemAttributeNamed("upgrade rate decrease")
 	
 		/**
 		 * In-Game: "+N% max building health"
 		 * 
 		 * Only applied if the building is NOT a disposable sentry.
 		 */
-		open val engyBuildingHealthBonus: ItemAttributeNamed<Int> = ItemAttributeNamed("engy building health bonus")
+		open val modBuildingHealth: ItemAttributeNamed<Int> = ItemAttributeNamed("engy building health bonus")
 	
 		/**
 		 * In-Game: "Cannot carry buildings"
@@ -240,12 +386,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Sets the cost to construct any building type to this value.
 		 */
-		open val buildingCostReduction: ItemAttributeNamed<Int> = ItemAttributeNamed("building cost reduction")
-	
-		/**
-		 * In-Game: "Sentry build speed increased by N%"
-		 */
-		open val engineerSentryBuildRateMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("engineer sentry build rate multiplier")
+		open val setConstructionCost: ItemAttributeNamed<Int> = ItemAttributeNamed("building cost reduction")
 	
 		open val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
@@ -254,6 +395,11 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		open val teleporter: TeleporterAttributes = TeleporterAttributes()
 	
 		open class SentryGunAttributes : IBlockScoped {
+			/**
+			 * In-Game: "Sentry build speed increased by N%"
+			 */
+			open val multBuildRate: ItemAttributeNamed<Number> = ItemAttributeNamed("engineer sentry build rate multiplier")
+	
 			/**
 			 * In-Game: "+N% sentry range"
 			 */
@@ -462,8 +608,8 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 	- In-Game: "N% health from packs on wearer"
 		 */
 		open val healthFromPacks: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("health from packs increased"),
-			ItemAttributeNamed("health from packs decreased"),
+		    ItemAttributeNamed("health from packs increased"),
+		    ItemAttributeNamed("health from packs decreased"),
 		)
 	
 		/**
@@ -483,8 +629,8 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 	- In-Game: "N% health from healers on wearer"
 		 */
 		open val healthFromHealersReduced: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("health from healers increased"),
-			ItemAttributeNamed("health from healers reduced"),
+		    ItemAttributeNamed("health from healers increased"),
+		    ItemAttributeNamed("health from healers reduced"),
 		)
 	
 		/**
@@ -503,7 +649,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 */
 		open val hiddenMaxhealthNonBuffed: ItemAttributeNamed<Int> = ItemAttributeNamed("hidden maxhealth non buffed")
 	
-		open val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		open val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
 	
 		open class HealthRegenAttributes : IBlockScoped {
 			/**
@@ -768,7 +914,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		/**
 		 * If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAMEBALL.
 		 */
-		override val itemMeterChargeType: ItemAttributeNamed<TFMeterRechargeType> get() = super.itemMeterChargeType
+		override val chargeType: ItemAttributeNamed<TFMeterRechargeType> get() = super.chargeType
 	
 		/**
 		 * In-Game: "Hype Decays Over Time."
@@ -794,7 +940,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
 			 */
-			open val generateRageOnDamage: ItemAttributeNamed<Boolean> = ItemAttributeNamed("generate rage on damage")
+			open val standard: ItemAttributeNamed<Boolean> = ItemAttributeNamed("generate rage on damage")
 	
 			/**
 			 * In-Game: "Generate building rescue energy on damage"
@@ -810,7 +956,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	}
 	
 	open class MovementAttributes : IBlockScoped {
-		open val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		open val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
 	
 		/**
 		 * Allows parachute to be deployed. Parachute prop only appears if the BASE Jumper is equipped, but the functionality is the same regardless.
@@ -860,9 +1006,9 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		}
 	
 		open class MoveSpeedAttributes : IBlockScoped {
-			open val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			open val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
 	
-			open val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+			open val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
 	
 			/**
 			 * In-Game: "+N% faster move speed on wearer (shield required)"
@@ -964,7 +1110,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Drop a small health pack when killing an enemy.
 		 */
-		open val dropHealthPackOnKill: ItemAttributeNamed<Boolean> = ItemAttributeNamed("drop health pack on kill")
+		open val dropHealthPack: ItemAttributeNamed<Boolean> = ItemAttributeNamed("drop health pack on kill")
 	
 		/**
 		 * In-Game: "On Kill: Burst into joyous laughter"
@@ -989,7 +1135,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Only works on Spy.
 		 */
-		open val addCloakOnKill: ItemAttributeNamed<Int> = ItemAttributeNamed("add cloak on kill")
+		open val addCloak: ItemAttributeNamed<Int> = ItemAttributeNamed("add cloak on kill")
 	}
 	
 	open class ResistanceAttributes : BaseEntityAttributes.ResistanceAttributes() {
@@ -1007,8 +1153,8 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 	- In-Game: "N% explosive damage vulnerability on wearer"
 		 */
 		open val dmgTakenFromBlast: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("dmg taken from blast reduced"),
-			ItemAttributeNamed("dmg taken from blast increased"),
+		    ItemAttributeNamed("dmg taken from blast reduced"),
+		    ItemAttributeNamed("dmg taken from blast increased"),
 		)
 	
 		open val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()

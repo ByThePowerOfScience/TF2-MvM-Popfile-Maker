@@ -3,10 +3,9 @@ package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 import btpos.source.vdfdsl.tf2.filegeneration.SDKNotes
 import btpos.source.vdfdsl.tf2.filegeneration.hierarchiesByName
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
-import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder.Type
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.Modality
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
-import com.squareup.kotlinpoet.TypeSpec
 import kotlin.collections.map
 
 class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, vararg attrs: ISortedNamedAttribute, notes: List<String> = emptyList())
@@ -31,8 +30,12 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 		hierarchiesByName[scopeName] = this
 	}
 	
-	override fun clone(): ISortedNamedAttribute {
-		return HierarchyNamedAttributeScope(scopeName, extendsFrom, attrs=attrs.map { it.clone() }.toTypedArray(), notes)
+	override fun clone(): HierarchyNamedAttributeScope {
+		return HierarchyNamedAttributeScope(scopeName, extendsFrom, attrs=attrs.map { it.clone() }.toTypedArray(), notes).also {
+			it.notes = notes
+			it.varName = varName
+			it.defaultAttribute = defaultAttribute
+		}
 	}
 	
 	
@@ -50,7 +53,7 @@ class HierarchyNamedAttributeScope(scopeName: String, val extendsFrom: String?, 
 		val cb = super.generateType().apply {
 			properties.values.forEach {
 				if (it.isOverridden()) {
-					it.modality = PropertyBuilder.Modality.OVERRIDE
+					it.modality = Modality.OVERRIDE
 				}
 			}
 		}

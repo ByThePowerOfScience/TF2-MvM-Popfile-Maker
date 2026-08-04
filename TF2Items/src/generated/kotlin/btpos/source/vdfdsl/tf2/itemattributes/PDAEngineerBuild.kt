@@ -9,129 +9,327 @@ import kotlin.time.Duration
 
 interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * Attributes related to afterburn.
+		 */
 		private val afterburn: AfterburnAttributes = AfterburnAttributes()
 	
+		/**
+		 * Attributes related to max ammo, clip-size, and resupply.
+		 */
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
+		/**
+		 * Attributes related to moving, constructing, and interacting with the Engineer's buildings.
+		 */
 		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
+		/**
+		 * Attributes related to dealing or preventing critical hits and mini-crits.
+		 */
 		private val crits: CritsAttributes = CritsAttributes()
 	
+		/**
+		 * Multipliers governing the damage you deal to different targets.
+		 * 
+		 * For damage _taken_, see [resistance].
+		 */
 		private val damage: DamageAttributes = DamageAttributes()
 	
+		/**
+		 * Attributes governing the Demoknight's shield-charge.
+		 * 
+		 * Some of these attributes are hardcoded to only work on the Demoman. These are noted in their documentation.
+		 */
 		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
+		/**
+		 * Attributes governing rate-of-fire.
+		 */
 		private val firing: FiringAttributes = FiringAttributes()
 	
+		/**
+		 * Attributes related to the player's HP stat and healing players.
+		 */
 		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
+		/**
+		 * Attributes governing how much you are pushed when hit by different push sources.
+		 */
 		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
+		/**
+		 * Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)
+		 */
 		private val meta: MetaAttributes = MetaAttributes()
 	
+		/**
+		 * Attributes related to rage and items that recharge on a meter/timer.
+		 */
 		private val meter: MeterAttributes = MeterAttributes()
 	
+		/**
+		 * Attributes governing the player's move-speed, jump height, swimming, air-strafing capabilities, and all things mobility-related.
+		 */
 		private val movement: MovementAttributes = MovementAttributes()
 	
+		/**
+		 * Attributes related to the collection and passive effects of "heads".
+		 * 
+		 * While originally made for the Eyelander, this stat is used by many other weapons that track players hit or killed: the Vita-Saw, the Bazaar Bargain, etc.
+		 * 
+		 * For "revenge crits", like the Frontier Justice, Manmelter, and Diamondback, see [revengeCrits].
+		 */
 		private val heads: HeadsAttributes = HeadsAttributes()
 	
+		/**
+		 * Attributes governing what happens when you hit another player, such as applying conditions or debuffs.
+		 * 
+		 * @see onKill
+		 */
 		private val onHit: OnHitAttributes = OnHitAttributes()
 	
+		/**
+		 * Attributes governing what happens when you kill another player, usually applying bonuses to yourself.
+		 * 
+		 * @see onHit
+		 */
 		private val onKill: OnKillAttributes = OnKillAttributes()
 	
+		/**
+		 * All attributes governing what projectile or bullet this weapon can fire, and how that projectile or bullet acts once fired.
+		 * 
+		 * Each type of projectile also has a subcategory with every attribute it checks for on the gun that fired it.
+		 */
 		private val projectiles: ProjectilesAttributes = ProjectilesAttributes()
 	
+		/**
+		 * Attributes governing either the time taken to reload a weapon's magazine or the cooldown time for weapons that draw directly from reserve ammo like the Sniper Rifle and Flare Gun.
+		 */
 		private val reloading: ReloadingAttributes = ReloadingAttributes()
 	
+		/**
+		 * Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.
+		 * 
+		 * For outgoing damage, see [damage].
+		 */
 		private val resistance: ResistanceAttributes = ResistanceAttributes()
 	
+		/**
+		 * Attributes governing the collection of "Revenge Crits", guaranteed criticals gained by fulfilling certain requirements.
+		 * 
+		 * It should be noted that for the most part, these attributes just state whether or not a weapon CAN gain revenge crits. Actually _using_ them is bound to the weapon type, not any attribute.
+		 * 
+		 * For the collection and usage of "heads", see [heads].
+		 */
 		private val revengeCrits: RevengeCritsAttributes = RevengeCritsAttributes()
 	
+		/**
+		 * Attributes related to Mad Milk, Jarate, and Gas.
+		 * 
+		 * This will be empty for most weapons unless a mod adds something.  Notably, "explode on ignite" is available for all weapons.
+		 */
 		private val statusEffects: StatusEffectsAttributes = StatusEffectsAttributes()
 	
+		/**
+		 * Attributes governing taunt speed and the effects of taunts.
+		 */
 		private val taunting: TauntingAttributes = TauntingAttributes()
 	
+		/**
+		 * Attributes governing weapon deploy/holster speed, things that activate when a weapon is deployed, and whether a player can swap weapons at all.
+		 */
 		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
+		/**
+		 * Attributes governing what happens when this player is hit by an enemy.
+		 * 
+		 * For what happens when _this player_ hits an enemy, see [onHit] and [onKill].
+		 */
 		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
+		/**
+		 * Attributes governing ragdolls, gibs, and statues.
+		 */
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
 		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
 		private val cloak: CloakAttributes = CloakAttributes()
 	
+		/**
+		 * Attributes related to disguising.
+		 */
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
 		private val hud: HudAttributes = HudAttributes()
 	
 		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
-
+	
+	/**
+	 * Attributes related to afterburn.
+	 */
 	override val afterburn: AfterburnAttributes get() = PDAEngineerBuildAttributes.afterburn
 	
+	/**
+	 * Attributes related to max ammo, clip-size, and resupply.
+	 */
 	override val ammo: AmmoAttributes get() = PDAEngineerBuildAttributes.ammo
 	
+	/**
+	 * Attributes related to moving, constructing, and interacting with the Engineer's buildings.
+	 */
 	override val buildings: BuildingsAttributes get() = PDAEngineerBuildAttributes.buildings
 	
+	/**
+	 * Attributes related to dealing or preventing critical hits and mini-crits.
+	 */
 	override val crits: CritsAttributes get() = PDAEngineerBuildAttributes.crits
 	
+	/**
+	 * Multipliers governing the damage you deal to different targets.
+	 * 
+	 * For damage _taken_, see [resistance].
+	 */
 	override val damage: DamageAttributes get() = PDAEngineerBuildAttributes.damage
 	
+	/**
+	 * Attributes governing the Demoknight's shield-charge.
+	 * 
+	 * Some of these attributes are hardcoded to only work on the Demoman. These are noted in their documentation.
+	 */
 	override val demoCharge: DemoChargeAttributes get() = PDAEngineerBuildAttributes.demoCharge
 	
+	/**
+	 * Attributes governing rate-of-fire.
+	 */
 	override val firing: FiringAttributes get() = PDAEngineerBuildAttributes.firing
 	
+	/**
+	 * Attributes related to the player's HP stat and healing players.
+	 */
 	override val healthAndHealing: HealthAndHealingAttributes get() = PDAEngineerBuildAttributes.healthAndHealing
 	
+	/**
+	 * Attributes governing how much you are pushed when hit by different push sources.
+	 */
 	override val knockbackReceived: KnockbackReceivedAttributes get() = PDAEngineerBuildAttributes.knockbackReceived
 	
+	/**
+	 * Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)
+	 */
 	override val meta: MetaAttributes get() = PDAEngineerBuildAttributes.meta
 	
+	/**
+	 * Attributes related to rage and items that recharge on a meter/timer.
+	 */
 	override val meter: MeterAttributes get() = PDAEngineerBuildAttributes.meter
 	
+	/**
+	 * Attributes governing the player's move-speed, jump height, swimming, air-strafing capabilities, and all things mobility-related.
+	 */
 	override val movement: MovementAttributes get() = PDAEngineerBuildAttributes.movement
 	
+	/**
+	 * Attributes related to the collection and passive effects of "heads".
+	 * 
+	 * While originally made for the Eyelander, this stat is used by many other weapons that track players hit or killed: the Vita-Saw, the Bazaar Bargain, etc.
+	 * 
+	 * For "revenge crits", like the Frontier Justice, Manmelter, and Diamondback, see [revengeCrits].
+	 */
 	override val heads: HeadsAttributes get() = PDAEngineerBuildAttributes.heads
 	
+	/**
+	 * Attributes governing what happens when you hit another player, such as applying conditions or debuffs.
+	 * 
+	 * @see onKill
+	 */
 	override val onHit: OnHitAttributes get() = PDAEngineerBuildAttributes.onHit
 	
+	/**
+	 * Attributes governing what happens when you kill another player, usually applying bonuses to yourself.
+	 * 
+	 * @see onHit
+	 */
 	override val onKill: OnKillAttributes get() = PDAEngineerBuildAttributes.onKill
 	
+	/**
+	 * All attributes governing what projectile or bullet this weapon can fire, and how that projectile or bullet acts once fired.
+	 * 
+	 * Each type of projectile also has a subcategory with every attribute it checks for on the gun that fired it.
+	 */
 	override val projectiles: ProjectilesAttributes get() = PDAEngineerBuildAttributes.projectiles
 	
+	/**
+	 * Attributes governing either the time taken to reload a weapon's magazine or the cooldown time for weapons that draw directly from reserve ammo like the Sniper Rifle and Flare Gun.
+	 */
 	override val reloading: ReloadingAttributes get() = PDAEngineerBuildAttributes.reloading
 	
+	/**
+	 * Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.
+	 * 
+	 * For outgoing damage, see [damage].
+	 */
 	override val resistance: ResistanceAttributes get() = PDAEngineerBuildAttributes.resistance
 	
+	/**
+	 * Attributes governing the collection of "Revenge Crits", guaranteed criticals gained by fulfilling certain requirements.
+	 * 
+	 * It should be noted that for the most part, these attributes just state whether or not a weapon CAN gain revenge crits. Actually _using_ them is bound to the weapon type, not any attribute.
+	 * 
+	 * For the collection and usage of "heads", see [heads].
+	 */
 	override val revengeCrits: RevengeCritsAttributes get() = PDAEngineerBuildAttributes.revengeCrits
 	
+	/**
+	 * Attributes related to Mad Milk, Jarate, and Gas.
+	 * 
+	 * This will be empty for most weapons unless a mod adds something.  Notably, "explode on ignite" is available for all weapons.
+	 */
 	override val statusEffects: StatusEffectsAttributes get() = PDAEngineerBuildAttributes.statusEffects
 	
+	/**
+	 * Attributes governing taunt speed and the effects of taunts.
+	 */
 	override val taunting: TauntingAttributes get() = PDAEngineerBuildAttributes.taunting
 	
+	/**
+	 * Attributes governing weapon deploy/holster speed, things that activate when a weapon is deployed, and whether a player can swap weapons at all.
+	 */
 	override val swapWeapons: SwapWeaponsAttributes get() = PDAEngineerBuildAttributes.swapWeapons
 	
+	/**
+	 * Attributes governing what happens when this player is hit by an enemy.
+	 * 
+	 * For what happens when _this player_ hits an enemy, see [onHit] and [onKill].
+	 */
 	override val whenHit: WhenHitAttributes get() = PDAEngineerBuildAttributes.whenHit
 	
+	/**
+	 * Attributes governing ragdolls, gibs, and statues.
+	 */
 	override val ragdolls: RagdollsAttributes get() = PDAEngineerBuildAttributes.ragdolls
 	
 	override val buffItems: BuffItemsAttributes get() = PDAEngineerBuildAttributes.buffItems
 	
 	override val cloak: CloakAttributes get() = PDAEngineerBuildAttributes.cloak
 	
+	/**
+	 * Attributes related to disguising.
+	 */
 	override val disguise: DisguiseAttributes get() = PDAEngineerBuildAttributes.disguise
 	
 	override val hud: HudAttributes get() = PDAEngineerBuildAttributes.hud
 	
 	override val spyOnly: SpyOnlyAttributes get() = PDAEngineerBuildAttributes.spyOnly
-
+	
 	open class AfterburnAttributes : PDAAttributes.AfterburnAttributes() 
 	
 	open class AmmoAttributes : PDAAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
-		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		override val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class ClipSizeAttributes : PDAAttributes.AmmoAttributes.ClipSizeAttributes() 
 	
@@ -175,7 +373,7 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	open class HealthAndHealingAttributes : PDAAttributes.HealthAndHealingAttributes() {
 		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
 	
-		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		override val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
 	
 		open class HealthRegenAttributes : PDAAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
 	
@@ -227,12 +425,12 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	open class MovementAttributes : PDAAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		override val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
 	
 		open class MoveSpeedAttributes : PDAAttributes.MovementAttributes.MoveSpeedAttributes() {
-			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			override val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
 	
-			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+			override val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
 	
 			open class AimingMovespeedAttributes : PDAAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
 	
@@ -265,7 +463,7 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
-		open class ProjectilePenetrationAttributes : PDAAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
+		open class ProjectilePenetrationAttributes : PDAAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes(), ItemAttribute<Int> 
 	
 		open class BulletsAttributes : PDAAttributes.ProjectilesAttributes.BulletsAttributes() 
 	}

@@ -16,13 +16,13 @@ interface ProjectileArrowAttributes : IBlockScoped, BaseRocketAttributes {
 		 */
 		val arrowHealsBuildings: ItemAttributeNamed<Boolean> = ItemAttributeNamed("arrow heals buildings")
 	}
-
+	
 	/**
 	 * In-Game: "Fires a special bolt that can repair friendly buildings"
 	 * 
 	 * Checked on player.
 	 */
 	val arrowHealsBuildings: ItemAttributeNamed<Boolean> get() = ProjectileArrowAttributes.arrowHealsBuildings
-
+	
 	object Inherited : ProjectileArrowAttributes 
 }

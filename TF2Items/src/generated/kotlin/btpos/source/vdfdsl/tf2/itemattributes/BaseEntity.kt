@@ -9,35 +9,85 @@ import kotlin.time.Duration
 
 interface BaseEntityAttributes : IBlockScoped {
 	companion object : IBlockScoped {
+		/**
+		 * Attributes related to disguising.
+		 */
 		val disguise: DisguiseAttributes = DisguiseAttributes()
 	
+		/**
+		 * Attributes related to dealing or preventing critical hits and mini-crits.
+		 */
 		val crits: CritsAttributes = CritsAttributes()
 	
+		/**
+		 * Multipliers governing the damage you deal to different targets.
+		 * 
+		 * For damage _taken_, see [resistance].
+		 */
 		val damage: DamageAttributes = DamageAttributes()
 	
+		/**
+		 * Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)
+		 */
 		val meta: MetaAttributes = MetaAttributes()
 	
+		/**
+		 * Attributes related to rage and items that recharge on a meter/timer.
+		 */
 		val meter: MeterAttributes = MeterAttributes()
 	
+		/**
+		 * Attributes governing how much you are pushed when hit by different push sources.
+		 */
 		val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
+		/**
+		 * Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.
+		 * 
+		 * For outgoing damage, see [damage].
+		 */
 		val resistance: ResistanceAttributes = ResistanceAttributes()
 	}
-
+	
+	/**
+	 * Attributes related to disguising.
+	 */
 	val disguise: DisguiseAttributes get() = BaseEntityAttributes.disguise
 	
+	/**
+	 * Attributes related to dealing or preventing critical hits and mini-crits.
+	 */
 	val crits: CritsAttributes get() = BaseEntityAttributes.crits
 	
+	/**
+	 * Multipliers governing the damage you deal to different targets.
+	 * 
+	 * For damage _taken_, see [resistance].
+	 */
 	val damage: DamageAttributes get() = BaseEntityAttributes.damage
 	
+	/**
+	 * Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)
+	 */
 	val meta: MetaAttributes get() = BaseEntityAttributes.meta
 	
+	/**
+	 * Attributes related to rage and items that recharge on a meter/timer.
+	 */
 	val meter: MeterAttributes get() = BaseEntityAttributes.meter
 	
+	/**
+	 * Attributes governing how much you are pushed when hit by different push sources.
+	 */
 	val knockbackReceived: KnockbackReceivedAttributes get() = BaseEntityAttributes.knockbackReceived
 	
+	/**
+	 * Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.
+	 * 
+	 * For outgoing damage, see [damage].
+	 */
 	val resistance: ResistanceAttributes get() = BaseEntityAttributes.resistance
-
+	
 	open class DisguiseAttributes : IBlockScoped {
 		/**
 		 * In-Game: "Normal disguises require (and consume) a full cloak meter"
@@ -49,6 +99,8 @@ interface BaseEntityAttributes : IBlockScoped {
 	
 	open class DamageAttributes : IBlockScoped {
 		/**
+		 * Applies to all damage falloff, including blast-radius damage falloff.
+		 * 
 		 * Bonus:
 		 * 
 		 * 	- In-Game: "N% splash damage fall off"
@@ -56,8 +108,8 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * Penalty:
 		 */
 		open val multDmgFalloff: BonusPenalty<Number> = BonusPenalty(
-			ItemAttributeNamed("dmg falloff decreased"),
-			ItemAttributeNamed("dmg falloff increased"),
+		    ItemAttributeNamed("dmg falloff decreased"),
+		    ItemAttributeNamed("dmg falloff increased"),
 		)
 	}
 	
@@ -78,28 +130,28 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * 
 		 * If true, resupply cabinets and spawning do not fully recharge the meter for this item.  Instead, its "default charge meter value" is used.
 		 */
-		open val itemMeterResupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("item_meter_resupply_denied")
+		open val resupplyDenied: ItemAttributeNamed<Boolean> = ItemAttributeNamed("item_meter_resupply_denied")
 	
 		/**
 		 * If `TIME` or `COMBO`, checks the `mult_item_meter_charge_rate` attribute for passive recharge rate mult.
 		 * 
 		 * If `DAMAGE` or `COMBO`, checks the `item_meter_damage_for_full_charge` and `mult_item_meter_charge_rate` attribute classes.
 		 */
-		open val itemMeterChargeType: ItemAttributeNamed<TFMeterRechargeType> = ItemAttributeNamed("item_meter_charge_type")
+		open val chargeType: ItemAttributeNamed<TFMeterRechargeType> = ItemAttributeNamed("item_meter_charge_type")
 	
 		/**
 		 * Amount of meter required to fully charge the item.
 		 * 
 		 * If negative, 0, or not set, does not attempt to fill the meter at all when dealing damage.
 		 */
-		open val itemMeterDamageForFullCharge: ItemAttributeNamed<Number> = ItemAttributeNamed("item_meter_damage_for_full_charge")
+		open val damageForFullCharge: ItemAttributeNamed<Number> = ItemAttributeNamed("item_meter_damage_for_full_charge")
 	
 		/**
 		 * In-Game: "N% faster recharge rate"
 		 * 
 		 * Scale factor for meter gained per second and/or meter gained on dealing damage.
 		 */
-		open val multItemMeterChargeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_item_meter_charge_rate")
+		open val multChargeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_item_meter_charge_rate")
 	}
 	
 	open class KnockbackReceivedAttributes : IBlockScoped {

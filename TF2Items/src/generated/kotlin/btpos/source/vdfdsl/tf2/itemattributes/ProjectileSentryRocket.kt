@@ -9,6 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileSentryRocketAttributes : IBlockScoped, ProjectileRocketAttributes {
 	companion object : IBlockScoped 
-
+	
 	object Inherited : ProjectileSentryRocketAttributes 
 }

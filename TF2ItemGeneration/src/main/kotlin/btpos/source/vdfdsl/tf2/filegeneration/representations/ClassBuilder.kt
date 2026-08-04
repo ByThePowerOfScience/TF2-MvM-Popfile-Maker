@@ -27,6 +27,7 @@ class ClassBuilder(var name: String, var type: Type) {
 	
 	var isOpen: Boolean = false
 	
+	val functions: MutableList<FunctionBuilder> = mutableListOf()
 	
 	enum class Type {
 		INTERFACE,
@@ -40,6 +41,7 @@ class ClassBuilder(var name: String, var type: Type) {
 		properties.clear()
 		nestedClasses.clear()
 		companionObject = null
+		functions.clear()
 	}
 	
 	fun copy(): ClassBuilder = ClassBuilder(name, type).apply {
@@ -50,6 +52,7 @@ class ClassBuilder(var name: String, var type: Type) {
 		docComment += this@ClassBuilder.docComment
 		companionObject = this@ClassBuilder.companionObject?.copy()
 		isOpen = this@ClassBuilder.isOpen
+		functions += this@ClassBuilder.functions
 	}
 	
 	/**
@@ -90,7 +93,7 @@ class ClassBuilder(var name: String, var type: Type) {
 		}
 		
 		val companionObjectString = companionObject?.let {
-			it.build().prependIndent("\t")
+			it.build()
 		}
 		
 		val classTypeClassName = if (type == Type.COMPANION_OBJECT)
@@ -111,9 +114,10 @@ class ClassBuilder(var name: String, var type: Type) {
 			"{\n" +
 			listOfNotNull(
 				companionObjectString,
-				properties.takeIf { it.isNotEmpty() }?.values?.joinToString("\n\n") { it.build(this.type) }?.prependIndent("\t"),
-				nestedClasses.takeIf { it.isNotEmpty() }?.entries?.joinToString("\n\n") { it.value.build() }?.prependIndent("\t")
-			).joinToString("\n\n") +
+				properties.takeIf { it.isNotEmpty() }?.values?.joinToString("\n\n") { it.build(this.type) },
+				nestedClasses.takeIf { it.isNotEmpty() }?.entries?.joinToString("\n\n") { it.value.build() },
+				functions.takeIf { it.isNotEmpty() }?.joinToString("\n\n") { it.build() }
+			).joinToString("\n\n").prependIndent("\t") +
 			"\n}"
 		}
 		

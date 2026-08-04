@@ -25,7 +25,9 @@ class Vis(
 	}
 	
 	override fun clone(): ISortedNamedAttribute {
-		return Vis(visible.clone(), hidden.clone(), _varName)
+		return Vis(visible.clone(), hidden.clone(), _varName).also {
+			it.varName = varName
+		}
 	}
 	
 	override var varName: String =  visible.varName.removeBonusPenaltyHiddenStuff().overrideVarName()

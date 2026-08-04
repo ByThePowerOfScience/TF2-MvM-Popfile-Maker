@@ -22,7 +22,10 @@ class LongAttributeHiLo(
 	
 	override var notes: List<String> = listOf()
 	
-	override fun clone() = LongAttributeHiLo(lo.clone() as NamedAttribute, hi.clone() as NamedAttribute, innateDescription)
+	override fun clone() = LongAttributeHiLo(lo.clone() as NamedAttribute, hi.clone() as NamedAttribute, innateDescription).also {
+		it.varName = varName
+		it.notes = notes
+	}
 	
 	override fun propertyBuilder(): PropertyBuilder {
 		return PropertyBuilder(varName, HILO_CLASS) {

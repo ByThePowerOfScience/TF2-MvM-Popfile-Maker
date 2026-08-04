@@ -16,13 +16,13 @@ interface ProjectileRocketAttributes : IBlockScoped, BaseRocketAttributes {
 		 */
 		val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SPELL: Halloween pumpkin explosions")
 	}
-
+	
 	/**
 	 * In-Game: "Pumpkin Bombs"
 	 * 
 	 * Checks on owner or sentry's owner.
 	 */
 	override val spellHalloweenPumpkinExplosions: ItemAttributeNamed<Boolean> get() = super.spellHalloweenPumpkinExplosions
-
+	
 	object Inherited : ProjectileRocketAttributes 
 }

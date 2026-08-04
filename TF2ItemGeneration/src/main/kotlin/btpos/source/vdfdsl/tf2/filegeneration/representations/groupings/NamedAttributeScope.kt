@@ -3,15 +3,12 @@ package btpos.source.vdfdsl.tf2.filegeneration.representations.groupings
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassBuilder.Type
 import btpos.source.vdfdsl.tf2.filegeneration.representations.FakeCodec
+import btpos.source.vdfdsl.tf2.filegeneration.representations.FunctionBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ISortedNamedAttribute
+import btpos.source.vdfdsl.tf2.filegeneration.representations.Modality
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
-import btpos.source.vdfdsl.tf2.filegeneration.representations.postprocess
-import btpos.source.vdfdsl.tf2.filegeneration.representations.toSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.TypeSpec
-import kotlin.properties.Delegates.notNull
 
 /**
  * Scopes are all top-level object declarations. Any properties just reference them with getters.
@@ -19,13 +16,17 @@ import kotlin.properties.Delegates.notNull
 open class NamedAttributeScope(
 	var scopeName: String,
 	vararg attrs: ISortedNamedAttribute,
-	override val innateDescription: List<String> = emptyList(),
+	override var innateDescription: List<String> = emptyList(),
 	val _varName: String? = null,
 ) : ISortedNamedAttribute {
 	override var varName: String = (_varName ?: this.scopeName).decapitalize().overrideVarName()
 	
-	override fun clone(): ISortedNamedAttribute {
-		return NamedAttributeScope(this.scopeName, attrs=attrs.map { it.clone() }.toTypedArray(), innateDescription = innateDescription, _varName=_varName)
+	override fun clone(): NamedAttributeScope {
+		return NamedAttributeScope(this.scopeName, attrs=attrs.map { it.clone() }.toTypedArray(), innateDescription = innateDescription, _varName=_varName).also {
+			it.varName = varName
+			it.notes = notes
+			it.defaultAttribute = defaultAttribute
+		}
 	}
 	
 	val attrs = attrs.distinct()
@@ -33,6 +34,7 @@ open class NamedAttributeScope(
 	override fun propertyBuilder(): PropertyBuilder {
 		return PropertyBuilder(varName, getKotlinType()) {
 			initializer = "$clsname()"
+			docComment += innateDescription
 		}
 	}
 	
@@ -44,6 +46,8 @@ open class NamedAttributeScope(
 	
 	operator fun contains(attr: ISortedNamedAttribute) = this.attrs.any { it.varName == attr.varName }
 	
+	
+	var defaultAttribute: ISortedNamedAttribute? = null
 	
 	/**
 	 * Just generate a class representing this scope, not worrying about overrides or extensions or anything at all.
@@ -61,6 +65,33 @@ open class NamedAttributeScope(
 					addNestedClass(it)
 				}
 			}
+			
+			defaultAttribute?.let {
+				delegateItemAttributeTo(it)
+			}
+		}
+	}
+	
+	private fun ClassBuilder.delegateItemAttributeTo(attr: ISortedNamedAttribute) {
+		val valueType = attr.getKotlinType()
+		parentInterfaces += "ItemAttribute<$valueType>"
+		
+		functions += FunctionBuilder("set").apply {
+			valueParams += "value" to "$valueType?"
+			contextParams += "_" to "IAttributeContainer"
+			body += "${attr.varName} = value"
+			modality = Modality.OVERRIDE
+		}
+		
+		functions += FunctionBuilder("get", "$valueType?").apply {
+			contextParams += "_" to "IAttributeContainer"
+			body += "return ${attr.varName}.get()"
+			modality = Modality.OVERRIDE
+		}
+		
+		functions += FunctionBuilder("serialize", "$valueType?").apply {
+			body += "return ${attr.varName}.serialize()"
+			modality = Modality.OVERRIDE
 		}
 	}
 	

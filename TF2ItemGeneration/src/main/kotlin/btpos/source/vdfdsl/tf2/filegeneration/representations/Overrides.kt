@@ -57,73 +57,22 @@ val overrideAutogenVarNames: MutableMap<String, String> = mutableMapOf(
 	"maxhealthDrainRate" to "maxHealthDrainedWhileActive",
 	"dmgBonusWhileHalfDead" to "multDmgWhileHalfDead",
 	"dmgPenaltyWhileHalfAlive" to "multDmgWhileHalfAlive",
-	"damageAppliesToSappers" to "canDamageSappers"
+	"damageAppliesToSappers" to "canDamageSappers",
+	"restoreHealthOnKill" to "restoreHealthPercent",
+	"healOnKill" to "restoreHealthFlat",
+	"upgradeRateDecrease" to "metalAddedPerHit",
+	"engyBuildingHealthBonus" to "modBuildingHealth",
+	"buildingCostReduction" to "setConstructionCost",
+	"engineerSentryBuildRateMultiplier" to "multBuildRate",
 )
 
-/** Scopename to description lines */
-val extraScopeDescriptions = mapOf(
-	"afterburn" to listOf("Attributes related to afterburn."),
-	"ammo" to listOf("Attributes related to max ammo, clip-size, and resupply."),
-	"buildings" to listOf("Attributes related to moving, constructing, and interacting with the Engineer's buildings."),
-	"crits" to listOf("Attributes related to dealing or preventing critical hits and mini-crits."),
-	"damage" to listOf(
-		"Multipliers governing the damage you deal to different targets.",
-		"For damage _taken_, see [resistance]."
-	),
-	"demoCharge" to listOf(
-		"Attributes governing the Demoknight's shield-charge.",
-		"Some of these attributes are hardcoded to only work on the Demoman. These are noted in their documentation."
-	),
-	"firing" to listOf("Attributes governing rate-of-fire."),
-	"healthAndHealing" to listOf("Attributes related to the player's HP stat and healing players."),
-	"knockbackReceived" to listOf("Attributes governing how much you are pushed when hit by different push sources."),
-	"meta" to listOf("Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)"),
-	"meter" to listOf("Attributes related to rage and items that recharge on a meter/timer."),
-	"movement" to listOf("Attributes governing the player's move-speed, jump height, swimming, air-strafing capabilities, and all things mobility-related."),
-	"heads" to listOf(
-		"Attributes related to the collection and passive effects of \"heads\".",
-		"While originally made for the Eyelander, this stat is used by many other weapons that track players hit or killed: the Vita-Saw, the Bazaar Bargain, etc.",
-		"For \"revenge crits\", like the Frontier Justice, Manmelter, and Diamondback, see [revengeCrits]."
-	),
-	"onHit" to listOf(
-		"Attributes governing what happens when you hit another player, such as applying conditions or debuffs.",
-		"@see onKill"
-	),
-	"onKill" to listOf(
-		"Attributes governing what happens when you kill another player, usually applying bonuses to yourself.",
-		"@see onHit"
-	),
-	"projectiles" to listOf(
-		"All attributes governing what projectile or bullet this weapon can fire, and how that projectile or bullet acts once fired.",
-		"Each type of projectile also has a subcategory with every attribute it checks for on the gun that fired it.",
-	),
-	"reloading" to listOf("Attributes governing either the time taken to reload a weapon's magazine or the cooldown time for weapons that draw directly from reserve ammo like the Sniper Rifle and Flare Gun."),
-	"resistance" to listOf(
-		"Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.",
-		"For outgoing damage, see [damage]."
-	),
-	"revengeCrits" to listOf(
-		"Attributes governing the collection of \"Revenge Crits\", guaranteed criticals gained by fulfilling certain requirements.",
-		"It should be noted that for the most part, these attributes just state whether or not a weapon CAN gain revenge crits. Actually _using_ them is bound to the weapon type, not any attribute.",
-		"For the collection and usage of \"heads\", see [heads]."
-	),
-	"statusEffects" to listOf(
-		"Attributes related to Mad Milk, Jarate, and Gas.",
-		"This will be empty for most weapons unless a mod adds something.  Notably, \"explode on ignite\" is available for all weapons."
-	),
-	"taunting" to listOf("Attributes governing taunt speed and the effects of taunts."),
-	"whenHit" to listOf(
-		"Attributes governing what happens when this player is hit by an enemy.",
-		"For what happens when _this player_ hits an enemy, see [onHit] and [onKill]."
-	),
-	"ragdolls" to listOf("Attributes governing ragdolls, gibs, and statues."),
-	"disguise" to listOf("Attributes related to disguising."),
-	"swapWeapons" to listOf("Attributes governing weapon deploy/holster speed, things that activate when a weapon is deployed, and whether a player can swap weapons at all."),
-	"flames" to listOf("Attributes controlling how flames emitted by the flamethrower move and reflect."),
-	"airblast" to listOf("Attributes governing the flamethrower's airblast, including [what it's allowed to do][AirblastAttributes.functionalityFlags], the [direction it pushes][AirblastAttributes.reverseAirblast], and whether it [flings the wielder forward][AirblastAttributes.airblast_dashes]."),
-) + mapOf(
-	"multDmgFalloff" to listOf("Applies to all damage falloff, including blast-radius damage falloff."),
+/**
+ * A less brittle map, using the actual attribute name
+ */
+val overrideNamedAttributeVarNames = mapOf(
+	"bullets per shot bonus" to "modBulletsPerShot"
 )
+
 
 val overrideAutogeneratedScopeNames = mapOf(
 	"MedigunChargeIsCritBoost" to "UberchargeType"
@@ -133,7 +82,8 @@ val overrideAutogeneratedScopeNames = mapOf(
  * map of "scope name" to "word to remove from thing"
  */
 val stripFromScopeMembersNames = mutableMapOf(
-	"Meter" to "itemMeter"
+	"Meter" to "itemMeter",
+	"OnKill" to "onKill"
 )
 
 val dontMergeClassMembersIntoHierarchyCompanion = setOf(
@@ -147,92 +97,207 @@ val dontMergeClassMembersIntoHierarchyCompanion = setOf(
  */
 val addMultPrefix = mutableSetOf(
 	"dmgFalloff",
-	"healingReceived"
+	"healingReceived",
+	"reloadTime"
 )
 
-private val attrClass_to_createScopeForItsItems: Map<String, List<NamedAttribute>.() -> List<ISortedNamedAttribute>>
-	get() {
-		fun List<NamedAttribute>.select(attr: String): NamedAttribute = first { it.attrName == attr }
-		
-		return mapOf(
-			"set_buff_type" to {
-				this // flatten entries to premade subgroup
-			},
-			"or_crit_vs_playercond" to {
-				listOf(
-					// general
-					select("crit vs burning players").copy(inGameDesc=null).apply {
-						varName = "critVsConditions"
-					},
-					// specifics
-					select("crit vs burning players").apply {
-						codec = FakeCodec("Boolean", "{ if (it) EnumSetOrCodec()(EnumSet.of(TFCritCondition.Burning)) else null }")
-					},
-					select("crit vs disguised players").apply {
-						codec = FakeCodec("Boolean", "{ if (it) EnumSetOrCodec()(EnumSet.of(TFCritCondition.Disguised)) else null }")
-					}
-				)
-			},
-			"mult_dmg" to {
-				listOf(
-					PenaltyBonus(
-						bonus = select("damage bonus"),
-						penalty = select("damage penalty"),
-						neutral = select("CARD: damage bonus"),
-						hidden = select("damage bonus HIDDEN")
-					).apply {
-						varName = "multDmg"
-					}
-				)
-			},
-			"mult_postfiredelay" to {
-				listOf(
-					PenaltyBonus(
-						bonus = select("fire rate bonus"),
-						penalty = select("fire rate penalty"),
-						hidden = PenaltyBonus(
-							bonus = select("fire rate bonus HIDDEN"),
-							penalty = select("fire rate penalty HIDDEN")
-						),
-						neutral = select("melee attack rate bonus")
-					).apply {
-						notes += first().notes
-						varName = "multPostFireDelay"
-					}
-				)
-			}
-		)
-	}
+/**
+ * "varName of scope" to "map of old var names to new var names"
+ *
+ * if the old var name is null, that sets the name of the scope
+ *
+ * if the old var name is [Unit], that denotes that the default attribute for the scope should be
+ */
+val overrideScopeVarNames: Map<String, Map<Any?, String>> = mapOf(
+	"generateRageOnDamage" to mapOf(
+		"generateRageOnDamage" to "standard",
+		"engineerRageOnDamage" to "buildingRescue"
+	),
+	"maxAmmo" to mapOf(
+		null to "modMaxAmmo",
+		"maxammoPrimaryReduced" to "primary",
+		"maxammoSecondaryReduced" to "secondary",
+		"maxammoMetalReduced" to "metal",
+		"maxammoGrenades1Increased" to "batBalls"
+	),
+	"projectilePenetration" to mapOf(
+		"projectilePenetration" to "projectiles",
+		"projectilePenetrationHeavy" to "bullets",
+		Unit to "projectiles"
+	)
+)
 
-
-fun <T : ISortedNamedAttribute> T.postprocess(): T = apply {
-	if (this is PenaltyBonus || this is NamedAttributeScope) {
-		extraScopeDescriptions[this.varName]?.let {
-			this.notes += it
+fun NamedAttributeScope.overrideScopeVarNames() {
+	val overrides = overrideScopeVarNames[this.varName]
+	                ?: return;
+	
+	this.attrs.forEach { attr ->
+		overrides[attr.varName]?.let {
+			attr.varName = it
 		}
 	}
 	
-	if (this is NamedAttributeScope) {
-		stripFromScopeMembersNames[scopeName]?.let { toStrip ->
-			attrs.forEach {
-				it.varName = it.varName.removeFromCamelCase(toStrip)
+	overrides[null]?.let {
+		this.varName = it
+	}
+	
+	overrides[Unit]?.let { defaultAttribute ->
+		this.defaultAttribute = this.attrs.first { it.varName == defaultAttribute }
+	}
+}
+
+private val attrClass_to_createScopeForItsItems: Map<String, List<NamedAttribute>.() -> List<ISortedNamedAttribute>> by lazy {
+	fun List<NamedAttribute>.select(attr: String): NamedAttribute = first { it.attrName == attr }
+	
+	mapOf(
+		"set_buff_type" to {
+			this // flatten entries to premade subgroup
+		},
+		"or_crit_vs_playercond" to {
+			listOf(
+				// general
+				select("crit vs burning players").copy(inGameDesc=null).apply {
+					varName = "critVsConditions"
+				},
+				// specifics
+				select("crit vs burning players").apply {
+					codec = FakeCodec("Boolean", "{ if (it) EnumSetOrCodec()(EnumSet.of(TFCritCondition.Burning)) else null }")
+				},
+				select("crit vs disguised players").apply {
+					codec = FakeCodec("Boolean", "{ if (it) EnumSetOrCodec()(EnumSet.of(TFCritCondition.Disguised)) else null }")
+				}
+			)
+		},
+		"mult_dmg" to {
+			listOf(
+				PenaltyBonus(
+					bonus = select("damage bonus"),
+					penalty = select("damage penalty"),
+					neutral = select("CARD: damage bonus"),
+					hidden = select("damage bonus HIDDEN")
+				).apply {
+					varName = "multDmg"
+				}
+			)
+		},
+		"mult_postfiredelay" to {
+			listOf(
+				PenaltyBonus(
+					bonus = select("fire rate bonus"),
+					penalty = select("fire rate penalty"),
+					hidden = PenaltyBonus(
+						bonus = select("fire rate bonus HIDDEN"),
+						penalty = select("fire rate penalty HIDDEN")
+					),
+					neutral = select("melee attack rate bonus")
+				).apply {
+					notes += first().notes
+					varName = "multPostFireDelay"
+				}
+			)
+		}
+	)
+}
+
+
+
+/** Scopename to description lines */
+val extraScopeDescriptions = mapOf(
+	"Afterburn" to listOf("Attributes related to afterburn."),
+	"Ammo" to listOf("Attributes related to max ammo, clip-size, and resupply."),
+	"Buildings" to listOf("Attributes related to moving, constructing, and interacting with the Engineer's buildings."),
+	"Crits" to listOf("Attributes related to dealing or preventing critical hits and mini-crits."),
+	"Damage" to listOf(
+		"Multipliers governing the damage you deal to different targets.",
+		"For damage _taken_, see [resistance]."
+	),
+	"DemoCharge" to listOf(
+		"Attributes governing the Demoknight's shield-charge.",
+		"Some of these attributes are hardcoded to only work on the Demoman. These are noted in their documentation."
+	),
+	"Firing" to listOf("Attributes governing rate-of-fire."),
+	"HealthAndHealing" to listOf("Attributes related to the player's HP stat and healing players."),
+	"KnockbackReceived" to listOf("Attributes governing how much you are pushed when hit by different push sources."),
+	"Meta" to listOf("Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)"),
+	"Meter" to listOf("Attributes related to rage and items that recharge on a meter/timer."),
+	"Movement" to listOf("Attributes governing the player's move-speed, jump height, swimming, air-strafing capabilities, and all things mobility-related."),
+	"Heads" to listOf(
+		"Attributes related to the collection and passive effects of \"heads\".",
+		"While originally made for the Eyelander, this stat is used by many other weapons that track players hit or killed: the Vita-Saw, the Bazaar Bargain, etc.",
+		"For \"revenge crits\", like the Frontier Justice, Manmelter, and Diamondback, see [revengeCrits]."
+	),
+	"OnHit" to listOf(
+		"Attributes governing what happens when you hit another player, such as applying conditions or debuffs.",
+		"@see onKill"
+	),
+	"OnKill" to listOf(
+		"Attributes governing what happens when you kill another player, usually applying bonuses to yourself.",
+		"@see onHit"
+	),
+	"Projectiles" to listOf(
+		"All attributes governing what projectile or bullet this weapon can fire, and how that projectile or bullet acts once fired.",
+		"Each type of projectile also has a subcategory with every attribute it checks for on the gun that fired it.",
+	),
+	"Reloading" to listOf("Attributes governing either the time taken to reload a weapon's magazine or the cooldown time for weapons that draw directly from reserve ammo like the Sniper Rifle and Flare Gun."),
+	"Resistance" to listOf(
+		"Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.",
+		"For outgoing damage, see [damage]."
+	),
+	"RevengeCrits" to listOf(
+		"Attributes governing the collection of \"Revenge Crits\", guaranteed criticals gained by fulfilling certain requirements.",
+		"It should be noted that for the most part, these attributes just state whether or not a weapon CAN gain revenge crits. Actually _using_ them is bound to the weapon type, not any attribute.",
+		"For the collection and usage of \"heads\", see [heads]."
+	),
+	"StatusEffects" to listOf(
+		"Attributes related to Mad Milk, Jarate, and Gas.",
+		"This will be empty for most weapons unless a mod adds something.  Notably, \"explode on ignite\" is available for all weapons."
+	),
+	"Taunting" to listOf("Attributes governing taunt speed and the effects of taunts."),
+	"WhenHit" to listOf(
+		"Attributes governing what happens when this player is hit by an enemy.",
+		"For what happens when _this player_ hits an enemy, see [onHit] and [onKill]."
+	),
+	"Ragdolls" to listOf("Attributes governing ragdolls, gibs, and statues."),
+	"Disguise" to listOf("Attributes related to disguising."),
+	"SwapWeapons" to listOf("Attributes governing weapon deploy/holster speed, things that activate when a weapon is deployed, and whether a player can swap weapons at all."),
+	"Flames" to listOf("Attributes controlling how flames emitted by the flamethrower move and reflect."),
+	"Airblast" to listOf("Attributes governing the flamethrower's airblast, including [what it's allowed to do][AirblastAttributes.functionalityFlags], the [direction it pushes][AirblastAttributes.reverseAirblast], and whether it [flings the wielder forward][AirblastAttributes.airblast_dashes]."),
+) + mapOf(
+	"multDmgFalloff" to listOf("Applies to all damage falloff, including blast-radius damage falloff."),
+)
+
+fun <T : ISortedNamedAttribute> T.postprocessRecursive(): T = apply {
+	when (this) {
+		is NamedAttribute -> {
+			overrideNamedAttributeVarNames[this.attrName]?.let {
+				this.varName = it
 			}
 		}
-		
-		this.attrs.forEach {
-			it.postprocess()
+		is PenaltyBonus -> {
+			extraScopeDescriptions[this.varName]?.let {
+				this.innateDescription += it
+			}
+		}
+		is NamedAttributeScope -> {
+			extraScopeDescriptions[this.scopeName]?.let {
+				this.innateDescription += it
+			}
+			
+			this.overrideScopeVarNames()
+			
+			stripFromScopeMembersNames[scopeName]?.let { toStrip ->
+				attrs.forEach {
+					it.varName = it.varName.removeFromCamelCase(toStrip)
+				}
+			}
+			
+			this.attrs.forEach {
+				it.postprocessRecursive()
+			}
 		}
 	}
 }
 
-fun postprocessAllScopes(list: List<ISortedNamedAttribute>) {
-	list.forEach {
-		it.postprocess()
-		if (it is NamedAttributeScope) {
-			postprocessAllScopes(it.attrs)
-		}
-	}
-}
 
 /**
  * Create some combined representation for these attributes in the same attribute class.
@@ -269,7 +334,7 @@ fun fabricateScope(attrClass: String, attrsOfSameClass: List<NamedAttribute>): L
 	
 	//
 	attrClass_to_createScopeForItsItems[attrClass]?.let { ctor ->
-		return ctor(attrsOfSameClass).onEach { it.postprocess() }
+		return ctor(attrsOfSameClass)
 	}
 	
 	
@@ -287,7 +352,7 @@ fun fabricateScope(attrClass: String, attrsOfSameClass: List<NamedAttribute>): L
 	// If we have multiple bonuses or multiple penalties and they're not just hidden, we should have assigned a custom scope.
 	// Fallthrough to just making a default scope.
 	if (groupedByPosNegNeutral.size == 1 || groupedByPosNegNeutral.any { it.key != isHidden && it.value.size > 1 }) {
-		return listOf(makeDefaultScope().overrideAutogen().postprocess())
+		return listOf(makeDefaultScope().overrideAutogen())
 	}
 	
 	/*
@@ -330,7 +395,6 @@ fun fabricateScope(attrClass: String, attrsOfSameClass: List<NamedAttribute>): L
 		if (it is NamedAttributeScope) {
 			it.overrideAutogen()
 		}
-		it.postprocess()
 	}
 }
 

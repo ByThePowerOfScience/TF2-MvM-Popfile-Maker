@@ -10,7 +10,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.removeBonusPenalty
 /**
  * Different description variants of the same attribute class, all combined into a single little namespace
  */
-data class PenaltyBonus(
+class PenaltyBonus(
 	val penalty: ISortedNamedAttribute? = null,
 	val bonus: ISortedNamedAttribute? = null,
 	val neutral: ISortedNamedAttribute? = null,
@@ -20,6 +20,19 @@ data class PenaltyBonus(
 	private val list = listOfNotNull(penalty, bonus, neutral, hidden)
 	
 	override var varName: String = list.first().varName.removeBonusPenaltyHiddenStuff().overrideVarName()
+	
+	fun copy(
+		penalty: ISortedNamedAttribute? = this.penalty,
+		bonus: ISortedNamedAttribute? = this.bonus,
+		neutral: ISortedNamedAttribute? = this.neutral,
+		hidden: ISortedNamedAttribute? = this.hidden,
+		desc: String? = this.desc,
+		varName: String? = this.varName,
+	) = PenaltyBonus(penalty, bonus, neutral, hidden, desc).apply {
+		varName?.let {
+			this.varName = it
+		}
+	}
 	
 	init {
 		require(list.size > 1) {
@@ -48,8 +61,11 @@ data class PenaltyBonus(
 		const val BONUSPENALTYNEUTRALHIDDEN = "BonusPenaltyNeutralHidden"
 	}
 	
-	override fun clone(): ISortedNamedAttribute {
-		return copy()
+	override fun clone(): PenaltyBonus {
+		return copy().also {
+			it.varName = varName
+			it.notes = notes
+		}
 	}
 	
 	val classType by lazy {
@@ -66,35 +82,33 @@ data class PenaltyBonus(
 		}
 	}
 	
-	val propertyBuilder by lazy {
-		val hiddenTypeParam = if (hidden == null) "" else ", ${hidden.propertyBuilder().kType}"
+	override fun propertyBuilder(): PropertyBuilder {
+		val hiddenAttributeType = if (hidden == null) "" else ", ${hidden.propertyBuilder().kType}"
 		
-		PropertyBuilder(varName, "${classType.first}<${getKotlinType()}$hiddenTypeParam>") {
+		return PropertyBuilder(varName, "${classType.first}<${getKotlinType()}$hiddenAttributeType>") {
 			initializer = "${classType.first}(\n" +
-			                "\t" + classType.second.joinToString(",\n\t") { it.propertyBuilder().initializer } + ",\n" +
+			              classType.second.joinToString(",\n") { it.propertyBuilder().initializer.prependIndent() } + ",\n" +
 			              ")"
 			
 			docComment += innateDescription
+			
+			docComment += buildList {
+				fun doThing(name: String, it: ISortedNamedAttribute?) {
+					if (it != null) {
+						add(name + ":")
+						addAll(it.innateDescription.filter { it.isNotBlank() }.map { if (!it.trimStart().startsWith("- ")) "- $it" else it  }.map { "\t" + it })
+					}
+				}
+				
+				doThing("Bonus", bonus)
+				doThing("Penalty", penalty)
+				doThing("Neutral", neutral)
+				doThing("Hidden", hidden)
+			}
 		}
-	}
-	override fun propertyBuilder(): PropertyBuilder {
-		return propertyBuilder
 	}
 	
-	override val innateDescription: List<String>
-		get() = buildList {
-			fun doThing(name: String, it: ISortedNamedAttribute?) {
-				if (it != null) {
-					add(name + ":")
-					addAll(it.innateDescription.filter { it.isNotBlank() }.map { if (!it.trimStart().startsWith("- ")) "- $it" else it  }.map { "\t" + it })
-				}
-			}
-			
-			doThing("Bonus", bonus)
-			doThing("Penalty", penalty)
-			doThing("Neutral", neutral)
-			doThing("Hidden", hidden)
-		}
+	override var innateDescription: List<String> = emptyList()
 	
 	override var notes: List<String> = listOf()
 		set(value) {

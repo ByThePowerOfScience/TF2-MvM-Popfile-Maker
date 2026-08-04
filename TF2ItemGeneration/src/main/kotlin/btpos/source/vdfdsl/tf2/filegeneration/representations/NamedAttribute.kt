@@ -25,7 +25,7 @@ data class NamedAttribute(
 	
 	
 	
-	override fun clone(): ISortedNamedAttribute {
+	override fun clone(): NamedAttribute {
 		return this.copy().also {
 			it.forceType = forceType
 			it.codec = codec
@@ -39,9 +39,9 @@ data class NamedAttribute(
 	
 	override var varName: String = attrName.sanitizeNamedAttributeName().camelCase().overrideVarName()
 
-	override val innateDescription: List<String> = listOfNotNull(inGameDesc).map { "In-Game: \"$it\"" }
-	
 	override var notes: List<String> = listOf()
+	
+	override val innateDescription: List<String> = listOfNotNull(inGameDesc).map { "In-Game: \"$it\"" }
 	
 	override fun getKotlinType(): String {
 		codec?.let { // trust codecs over attribute class notes

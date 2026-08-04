@@ -4,8 +4,6 @@ import btpos.source.vdfdsl.tf2.filegeneration.RE_WHITESPACE
 import btpos.source.vdfdsl.tf2.filegeneration.representations.ClassNames.classNameFor
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeName
-import kotlin.time.Duration
 
 class PropertyBuilder(var name: String, var kType: String) {
 	companion object {
@@ -115,12 +113,6 @@ class PropertyBuilder(var name: String, var kType: String) {
 		       "${context}${accessQualifier}${overrideString}$valOrVar $extString$name: $kType " + body + setter
 	}
 	
-	
-	enum class Modality {
-		FINAL,
-		OPEN,
-		OVERRIDE;
-	}
 	
 	enum class AccessModifier {
 		PUBLIC,

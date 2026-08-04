@@ -16,13 +16,13 @@ interface ProjectileEnergyRingAttributes : IBlockScoped, BaseProjectileAttribute
 		 */
 		val energyWeaponPenetration: ItemAttributeNamed<Boolean> = ItemAttributeNamed("energy weapon penetration")
 	}
-
+	
 	/**
 	 * In-Game: "Projectile penetrates enemy targets"
 	 * 
 	 * Checked on owner.
 	 */
 	val energyWeaponPenetration: ItemAttributeNamed<Boolean> get() = ProjectileEnergyRingAttributes.energyWeaponPenetration
-
+	
 	object Inherited : ProjectileEnergyRingAttributes 
 }

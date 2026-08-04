@@ -9,6 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileHealingBoltAttributes : IBlockScoped, ProjectileArrowAttributes {
 	companion object : IBlockScoped 
-
+	
 	object Inherited : ProjectileHealingBoltAttributes 
 }

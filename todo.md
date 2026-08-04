@@ -18,3 +18,10 @@ NoCrouchButtonRelease 1 in TFBot
 
 
 Rafmod chat message coloring parsing, components etc
+
+
+# Attributes
+Make BaseEntity extend from Player
+
+Rename:
+- healOnKill/restoreHealthOnKill -> "gainFlatHP"/"gainPercentHP"

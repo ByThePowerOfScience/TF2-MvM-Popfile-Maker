@@ -9,99 +9,245 @@ import kotlin.time.Duration
 
 interface WearableDemoShieldAttributes : IBlockScoped, WearableAttributes {
 	companion object : IBlockScoped {
+		/**
+		 * Attributes governing the Demoknight's shield-charge.
+		 * 
+		 * Some of these attributes are hardcoded to only work on the Demoman. These are noted in their documentation.
+		 */
 		val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
 	
+		/**
+		 * Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.
+		 * 
+		 * For outgoing damage, see [damage].
+		 */
 		val resistance: ResistanceAttributes = ResistanceAttributes()
 	
+		/**
+		 * Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)
+		 */
 		private val meta: MetaAttributes = MetaAttributes()
 	
+		/**
+		 * Attributes related to max ammo, clip-size, and resupply.
+		 */
 		private val ammo: AmmoAttributes = AmmoAttributes()
 	
 		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
 	
+		/**
+		 * Attributes related to moving, constructing, and interacting with the Engineer's buildings.
+		 */
 		private val buildings: BuildingsAttributes = BuildingsAttributes()
 	
 		private val cloak: CloakAttributes = CloakAttributes()
 	
+		/**
+		 * Multipliers governing the damage you deal to different targets.
+		 * 
+		 * For damage _taken_, see [resistance].
+		 */
 		private val damage: DamageAttributes = DamageAttributes()
 	
+		/**
+		 * Attributes related to disguising.
+		 */
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
 	
+		/**
+		 * Attributes governing rate-of-fire.
+		 */
 		private val firing: FiringAttributes = FiringAttributes()
 	
+		/**
+		 * Attributes related to the collection and passive effects of "heads".
+		 * 
+		 * While originally made for the Eyelander, this stat is used by many other weapons that track players hit or killed: the Vita-Saw, the Bazaar Bargain, etc.
+		 * 
+		 * For "revenge crits", like the Frontier Justice, Manmelter, and Diamondback, see [revengeCrits].
+		 */
 		private val heads: HeadsAttributes = HeadsAttributes()
 	
+		/**
+		 * Attributes related to the player's HP stat and healing players.
+		 */
 		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
 	
 		private val hud: HudAttributes = HudAttributes()
 	
+		/**
+		 * Attributes governing how much you are pushed when hit by different push sources.
+		 */
 		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
 	
+		/**
+		 * Attributes related to rage and items that recharge on a meter/timer.
+		 */
 		private val meter: MeterAttributes = MeterAttributes()
 	
+		/**
+		 * Attributes governing the player's move-speed, jump height, swimming, air-strafing capabilities, and all things mobility-related.
+		 */
 		private val movement: MovementAttributes = MovementAttributes()
 	
+		/**
+		 * Attributes governing what happens when you hit another player, such as applying conditions or debuffs.
+		 * 
+		 * @see onKill
+		 */
 		private val onHit: OnHitAttributes = OnHitAttributes()
 	
+		/**
+		 * Attributes governing what happens when you kill another player, usually applying bonuses to yourself.
+		 * 
+		 * @see onHit
+		 */
 		private val onKill: OnKillAttributes = OnKillAttributes()
 	
+		/**
+		 * Attributes governing taunt speed and the effects of taunts.
+		 */
 		private val taunting: TauntingAttributes = TauntingAttributes()
 	
+		/**
+		 * Attributes governing weapon deploy/holster speed, things that activate when a weapon is deployed, and whether a player can swap weapons at all.
+		 */
 		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
 	
+		/**
+		 * Attributes governing what happens when this player is hit by an enemy.
+		 * 
+		 * For what happens when _this player_ hits an enemy, see [onHit] and [onKill].
+		 */
 		private val whenHit: WhenHitAttributes = WhenHitAttributes()
 	
 		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	
+		/**
+		 * Attributes related to dealing or preventing critical hits and mini-crits.
+		 */
 		private val crits: CritsAttributes = CritsAttributes()
 	}
-
+	
+	/**
+	 * Attributes governing the Demoknight's shield-charge.
+	 * 
+	 * Some of these attributes are hardcoded to only work on the Demoman. These are noted in their documentation.
+	 */
 	override val demoCharge: DemoChargeAttributes get() = WearableDemoShieldAttributes.demoCharge
 	
+	/**
+	 * Attributes governing how much damage the player takes from various sources.  Also includes the passive and active effects of the Vaccinator on the user.
+	 * 
+	 * For outgoing damage, see [damage].
+	 */
 	override val resistance: ResistanceAttributes get() = WearableDemoShieldAttributes.resistance
 	
+	/**
+	 * Attributes related to the scoreboard, killfeed, HuD, item descriptions, and interactions with the wider game-state. (including capture rate)
+	 */
 	override val meta: MetaAttributes get() = WearableDemoShieldAttributes.meta
 	
+	/**
+	 * Attributes related to max ammo, clip-size, and resupply.
+	 */
 	override val ammo: AmmoAttributes get() = WearableDemoShieldAttributes.ammo
 	
 	override val buffItems: BuffItemsAttributes get() = WearableDemoShieldAttributes.buffItems
 	
+	/**
+	 * Attributes related to moving, constructing, and interacting with the Engineer's buildings.
+	 */
 	override val buildings: BuildingsAttributes get() = WearableDemoShieldAttributes.buildings
 	
 	override val cloak: CloakAttributes get() = WearableDemoShieldAttributes.cloak
 	
+	/**
+	 * Multipliers governing the damage you deal to different targets.
+	 * 
+	 * For damage _taken_, see [resistance].
+	 */
 	override val damage: DamageAttributes get() = WearableDemoShieldAttributes.damage
 	
+	/**
+	 * Attributes related to disguising.
+	 */
 	override val disguise: DisguiseAttributes get() = WearableDemoShieldAttributes.disguise
 	
+	/**
+	 * Attributes governing rate-of-fire.
+	 */
 	override val firing: FiringAttributes get() = WearableDemoShieldAttributes.firing
 	
+	/**
+	 * Attributes related to the collection and passive effects of "heads".
+	 * 
+	 * While originally made for the Eyelander, this stat is used by many other weapons that track players hit or killed: the Vita-Saw, the Bazaar Bargain, etc.
+	 * 
+	 * For "revenge crits", like the Frontier Justice, Manmelter, and Diamondback, see [revengeCrits].
+	 */
 	override val heads: HeadsAttributes get() = WearableDemoShieldAttributes.heads
 	
+	/**
+	 * Attributes related to the player's HP stat and healing players.
+	 */
 	override val healthAndHealing: HealthAndHealingAttributes get() = WearableDemoShieldAttributes.healthAndHealing
 	
 	override val hud: HudAttributes get() = WearableDemoShieldAttributes.hud
 	
+	/**
+	 * Attributes governing how much you are pushed when hit by different push sources.
+	 */
 	override val knockbackReceived: KnockbackReceivedAttributes get() = WearableDemoShieldAttributes.knockbackReceived
 	
+	/**
+	 * Attributes related to rage and items that recharge on a meter/timer.
+	 */
 	override val meter: MeterAttributes get() = WearableDemoShieldAttributes.meter
 	
+	/**
+	 * Attributes governing the player's move-speed, jump height, swimming, air-strafing capabilities, and all things mobility-related.
+	 */
 	override val movement: MovementAttributes get() = WearableDemoShieldAttributes.movement
 	
+	/**
+	 * Attributes governing what happens when you hit another player, such as applying conditions or debuffs.
+	 * 
+	 * @see onKill
+	 */
 	override val onHit: OnHitAttributes get() = WearableDemoShieldAttributes.onHit
 	
+	/**
+	 * Attributes governing what happens when you kill another player, usually applying bonuses to yourself.
+	 * 
+	 * @see onHit
+	 */
 	override val onKill: OnKillAttributes get() = WearableDemoShieldAttributes.onKill
 	
+	/**
+	 * Attributes governing taunt speed and the effects of taunts.
+	 */
 	override val taunting: TauntingAttributes get() = WearableDemoShieldAttributes.taunting
 	
+	/**
+	 * Attributes governing weapon deploy/holster speed, things that activate when a weapon is deployed, and whether a player can swap weapons at all.
+	 */
 	override val swapWeapons: SwapWeaponsAttributes get() = WearableDemoShieldAttributes.swapWeapons
 	
+	/**
+	 * Attributes governing what happens when this player is hit by an enemy.
+	 * 
+	 * For what happens when _this player_ hits an enemy, see [onHit] and [onKill].
+	 */
 	override val whenHit: WhenHitAttributes get() = WearableDemoShieldAttributes.whenHit
 	
 	override val spyOnly: SpyOnlyAttributes get() = WearableDemoShieldAttributes.spyOnly
 	
+	/**
+	 * Attributes related to dealing or preventing critical hits and mini-crits.
+	 */
 	override val crits: CritsAttributes get() = WearableDemoShieldAttributes.crits
-
+	
 	open class DemoChargeAttributes : WearableAttributes.DemoChargeAttributes() {
 		open val attackNotCancelCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("Attack not cancel charge")
 	
@@ -164,7 +310,7 @@ interface WearableDemoShieldAttributes : IBlockScoped, WearableAttributes {
 	}
 	
 	open class AmmoAttributes : WearableAttributes.AmmoAttributes() {
-		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		override val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class MaxAmmoAttributes : WearableAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
@@ -202,7 +348,7 @@ interface WearableDemoShieldAttributes : IBlockScoped, WearableAttributes {
 	open class HealthAndHealingAttributes : WearableAttributes.HealthAndHealingAttributes() {
 		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
 	
-		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		override val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
 	
 		open class HealthRegenAttributes : WearableAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
 	
@@ -220,16 +366,16 @@ interface WearableDemoShieldAttributes : IBlockScoped, WearableAttributes {
 	}
 	
 	open class MovementAttributes : WearableAttributes.MovementAttributes() {
-		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		override val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
 	
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
 		open class jumpHeightAttributes : WearableAttributes.MovementAttributes.jumpHeightAttributes() 
 	
 		open class MoveSpeedAttributes : WearableAttributes.MovementAttributes.MoveSpeedAttributes() {
-			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			override val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
 	
-			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+			override val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
 	
 			open class AimingMovespeedAttributes : WearableAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
 	

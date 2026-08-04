@@ -9,6 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileCleaverAttributes : IBlockScoped, ProjectileJarAttributes {
 	companion object : IBlockScoped 
-
+	
 	object Inherited : ProjectileCleaverAttributes 
 }
