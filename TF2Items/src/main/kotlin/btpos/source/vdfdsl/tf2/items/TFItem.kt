@@ -12,6 +12,8 @@ import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.items.weapons.Weapons
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsMelee
 
+typealias AttributeConfigurationScope<T> = context(IAttributeContainer) T.() -> Unit
+
 @PopFileDSL
 class TFItem<ATTR : Any>(
 	val name: String,
@@ -58,7 +60,7 @@ class TFItem<ATTR : Any>(
 	inline fun <MAP : IAttributeContainer> configureAttributes(map: MAP, configure: context(MAP) ATTR.() -> Unit): MAP {
 		return map.apply {
 			scopedAttributeFunctions.configure()
-			this.set(ATTR_NAME, this@TFItem.name)
+			this.set(ItemName, this@TFItem.name)
 		}
 	}
 	
@@ -85,6 +87,6 @@ class TFItem<ATTR : Any>(
 		
 		val MeleeWeapons get() = WeaponsMelee
 		
-		val ATTR_NAME = ItemAttributeNamed<String>("ItemName")
+		val ItemName = ItemAttributeNamed<String>("ItemName")
 	}
 }
