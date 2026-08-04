@@ -13,32 +13,112 @@ interface PDAExpansionTeleporterAttributes : IBlockScoped, WearableAttributes {
 	
 		private val meta: MetaAttributes = MetaAttributes()
 	
-		private val disguise: DisguiseAttributes = DisguiseAttributes()
+		private val ammo: AmmoAttributes = AmmoAttributes()
 	
-		private val crits: CritsAttributes = CritsAttributes()
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val buildings: BuildingsAttributes = BuildingsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
 	
 		private val damage: DamageAttributes = DamageAttributes()
 	
-		private val meter: MeterAttributes = MeterAttributes()
+		private val demoCharge: DemoChargeAttributes = DemoChargeAttributes()
+	
+		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val firing: FiringAttributes = FiringAttributes()
+	
+		private val heads: HeadsAttributes = HeadsAttributes()
+	
+		private val healthAndHealing: HealthAndHealingAttributes = HealthAndHealingAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
 	
 		private val knockbackReceived: KnockbackReceivedAttributes = KnockbackReceivedAttributes()
+	
+		private val meter: MeterAttributes = MeterAttributes()
+	
+		private val movement: MovementAttributes = MovementAttributes()
+	
+		private val onHit: OnHitAttributes = OnHitAttributes()
+	
+		private val onKill: OnKillAttributes = OnKillAttributes()
+	
+		private val taunting: TauntingAttributes = TauntingAttributes()
+	
+		private val swapWeapons: SwapWeaponsAttributes = SwapWeaponsAttributes()
+	
+		private val whenHit: WhenHitAttributes = WhenHitAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
+	
+		private val crits: CritsAttributes = CritsAttributes()
 	}
 
 	override val resistance: ResistanceAttributes get() = PDAExpansionTeleporterAttributes.resistance
 	
 	override val meta: MetaAttributes get() = PDAExpansionTeleporterAttributes.meta
 	
-	override val disguise: DisguiseAttributes get() = PDAExpansionTeleporterAttributes.disguise
+	override val ammo: AmmoAttributes get() = PDAExpansionTeleporterAttributes.ammo
 	
-	override val crits: CritsAttributes get() = PDAExpansionTeleporterAttributes.crits
+	override val buffItems: BuffItemsAttributes get() = PDAExpansionTeleporterAttributes.buffItems
+	
+	override val buildings: BuildingsAttributes get() = PDAExpansionTeleporterAttributes.buildings
+	
+	override val cloak: CloakAttributes get() = PDAExpansionTeleporterAttributes.cloak
 	
 	override val damage: DamageAttributes get() = PDAExpansionTeleporterAttributes.damage
 	
-	override val meter: MeterAttributes get() = PDAExpansionTeleporterAttributes.meter
+	override val demoCharge: DemoChargeAttributes get() = PDAExpansionTeleporterAttributes.demoCharge
+	
+	override val disguise: DisguiseAttributes get() = PDAExpansionTeleporterAttributes.disguise
+	
+	override val firing: FiringAttributes get() = PDAExpansionTeleporterAttributes.firing
+	
+	override val heads: HeadsAttributes get() = PDAExpansionTeleporterAttributes.heads
+	
+	override val healthAndHealing: HealthAndHealingAttributes get() = PDAExpansionTeleporterAttributes.healthAndHealing
+	
+	override val hud: HudAttributes get() = PDAExpansionTeleporterAttributes.hud
 	
 	override val knockbackReceived: KnockbackReceivedAttributes get() = PDAExpansionTeleporterAttributes.knockbackReceived
+	
+	override val meter: MeterAttributes get() = PDAExpansionTeleporterAttributes.meter
+	
+	override val movement: MovementAttributes get() = PDAExpansionTeleporterAttributes.movement
+	
+	override val onHit: OnHitAttributes get() = PDAExpansionTeleporterAttributes.onHit
+	
+	override val onKill: OnKillAttributes get() = PDAExpansionTeleporterAttributes.onKill
+	
+	override val taunting: TauntingAttributes get() = PDAExpansionTeleporterAttributes.taunting
+	
+	override val swapWeapons: SwapWeaponsAttributes get() = PDAExpansionTeleporterAttributes.swapWeapons
+	
+	override val whenHit: WhenHitAttributes get() = PDAExpansionTeleporterAttributes.whenHit
+	
+	override val spyOnly: SpyOnlyAttributes get() = PDAExpansionTeleporterAttributes.spyOnly
+	
+	override val crits: CritsAttributes get() = PDAExpansionTeleporterAttributes.crits
 
-	open class ResistanceAttributes : WearableAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : WearableAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : WearableAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : WearableAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : WearableAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : WearableAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class MetaAttributes : WearableAttributes.MetaAttributes() {
 		override val player: PlayerAttributes = PlayerAttributes()
@@ -49,6 +129,10 @@ interface PDAExpansionTeleporterAttributes : IBlockScoped, WearableAttributes {
 	
 		override val killfeed: KillfeedAttributes = KillfeedAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class PlayerAttributes : WearableAttributes.MetaAttributes.PlayerAttributes() 
 	
 		open class ItemsAttributes : WearableAttributes.MetaAttributes.ItemsAttributes() 
@@ -56,15 +140,109 @@ interface PDAExpansionTeleporterAttributes : IBlockScoped, WearableAttributes {
 		open class ParticlesAttributes : WearableAttributes.MetaAttributes.ParticlesAttributes() 
 	
 		open class KillfeedAttributes : WearableAttributes.MetaAttributes.KillfeedAttributes() 
+	
+		open class NoisemakersAttributes : WearableAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class GameplayAttributes : WearableAttributes.MetaAttributes.GameplayAttributes() 
+	}
+	
+	open class AmmoAttributes : WearableAttributes.AmmoAttributes() {
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
+		open class MaxAmmoAttributes : WearableAttributes.AmmoAttributes.MaxAmmoAttributes() 
+	}
+	
+	open class BuffItemsAttributes : WearableAttributes.BuffItemsAttributes() 
+	
+	open class BuildingsAttributes : WearableAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : WearableAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : WearableAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : WearableAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
+	
+	open class CloakAttributes : WearableAttributes.CloakAttributes() 
+	
+	open class DamageAttributes : WearableAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : WearableAttributes.DamageAttributes.AlienAttributes() 
+	}
+	
+	open class DemoChargeAttributes : WearableAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : WearableAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
 	}
 	
 	open class DisguiseAttributes : WearableAttributes.DisguiseAttributes() 
 	
-	open class CritsAttributes : WearableAttributes.CritsAttributes() 
+	open class FiringAttributes : WearableAttributes.FiringAttributes() 
 	
-	open class DamageAttributes : WearableAttributes.DamageAttributes() 
+	open class HeadsAttributes : WearableAttributes.HeadsAttributes() 
 	
-	open class MeterAttributes : WearableAttributes.MeterAttributes() 
+	open class HealthAndHealingAttributes : WearableAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : WearableAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : WearableAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
+	
+	open class HudAttributes : WearableAttributes.HudAttributes() 
 	
 	open class KnockbackReceivedAttributes : WearableAttributes.KnockbackReceivedAttributes() 
+	
+	open class MeterAttributes : WearableAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : WearableAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
+	
+	open class MovementAttributes : WearableAttributes.MovementAttributes() {
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+		open class jumpHeightAttributes : WearableAttributes.MovementAttributes.jumpHeightAttributes() 
+	
+		open class MoveSpeedAttributes : WearableAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : WearableAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : WearableAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	}
+	
+	open class OnHitAttributes : WearableAttributes.OnHitAttributes() {
+		override val falling: FallingAttributes = FallingAttributes()
+	
+		open class FallingAttributes : WearableAttributes.OnHitAttributes.FallingAttributes() 
+	}
+	
+	open class OnKillAttributes : WearableAttributes.OnKillAttributes() 
+	
+	open class TauntingAttributes : WearableAttributes.TauntingAttributes() 
+	
+	open class SwapWeaponsAttributes : WearableAttributes.SwapWeaponsAttributes() 
+	
+	open class WhenHitAttributes : WearableAttributes.WhenHitAttributes() 
+	
+	open class SpyOnlyAttributes : WearableAttributes.SpyOnlyAttributes() 
+	
+	open class CritsAttributes : WearableAttributes.CritsAttributes() 
+	
+	object Inherited : PDAExpansionTeleporterAttributes 
 }

@@ -57,7 +57,15 @@ interface BatGiftwrapAttributes : IBlockScoped, BatWoodAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val crits: CritsAttributes get() = BatGiftwrapAttributes.crits
@@ -108,20 +116,36 @@ interface BatGiftwrapAttributes : IBlockScoped, BatWoodAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = BatGiftwrapAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = BatGiftwrapAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = BatGiftwrapAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = BatGiftwrapAttributes.disguise
+	
+	override val hud: HudAttributes get() = BatGiftwrapAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = BatGiftwrapAttributes.spyOnly
 
 	open class CritsAttributes : BatWoodAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : BatWoodAttributes.DamageAttributes() 
+	open class DamageAttributes : BatWoodAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : BatWoodAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class OnHitAttributes : BatWoodAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : BatWoodAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : BatWoodAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : BatWoodAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class SwapWeaponsAttributes : BatWoodAttributes.SwapWeaponsAttributes() {
@@ -135,12 +159,32 @@ interface BatGiftwrapAttributes : IBlockScoped, BatWoodAttributes {
 	open class AmmoAttributes : BatWoodAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : BatWoodAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : BatWoodAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : BatWoodAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : BatWoodAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
-	open class DemoChargeAttributes : BatWoodAttributes.DemoChargeAttributes() 
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : BatWoodAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : BatWoodAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : BatWoodAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
+	
+	open class DemoChargeAttributes : BatWoodAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : BatWoodAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : BatWoodAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -148,7 +192,15 @@ interface BatGiftwrapAttributes : IBlockScoped, BatWoodAttributes {
 		open class FireRateAttributes : BatWoodAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : BatWoodAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : BatWoodAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : BatWoodAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : BatWoodAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : BatWoodAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -165,6 +217,12 @@ interface BatGiftwrapAttributes : IBlockScoped, BatWoodAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : BatWoodAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : BatWoodAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -172,14 +230,36 @@ interface BatGiftwrapAttributes : IBlockScoped, BatWoodAttributes {
 		open class ItemsAttributes : BatWoodAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : BatWoodAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : BatWoodAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : BatWoodAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : BatWoodAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : BatWoodAttributes.MeterAttributes() 
+	open class MeterAttributes : BatWoodAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : BatWoodAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : BatWoodAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : BatWoodAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : BatWoodAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : BatWoodAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : BatWoodAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : BatWoodAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : BatWoodAttributes.HeadsAttributes() 
@@ -198,7 +278,23 @@ interface BatGiftwrapAttributes : IBlockScoped, BatWoodAttributes {
 	
 	open class ReloadingAttributes : BatWoodAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : BatWoodAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : BatWoodAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : BatWoodAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : BatWoodAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : BatWoodAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : BatWoodAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : BatWoodAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface BatGiftwrapAttributes : IBlockScoped, BatWoodAttributes {
 	
 	open class RagdollsAttributes : BatWoodAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : BatWoodAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : BatWoodAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : BatWoodAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : BatWoodAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : BatWoodAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : BatGiftwrapAttributes 
 }

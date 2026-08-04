@@ -9,4 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileSpellSpawnZombieAttributes : IBlockScoped, ProjectileSpellBatsAttributes {
 	companion object : IBlockScoped 
+
+	object Inherited : ProjectileSpellSpawnZombieAttributes 
 }

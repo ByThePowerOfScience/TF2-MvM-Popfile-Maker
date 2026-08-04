@@ -1,6 +1,11 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
+import java.util.*
+import kotlin.time.Duration
 
 interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 	companion object : IBlockScoped {
@@ -54,10 +59,16 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
-	val buffItems: BuffItemsAttributes get() = BuffItemAttributes.buffItems
+	override val buffItems: BuffItemsAttributes get() = BuffItemAttributes.buffItems
 	
 	override val crits: CritsAttributes get() = BuffItemAttributes.crits
 	
@@ -107,9 +118,15 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = BuffItemAttributes.ragdolls
 	
+	override val cloak: CloakAttributes get() = BuffItemAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = BuffItemAttributes.disguise
+	
+	override val hud: HudAttributes get() = BuffItemAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = BuffItemAttributes.spyOnly
 
-	open class BuffItemsAttributes : IBlockScoped {
+	open class BuffItemsAttributes : BaseMeleeAttributes.BuffItemsAttributes() {
 		/**
 		 * Sets which banner is used.
 		 * 
@@ -119,7 +136,7 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 		 * 
 		 * 2 = Concheror.
 		 */
-		open val soldierBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod soldier buff type")
+		override val soldierBuffType: ItemAttributeNamed<Int> get() = super.soldierBuffType
 	
 		/**
 		 * Sets which banner is used.
@@ -130,23 +147,31 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 		 * 
 		 * 2 = Concheror.
 		 */
-		open val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
+		override val demoBuffType: ItemAttributeNamed<Int> get() = super.demoBuffType
 	
-		open val buffDuration: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("increase buff duration"), ItemAttributeNamed<Number>("increase buff duration HIDDEN"))
+		override val buffDuration: VisHidden<Number> get() = super.buffDuration
 	}
 	
 	open class CritsAttributes : BaseMeleeAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() 
+	open class DamageAttributes : BaseMeleeAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : BaseMeleeAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class OnHitAttributes : BaseMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : BaseMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : BaseMeleeAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class SwapWeaponsAttributes : BaseMeleeAttributes.SwapWeaponsAttributes() {
@@ -160,12 +185,32 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 	open class AmmoAttributes : BaseMeleeAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : BaseMeleeAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : BaseMeleeAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : BaseMeleeAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : BaseMeleeAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
-	open class DemoChargeAttributes : BaseMeleeAttributes.DemoChargeAttributes() 
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : BaseMeleeAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : BaseMeleeAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : BaseMeleeAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
+	
+	open class DemoChargeAttributes : BaseMeleeAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : BaseMeleeAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : BaseMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -173,7 +218,15 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 		open class FireRateAttributes : BaseMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : BaseMeleeAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : BaseMeleeAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : BaseMeleeAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : BaseMeleeAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -190,6 +243,12 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : BaseMeleeAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : BaseMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -197,14 +256,36 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 		open class ItemsAttributes : BaseMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : BaseMeleeAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : BaseMeleeAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : BaseMeleeAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : BaseMeleeAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : BaseMeleeAttributes.MeterAttributes() 
+	open class MeterAttributes : BaseMeleeAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : BaseMeleeAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : BaseMeleeAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : BaseMeleeAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : BaseMeleeAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : BaseMeleeAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : BaseMeleeAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : BaseMeleeAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : BaseMeleeAttributes.HeadsAttributes() 
@@ -223,7 +304,23 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 	
 	open class ReloadingAttributes : BaseMeleeAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : BaseMeleeAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : BaseMeleeAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : BaseMeleeAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : BaseMeleeAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : BaseMeleeAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : BaseMeleeAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : BaseMeleeAttributes.RevengeCritsAttributes() 
 	
@@ -235,5 +332,13 @@ interface BuffItemAttributes : IBlockScoped, BaseMeleeAttributes {
 	
 	open class RagdollsAttributes : BaseMeleeAttributes.RagdollsAttributes() 
 	
+	open class CloakAttributes : BaseMeleeAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : BaseMeleeAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : BaseMeleeAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : BaseMeleeAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : BuffItemAttributes 
 }

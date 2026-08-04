@@ -9,4 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileSpellMirvAttributes : IBlockScoped, ProjectileSpellBatsAttributes {
 	companion object : IBlockScoped 
+
+	object Inherited : ProjectileSpellMirvAttributes 
 }

@@ -63,7 +63,15 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val airblast: AirblastAttributes get() = DragonsFuryAttributes.airblast
@@ -120,7 +128,15 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = DragonsFuryAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = DragonsFuryAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = DragonsFuryAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = DragonsFuryAttributes.disguise
+	
+	override val hud: HudAttributes get() = DragonsFuryAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = DragonsFuryAttributes.spyOnly
 
 	open class AirblastAttributes : FlamethrowerAttributes.AirblastAttributes() 
 	
@@ -129,16 +145,40 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 	open class MovementAttributes : FlamethrowerAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : FlamethrowerAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : FlamethrowerAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : FlamethrowerAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : FlamethrowerAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : FlamethrowerAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class AmmoAttributes : FlamethrowerAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : FlamethrowerAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : FlamethrowerAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : FlamethrowerAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : FlamethrowerAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : FlamethrowerAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : FlamethrowerAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class BuffTypeAttributes : FlamethrowerAttributes.BuffTypeAttributes() 
 	
@@ -150,7 +190,11 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 	
 	open class FlamesAttributes : FlamethrowerAttributes.FlamesAttributes() 
 	
-	open class DamageAttributes : FlamethrowerAttributes.DamageAttributes() 
+	open class DamageAttributes : FlamethrowerAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : FlamethrowerAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class ProjectilesAttributes : FlamethrowerAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
@@ -164,9 +208,25 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 	
 	open class AfterburnAttributes : FlamethrowerAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : FlamethrowerAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : FlamethrowerAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
-	open class DemoChargeAttributes : FlamethrowerAttributes.DemoChargeAttributes() 
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : FlamethrowerAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : FlamethrowerAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : FlamethrowerAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
+	
+	open class DemoChargeAttributes : FlamethrowerAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : FlamethrowerAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : FlamethrowerAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -183,6 +243,12 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : FlamethrowerAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : FlamethrowerAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -190,9 +256,19 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 		open class ItemsAttributes : FlamethrowerAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : FlamethrowerAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : FlamethrowerAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : FlamethrowerAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : FlamethrowerAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : FlamethrowerAttributes.MeterAttributes() 
+	open class MeterAttributes : FlamethrowerAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : FlamethrowerAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class HeadsAttributes : FlamethrowerAttributes.HeadsAttributes() 
 	
@@ -201,16 +277,36 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : FlamethrowerAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : FlamethrowerAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : FlamethrowerAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : FlamethrowerAttributes.OnKillAttributes() 
 	
 	open class ReloadingAttributes : FlamethrowerAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : FlamethrowerAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : FlamethrowerAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : FlamethrowerAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : FlamethrowerAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : FlamethrowerAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : FlamethrowerAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : FlamethrowerAttributes.RevengeCritsAttributes() 
 	
@@ -228,5 +324,15 @@ interface DragonsFuryAttributes : IBlockScoped, FlamethrowerAttributes {
 	
 	open class RagdollsAttributes : FlamethrowerAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : FlamethrowerAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : FlamethrowerAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : FlamethrowerAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : FlamethrowerAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : FlamethrowerAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : DragonsFuryAttributes 
 }

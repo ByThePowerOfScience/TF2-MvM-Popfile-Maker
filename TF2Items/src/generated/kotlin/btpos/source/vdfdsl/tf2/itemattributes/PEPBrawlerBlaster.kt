@@ -57,7 +57,15 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val onHit: OnHitAttributes get() = PEPBrawlerBlasterAttributes.onHit
@@ -108,16 +116,28 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = PEPBrawlerBlasterAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = PEPBrawlerBlasterAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = PEPBrawlerBlasterAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = PEPBrawlerBlasterAttributes.disguise
+	
+	override val hud: HudAttributes get() = PEPBrawlerBlasterAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = PEPBrawlerBlasterAttributes.spyOnly
 
 	open class OnHitAttributes : ScattergunAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : ScattergunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : ScattergunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : ScattergunAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class ReloadingAttributes : ScattergunAttributes.ReloadingAttributes() 
@@ -125,10 +145,18 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	open class AmmoAttributes : ScattergunAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : ScattergunAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : ScattergunAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class DamageAttributes : ScattergunAttributes.DamageAttributes() 
+	open class DamageAttributes : ScattergunAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : ScattergunAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class FiringAttributes : ScattergunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -148,13 +176,37 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	
 	open class AfterburnAttributes : ScattergunAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : ScattergunAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : ScattergunAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : ScattergunAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : ScattergunAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : ScattergunAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : ScattergunAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : ScattergunAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : ScattergunAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : ScattergunAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : ScattergunAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : ScattergunAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : ScattergunAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : ScattergunAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : ScattergunAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -171,6 +223,12 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : ScattergunAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : ScattergunAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -178,21 +236,59 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 		open class ItemsAttributes : ScattergunAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : ScattergunAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : ScattergunAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : ScattergunAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : ScattergunAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : ScattergunAttributes.MeterAttributes() 
+	open class MeterAttributes : ScattergunAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : ScattergunAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : ScattergunAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : ScattergunAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : ScattergunAttributes.HeadsAttributes() 
 	
 	open class OnKillAttributes : ScattergunAttributes.OnKillAttributes() 
 	
-	open class ResistanceAttributes : ScattergunAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : ScattergunAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : ScattergunAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : ScattergunAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : ScattergunAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : ScattergunAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : ScattergunAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	
 	open class RagdollsAttributes : ScattergunAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : ScattergunAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : ScattergunAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : ScattergunAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : ScattergunAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : ScattergunAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : PEPBrawlerBlasterAttributes 
 }

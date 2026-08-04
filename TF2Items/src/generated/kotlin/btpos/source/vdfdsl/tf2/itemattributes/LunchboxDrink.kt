@@ -57,7 +57,15 @@ interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val afterburn: AfterburnAttributes get() = LunchboxDrinkAttributes.afterburn
@@ -108,23 +116,55 @@ interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = LunchboxDrinkAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = LunchboxDrinkAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = LunchboxDrinkAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = LunchboxDrinkAttributes.disguise
+	
+	override val hud: HudAttributes get() = LunchboxDrinkAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = LunchboxDrinkAttributes.spyOnly
 
 	open class AfterburnAttributes : LunchboxAttributes.AfterburnAttributes() 
 	
 	open class AmmoAttributes : LunchboxAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : LunchboxAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : LunchboxAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : LunchboxAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : LunchboxAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : LunchboxAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : LunchboxAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : LunchboxAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : LunchboxAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : LunchboxAttributes.DamageAttributes() 
+	open class DamageAttributes : LunchboxAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
 	
-	open class DemoChargeAttributes : LunchboxAttributes.DemoChargeAttributes() 
+		open class AlienAttributes : LunchboxAttributes.DamageAttributes.AlienAttributes() 
+	}
+	
+	open class DemoChargeAttributes : LunchboxAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : LunchboxAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : LunchboxAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -132,7 +172,15 @@ interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 		open class FireRateAttributes : LunchboxAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : LunchboxAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : LunchboxAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : LunchboxAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : LunchboxAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : LunchboxAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -149,6 +197,12 @@ interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : LunchboxAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : LunchboxAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -156,14 +210,36 @@ interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 		open class ItemsAttributes : LunchboxAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : LunchboxAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : LunchboxAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : LunchboxAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : LunchboxAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : LunchboxAttributes.MeterAttributes() 
+	open class MeterAttributes : LunchboxAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : LunchboxAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : LunchboxAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : LunchboxAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : LunchboxAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : LunchboxAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : LunchboxAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : LunchboxAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : LunchboxAttributes.HeadsAttributes() 
@@ -173,9 +249,13 @@ interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : LunchboxAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : LunchboxAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : LunchboxAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : LunchboxAttributes.OnKillAttributes() 
@@ -192,7 +272,23 @@ interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 	
 	open class ReloadingAttributes : LunchboxAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : LunchboxAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : LunchboxAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : LunchboxAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : LunchboxAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : LunchboxAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : LunchboxAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : LunchboxAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface LunchboxDrinkAttributes : IBlockScoped, LunchboxAttributes {
 	
 	open class RagdollsAttributes : LunchboxAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : LunchboxAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : LunchboxAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : LunchboxAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : LunchboxAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : LunchboxAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : LunchboxDrinkAttributes 
 }

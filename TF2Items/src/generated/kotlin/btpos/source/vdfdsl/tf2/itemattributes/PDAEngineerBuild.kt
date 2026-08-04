@@ -57,7 +57,15 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val afterburn: AfterburnAttributes get() = PDAEngineerBuildAttributes.afterburn
@@ -108,23 +116,55 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = PDAEngineerBuildAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = PDAEngineerBuildAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = PDAEngineerBuildAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = PDAEngineerBuildAttributes.disguise
+	
+	override val hud: HudAttributes get() = PDAEngineerBuildAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = PDAEngineerBuildAttributes.spyOnly
 
 	open class AfterburnAttributes : PDAAttributes.AfterburnAttributes() 
 	
 	open class AmmoAttributes : PDAAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : PDAAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : PDAAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : PDAAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : PDAAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : PDAAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : PDAAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : PDAAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : PDAAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : PDAAttributes.DamageAttributes() 
+	open class DamageAttributes : PDAAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
 	
-	open class DemoChargeAttributes : PDAAttributes.DemoChargeAttributes() 
+		open class AlienAttributes : PDAAttributes.DamageAttributes.AlienAttributes() 
+	}
+	
+	open class DemoChargeAttributes : PDAAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : PDAAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : PDAAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -132,7 +172,15 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 		open class FireRateAttributes : PDAAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : PDAAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : PDAAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : PDAAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : PDAAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : PDAAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -149,6 +197,12 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : PDAAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : PDAAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -156,14 +210,36 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 		open class ItemsAttributes : PDAAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : PDAAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : PDAAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : PDAAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : PDAAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : PDAAttributes.MeterAttributes() 
+	open class MeterAttributes : PDAAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : PDAAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : PDAAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : PDAAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : PDAAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : PDAAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : PDAAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : PDAAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : PDAAttributes.HeadsAttributes() 
@@ -173,9 +249,13 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : PDAAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : PDAAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : PDAAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : PDAAttributes.OnKillAttributes() 
@@ -192,7 +272,23 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	
 	open class ReloadingAttributes : PDAAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : PDAAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : PDAAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : PDAAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : PDAAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : PDAAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : PDAAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : PDAAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface PDAEngineerBuildAttributes : IBlockScoped, PDAAttributes {
 	
 	open class RagdollsAttributes : PDAAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : PDAAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : PDAAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : PDAAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : PDAAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : PDAAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : PDAEngineerBuildAttributes 
 }

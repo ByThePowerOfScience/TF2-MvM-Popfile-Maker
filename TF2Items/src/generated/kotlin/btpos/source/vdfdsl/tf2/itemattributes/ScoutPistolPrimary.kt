@@ -57,7 +57,15 @@ interface ScoutPistolPrimaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val ammo: AmmoAttributes get() = ScoutPistolPrimaryAttributes.ammo
@@ -108,15 +116,31 @@ interface ScoutPistolPrimaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = ScoutPistolPrimaryAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = ScoutPistolPrimaryAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = ScoutPistolPrimaryAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = ScoutPistolPrimaryAttributes.disguise
+	
+	override val hud: HudAttributes get() = ScoutPistolPrimaryAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = ScoutPistolPrimaryAttributes.spyOnly
 
 	open class AmmoAttributes : ScoutPistolAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : ScoutPistolAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : ScoutPistolAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class DamageAttributes : ScoutPistolAttributes.DamageAttributes() 
+	open class DamageAttributes : ScoutPistolAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : ScoutPistolAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class FiringAttributes : ScoutPistolAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -136,13 +160,37 @@ interface ScoutPistolPrimaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	
 	open class AfterburnAttributes : ScoutPistolAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : ScoutPistolAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : ScoutPistolAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : ScoutPistolAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : ScoutPistolAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : ScoutPistolAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : ScoutPistolAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : ScoutPistolAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : ScoutPistolAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : ScoutPistolAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : ScoutPistolAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : ScoutPistolAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : ScoutPistolAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : ScoutPistolAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : ScoutPistolAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -159,6 +207,12 @@ interface ScoutPistolPrimaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : ScoutPistolAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : ScoutPistolAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -166,14 +220,36 @@ interface ScoutPistolPrimaryAttributes : IBlockScoped, ScoutPistolAttributes {
 		open class ItemsAttributes : ScoutPistolAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : ScoutPistolAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : ScoutPistolAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : ScoutPistolAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : ScoutPistolAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : ScoutPistolAttributes.MeterAttributes() 
+	open class MeterAttributes : ScoutPistolAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : ScoutPistolAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : ScoutPistolAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : ScoutPistolAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : ScoutPistolAttributes.HeadsAttributes() 
@@ -183,16 +259,36 @@ interface ScoutPistolPrimaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : ScoutPistolAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : ScoutPistolAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : ScoutPistolAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : ScoutPistolAttributes.OnKillAttributes() 
 	
 	open class ReloadingAttributes : ScoutPistolAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : ScoutPistolAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : ScoutPistolAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : ScoutPistolAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : ScoutPistolAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : ScoutPistolAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : ScoutPistolAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : ScoutPistolAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface ScoutPistolPrimaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	
 	open class RagdollsAttributes : ScoutPistolAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : ScoutPistolAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : ScoutPistolAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : ScoutPistolAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : ScoutPistolAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : ScoutPistolAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : ScoutPistolPrimaryAttributes 
 }

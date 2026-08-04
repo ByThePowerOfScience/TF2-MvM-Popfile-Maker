@@ -57,7 +57,15 @@ interface BatFishAttributes : IBlockScoped, BatAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val crits: CritsAttributes get() = BatFishAttributes.crits
@@ -108,20 +116,36 @@ interface BatFishAttributes : IBlockScoped, BatAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = BatFishAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = BatFishAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = BatFishAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = BatFishAttributes.disguise
+	
+	override val hud: HudAttributes get() = BatFishAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = BatFishAttributes.spyOnly
 
 	open class CritsAttributes : BatAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : BatAttributes.DamageAttributes() 
+	open class DamageAttributes : BatAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : BatAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class OnHitAttributes : BatAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : BatAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : BatAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : BatAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class SwapWeaponsAttributes : BatAttributes.SwapWeaponsAttributes() {
@@ -135,12 +159,32 @@ interface BatFishAttributes : IBlockScoped, BatAttributes {
 	open class AmmoAttributes : BatAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : BatAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : BatAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : BatAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : BatAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
-	open class DemoChargeAttributes : BatAttributes.DemoChargeAttributes() 
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : BatAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : BatAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : BatAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
+	
+	open class DemoChargeAttributes : BatAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : BatAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : BatAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -148,7 +192,15 @@ interface BatFishAttributes : IBlockScoped, BatAttributes {
 		open class FireRateAttributes : BatAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : BatAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : BatAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : BatAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : BatAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : BatAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -165,6 +217,12 @@ interface BatFishAttributes : IBlockScoped, BatAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : BatAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : BatAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -172,14 +230,36 @@ interface BatFishAttributes : IBlockScoped, BatAttributes {
 		open class ItemsAttributes : BatAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : BatAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : BatAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : BatAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : BatAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : BatAttributes.MeterAttributes() 
+	open class MeterAttributes : BatAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : BatAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : BatAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : BatAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : BatAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : BatAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : BatAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : BatAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : BatAttributes.HeadsAttributes() 
@@ -198,7 +278,23 @@ interface BatFishAttributes : IBlockScoped, BatAttributes {
 	
 	open class ReloadingAttributes : BatAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : BatAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : BatAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : BatAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : BatAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : BatAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : BatAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : BatAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface BatFishAttributes : IBlockScoped, BatAttributes {
 	
 	open class RagdollsAttributes : BatAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : BatAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : BatAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : BatAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : BatAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : BatAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : BatFishAttributes 
 }

@@ -9,298 +9,298 @@ import java.util.*
 import kotlin.time.Duration
 
 object TFItemFactories {
-	@JvmField val BASEENTITY = TFItemFactory(BaseEntityAttributes)
+	@JvmField val BASEENTITY = TFItemFactory(BaseEntityAttributes.Inherited)
 
-	@JvmField val BASEPROJECTILE = TFItemFactory(BaseProjectileAttributes)
+	@JvmField val BASEPROJECTILE = TFItemFactory(BaseProjectileAttributes.Inherited)
 
-	@JvmField val BASEGRENADEPROJECTILE = TFItemFactory(BaseGrenadeProjectileAttributes)
+	@JvmField val BASEGRENADEPROJECTILE = TFItemFactory(BaseGrenadeProjectileAttributes.Inherited)
 
-	@JvmField val PLAYER = TFItemFactory(PlayerAttributes)
+	@JvmField val PLAYER = TFItemFactory(PlayerAttributes.Inherited)
 
-	@JvmField val BASEROCKET = TFItemFactory(BaseRocketAttributes)
+	@JvmField val BASEROCKET = TFItemFactory(BaseRocketAttributes.Inherited)
 
-	@JvmField val PROJECTILEFLARE = TFItemFactory(ProjectileFlareAttributes)
+	@JvmField val PROJECTILEFLARE = TFItemFactory(ProjectileFlareAttributes.Inherited)
 
-	@JvmField val PROJECTILEENERGYRING = TFItemFactory(ProjectileEnergyRingAttributes)
+	@JvmField val PROJECTILEENERGYRING = TFItemFactory(ProjectileEnergyRingAttributes.Inherited)
 
-	@JvmField val PROJECTILESTICKYBOMB = TFItemFactory(ProjectileStickybombAttributes)
+	@JvmField val PROJECTILESTICKYBOMB = TFItemFactory(ProjectileStickybombAttributes.Inherited)
 
-	@JvmField val ECONENTITY = TFItemFactory(EconEntityAttributes)
+	@JvmField val PROJECTILESYRINGE = TFItemFactory(ProjectileSyringeAttributes.Inherited)
 
-	@JvmField val PROJECTILESYRINGE = TFItemFactory(ProjectileSyringeAttributes)
+	@JvmField val MVMBOT = TFItemFactory(MvMBotAttributes.Inherited)
 
-	@JvmField val BASECOMBATWEAPON = TFItemFactory(BaseCombatWeaponAttributes)
+	@JvmField val PROJECTILEROCKET = TFItemFactory(ProjectileRocketAttributes.Inherited)
 
-	@JvmField val WEARABLE = TFItemFactory(WearableAttributes)
+	@JvmField val PROJECTILEARROW = TFItemFactory(ProjectileArrowAttributes.Inherited)
 
-	@JvmField val MVMBOT = TFItemFactory(MvMBotAttributes)
+	@JvmField val ECONENTITY = TFItemFactory(EconEntityAttributes.Inherited)
 
-	@JvmField val PROJECTILEROCKET = TFItemFactory(ProjectileRocketAttributes)
+	@JvmField val PROJECTILEJAR = TFItemFactory(ProjectileJarAttributes.Inherited)
 
-	@JvmField val PROJECTILEARROW = TFItemFactory(ProjectileArrowAttributes)
+	@JvmField val PROJECTILEENERGYBALL = TFItemFactory(ProjectileEnergyBallAttributes.Inherited)
 
-	@JvmField val PROJECTILEJAR = TFItemFactory(ProjectileJarAttributes)
+	@JvmField val BASECOMBATWEAPON = TFItemFactory(BaseCombatWeaponAttributes.Inherited)
 
-	@JvmField val PROJECTILEENERGYBALL = TFItemFactory(ProjectileEnergyBallAttributes)
+	@JvmField val WEARABLE = TFItemFactory(WearableAttributes.Inherited)
 
-	@JvmField val WEAPONBASE = TFItemFactory(WeaponBaseAttributes)
+	@JvmField val PROJECTILEHEALINGBOLT = TFItemFactory(ProjectileHealingBoltAttributes.Inherited)
 
-	@JvmField val WEARABLEDEMOSHIELD = TFItemFactory(WearableDemoShieldAttributes)
+	@JvmField val PROJECTILESPELLFIREBALL = TFItemFactory(ProjectileSpellFireballAttributes.Inherited)
 
-	@JvmField val POWERUPBOTTLE = TFItemFactory(PowerUpBottleAttributes)
+	@JvmField val PROJECTILESPELLBATS = TFItemFactory(ProjectileSpellBatsAttributes.Inherited)
 
-	@JvmField val WEARABLERAZORBACK = TFItemFactory(WearableRazorbackAttributes)
+	@JvmField val PROJECTILEGRAPPLINGHOOK = TFItemFactory(ProjectileGrapplingHookAttributes.Inherited)
 
-	@JvmField val WEARABLEROBOTARM = TFItemFactory(WearableRobotArmAttributes)
+	@JvmField val PROJECTILEDRAGONSFURY = TFItemFactory(ProjectileDragonsFuryAttributes.Inherited)
 
-	@JvmField val PROJECTILEHEALINGBOLT = TFItemFactory(ProjectileHealingBoltAttributes)
+	@JvmField val PROJECTILEMECHANICALARMORB = TFItemFactory(ProjectileMechanicalArmOrbAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLFIREBALL = TFItemFactory(ProjectileSpellFireballAttributes)
+	@JvmField val PROJECTILECLEAVER = TFItemFactory(ProjectileCleaverAttributes.Inherited)
 
-	@JvmField val PDAEXPANSIONTELEPORTER = TFItemFactory(PDAExpansionTeleporterAttributes)
+	@JvmField val PROJECTILESENTRYROCKET = TFItemFactory(ProjectileSentryRocketAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLBATS = TFItemFactory(ProjectileSpellBatsAttributes)
+	@JvmField val PROJECTILEJARMILK = TFItemFactory(ProjectileJarMilkAttributes.Inherited)
 
-	@JvmField val PDAEXPANSIONDISPENSER = TFItemFactory(PDAExpansionDispenserAttributes)
+	@JvmField val WEAPONBASE = TFItemFactory(WeaponBaseAttributes.Inherited)
 
-	@JvmField val PROJECTILEGRAPPLINGHOOK = TFItemFactory(ProjectileGrapplingHookAttributes)
+	@JvmField val WEARABLEDEMOSHIELD = TFItemFactory(WearableDemoShieldAttributes.Inherited)
 
-	@JvmField val PROJECTILEDRAGONSFURY = TFItemFactory(ProjectileDragonsFuryAttributes)
+	@JvmField val POWERUPBOTTLE = TFItemFactory(PowerUpBottleAttributes.Inherited)
 
-	@JvmField val PROJECTILEMECHANICALARMORB = TFItemFactory(ProjectileMechanicalArmOrbAttributes)
+	@JvmField val PROJECTILESPELLLIGHTNINGORB = TFItemFactory(ProjectileSpellLightningOrbAttributes.Inherited)
 
-	@JvmField val PROJECTILECLEAVER = TFItemFactory(ProjectileCleaverAttributes)
+	@JvmField val PROJECTILESPELLSPAWNHORDE = TFItemFactory(ProjectileSpellSpawnHordeAttributes.Inherited)
 
-	@JvmField val PROJECTILESENTRYROCKET = TFItemFactory(ProjectileSentryRocketAttributes)
+	@JvmField val WEARABLERAZORBACK = TFItemFactory(WearableRazorbackAttributes.Inherited)
 
-	@JvmField val PROJECTILEJARMILK = TFItemFactory(ProjectileJarMilkAttributes)
+	@JvmField val PROJECTILESPELLMIRV = TFItemFactory(ProjectileSpellMirvAttributes.Inherited)
 
-	@JvmField val WEARABLECAMPAIGNITEM = TFItemFactory(WearableCampaignItemAttributes)
+	@JvmField val PROJECTILESPELLTRANSPOSETELEPORT = TFItemFactory(ProjectileSpellTransposeTeleportAttributes.Inherited)
 
-	@JvmField val WEARABLEVM = TFItemFactory(WearableVMAttributes)
+	@JvmField val WEARABLEROBOTARM = TFItemFactory(WearableRobotArmAttributes.Inherited)
 
-	@JvmField val WEARABLELEVELABLEITEM = TFItemFactory(WearableLevelableItemAttributes)
+	@JvmField val PDAEXPANSIONTELEPORTER = TFItemFactory(PDAExpansionTeleporterAttributes.Inherited)
 
-	@JvmField val BASEGUN = TFItemFactory(BaseGunAttributes)
+	@JvmField val PROJECTILESPELLMETEORSHOWER = TFItemFactory(ProjectileSpellMeteorShowerAttributes.Inherited)
 
-	@JvmField val BASEMELEE = TFItemFactory(BaseMeleeAttributes)
+	@JvmField val PROJECTILESPELLSPAWNBOSS = TFItemFactory(ProjectileSpellSpawnBossAttributes.Inherited)
 
-	@JvmField val INVIS = TFItemFactory(InvisAttributes)
+	@JvmField val PDAEXPANSIONDISPENSER = TFItemFactory(PDAExpansionDispenserAttributes.Inherited)
 
-	@JvmField val LUNCHBOX = TFItemFactory(LunchboxAttributes)
+	@JvmField val PROJECTILESPELLPUMPKIN = TFItemFactory(ProjectileSpellPumpkinAttributes.Inherited)
 
-	@JvmField val BUILDER = TFItemFactory(BuilderAttributes)
+	@JvmField val PROJECTILESPELLSPAWNZOMBIE = TFItemFactory(ProjectileSpellSpawnZombieAttributes.Inherited)
 
-	@JvmField val PROJECTILEGRENADE = TFItemFactory(ProjectileGrenadeAttributes)
+	@JvmField val WEARABLECAMPAIGNITEM = TFItemFactory(WearableCampaignItemAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLLIGHTNINGORB = TFItemFactory(ProjectileSpellLightningOrbAttributes)
+	@JvmField val PROJECTILESPELLKARTBATS = TFItemFactory(ProjectileSpellKartBatsAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLSPAWNHORDE = TFItemFactory(ProjectileSpellSpawnHordeAttributes)
+	@JvmField val WEARABLEVM = TFItemFactory(WearableVMAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLMIRV = TFItemFactory(ProjectileSpellMirvAttributes)
+	@JvmField val WEARABLELEVELABLEITEM = TFItemFactory(WearableLevelableItemAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLTRANSPOSETELEPORT = TFItemFactory(ProjectileSpellTransposeTeleportAttributes)
+	@JvmField val BASEGUN = TFItemFactory(BaseGunAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLMETEORSHOWER = TFItemFactory(ProjectileSpellMeteorShowerAttributes)
+	@JvmField val BASEMELEE = TFItemFactory(BaseMeleeAttributes.Inherited)
 
-	@JvmField val PASSTIMEGUN = TFItemFactory(PassTimeGunAttributes)
+	@JvmField val INVIS = TFItemFactory(InvisAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLSPAWNBOSS = TFItemFactory(ProjectileSpellSpawnBossAttributes)
+	@JvmField val LUNCHBOX = TFItemFactory(LunchboxAttributes.Inherited)
 
-	@JvmField val WEAPONBASEGRENADE = TFItemFactory(WeaponBaseGrenadeAttributes)
+	@JvmField val BUILDER = TFItemFactory(BuilderAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLPUMPKIN = TFItemFactory(ProjectileSpellPumpkinAttributes)
+	@JvmField val PROJECTILEGRENADE = TFItemFactory(ProjectileGrenadeAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLSPAWNZOMBIE = TFItemFactory(ProjectileSpellSpawnZombieAttributes)
+	@JvmField val PROJECTILESPELLKARTPUMPKIN = TFItemFactory(ProjectileSpellKartPumpkinAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLKARTBATS = TFItemFactory(ProjectileSpellKartBatsAttributes)
+	@JvmField val PASSTIMEGUN = TFItemFactory(PassTimeGunAttributes.Inherited)
 
-	@JvmField val PDA = TFItemFactory(PDAAttributes)
+	@JvmField val WEAPONBASEGRENADE = TFItemFactory(WeaponBaseGrenadeAttributes.Inherited)
 
-	@JvmField val FLAMETHROWER = TFItemFactory(FlamethrowerAttributes)
+	@JvmField val PDA = TFItemFactory(PDAAttributes.Inherited)
 
-	@JvmField val SMG = TFItemFactory(SMGAttributes)
+	@JvmField val PROJECTILESPELLKARTMIRV = TFItemFactory(ProjectileSpellKartMirvAttributes.Inherited)
 
-	@JvmField val SAPPER = TFItemFactory(SapperAttributes)
+	@JvmField val FLAMETHROWER = TFItemFactory(FlamethrowerAttributes.Inherited)
 
-	@JvmField val FISTS = TFItemFactory(FistsAttributes)
+	@JvmField val SMG = TFItemFactory(SMGAttributes.Inherited)
 
-	@JvmField val SHOVEL = TFItemFactory(ShovelAttributes)
+	@JvmField val SAPPER = TFItemFactory(SapperAttributes.Inherited)
 
-	@JvmField val FIREAXE = TFItemFactory(FireAxeAttributes)
+	@JvmField val FISTS = TFItemFactory(FistsAttributes.Inherited)
 
-	@JvmField val BONESAW = TFItemFactory(BonesawAttributes)
+	@JvmField val SHOVEL = TFItemFactory(ShovelAttributes.Inherited)
 
-	@JvmField val MINIGUN = TFItemFactory(MinigunAttributes)
+	@JvmField val FIREAXE = TFItemFactory(FireAxeAttributes.Inherited)
 
-	@JvmField val PISTOL = TFItemFactory(PistolAttributes)
+	@JvmField val BONESAW = TFItemFactory(BonesawAttributes.Inherited)
 
-	@JvmField val REVOLVER = TFItemFactory(RevolverAttributes)
+	@JvmField val MINIGUN = TFItemFactory(MinigunAttributes.Inherited)
 
-	@JvmField val SYRINGEGUN = TFItemFactory(SyringeGunAttributes)
+	@JvmField val PISTOL = TFItemFactory(PistolAttributes.Inherited)
 
-	@JvmField val ROCKETPACK = TFItemFactory(RocketPackAttributes)
+	@JvmField val REVOLVER = TFItemFactory(RevolverAttributes.Inherited)
 
-	@JvmField val STICKYBOMBLAUNCHER = TFItemFactory(StickybombLauncherAttributes)
+	@JvmField val SYRINGEGUN = TFItemFactory(SyringeGunAttributes.Inherited)
 
-	@JvmField val BUFFITEM = TFItemFactory(BuffItemAttributes)
+	@JvmField val ROCKETPACK = TFItemFactory(RocketPackAttributes.Inherited)
 
-	@JvmField val WRENCH = TFItemFactory(WrenchAttributes)
+	@JvmField val STICKYBOMBLAUNCHER = TFItemFactory(StickybombLauncherAttributes.Inherited)
 
-	@JvmField val ROCKETLAUNCHER = TFItemFactory(RocketLauncherAttributes)
+	@JvmField val BUFFITEM = TFItemFactory(BuffItemAttributes.Inherited)
 
-	@JvmField val GRENADELAUNCHER = TFItemFactory(GrenadeLauncherAttributes)
+	@JvmField val WRENCH = TFItemFactory(WrenchAttributes.Inherited)
 
-	@JvmField val SHOTGUN = TFItemFactory(ShotgunAttributes)
+	@JvmField val ROCKETLAUNCHER = TFItemFactory(RocketLauncherAttributes.Inherited)
 
-	@JvmField val KNIFE = TFItemFactory(KnifeAttributes)
+	@JvmField val GRENADELAUNCHER = TFItemFactory(GrenadeLauncherAttributes.Inherited)
 
-	@JvmField val SWORD = TFItemFactory(SwordAttributes)
+	@JvmField val SHOTGUN = TFItemFactory(ShotgunAttributes.Inherited)
 
-	@JvmField val FLAREGUN = TFItemFactory(FlareGunAttributes)
+	@JvmField val KNIFE = TFItemFactory(KnifeAttributes.Inherited)
 
-	@JvmField val JAR = TFItemFactory(JarAttributes)
+	@JvmField val SWORD = TFItemFactory(SwordAttributes.Inherited)
 
-	@JvmField val MECHANICALARM = TFItemFactory(MechanicalArmAttributes)
+	@JvmField val FLAREGUN = TFItemFactory(FlareGunAttributes.Inherited)
 
-	@JvmField val SNIPERRIFLE = TFItemFactory(SniperRifleAttributes)
+	@JvmField val JAR = TFItemFactory(JarAttributes.Inherited)
 
-	@JvmField val MEDIGUN = TFItemFactory(MedigunAttributes)
+	@JvmField val MECHANICALARM = TFItemFactory(MechanicalArmAttributes.Inherited)
 
-	@JvmField val BAT = TFItemFactory(BatAttributes)
+	@JvmField val SNIPERRIFLE = TFItemFactory(SniperRifleAttributes.Inherited)
 
-	@JvmField val NAILGUN = TFItemFactory(NailgunAttributes)
+	@JvmField val MEDIGUN = TFItemFactory(MedigunAttributes.Inherited)
 
-	@JvmField val PDAENGINEERDESTROY = TFItemFactory(PDAEngineerDestroyAttributes)
+	@JvmField val BAT = TFItemFactory(BatAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLKARTPUMPKIN = TFItemFactory(ProjectileSpellKartPumpkinAttributes)
+	@JvmField val NAILGUN = TFItemFactory(NailgunAttributes.Inherited)
 
-	@JvmField val GRENADEHEAL = TFItemFactory(GrenadeHealAttributes)
+	@JvmField val PDAENGINEERDESTROY = TFItemFactory(PDAEngineerDestroyAttributes.Inherited)
 
-	@JvmField val TRANQ = TFItemFactory(TranqAttributes)
+	@JvmField val GRENADEHEAL = TFItemFactory(GrenadeHealAttributes.Inherited)
 
-	@JvmField val GRENADEMIRV = TFItemFactory(GrenadeMirvAttributes)
+	@JvmField val TRANQ = TFItemFactory(TranqAttributes.Inherited)
 
-	@JvmField val BREAKABLEMELEE = TFItemFactory(BreakableMeleeAttributes)
+	@JvmField val GRENADEMIRV = TFItemFactory(GrenadeMirvAttributes.Inherited)
 
-	@JvmField val FLAG = TFItemFactory(FlagAttributes)
+	@JvmField val BREAKABLEMELEE = TFItemFactory(BreakableMeleeAttributes.Inherited)
 
-	@JvmField val PDASPY = TFItemFactory(PDASpyAttributes)
+	@JvmField val FLAG = TFItemFactory(FlagAttributes.Inherited)
 
-	@JvmField val PDAENGINEERBUILD = TFItemFactory(PDAEngineerBuildAttributes)
+	@JvmField val PDASPY = TFItemFactory(PDASpyAttributes.Inherited)
 
-	@JvmField val BOOMERANG = TFItemFactory(BoomerangAttributes)
+	@JvmField val PDAENGINEERBUILD = TFItemFactory(PDAEngineerBuildAttributes.Inherited)
 
-	@JvmField val GRENADENAIL = TFItemFactory(GrenadeNailAttributes)
+	@JvmField val BOOMERANG = TFItemFactory(BoomerangAttributes.Inherited)
 
-	@JvmField val SLAP = TFItemFactory(SlapAttributes)
+	@JvmField val GRENADENAIL = TFItemFactory(GrenadeNailAttributes.Inherited)
 
-	@JvmField val GRENADECALTROP = TFItemFactory(GrenadeCaltropAttributes)
+	@JvmField val SLAP = TFItemFactory(SlapAttributes.Inherited)
 
-	@JvmField val GRENADESMOKEBOMB = TFItemFactory(GrenadeSmokeBombAttributes)
+	@JvmField val GRENADECALTROP = TFItemFactory(GrenadeCaltropAttributes.Inherited)
 
-	@JvmField val CLUB = TFItemFactory(ClubAttributes)
+	@JvmField val GRENADESMOKEBOMB = TFItemFactory(GrenadeSmokeBombAttributes.Inherited)
 
-	@JvmField val LUNCHBOXDRINK = TFItemFactory(LunchboxDrinkAttributes)
+	@JvmField val CLUB = TFItemFactory(ClubAttributes.Inherited)
 
-	@JvmField val GRENADENAPALM = TFItemFactory(GrenadeNapalmAttributes)
+	@JvmField val LUNCHBOXDRINK = TFItemFactory(LunchboxDrinkAttributes.Inherited)
 
-	@JvmField val GRENADEEMP = TFItemFactory(GrenadeEMPAttributes)
+	@JvmField val GRENADENAPALM = TFItemFactory(GrenadeNapalmAttributes.Inherited)
 
-	@JvmField val GRENADEGAS = TFItemFactory(GrenadeGasAttributes)
+	@JvmField val GRENADEEMP = TFItemFactory(GrenadeEMPAttributes.Inherited)
 
-	@JvmField val GRENADENORMAL = TFItemFactory(GrenadeNormalAttributes)
+	@JvmField val GRENADEGAS = TFItemFactory(GrenadeGasAttributes.Inherited)
 
-	@JvmField val LASERPOINTER = TFItemFactory(LaserPointerAttributes)
+	@JvmField val GRENADENORMAL = TFItemFactory(GrenadeNormalAttributes.Inherited)
 
-	@JvmField val PROJECTILESPELLKARTMIRV = TFItemFactory(ProjectileSpellKartMirvAttributes)
+	@JvmField val LASERPOINTER = TFItemFactory(LaserPointerAttributes.Inherited)
 
-	@JvmField val CROWBAR = TFItemFactory(CrowbarAttributes)
+	@JvmField val CROWBAR = TFItemFactory(CrowbarAttributes.Inherited)
 
-	@JvmField val CHARGEDSMG = TFItemFactory(ChargedSMGAttributes)
+	@JvmField val CHARGEDSMG = TFItemFactory(ChargedSMGAttributes.Inherited)
 
-	@JvmField val STICKBOMB = TFItemFactory(StickBombAttributes)
+	@JvmField val STICKBOMB = TFItemFactory(StickBombAttributes.Inherited)
 
-	@JvmField val SCOUTPISTOL = TFItemFactory(ScoutPistolAttributes)
+	@JvmField val SCOUTPISTOL = TFItemFactory(ScoutPistolAttributes.Inherited)
 
-	@JvmField val ROCKETLAUNCHER_AIRSTRIKE = TFItemFactory(RocketLauncher_AirStrikeAttributes)
+	@JvmField val ROCKETLAUNCHER_AIRSTRIKE = TFItemFactory(RocketLauncher_AirStrikeAttributes.Inherited)
 
-	@JvmField val CROSSBOW = TFItemFactory(CrossbowAttributes)
+	@JvmField val CROSSBOW = TFItemFactory(CrossbowAttributes.Inherited)
 
-	@JvmField val RAYGUN = TFItemFactory(RayGunAttributes)
+	@JvmField val RAYGUN = TFItemFactory(RayGunAttributes.Inherited)
 
-	@JvmField val SHOTGUNREVENGE = TFItemFactory(ShotgunRevengeAttributes)
+	@JvmField val SHOTGUNREVENGE = TFItemFactory(ShotgunRevengeAttributes.Inherited)
 
-	@JvmField val SCATTERGUN = TFItemFactory(ScattergunAttributes)
+	@JvmField val SCATTERGUN = TFItemFactory(ScattergunAttributes.Inherited)
 
-	@JvmField val THROWABLE = TFItemFactory(ThrowableAttributes)
+	@JvmField val THROWABLE = TFItemFactory(ThrowableAttributes.Inherited)
 
-	@JvmField val COMPOUNDBOW = TFItemFactory(CompoundBowAttributes)
+	@JvmField val COMPOUNDBOW = TFItemFactory(CompoundBowAttributes.Inherited)
 
-	@JvmField val BATWOOD = TFItemFactory(BatWoodAttributes)
+	@JvmField val BATWOOD = TFItemFactory(BatWoodAttributes.Inherited)
 
-	@JvmField val ROBOTARM = TFItemFactory(RobotArmAttributes)
+	@JvmField val ROBOTARM = TFItemFactory(RobotArmAttributes.Inherited)
 
-	@JvmField val REVOLVERSECONDARY = TFItemFactory(RevolverSecondaryAttributes)
+	@JvmField val REVOLVERSECONDARY = TFItemFactory(RevolverSecondaryAttributes.Inherited)
 
-	@JvmField val BOTTLE = TFItemFactory(BottleAttributes)
+	@JvmField val BOTTLE = TFItemFactory(BottleAttributes.Inherited)
 
-	@JvmField val PARTICLECANNON = TFItemFactory(ParticleCannonAttributes)
+	@JvmField val PARTICLECANNON = TFItemFactory(ParticleCannonAttributes.Inherited)
 
-	@JvmField val FLAREGUNREVENGE = TFItemFactory(FlareGunRevengeAttributes)
+	@JvmField val FLAREGUNREVENGE = TFItemFactory(FlareGunRevengeAttributes.Inherited)
 
-	@JvmField val BREAKABLESIGN = TFItemFactory(BreakableSignAttributes)
+	@JvmField val BREAKABLESIGN = TFItemFactory(BreakableSignAttributes.Inherited)
 
-	@JvmField val ROCKETLAUNCHER_DIRECTHIT = TFItemFactory(RocketLauncher_DirectHitAttributes)
+	@JvmField val ROCKETLAUNCHER_DIRECTHIT = TFItemFactory(RocketLauncher_DirectHitAttributes.Inherited)
 
-	@JvmField val SHOTGUNBUILDINGRESCUE = TFItemFactory(ShotgunBuildingRescueAttributes)
+	@JvmField val SHOTGUNBUILDINGRESCUE = TFItemFactory(ShotgunBuildingRescueAttributes.Inherited)
 
-	@JvmField val CANNON = TFItemFactory(CannonAttributes)
+	@JvmField val CANNON = TFItemFactory(CannonAttributes.Inherited)
 
-	@JvmField val DRAGONSFURY = TFItemFactory(DragonsFuryAttributes)
+	@JvmField val DRAGONSFURY = TFItemFactory(DragonsFuryAttributes.Inherited)
 
-	@JvmField val ROCKETLAUNCHER_MORTAR = TFItemFactory(RocketLauncher_MortarAttributes)
+	@JvmField val ROCKETLAUNCHER_MORTAR = TFItemFactory(RocketLauncher_MortarAttributes.Inherited)
 
-	@JvmField val CLEAVER = TFItemFactory(CleaverAttributes)
+	@JvmField val CLEAVER = TFItemFactory(CleaverAttributes.Inherited)
 
-	@JvmField val PARACHUTE = TFItemFactory(ParachuteAttributes)
+	@JvmField val PARACHUTE = TFItemFactory(ParachuteAttributes.Inherited)
 
-	@JvmField val JARGAS = TFItemFactory(JarGasAttributes)
+	@JvmField val JARGAS = TFItemFactory(JarGasAttributes.Inherited)
 
-	@JvmField val SNIPERRIFLEDECAP = TFItemFactory(SniperRifleDecapAttributes)
+	@JvmField val SNIPERRIFLEDECAP = TFItemFactory(SniperRifleDecapAttributes.Inherited)
 
-	@JvmField val SNIPERRIFLECLASSIC = TFItemFactory(SniperRifleClassicAttributes)
+	@JvmField val SNIPERRIFLECLASSIC = TFItemFactory(SniperRifleClassicAttributes.Inherited)
 
-	@JvmField val BATFISH = TFItemFactory(BatFishAttributes)
+	@JvmField val BATFISH = TFItemFactory(BatFishAttributes.Inherited)
 
-	@JvmField val DECOY = TFItemFactory(DecoyAttributes)
+	@JvmField val DECOY = TFItemFactory(DecoyAttributes.Inherited)
 
-	@JvmField val JARMILK = TFItemFactory(JarMilkAttributes)
+	@JvmField val JARMILK = TFItemFactory(JarMilkAttributes.Inherited)
 
-	@JvmField val GRAPPLINGHOOK = TFItemFactory(GrapplingHookAttributes)
+	@JvmField val GRAPPLINGHOOK = TFItemFactory(GrapplingHookAttributes.Inherited)
 
-	@JvmField val SODAPOPPER = TFItemFactory(SodaPopperAttributes)
+	@JvmField val SODAPOPPER = TFItemFactory(SodaPopperAttributes.Inherited)
 
-	@JvmField val THROWABLEUTILITY = TFItemFactory(ThrowableUtilityAttributes)
+	@JvmField val THROWABLEUTILITY = TFItemFactory(ThrowableUtilityAttributes.Inherited)
 
-	@JvmField val SCOUTPISTOLPRIMARY = TFItemFactory(ScoutPistolPrimaryAttributes)
+	@JvmField val SCOUTPISTOLPRIMARY = TFItemFactory(ScoutPistolPrimaryAttributes.Inherited)
 
-	@JvmField val DRGPOMSON = TFItemFactory(DRGPomsonAttributes)
+	@JvmField val DRGPOMSON = TFItemFactory(DRGPomsonAttributes.Inherited)
 
-	@JvmField val SCOUTPISTOLSECONDARY = TFItemFactory(ScoutPistolSecondaryAttributes)
+	@JvmField val SCOUTPISTOLSECONDARY = TFItemFactory(ScoutPistolSecondaryAttributes.Inherited)
 
-	@JvmField val RAYGUN_REVENGE = TFItemFactory(Raygun_RevengeAttributes)
+	@JvmField val RAYGUN_REVENGE = TFItemFactory(Raygun_RevengeAttributes.Inherited)
 
-	@JvmField val SPELLBOOK = TFItemFactory(SpellBookAttributes)
+	@JvmField val SPELLBOOK = TFItemFactory(SpellBookAttributes.Inherited)
 
-	@JvmField val THROWABLESECONDARY = TFItemFactory(ThrowableSecondaryAttributes)
+	@JvmField val THROWABLESECONDARY = TFItemFactory(ThrowableSecondaryAttributes.Inherited)
 
-	@JvmField val BATGIFTWRAP = TFItemFactory(BatGiftwrapAttributes)
+	@JvmField val BATGIFTWRAP = TFItemFactory(BatGiftwrapAttributes.Inherited)
 
-	@JvmField val PEPBRAWLERBLASTER = TFItemFactory(PEPBrawlerBlasterAttributes)
+	@JvmField val PEPBRAWLERBLASTER = TFItemFactory(PEPBrawlerBlasterAttributes.Inherited)
 
-	@JvmField val THROWABLEPRIMARY = TFItemFactory(ThrowablePrimaryAttributes)
+	@JvmField val THROWABLEPRIMARY = TFItemFactory(ThrowablePrimaryAttributes.Inherited)
 
-	@JvmField val THROWABLEMELEE = TFItemFactory(ThrowableMeleeAttributes)
+	@JvmField val THROWABLEMELEE = TFItemFactory(ThrowableMeleeAttributes.Inherited)
 
 }

@@ -57,7 +57,15 @@ interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttri
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val projectiles: ProjectilesAttributes get() = RocketLauncher_DirectHitAttributes.projectiles
@@ -108,7 +116,15 @@ interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttri
 	
 	override val ragdolls: RagdollsAttributes get() = RocketLauncher_DirectHitAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = RocketLauncher_DirectHitAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = RocketLauncher_DirectHitAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = RocketLauncher_DirectHitAttributes.disguise
+	
+	override val hud: HudAttributes get() = RocketLauncher_DirectHitAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = RocketLauncher_DirectHitAttributes.spyOnly
 
 	open class ProjectilesAttributes : RocketLauncherAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
@@ -123,10 +139,18 @@ interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttri
 	open class AmmoAttributes : RocketLauncherAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : RocketLauncherAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : RocketLauncherAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class DamageAttributes : RocketLauncherAttributes.DamageAttributes() 
+	open class DamageAttributes : RocketLauncherAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : RocketLauncherAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class FiringAttributes : RocketLauncherAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -136,13 +160,37 @@ interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttri
 	
 	open class AfterburnAttributes : RocketLauncherAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : RocketLauncherAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : RocketLauncherAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : RocketLauncherAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : RocketLauncherAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : RocketLauncherAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : RocketLauncherAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : RocketLauncherAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : RocketLauncherAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : RocketLauncherAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : RocketLauncherAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : RocketLauncherAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : RocketLauncherAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : RocketLauncherAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : RocketLauncherAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -159,6 +207,12 @@ interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttri
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : RocketLauncherAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : RocketLauncherAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -166,14 +220,36 @@ interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttri
 		open class ItemsAttributes : RocketLauncherAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : RocketLauncherAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : RocketLauncherAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : RocketLauncherAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : RocketLauncherAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : RocketLauncherAttributes.MeterAttributes() 
+	open class MeterAttributes : RocketLauncherAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : RocketLauncherAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : RocketLauncherAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : RocketLauncherAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : RocketLauncherAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : RocketLauncherAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : RocketLauncherAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : RocketLauncherAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : RocketLauncherAttributes.HeadsAttributes() 
@@ -183,16 +259,36 @@ interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttri
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : RocketLauncherAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : RocketLauncherAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : RocketLauncherAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : RocketLauncherAttributes.OnKillAttributes() 
 	
 	open class ReloadingAttributes : RocketLauncherAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : RocketLauncherAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : RocketLauncherAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : RocketLauncherAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : RocketLauncherAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : RocketLauncherAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : RocketLauncherAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : RocketLauncherAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface RocketLauncher_DirectHitAttributes : IBlockScoped, RocketLauncherAttri
 	
 	open class RagdollsAttributes : RocketLauncherAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : RocketLauncherAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : RocketLauncherAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : RocketLauncherAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : RocketLauncherAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : RocketLauncherAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : RocketLauncher_DirectHitAttributes 
 }

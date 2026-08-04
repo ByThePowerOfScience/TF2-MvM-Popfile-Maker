@@ -9,4 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileSyringeAttributes : IBlockScoped, BaseProjectileAttributes {
 	companion object : IBlockScoped 
+
+	object Inherited : ProjectileSyringeAttributes 
 }

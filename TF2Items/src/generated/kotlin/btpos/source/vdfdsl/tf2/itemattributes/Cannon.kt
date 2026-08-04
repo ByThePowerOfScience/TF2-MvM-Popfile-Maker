@@ -57,7 +57,15 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val projectiles: ProjectilesAttributes get() = CannonAttributes.projectiles
@@ -108,7 +116,15 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = CannonAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = CannonAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = CannonAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = CannonAttributes.disguise
+	
+	override val hud: HudAttributes get() = CannonAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = CannonAttributes.spyOnly
 
 	open class ProjectilesAttributes : GrenadeLauncherAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
@@ -120,12 +136,20 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 		open class ProjectilePenetrationAttributes : GrenadeLauncherAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
 	}
 	
-	open class DamageAttributes : GrenadeLauncherAttributes.DamageAttributes() 
+	open class DamageAttributes : GrenadeLauncherAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : GrenadeLauncherAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class AmmoAttributes : GrenadeLauncherAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : GrenadeLauncherAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : GrenadeLauncherAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
 	open class FiringAttributes : GrenadeLauncherAttributes.FiringAttributes() {
@@ -136,13 +160,37 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	
 	open class AfterburnAttributes : GrenadeLauncherAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : GrenadeLauncherAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : GrenadeLauncherAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : GrenadeLauncherAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : GrenadeLauncherAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : GrenadeLauncherAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : GrenadeLauncherAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : GrenadeLauncherAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : GrenadeLauncherAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : GrenadeLauncherAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : GrenadeLauncherAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -159,6 +207,12 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : GrenadeLauncherAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : GrenadeLauncherAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -166,14 +220,36 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 		open class ItemsAttributes : GrenadeLauncherAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : GrenadeLauncherAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : GrenadeLauncherAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : GrenadeLauncherAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : GrenadeLauncherAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : GrenadeLauncherAttributes.MeterAttributes() 
+	open class MeterAttributes : GrenadeLauncherAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : GrenadeLauncherAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : GrenadeLauncherAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : GrenadeLauncherAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : GrenadeLauncherAttributes.HeadsAttributes() 
@@ -183,16 +259,36 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : GrenadeLauncherAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : GrenadeLauncherAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : GrenadeLauncherAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : GrenadeLauncherAttributes.OnKillAttributes() 
 	
 	open class ReloadingAttributes : GrenadeLauncherAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : GrenadeLauncherAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : GrenadeLauncherAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : GrenadeLauncherAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : GrenadeLauncherAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : GrenadeLauncherAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : GrenadeLauncherAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : GrenadeLauncherAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	
 	open class RagdollsAttributes : GrenadeLauncherAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : GrenadeLauncherAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : GrenadeLauncherAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : GrenadeLauncherAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : GrenadeLauncherAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : GrenadeLauncherAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : CannonAttributes 
 }

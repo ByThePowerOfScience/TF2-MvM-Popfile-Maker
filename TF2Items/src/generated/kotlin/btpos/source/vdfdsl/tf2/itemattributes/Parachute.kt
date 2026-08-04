@@ -59,7 +59,13 @@ interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val buffItems: BuffItemsAttributes get() = ParachuteAttributes.buffItems
@@ -112,22 +118,36 @@ interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = ParachuteAttributes.ragdolls
 	
+	override val cloak: CloakAttributes get() = ParachuteAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = ParachuteAttributes.disguise
+	
+	override val hud: HudAttributes get() = ParachuteAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = ParachuteAttributes.spyOnly
 
 	open class BuffItemsAttributes : BuffItemAttributes.BuffItemsAttributes() 
 	
 	open class CritsAttributes : BuffItemAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : BuffItemAttributes.DamageAttributes() 
+	open class DamageAttributes : BuffItemAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : BuffItemAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class OnHitAttributes : BuffItemAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : BuffItemAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : BuffItemAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : BuffItemAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class SwapWeaponsAttributes : BuffItemAttributes.SwapWeaponsAttributes() {
@@ -141,12 +161,32 @@ interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 	open class AmmoAttributes : BuffItemAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : BuffItemAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : BuffItemAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : BuffItemAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : BuffItemAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
-	open class DemoChargeAttributes : BuffItemAttributes.DemoChargeAttributes() 
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : BuffItemAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : BuffItemAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : BuffItemAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
+	
+	open class DemoChargeAttributes : BuffItemAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : BuffItemAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : BuffItemAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -154,7 +194,15 @@ interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 		open class FireRateAttributes : BuffItemAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : BuffItemAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : BuffItemAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : BuffItemAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : BuffItemAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : BuffItemAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -171,6 +219,12 @@ interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : BuffItemAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : BuffItemAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -178,14 +232,36 @@ interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 		open class ItemsAttributes : BuffItemAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : BuffItemAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : BuffItemAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : BuffItemAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : BuffItemAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : BuffItemAttributes.MeterAttributes() 
+	open class MeterAttributes : BuffItemAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : BuffItemAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : BuffItemAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : BuffItemAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : BuffItemAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : BuffItemAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : BuffItemAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : BuffItemAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : BuffItemAttributes.HeadsAttributes() 
@@ -204,7 +280,23 @@ interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 	
 	open class ReloadingAttributes : BuffItemAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : BuffItemAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : BuffItemAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : BuffItemAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : BuffItemAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : BuffItemAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : BuffItemAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : BuffItemAttributes.RevengeCritsAttributes() 
 	
@@ -216,5 +308,13 @@ interface ParachuteAttributes : IBlockScoped, BuffItemAttributes {
 	
 	open class RagdollsAttributes : BuffItemAttributes.RagdollsAttributes() 
 	
+	open class CloakAttributes : BuffItemAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : BuffItemAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : BuffItemAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : BuffItemAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : ParachuteAttributes 
 }

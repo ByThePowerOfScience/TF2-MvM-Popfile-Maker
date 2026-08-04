@@ -1,6 +1,11 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
+import java.util.*
+import kotlin.time.Duration
 
 interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	companion object : IBlockScoped {
@@ -74,7 +79,15 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	/**
@@ -147,23 +160,55 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = SapperAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = SapperAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = SapperAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = SapperAttributes.disguise
+	
+	override val hud: HudAttributes get() = SapperAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = SapperAttributes.spyOnly
 
 	open class AfterburnAttributes : BuilderAttributes.AfterburnAttributes() 
 	
 	open class AmmoAttributes : BuilderAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : BuilderAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : BuilderAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : BuilderAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : BuilderAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : BuilderAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : BuilderAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : BuilderAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : BuilderAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : BuilderAttributes.DamageAttributes() 
+	open class DamageAttributes : BuilderAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
 	
-	open class DemoChargeAttributes : BuilderAttributes.DemoChargeAttributes() 
+		open class AlienAttributes : BuilderAttributes.DamageAttributes.AlienAttributes() 
+	}
+	
+	open class DemoChargeAttributes : BuilderAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : BuilderAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : BuilderAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -171,7 +216,15 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 		open class FireRateAttributes : BuilderAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : BuilderAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : BuilderAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : BuilderAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : BuilderAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : BuilderAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -188,6 +241,12 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : BuilderAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : BuilderAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -195,14 +254,36 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 		open class ItemsAttributes : BuilderAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : BuilderAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : BuilderAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : BuilderAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : BuilderAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : BuilderAttributes.MeterAttributes() 
+	open class MeterAttributes : BuilderAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : BuilderAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : BuilderAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : BuilderAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : BuilderAttributes.HeadsAttributes() 
@@ -212,9 +293,13 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : BuilderAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : BuilderAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : BuilderAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : BuilderAttributes.OnKillAttributes() 
@@ -231,7 +316,23 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	
 	open class ReloadingAttributes : BuilderAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : BuilderAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : BuilderAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : BuilderAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : BuilderAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : BuilderAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : BuilderAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : BuilderAttributes.RevengeCritsAttributes() 
 	
@@ -249,5 +350,15 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	
 	open class RagdollsAttributes : BuilderAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : BuilderAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : BuilderAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : BuilderAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : BuilderAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : BuilderAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : SapperAttributes 
 }

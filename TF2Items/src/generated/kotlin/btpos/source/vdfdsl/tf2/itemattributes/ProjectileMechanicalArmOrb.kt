@@ -9,4 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileMechanicalArmOrbAttributes : IBlockScoped, ProjectileRocketAttributes {
 	companion object : IBlockScoped 
+
+	object Inherited : ProjectileMechanicalArmOrbAttributes 
 }

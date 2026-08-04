@@ -1,8 +1,11 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
+import kotlin.time.Duration
 
 interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 	companion object : IBlockScoped {
@@ -68,7 +71,15 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 	
 		val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	/**
@@ -89,17 +100,17 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 	
 	override val ammo: AmmoAttributes get() = WeaponBaseAttributes.ammo
 	
-	val buildings: BuildingsAttributes get() = WeaponBaseAttributes.buildings
+	override val buildings: BuildingsAttributes get() = WeaponBaseAttributes.buildings
 	
 	override val crits: CritsAttributes get() = WeaponBaseAttributes.crits
 	
 	override val damage: DamageAttributes get() = WeaponBaseAttributes.damage
 	
-	val demoCharge: DemoChargeAttributes get() = WeaponBaseAttributes.demoCharge
+	override val demoCharge: DemoChargeAttributes get() = WeaponBaseAttributes.demoCharge
 	
-	val firing: FiringAttributes get() = WeaponBaseAttributes.firing
+	override val firing: FiringAttributes get() = WeaponBaseAttributes.firing
 	
-	val healthAndHealing: HealthAndHealingAttributes get() = WeaponBaseAttributes.healthAndHealing
+	override val healthAndHealing: HealthAndHealingAttributes get() = WeaponBaseAttributes.healthAndHealing
 	
 	override val knockbackReceived: KnockbackReceivedAttributes get() = WeaponBaseAttributes.knockbackReceived
 	
@@ -107,13 +118,13 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 	
 	override val meter: MeterAttributes get() = WeaponBaseAttributes.meter
 	
-	val movement: MovementAttributes get() = WeaponBaseAttributes.movement
+	override val movement: MovementAttributes get() = WeaponBaseAttributes.movement
 	
-	val heads: HeadsAttributes get() = WeaponBaseAttributes.heads
+	override val heads: HeadsAttributes get() = WeaponBaseAttributes.heads
 	
-	val onHit: OnHitAttributes get() = WeaponBaseAttributes.onHit
+	override val onHit: OnHitAttributes get() = WeaponBaseAttributes.onHit
 	
-	val onKill: OnKillAttributes get() = WeaponBaseAttributes.onKill
+	override val onKill: OnKillAttributes get() = WeaponBaseAttributes.onKill
 	
 	val projectiles: ProjectilesAttributes get() = WeaponBaseAttributes.projectiles
 	
@@ -125,15 +136,23 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 	
 	val statusEffects: StatusEffectsAttributes get() = WeaponBaseAttributes.statusEffects
 	
-	val taunting: TauntingAttributes get() = WeaponBaseAttributes.taunting
+	override val taunting: TauntingAttributes get() = WeaponBaseAttributes.taunting
 	
-	val swapWeapons: SwapWeaponsAttributes get() = WeaponBaseAttributes.swapWeapons
+	override val swapWeapons: SwapWeaponsAttributes get() = WeaponBaseAttributes.swapWeapons
 	
-	val whenHit: WhenHitAttributes get() = WeaponBaseAttributes.whenHit
+	override val whenHit: WhenHitAttributes get() = WeaponBaseAttributes.whenHit
 	
 	val ragdolls: RagdollsAttributes get() = WeaponBaseAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = WeaponBaseAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = WeaponBaseAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = WeaponBaseAttributes.disguise
+	
+	override val hud: HudAttributes get() = WeaponBaseAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = WeaponBaseAttributes.spyOnly
 
 	open class AfterburnAttributes : IBlockScoped {
 		/**
@@ -192,6 +211,8 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 	
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : BaseCombatWeaponAttributes.AmmoAttributes.ClipSizeAttributes() {
 			/**
 			 * Bonus:
@@ -231,9 +252,11 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 			 */
 			open val clipsizeIncreaseOnKill: ItemAttributeNamed<Int> = ItemAttributeNamed("clipsize increase on kill")
 		}
+	
+		open class MaxAmmoAttributes : BaseCombatWeaponAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : IBlockScoped {
+	open class BuildingsAttributes : BaseCombatWeaponAttributes.BuildingsAttributes() {
 		/**
 		 * In-Game: "Alt-Fire: Use N metal to pick up your targeted building from long range"
 		 * 
@@ -242,6 +265,18 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 * Restricted to the default rescue ranger range, but can be used by any weapon.
 		 */
 		open val buildingRescueMetalCost: ItemAttributeNamed<Int> = ItemAttributeNamed("engineer building teleporting pickup")
+	
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : BaseCombatWeaponAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : BaseCombatWeaponAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : BaseCombatWeaponAttributes.BuildingsAttributes.TeleporterAttributes() 
 	}
 	
 	open class CritsAttributes : BaseCombatWeaponAttributes.CritsAttributes() {
@@ -416,9 +451,13 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 * Multiplier applied to bodyshot damage.
 		 */
 		open val damagePenaltyOnBodyshot: ItemAttributeNamed<Number> = ItemAttributeNamed("damage penalty on bodyshot")
+	
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : BaseCombatWeaponAttributes.DamageAttributes.AlienAttributes() 
 	}
 	
-	open class DemoChargeAttributes : IBlockScoped {
+	open class DemoChargeAttributes : BaseCombatWeaponAttributes.DemoChargeAttributes() {
 		/**
 		 * In-Game: "Melee hits refill  N% of your charge meter."
 		 * 
@@ -432,9 +471,13 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 * If true, and player has a demoman charge meter, add charge based on ammo pack size.
 		 */
 		open val ammoPacksGiveDemoknightCharge: ItemAttributeNamed<Boolean> = ItemAttributeNamed("ammo gives charge")
+	
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : BaseCombatWeaponAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
 	}
 	
-	open class FiringAttributes : IBlockScoped {
+	open class FiringAttributes : BaseCombatWeaponAttributes.FiringAttributes() {
 		/**
 		 * Bonus:
 		 * 
@@ -494,13 +537,13 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		}
 	}
 	
-	open class HealthAndHealingAttributes : IBlockScoped {
+	open class HealthAndHealingAttributes : BaseCombatWeaponAttributes.HealthAndHealingAttributes() {
 		/**
 		 * In-Game: "Blocks healing while in use"
 		 * 
 		 * Prevents mediguns/dispensers from targeting you and crossbow bolts from healing you while the weapon is active.
 		 */
-		open val weaponBlocksHealing: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod weapon blocks healing")
+		override val weaponBlocksHealing: ItemAttributeNamed<Boolean> get() = super.weaponBlocksHealing
 	
 		/**
 		 * Bonus:
@@ -553,7 +596,7 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 * 
 		 * Applies to all non-dispenser forms of healing that apply the `TF_COND_HEAL_BUFF` status.
 		 */
-		open val reducedHealingFromMedics: ItemAttributeNamed<Number> = ItemAttributeNamed("reduced_healing_from_medics")
+		override val reducedHealingFromMedics: ItemAttributeNamed<Number> get() = super.reducedHealingFromMedics
 	
 		/**
 		 * Bonus:
@@ -575,6 +618,14 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 * Maximum health decrease per tick while weapon is active. (Gloves of Running Urgently/Eviction Notice).
 		 */
 		open val maxHealthDrainedWhileActive: ItemAttributeNamed<Number> = ItemAttributeNamed("mod_maxhealth_drain_rate")
+	
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : BaseCombatWeaponAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : BaseCombatWeaponAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
 	}
 	
 	open class KnockbackReceivedAttributes : BaseCombatWeaponAttributes.KnockbackReceivedAttributes() {
@@ -639,6 +690,12 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : BaseCombatWeaponAttributes.MetaAttributes.KillfeedAttributes() {
 			open val isGigerCounter: ItemAttributeNamed<Boolean> = ItemAttributeNamed("is giger counter")
 	
@@ -673,6 +730,12 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		open class ItemsAttributes : BaseCombatWeaponAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : BaseCombatWeaponAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : BaseCombatWeaponAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : BaseCombatWeaponAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : BaseCombatWeaponAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
 	open class MeterAttributes : BaseCombatWeaponAttributes.MeterAttributes() {
@@ -682,9 +745,13 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 * For things like throwable recharge timers, jetpack charging, etc: how much it recharges per second.
 		 */
 		open val effectBarRechargeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("effect bar recharge rate increased")
+	
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : BaseCombatWeaponAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
 	}
 	
-	open class MovementAttributes : IBlockScoped {
+	open class MovementAttributes : BaseCombatWeaponAttributes.MovementAttributes() {
 		/**
 		 * In-Game: "+N% greater jump height when active"
 		 * 
@@ -701,9 +768,11 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 */
 		open val airDashCount: ItemAttributeNamed<Int> = ItemAttributeNamed("air dash count")
 	
-		open val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : IBlockScoped {
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : BaseCombatWeaponAttributes.MovementAttributes.MoveSpeedAttributes() {
 			/**
 			 * Multiplier applied to movement speed scaled by ubercharge percentage.
 			 * 
@@ -717,12 +786,22 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 			 * Multiplier applied to player movement speed only while this is the active weapon.
 			 */
 			open val multPlayerMovespeedActive: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_player_movespeed_active")
+	
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : BaseCombatWeaponAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : BaseCombatWeaponAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
 		}
+	
+		open class jumpHeightAttributes : BaseCombatWeaponAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
-	open class HeadsAttributes : IBlockScoped 
+	open class HeadsAttributes : BaseCombatWeaponAttributes.HeadsAttributes() 
 	
-	open class OnHitAttributes : IBlockScoped {
+	open class OnHitAttributes : BaseCombatWeaponAttributes.OnHitAttributes() {
 		/**
 		 * In-Game: "+N% cloak on hit"
 		 * 
@@ -879,6 +958,8 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 */
 		open val bleedingDuration: ItemAttributeNamed<Number> = ItemAttributeNamed("bleeding duration")
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : IBlockScoped {
 			/**
 			 * In-Game: "On Hit: Gain up to +N health"
@@ -924,9 +1005,11 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 			 */
 			open val engineerRageOnDmg: ItemAttributeNamed<Boolean> = ItemAttributeNamed("engineer rage on dmg")
 		}
+	
+		open class FallingAttributes : BaseCombatWeaponAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
-	open class OnKillAttributes : IBlockScoped {
+	open class OnKillAttributes : BaseCombatWeaponAttributes.OnKillAttributes() {
 		/**
 		 * In-Game: "On Kill: N seconds of 100% critical chance"
 		 * 
@@ -1150,6 +1233,22 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		 * When a headshot would kill you, reduce health to 1.
 		 */
 		open val setBonusNoDeathFromHeadshots: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SET BONUS: no death from headshots")
+	
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : BaseCombatWeaponAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : BaseCombatWeaponAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : BaseCombatWeaponAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : BaseCombatWeaponAttributes.ResistanceAttributes.VaccinatorAttributes() 
 	}
 	
 	open class RevengeCritsAttributes : IBlockScoped {
@@ -1186,7 +1285,7 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		open val explodeOnIgnite: ItemAttributeNamed<Boolean> = ItemAttributeNamed("explode_on_ignite")
 	}
 	
-	open class TauntingAttributes : IBlockScoped {
+	open class TauntingAttributes : BaseCombatWeaponAttributes.TauntingAttributes() {
 		/**
 		 * In-Game: "Alt-Fire: Applies a healing effect to all nearby teammates"
 		 * 
@@ -1200,7 +1299,7 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		open val specialTaunt: ItemAttributeNamed<Boolean> = ItemAttributeNamed("special taunt")
 	}
 	
-	open class SwapWeaponsAttributes : IBlockScoped {
+	open class SwapWeaponsAttributes : BaseCombatWeaponAttributes.SwapWeaponsAttributes() {
 		/**
 		 * In-Game: "When weapon is active:"
 		 * 
@@ -1283,7 +1382,7 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		}
 	}
 	
-	open class WhenHitAttributes : IBlockScoped {
+	open class WhenHitAttributes : BaseCombatWeaponAttributes.WhenHitAttributes() {
 		/**
 		 * Knocks back attacker when wielder receives damage.
 		 */
@@ -1326,5 +1425,15 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		open val ragdollsPlasmaEffect: ItemAttributeNamed<Boolean> = ItemAttributeNamed("ragdolls plasma effect")
 	}
 	
+	open class BuffItemsAttributes : BaseCombatWeaponAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : BaseCombatWeaponAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : BaseCombatWeaponAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : BaseCombatWeaponAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : BaseCombatWeaponAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : WeaponBaseAttributes 
 }

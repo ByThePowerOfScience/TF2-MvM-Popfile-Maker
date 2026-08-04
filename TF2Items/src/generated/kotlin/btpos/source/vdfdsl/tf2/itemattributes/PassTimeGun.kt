@@ -57,7 +57,15 @@ interface PassTimeGunAttributes : IBlockScoped, WeaponBaseAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val afterburn: AfterburnAttributes get() = PassTimeGunAttributes.afterburn
@@ -108,23 +116,55 @@ interface PassTimeGunAttributes : IBlockScoped, WeaponBaseAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = PassTimeGunAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = PassTimeGunAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = PassTimeGunAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = PassTimeGunAttributes.disguise
+	
+	override val hud: HudAttributes get() = PassTimeGunAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = PassTimeGunAttributes.spyOnly
 
 	open class AfterburnAttributes : WeaponBaseAttributes.AfterburnAttributes() 
 	
 	open class AmmoAttributes : WeaponBaseAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : WeaponBaseAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : WeaponBaseAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : WeaponBaseAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : WeaponBaseAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : WeaponBaseAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : WeaponBaseAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : WeaponBaseAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : WeaponBaseAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() 
+	open class DamageAttributes : WeaponBaseAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
 	
-	open class DemoChargeAttributes : WeaponBaseAttributes.DemoChargeAttributes() 
+		open class AlienAttributes : WeaponBaseAttributes.DamageAttributes.AlienAttributes() 
+	}
+	
+	open class DemoChargeAttributes : WeaponBaseAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : WeaponBaseAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : WeaponBaseAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -132,7 +172,15 @@ interface PassTimeGunAttributes : IBlockScoped, WeaponBaseAttributes {
 		open class FireRateAttributes : WeaponBaseAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : WeaponBaseAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : WeaponBaseAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : WeaponBaseAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : WeaponBaseAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : WeaponBaseAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -149,6 +197,12 @@ interface PassTimeGunAttributes : IBlockScoped, WeaponBaseAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : WeaponBaseAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : WeaponBaseAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -156,14 +210,36 @@ interface PassTimeGunAttributes : IBlockScoped, WeaponBaseAttributes {
 		open class ItemsAttributes : WeaponBaseAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : WeaponBaseAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : WeaponBaseAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : WeaponBaseAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : WeaponBaseAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() 
+	open class MeterAttributes : WeaponBaseAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : WeaponBaseAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : WeaponBaseAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : WeaponBaseAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : WeaponBaseAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : WeaponBaseAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : WeaponBaseAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : WeaponBaseAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : WeaponBaseAttributes.HeadsAttributes() 
@@ -173,9 +249,13 @@ interface PassTimeGunAttributes : IBlockScoped, WeaponBaseAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : WeaponBaseAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : WeaponBaseAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : WeaponBaseAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : WeaponBaseAttributes.OnKillAttributes() 
@@ -192,7 +272,23 @@ interface PassTimeGunAttributes : IBlockScoped, WeaponBaseAttributes {
 	
 	open class ReloadingAttributes : WeaponBaseAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : WeaponBaseAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : WeaponBaseAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : WeaponBaseAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : WeaponBaseAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : WeaponBaseAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : WeaponBaseAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : WeaponBaseAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface PassTimeGunAttributes : IBlockScoped, WeaponBaseAttributes {
 	
 	open class RagdollsAttributes : WeaponBaseAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : WeaponBaseAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : WeaponBaseAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : WeaponBaseAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : WeaponBaseAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : WeaponBaseAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : PassTimeGunAttributes 
 }

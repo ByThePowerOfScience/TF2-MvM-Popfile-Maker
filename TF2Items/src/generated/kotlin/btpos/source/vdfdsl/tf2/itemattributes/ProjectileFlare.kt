@@ -1,6 +1,11 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
+import java.util.*
+import kotlin.time.Duration
 
 interface ProjectileFlareAttributes : IBlockScoped, BaseProjectileAttributes {
 	companion object : IBlockScoped {
@@ -63,4 +68,6 @@ interface ProjectileFlareAttributes : IBlockScoped, BaseProjectileAttributes {
 	 * 	- In-Game: "N% explosion radius"
 	 */
 	val blastRadius: BonusPenalty<Number> get() = ProjectileFlareAttributes.blastRadius
+
+	object Inherited : ProjectileFlareAttributes 
 }

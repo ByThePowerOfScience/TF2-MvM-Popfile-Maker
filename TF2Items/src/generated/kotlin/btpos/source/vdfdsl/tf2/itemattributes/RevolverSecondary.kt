@@ -57,7 +57,15 @@ interface RevolverSecondaryAttributes : IBlockScoped, RevolverAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val heads: HeadsAttributes get() = RevolverSecondaryAttributes.heads
@@ -108,17 +116,33 @@ interface RevolverSecondaryAttributes : IBlockScoped, RevolverAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = RevolverSecondaryAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = RevolverSecondaryAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = RevolverSecondaryAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = RevolverSecondaryAttributes.disguise
+	
+	override val hud: HudAttributes get() = RevolverSecondaryAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = RevolverSecondaryAttributes.spyOnly
 
 	open class HeadsAttributes : RevolverAttributes.HeadsAttributes() 
 	
 	open class AmmoAttributes : RevolverAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : RevolverAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : RevolverAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class DamageAttributes : RevolverAttributes.DamageAttributes() 
+	open class DamageAttributes : RevolverAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : RevolverAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class FiringAttributes : RevolverAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -138,13 +162,37 @@ interface RevolverSecondaryAttributes : IBlockScoped, RevolverAttributes {
 	
 	open class AfterburnAttributes : RevolverAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : RevolverAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : RevolverAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : RevolverAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : RevolverAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : RevolverAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : RevolverAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : RevolverAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : RevolverAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : RevolverAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : RevolverAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : RevolverAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : RevolverAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : RevolverAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : RevolverAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -161,6 +209,12 @@ interface RevolverSecondaryAttributes : IBlockScoped, RevolverAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : RevolverAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : RevolverAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -168,14 +222,36 @@ interface RevolverSecondaryAttributes : IBlockScoped, RevolverAttributes {
 		open class ItemsAttributes : RevolverAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : RevolverAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : RevolverAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : RevolverAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : RevolverAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : RevolverAttributes.MeterAttributes() 
+	open class MeterAttributes : RevolverAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : RevolverAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : RevolverAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : RevolverAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : RevolverAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : RevolverAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : RevolverAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : RevolverAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class OnHitAttributes : RevolverAttributes.OnHitAttributes() {
@@ -183,16 +259,36 @@ interface RevolverSecondaryAttributes : IBlockScoped, RevolverAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : RevolverAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : RevolverAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : RevolverAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : RevolverAttributes.OnKillAttributes() 
 	
 	open class ReloadingAttributes : RevolverAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : RevolverAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : RevolverAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : RevolverAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : RevolverAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : RevolverAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : RevolverAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : RevolverAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface RevolverSecondaryAttributes : IBlockScoped, RevolverAttributes {
 	
 	open class RagdollsAttributes : RevolverAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : RevolverAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : RevolverAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : RevolverAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : RevolverAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : RevolverAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : RevolverSecondaryAttributes 
 }

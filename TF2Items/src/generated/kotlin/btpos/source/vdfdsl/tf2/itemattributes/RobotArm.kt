@@ -57,7 +57,15 @@ interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val buildings: BuildingsAttributes get() = RobotArmAttributes.buildings
@@ -108,26 +116,50 @@ interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = RobotArmAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = RobotArmAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = RobotArmAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = RobotArmAttributes.disguise
+	
+	override val hud: HudAttributes get() = RobotArmAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = RobotArmAttributes.spyOnly
 
 	open class BuildingsAttributes : WrenchAttributes.BuildingsAttributes() {
 		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
 		open class SentryGunAttributes : WrenchAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : WrenchAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : WrenchAttributes.BuildingsAttributes.TeleporterAttributes() 
 	}
 	
 	open class CritsAttributes : WrenchAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : WrenchAttributes.DamageAttributes() 
+	open class DamageAttributes : WrenchAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : WrenchAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class OnHitAttributes : WrenchAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : WrenchAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : WrenchAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : WrenchAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class SwapWeaponsAttributes : WrenchAttributes.SwapWeaponsAttributes() {
@@ -141,10 +173,18 @@ interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 	open class AmmoAttributes : WrenchAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : WrenchAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : WrenchAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class DemoChargeAttributes : WrenchAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : WrenchAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : WrenchAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : WrenchAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -152,7 +192,15 @@ interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 		open class FireRateAttributes : WrenchAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : WrenchAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : WrenchAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : WrenchAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : WrenchAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : WrenchAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -169,6 +217,12 @@ interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : WrenchAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : WrenchAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -176,14 +230,36 @@ interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 		open class ItemsAttributes : WrenchAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : WrenchAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : WrenchAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : WrenchAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : WrenchAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : WrenchAttributes.MeterAttributes() 
+	open class MeterAttributes : WrenchAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : WrenchAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : WrenchAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : WrenchAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : WrenchAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : WrenchAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : WrenchAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : WrenchAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : WrenchAttributes.HeadsAttributes() 
@@ -202,7 +278,23 @@ interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 	
 	open class ReloadingAttributes : WrenchAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : WrenchAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : WrenchAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : WrenchAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : WrenchAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : WrenchAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : WrenchAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : WrenchAttributes.RevengeCritsAttributes() 
 	
@@ -214,5 +306,15 @@ interface RobotArmAttributes : IBlockScoped, WrenchAttributes {
 	
 	open class RagdollsAttributes : WrenchAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : WrenchAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : WrenchAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : WrenchAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : WrenchAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : WrenchAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : RobotArmAttributes 
 }

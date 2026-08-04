@@ -57,7 +57,15 @@ interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val crits: CritsAttributes get() = BreakableSignAttributes.crits
@@ -108,20 +116,36 @@ interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = BreakableSignAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = BreakableSignAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = BreakableSignAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = BreakableSignAttributes.disguise
+	
+	override val hud: HudAttributes get() = BreakableSignAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = BreakableSignAttributes.spyOnly
 
 	open class CritsAttributes : BreakableMeleeAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : BreakableMeleeAttributes.DamageAttributes() 
+	open class DamageAttributes : BreakableMeleeAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : BreakableMeleeAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class OnHitAttributes : BreakableMeleeAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : BreakableMeleeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : BreakableMeleeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : BreakableMeleeAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class SwapWeaponsAttributes : BreakableMeleeAttributes.SwapWeaponsAttributes() {
@@ -135,12 +159,32 @@ interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 	open class AmmoAttributes : BreakableMeleeAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : BreakableMeleeAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : BreakableMeleeAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : BreakableMeleeAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : BreakableMeleeAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
-	open class DemoChargeAttributes : BreakableMeleeAttributes.DemoChargeAttributes() 
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : BreakableMeleeAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : BreakableMeleeAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : BreakableMeleeAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
+	
+	open class DemoChargeAttributes : BreakableMeleeAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : BreakableMeleeAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : BreakableMeleeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -148,7 +192,15 @@ interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 		open class FireRateAttributes : BreakableMeleeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : BreakableMeleeAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : BreakableMeleeAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : BreakableMeleeAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : BreakableMeleeAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : BreakableMeleeAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -165,6 +217,12 @@ interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : BreakableMeleeAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : BreakableMeleeAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -172,14 +230,36 @@ interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 		open class ItemsAttributes : BreakableMeleeAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : BreakableMeleeAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : BreakableMeleeAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : BreakableMeleeAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : BreakableMeleeAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : BreakableMeleeAttributes.MeterAttributes() 
+	open class MeterAttributes : BreakableMeleeAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : BreakableMeleeAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : BreakableMeleeAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : BreakableMeleeAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : BreakableMeleeAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : BreakableMeleeAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : BreakableMeleeAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : BreakableMeleeAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : BreakableMeleeAttributes.HeadsAttributes() 
@@ -198,7 +278,23 @@ interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 	
 	open class ReloadingAttributes : BreakableMeleeAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : BreakableMeleeAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : BreakableMeleeAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : BreakableMeleeAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : BreakableMeleeAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : BreakableMeleeAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : BreakableMeleeAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : BreakableMeleeAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface BreakableSignAttributes : IBlockScoped, BreakableMeleeAttributes {
 	
 	open class RagdollsAttributes : BreakableMeleeAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : BreakableMeleeAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : BreakableMeleeAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : BreakableMeleeAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : BreakableMeleeAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : BreakableMeleeAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : BreakableSignAttributes 
 }

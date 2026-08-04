@@ -9,4 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileSpellTransposeTeleportAttributes : IBlockScoped, ProjectileSpellBatsAttributes {
 	companion object : IBlockScoped 
+
+	object Inherited : ProjectileSpellTransposeTeleportAttributes 
 }

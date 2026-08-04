@@ -57,7 +57,15 @@ interface FlareGunRevengeAttributes : IBlockScoped, FlareGunAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val ammo: AmmoAttributes get() = FlareGunRevengeAttributes.ammo
@@ -108,15 +116,31 @@ interface FlareGunRevengeAttributes : IBlockScoped, FlareGunAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = FlareGunRevengeAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = FlareGunRevengeAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = FlareGunRevengeAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = FlareGunRevengeAttributes.disguise
+	
+	override val hud: HudAttributes get() = FlareGunRevengeAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = FlareGunRevengeAttributes.spyOnly
 
 	open class AmmoAttributes : FlareGunAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : FlareGunAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : FlareGunAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class DamageAttributes : FlareGunAttributes.DamageAttributes() 
+	open class DamageAttributes : FlareGunAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : FlareGunAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class FiringAttributes : FlareGunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -136,13 +160,37 @@ interface FlareGunRevengeAttributes : IBlockScoped, FlareGunAttributes {
 	
 	open class AfterburnAttributes : FlareGunAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : FlareGunAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : FlareGunAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : FlareGunAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : FlareGunAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : FlareGunAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : FlareGunAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : FlareGunAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : FlareGunAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : FlareGunAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : FlareGunAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : FlareGunAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : FlareGunAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : FlareGunAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : FlareGunAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -159,6 +207,12 @@ interface FlareGunRevengeAttributes : IBlockScoped, FlareGunAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : FlareGunAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : FlareGunAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -166,14 +220,36 @@ interface FlareGunRevengeAttributes : IBlockScoped, FlareGunAttributes {
 		open class ItemsAttributes : FlareGunAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : FlareGunAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : FlareGunAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : FlareGunAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : FlareGunAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : FlareGunAttributes.MeterAttributes() 
+	open class MeterAttributes : FlareGunAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : FlareGunAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : FlareGunAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : FlareGunAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : FlareGunAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : FlareGunAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : FlareGunAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : FlareGunAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : FlareGunAttributes.HeadsAttributes() 
@@ -183,16 +259,36 @@ interface FlareGunRevengeAttributes : IBlockScoped, FlareGunAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : FlareGunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : FlareGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : FlareGunAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : FlareGunAttributes.OnKillAttributes() 
 	
 	open class ReloadingAttributes : FlareGunAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : FlareGunAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : FlareGunAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : FlareGunAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : FlareGunAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : FlareGunAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : FlareGunAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : FlareGunAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface FlareGunRevengeAttributes : IBlockScoped, FlareGunAttributes {
 	
 	open class RagdollsAttributes : FlareGunAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : FlareGunAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : FlareGunAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : FlareGunAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : FlareGunAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : FlareGunAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : FlareGunRevengeAttributes 
 }

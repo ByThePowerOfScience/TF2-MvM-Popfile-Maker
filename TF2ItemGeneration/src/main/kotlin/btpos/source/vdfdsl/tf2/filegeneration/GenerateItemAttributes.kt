@@ -238,12 +238,16 @@ fun generateItemAttributes(
 				writer.write("package ${targetPackage}\n\n")
 				writer.append(imports).append("\n\n")
 				
-				scope.generateType().also {
+				scope.generateType().also { builder ->
 					if (scope is HierarchyNamedAttributeScope) {
-						it.withParentScopes(scope)
+						builder.withParentScopes(scope)
 					}
 					
-					writer.write(it.build())
+					writer.write(builder.copy().apply {
+						addNestedClass(ClassBuilder("Inherited", Type.OBJECT) {
+							parentInterfaces += builder.name
+						})
+					}.build())
 				}
 			}
 	}
@@ -259,7 +263,7 @@ fun generateItemAttributes(
 			if ("Projectile" in weaponType.scopeName.lowercase())
 				continue;
 			
-			out.append("\t@JvmField val ").append(weaponType.scopeName.uppercase()).append(" = TFItemFactory(").append(weaponType.clsname).append(")\n\n")
+			out.append("\t@JvmField val ").append(weaponType.scopeName.uppercase()).append(" = TFItemFactory(").append(weaponType.clsname + ".Inherited").append(")\n\n")
 		}
 		out.append("}")
 	}
@@ -293,6 +297,25 @@ fun generateItemAttributes(
 	}
 }
 
+// what am I making?
+/*
+interface BaseWeaponAttributes {
+	companion object : BaseWeaponAttributes {
+		override val x: ItemAttributeNamed<Double> = ItemAttributeNamed("blah")
+	}
+	
+	// just the attributes from the thing
+	
+	val x: ItemAttributeNamed<Double> = foo
+	
+	interface Inherited : BaseEntityAttributes, BaseWeaponAttributes {
+		companion object : Inherited
+		
+		override val x: ItemAttributeNamed<Double> get() = BaseWeaponAttributes.x
+	}
+}
+*/
+
 
 fun ClassBuilder.makeNestedClassesOpen() {
 	this.nestedClasses.values.forEach { nested ->
@@ -322,6 +345,7 @@ fun ClassBuilder.withParentScopes(thisScope: HierarchyNamedAttributeScope): Clas
 	val parentBuilder = parent.generateType()
 	
 	patchWithParentOverridesRecursive(thisScope, this, parentBuilder, listOf())
+	
 	ensureOverriddenPropertiesAreMarkedOverride(thisScope, listOf())
 	
 	makeNestedClassesOpen()

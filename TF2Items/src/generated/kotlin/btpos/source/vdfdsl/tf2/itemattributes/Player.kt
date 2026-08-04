@@ -1,7 +1,11 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
+import java.util.*
+import kotlin.time.Duration
 
 interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	companion object : IBlockScoped {
@@ -1172,4 +1176,6 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	open class SpyOnlyAttributes : IBlockScoped 
 	
 	open class CritsAttributes : BaseEntityAttributes.CritsAttributes() 
+	
+	object Inherited : PlayerAttributes 
 }

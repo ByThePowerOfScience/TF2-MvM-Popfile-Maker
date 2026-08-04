@@ -9,4 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileJarMilkAttributes : IBlockScoped, ProjectileJarAttributes {
 	companion object : IBlockScoped 
+
+	object Inherited : ProjectileJarMilkAttributes 
 }

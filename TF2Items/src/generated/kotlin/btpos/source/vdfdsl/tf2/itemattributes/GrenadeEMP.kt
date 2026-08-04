@@ -57,7 +57,15 @@ interface GrenadeEMPAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val afterburn: AfterburnAttributes get() = GrenadeEMPAttributes.afterburn
@@ -108,23 +116,55 @@ interface GrenadeEMPAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = GrenadeEMPAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = GrenadeEMPAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = GrenadeEMPAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = GrenadeEMPAttributes.disguise
+	
+	override val hud: HudAttributes get() = GrenadeEMPAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = GrenadeEMPAttributes.spyOnly
 
 	open class AfterburnAttributes : WeaponBaseGrenadeAttributes.AfterburnAttributes() 
 	
 	open class AmmoAttributes : WeaponBaseGrenadeAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : WeaponBaseGrenadeAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : WeaponBaseGrenadeAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class BuildingsAttributes : WeaponBaseGrenadeAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : WeaponBaseGrenadeAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : WeaponBaseGrenadeAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : WeaponBaseGrenadeAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : WeaponBaseGrenadeAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : WeaponBaseGrenadeAttributes.CritsAttributes() 
 	
-	open class DamageAttributes : WeaponBaseGrenadeAttributes.DamageAttributes() 
+	open class DamageAttributes : WeaponBaseGrenadeAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
 	
-	open class DemoChargeAttributes : WeaponBaseGrenadeAttributes.DemoChargeAttributes() 
+		open class AlienAttributes : WeaponBaseGrenadeAttributes.DamageAttributes.AlienAttributes() 
+	}
+	
+	open class DemoChargeAttributes : WeaponBaseGrenadeAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+	
+		open class MultChargeTurnControlAttributes : WeaponBaseGrenadeAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
 	
 	open class FiringAttributes : WeaponBaseGrenadeAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -132,7 +172,15 @@ interface GrenadeEMPAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 		open class FireRateAttributes : WeaponBaseGrenadeAttributes.FiringAttributes.FireRateAttributes() 
 	}
 	
-	open class HealthAndHealingAttributes : WeaponBaseGrenadeAttributes.HealthAndHealingAttributes() 
+	open class HealthAndHealingAttributes : WeaponBaseGrenadeAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : WeaponBaseGrenadeAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : WeaponBaseGrenadeAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : WeaponBaseGrenadeAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -149,6 +197,12 @@ interface GrenadeEMPAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : WeaponBaseGrenadeAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : WeaponBaseGrenadeAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -156,14 +210,36 @@ interface GrenadeEMPAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 		open class ItemsAttributes : WeaponBaseGrenadeAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : WeaponBaseGrenadeAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : WeaponBaseGrenadeAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : WeaponBaseGrenadeAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : WeaponBaseGrenadeAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : WeaponBaseGrenadeAttributes.MeterAttributes() 
+	open class MeterAttributes : WeaponBaseGrenadeAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : WeaponBaseGrenadeAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : WeaponBaseGrenadeAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : WeaponBaseGrenadeAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : WeaponBaseGrenadeAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : WeaponBaseGrenadeAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : WeaponBaseGrenadeAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : WeaponBaseGrenadeAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : WeaponBaseGrenadeAttributes.HeadsAttributes() 
@@ -173,9 +249,13 @@ interface GrenadeEMPAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : WeaponBaseGrenadeAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : WeaponBaseGrenadeAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : WeaponBaseGrenadeAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : WeaponBaseGrenadeAttributes.OnKillAttributes() 
@@ -192,7 +272,23 @@ interface GrenadeEMPAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 	
 	open class ReloadingAttributes : WeaponBaseGrenadeAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : WeaponBaseGrenadeAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : WeaponBaseGrenadeAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : WeaponBaseGrenadeAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : WeaponBaseGrenadeAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : WeaponBaseGrenadeAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : WeaponBaseGrenadeAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : WeaponBaseGrenadeAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface GrenadeEMPAttributes : IBlockScoped, WeaponBaseGrenadeAttributes {
 	
 	open class RagdollsAttributes : WeaponBaseGrenadeAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : WeaponBaseGrenadeAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : WeaponBaseGrenadeAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : WeaponBaseGrenadeAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : WeaponBaseGrenadeAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : WeaponBaseGrenadeAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : GrenadeEMPAttributes 
 }

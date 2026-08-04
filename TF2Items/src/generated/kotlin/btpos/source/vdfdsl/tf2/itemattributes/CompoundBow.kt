@@ -1,6 +1,11 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
+import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
+import btpos.source.vdfdsl.tf2.tftypes.*
+import java.util.*
+import kotlin.time.Duration
 
 interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 	companion object : IBlockScoped {
@@ -59,7 +64,15 @@ interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	/**
@@ -117,15 +130,31 @@ interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = CompoundBowAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = CompoundBowAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = CompoundBowAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = CompoundBowAttributes.disguise
+	
+	override val hud: HudAttributes get() = CompoundBowAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = CompoundBowAttributes.spyOnly
 
 	open class AmmoAttributes : StickybombLauncherAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : StickybombLauncherAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : StickybombLauncherAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class DamageAttributes : StickybombLauncherAttributes.DamageAttributes() 
+	open class DamageAttributes : StickybombLauncherAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : StickybombLauncherAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class FiringAttributes : StickybombLauncherAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -145,13 +174,37 @@ interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 	
 	open class AfterburnAttributes : StickybombLauncherAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : StickybombLauncherAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : StickybombLauncherAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : StickybombLauncherAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : StickybombLauncherAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : StickybombLauncherAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : StickybombLauncherAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : StickybombLauncherAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : StickybombLauncherAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : StickybombLauncherAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : StickybombLauncherAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : StickybombLauncherAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : StickybombLauncherAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : StickybombLauncherAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : StickybombLauncherAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -168,6 +221,12 @@ interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : StickybombLauncherAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : StickybombLauncherAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -175,14 +234,36 @@ interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 		open class ItemsAttributes : StickybombLauncherAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : StickybombLauncherAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : StickybombLauncherAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : StickybombLauncherAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : StickybombLauncherAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : StickybombLauncherAttributes.MeterAttributes() 
+	open class MeterAttributes : StickybombLauncherAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : StickybombLauncherAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : StickybombLauncherAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : StickybombLauncherAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : StickybombLauncherAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : StickybombLauncherAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : StickybombLauncherAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : StickybombLauncherAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : StickybombLauncherAttributes.HeadsAttributes() 
@@ -192,16 +273,36 @@ interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : StickybombLauncherAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : StickybombLauncherAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : StickybombLauncherAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : StickybombLauncherAttributes.OnKillAttributes() 
 	
 	open class ReloadingAttributes : StickybombLauncherAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : StickybombLauncherAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : StickybombLauncherAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : StickybombLauncherAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : StickybombLauncherAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : StickybombLauncherAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : StickybombLauncherAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : StickybombLauncherAttributes.RevengeCritsAttributes() 
 	
@@ -219,5 +320,15 @@ interface CompoundBowAttributes : IBlockScoped, StickybombLauncherAttributes {
 	
 	open class RagdollsAttributes : StickybombLauncherAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : StickybombLauncherAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : StickybombLauncherAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : StickybombLauncherAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : StickybombLauncherAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : StickybombLauncherAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : CompoundBowAttributes 
 }

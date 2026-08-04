@@ -9,4 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileSpellKartPumpkinAttributes : IBlockScoped, ProjectileSpellPumpkinAttributes {
 	companion object : IBlockScoped 
+
+	object Inherited : ProjectileSpellKartPumpkinAttributes 
 }

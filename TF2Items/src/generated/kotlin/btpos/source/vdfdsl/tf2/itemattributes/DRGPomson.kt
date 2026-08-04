@@ -57,7 +57,15 @@ interface DRGPomsonAttributes : IBlockScoped, RayGunAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val ammo: AmmoAttributes get() = DRGPomsonAttributes.ammo
@@ -108,12 +116,24 @@ interface DRGPomsonAttributes : IBlockScoped, RayGunAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = DRGPomsonAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = DRGPomsonAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = DRGPomsonAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = DRGPomsonAttributes.disguise
+	
+	override val hud: HudAttributes get() = DRGPomsonAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = DRGPomsonAttributes.spyOnly
 
 	open class AmmoAttributes : RayGunAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : RayGunAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : RayGunAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
 	open class ProjectilesAttributes : RayGunAttributes.ProjectilesAttributes() {
@@ -126,7 +146,11 @@ interface DRGPomsonAttributes : IBlockScoped, RayGunAttributes {
 		open class ProjectilePenetrationAttributes : RayGunAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
 	}
 	
-	open class DamageAttributes : RayGunAttributes.DamageAttributes() 
+	open class DamageAttributes : RayGunAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : RayGunAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class FiringAttributes : RayGunAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -136,13 +160,37 @@ interface DRGPomsonAttributes : IBlockScoped, RayGunAttributes {
 	
 	open class AfterburnAttributes : RayGunAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : RayGunAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : RayGunAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : RayGunAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : RayGunAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : RayGunAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : RayGunAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : RayGunAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : RayGunAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : RayGunAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : RayGunAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : RayGunAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : RayGunAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : RayGunAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : RayGunAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -159,6 +207,12 @@ interface DRGPomsonAttributes : IBlockScoped, RayGunAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : RayGunAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : RayGunAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -166,14 +220,36 @@ interface DRGPomsonAttributes : IBlockScoped, RayGunAttributes {
 		open class ItemsAttributes : RayGunAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : RayGunAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : RayGunAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : RayGunAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : RayGunAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : RayGunAttributes.MeterAttributes() 
+	open class MeterAttributes : RayGunAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : RayGunAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : RayGunAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : RayGunAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : RayGunAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : RayGunAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : RayGunAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : RayGunAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : RayGunAttributes.HeadsAttributes() 
@@ -183,16 +259,36 @@ interface DRGPomsonAttributes : IBlockScoped, RayGunAttributes {
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : RayGunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : RayGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : RayGunAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class OnKillAttributes : RayGunAttributes.OnKillAttributes() 
 	
 	open class ReloadingAttributes : RayGunAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : RayGunAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : RayGunAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : RayGunAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : RayGunAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : RayGunAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : RayGunAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : RayGunAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface DRGPomsonAttributes : IBlockScoped, RayGunAttributes {
 	
 	open class RagdollsAttributes : RayGunAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : RayGunAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : RayGunAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : RayGunAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : RayGunAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : RayGunAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : DRGPomsonAttributes 
 }

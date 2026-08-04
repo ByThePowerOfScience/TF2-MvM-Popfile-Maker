@@ -109,12 +109,13 @@ object SDKNotes {
 	
 	val hierarchy = TFClassHierarchy(
 		"BaseEntity" to listOf(
-			"EconEntity" to listOf(
-				"Wearable",
-				"BaseCombatWeapon" to listOf("WeaponBase"),
-			),
+			
 			"Player" to listOf(
 				"MvMBot", // technically doesn't exist, but it's mainly just to
+				"EconEntity" to listOf( // inherit all player attributes for all weapons
+					"Wearable",
+					"BaseCombatWeapon" to listOf("WeaponBase"),
+				),
 			)
 		),
 		

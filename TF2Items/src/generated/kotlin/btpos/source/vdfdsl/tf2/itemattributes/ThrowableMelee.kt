@@ -57,7 +57,15 @@ interface ThrowableMeleeAttributes : IBlockScoped, ThrowableAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val projectiles: ProjectilesAttributes get() = ThrowableMeleeAttributes.projectiles
@@ -108,7 +116,15 @@ interface ThrowableMeleeAttributes : IBlockScoped, ThrowableAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = ThrowableMeleeAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = ThrowableMeleeAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = ThrowableMeleeAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = ThrowableMeleeAttributes.disguise
+	
+	override val hud: HudAttributes get() = ThrowableMeleeAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = ThrowableMeleeAttributes.spyOnly
 
 	open class ProjectilesAttributes : ThrowableAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
@@ -120,25 +136,41 @@ interface ThrowableMeleeAttributes : IBlockScoped, ThrowableAttributes {
 		open class ProjectilePenetrationAttributes : ThrowableAttributes.ProjectilesAttributes.ProjectilePenetrationAttributes() 
 	}
 	
-	open class MeterAttributes : ThrowableAttributes.MeterAttributes() 
+	open class MeterAttributes : ThrowableAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : ThrowableAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class OnHitAttributes : ThrowableAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : ThrowableAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : ThrowableAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : ThrowableAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class AmmoAttributes : ThrowableAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : ThrowableAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : ThrowableAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
-	open class DamageAttributes : ThrowableAttributes.DamageAttributes() 
+	open class DamageAttributes : ThrowableAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : ThrowableAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class FiringAttributes : ThrowableAttributes.FiringAttributes() {
 		override val fireRate: FireRateAttributes = FireRateAttributes()
@@ -148,13 +180,37 @@ interface ThrowableMeleeAttributes : IBlockScoped, ThrowableAttributes {
 	
 	open class AfterburnAttributes : ThrowableAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : ThrowableAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : ThrowableAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : ThrowableAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : ThrowableAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : ThrowableAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : ThrowableAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : ThrowableAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : ThrowableAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : ThrowableAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : ThrowableAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : ThrowableAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : ThrowableAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : ThrowableAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : ThrowableAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -171,6 +227,12 @@ interface ThrowableMeleeAttributes : IBlockScoped, ThrowableAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : ThrowableAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : ThrowableAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -178,12 +240,30 @@ interface ThrowableMeleeAttributes : IBlockScoped, ThrowableAttributes {
 		open class ItemsAttributes : ThrowableAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : ThrowableAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : ThrowableAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : ThrowableAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : ThrowableAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
 	open class MovementAttributes : ThrowableAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : ThrowableAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : ThrowableAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : ThrowableAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : ThrowableAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : ThrowableAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : ThrowableAttributes.HeadsAttributes() 
@@ -192,7 +272,23 @@ interface ThrowableMeleeAttributes : IBlockScoped, ThrowableAttributes {
 	
 	open class ReloadingAttributes : ThrowableAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : ThrowableAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : ThrowableAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : ThrowableAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : ThrowableAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : ThrowableAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : ThrowableAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : ThrowableAttributes.RevengeCritsAttributes() 
 	
@@ -210,5 +306,15 @@ interface ThrowableMeleeAttributes : IBlockScoped, ThrowableAttributes {
 	
 	open class RagdollsAttributes : ThrowableAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : ThrowableAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : ThrowableAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : ThrowableAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : ThrowableAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : ThrowableAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : ThrowableMeleeAttributes 
 }

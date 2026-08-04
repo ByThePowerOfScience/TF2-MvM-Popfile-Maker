@@ -59,7 +59,15 @@ interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 	
 		private val ragdolls: RagdollsAttributes = RagdollsAttributes()
 	
+		private val buffItems: BuffItemsAttributes = BuffItemsAttributes()
+	
+		private val cloak: CloakAttributes = CloakAttributes()
+	
 		private val disguise: DisguiseAttributes = DisguiseAttributes()
+	
+		private val hud: HudAttributes = HudAttributes()
+	
+		private val spyOnly: SpyOnlyAttributes = SpyOnlyAttributes()
 	}
 
 	override val damage: DamageAttributes get() = SniperRifleClassicAttributes.damage
@@ -112,18 +120,34 @@ interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 	
 	override val ragdolls: RagdollsAttributes get() = SniperRifleClassicAttributes.ragdolls
 	
+	override val buffItems: BuffItemsAttributes get() = SniperRifleClassicAttributes.buffItems
+	
+	override val cloak: CloakAttributes get() = SniperRifleClassicAttributes.cloak
+	
 	override val disguise: DisguiseAttributes get() = SniperRifleClassicAttributes.disguise
+	
+	override val hud: HudAttributes get() = SniperRifleClassicAttributes.hud
+	
+	override val spyOnly: SpyOnlyAttributes get() = SniperRifleClassicAttributes.spyOnly
 
-	open class DamageAttributes : SniperRifleAttributes.DamageAttributes() 
+	open class DamageAttributes : SniperRifleAttributes.DamageAttributes() {
+		override val alien: AlienAttributes = AlienAttributes()
+	
+		open class AlienAttributes : SniperRifleAttributes.DamageAttributes.AlienAttributes() 
+	}
 	
 	open class OnHitAttributes : SniperRifleAttributes.OnHitAttributes() {
 		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
 	
 		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
 	
+		override val falling: FallingAttributes = FallingAttributes()
+	
 		open class HealOnHitForRapidfireAttributes : SniperRifleAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
 	
 		open class GenerateRageOnDamageAttributes : SniperRifleAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+	
+		open class FallingAttributes : SniperRifleAttributes.OnHitAttributes.FallingAttributes() 
 	}
 	
 	open class SniperChargePerSecAttributes : SniperRifleAttributes.SniperChargePerSecAttributes() 
@@ -131,7 +155,11 @@ interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 	open class AmmoAttributes : SniperRifleAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
+		override val maxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+	
 		open class ClipSizeAttributes : SniperRifleAttributes.AmmoAttributes.ClipSizeAttributes() 
+	
+		open class MaxAmmoAttributes : SniperRifleAttributes.AmmoAttributes.MaxAmmoAttributes() 
 	}
 	
 	open class FiringAttributes : SniperRifleAttributes.FiringAttributes() {
@@ -152,13 +180,37 @@ interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 	
 	open class AfterburnAttributes : SniperRifleAttributes.AfterburnAttributes() 
 	
-	open class BuildingsAttributes : SniperRifleAttributes.BuildingsAttributes() 
+	open class BuildingsAttributes : SniperRifleAttributes.BuildingsAttributes() {
+		override val sentryGun: SentryGunAttributes = SentryGunAttributes()
+	
+		override val dispenser: DispenserAttributes = DispenserAttributes()
+	
+		override val teleporter: TeleporterAttributes = TeleporterAttributes()
+	
+		open class SentryGunAttributes : SniperRifleAttributes.BuildingsAttributes.SentryGunAttributes() 
+	
+		open class DispenserAttributes : SniperRifleAttributes.BuildingsAttributes.DispenserAttributes() 
+	
+		open class TeleporterAttributes : SniperRifleAttributes.BuildingsAttributes.TeleporterAttributes() 
+	}
 	
 	open class CritsAttributes : SniperRifleAttributes.CritsAttributes() 
 	
-	open class DemoChargeAttributes : SniperRifleAttributes.DemoChargeAttributes() 
+	open class DemoChargeAttributes : SniperRifleAttributes.DemoChargeAttributes() {
+		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
 	
-	open class HealthAndHealingAttributes : SniperRifleAttributes.HealthAndHealingAttributes() 
+		open class MultChargeTurnControlAttributes : SniperRifleAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+	}
+	
+	open class HealthAndHealingAttributes : SniperRifleAttributes.HealthAndHealingAttributes() {
+		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+	
+		override val maxHealthAdditive: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+	
+		open class HealthRegenAttributes : SniperRifleAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+	
+		open class MaxHealthAdditiveAttributes : SniperRifleAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+	}
 	
 	open class KnockbackReceivedAttributes : SniperRifleAttributes.KnockbackReceivedAttributes() {
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
@@ -175,6 +227,12 @@ interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 	
 		override val particles: ParticlesAttributes = ParticlesAttributes()
 	
+		override val noisemakers: NoisemakersAttributes = NoisemakersAttributes()
+	
+		override val player: PlayerAttributes = PlayerAttributes()
+	
+		override val gameplay: GameplayAttributes = GameplayAttributes()
+	
 		open class KillfeedAttributes : SniperRifleAttributes.MetaAttributes.KillfeedAttributes() 
 	
 		open class ViewmodelAttributes : SniperRifleAttributes.MetaAttributes.ViewmodelAttributes() 
@@ -182,14 +240,36 @@ interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 		open class ItemsAttributes : SniperRifleAttributes.MetaAttributes.ItemsAttributes() 
 	
 		open class ParticlesAttributes : SniperRifleAttributes.MetaAttributes.ParticlesAttributes() 
+	
+		open class NoisemakersAttributes : SniperRifleAttributes.MetaAttributes.NoisemakersAttributes() 
+	
+		open class PlayerAttributes : SniperRifleAttributes.MetaAttributes.PlayerAttributes() 
+	
+		open class GameplayAttributes : SniperRifleAttributes.MetaAttributes.GameplayAttributes() 
 	}
 	
-	open class MeterAttributes : SniperRifleAttributes.MeterAttributes() 
+	open class MeterAttributes : SniperRifleAttributes.MeterAttributes() {
+		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+	
+		open class GenerateRageOnDamageAttributes : SniperRifleAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+	}
 	
 	open class MovementAttributes : SniperRifleAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class MoveSpeedAttributes : SniperRifleAttributes.MovementAttributes.MoveSpeedAttributes() 
+		override val jumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+	
+		open class MoveSpeedAttributes : SniperRifleAttributes.MovementAttributes.MoveSpeedAttributes() {
+			override val aimingMovespeed: AimingMovespeedAttributes = AimingMovespeedAttributes()
+	
+			override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
+	
+			open class AimingMovespeedAttributes : SniperRifleAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+	
+			open class MoveSpeedAttributes : SniperRifleAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+		}
+	
+		open class jumpHeightAttributes : SniperRifleAttributes.MovementAttributes.jumpHeightAttributes() 
 	}
 	
 	open class HeadsAttributes : SniperRifleAttributes.HeadsAttributes() 
@@ -198,7 +278,23 @@ interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 	
 	open class ReloadingAttributes : SniperRifleAttributes.ReloadingAttributes() 
 	
-	open class ResistanceAttributes : SniperRifleAttributes.ResistanceAttributes() 
+	open class ResistanceAttributes : SniperRifleAttributes.ResistanceAttributes() {
+		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+	
+		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+	
+		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+	
+		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
+	
+		open class DmgTakenFromCritReducedAttributes : SniperRifleAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+	
+		open class DmgTakenFromFireReducedAttributes : SniperRifleAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+	
+		open class DmgTakenFromBulletsReducedAttributes : SniperRifleAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+	
+		open class VaccinatorAttributes : SniperRifleAttributes.ResistanceAttributes.VaccinatorAttributes() 
+	}
 	
 	open class RevengeCritsAttributes : SniperRifleAttributes.RevengeCritsAttributes() 
 	
@@ -216,5 +312,15 @@ interface SniperRifleClassicAttributes : IBlockScoped, SniperRifleAttributes {
 	
 	open class RagdollsAttributes : SniperRifleAttributes.RagdollsAttributes() 
 	
+	open class BuffItemsAttributes : SniperRifleAttributes.BuffItemsAttributes() 
+	
+	open class CloakAttributes : SniperRifleAttributes.CloakAttributes() 
+	
 	open class DisguiseAttributes : SniperRifleAttributes.DisguiseAttributes() 
+	
+	open class HudAttributes : SniperRifleAttributes.HudAttributes() 
+	
+	open class SpyOnlyAttributes : SniperRifleAttributes.SpyOnlyAttributes() 
+	
+	object Inherited : SniperRifleClassicAttributes 
 }

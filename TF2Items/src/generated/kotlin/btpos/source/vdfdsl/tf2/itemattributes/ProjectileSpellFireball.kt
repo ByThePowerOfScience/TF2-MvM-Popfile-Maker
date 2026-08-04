@@ -9,4 +9,6 @@ import kotlin.time.Duration
 
 interface ProjectileSpellFireballAttributes : IBlockScoped, ProjectileRocketAttributes {
 	companion object : IBlockScoped 
+
+	object Inherited : ProjectileSpellFireballAttributes 
 }
