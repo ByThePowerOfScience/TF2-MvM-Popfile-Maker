@@ -14,3 +14,5 @@ object ColorCodec : Codec<Color, Any> {
 		return PaintColors.rgbToInt(input.red, input.green, input.blue)
 	}
 }
+
+val ColorEncoder = ColorCodec::write

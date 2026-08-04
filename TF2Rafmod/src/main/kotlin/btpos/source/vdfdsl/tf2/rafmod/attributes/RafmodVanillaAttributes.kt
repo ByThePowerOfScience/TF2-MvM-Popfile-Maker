@@ -1,32 +1,22 @@
 package btpos.source.vdfdsl.tf2.rafmod.attributes
 
-import btpos.source.vdfdsl.modeling.IKeyValueMap
-import btpos.source.vdfdsl.serialization.codecs.BinaryIntCodec
-import btpos.source.vdfdsl.tf2.itemattributes.BaseEntityAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.BaseGunAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.BaseMeleeAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.CompoundBowAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.CrossbowAttributes
-import btpos.source.vdfdsl.tf2.itemattributes.DispenserAttributes
-import btpos.source.vdfdsl.tf2.itemattributes.EntityAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.FlamethrowerAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.itemattributes.MedigunAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.MinigunAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.MvMBotAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.PlayerAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.RevolverAttributes
-import btpos.source.vdfdsl.tf2.itemattributes.SentryGunAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.SniperRifleAttributes
-import btpos.source.vdfdsl.tf2.itemattributes.SpyOnlyAttributes
-import btpos.source.vdfdsl.tf2.itemattributes.SyringeGunAttributes
-import btpos.source.vdfdsl.tf2.itemattributes.TeleporterAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.WeaponBaseAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.WearableAttributes
-import btpos.source.vdfdsl.tf2.itemattributes.impl.EnumSetOrCodec
-import btpos.source.vdfdsl.tf2.itemattributes.impl.IEnumCustomValue
-import btpos.source.vdfdsl.tf2.rafmod.codecs.DurationCodec
-import java.util.EnumSet
+import btpos.source.vdfdsl.tf2.rafmod.codecs.SetToIntCodec
+import btpos.source.vdfdsl.utils.toSeconds
 import kotlin.time.Duration
 
 /**
@@ -39,58 +29,43 @@ object RafmodVanillaAttributes {
 	 *
 	 * Prevents the user from using alt-fire on their weapon.
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.altFireDisabled: Boolean?
-		get() = attrs.getTyped("alt-fire disabled", BinaryIntCodec)
-		set(value) = attrs.setNullable("alt-fire disabled", value, BinaryIntCodec)
+	val WeaponBaseAttributes.altFireDisabled: ItemAttributeNamed<Boolean> by ItemAttributeNamed("alt-fire disabled")
 	
 	/**
 	 * Rafmod expansion of a vanilla attribute.  Now works on any weapon, not just melee weapons.
 	 *
 	 * @see BaseMeleeAttributes.dmgPenaltyWhileHalfAlive
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.dmgBonusWhileHalfDead: Number?
-	    get() = BaseMeleeAttributes.dmgPenaltyWhileHalfAlive
-	    set(value) { BaseMeleeAttributes.dmgPenaltyWhileHalfAlive = value }
+	val WeaponBaseAttributes.DamageAttributes.multDmgWhileHalfDead get() = BaseMeleeAttributes.damage.multDmgWhileHalfDead
+	
 	
 	/**
 	 * Rafmod expansion of a vanilla attribute.  Now works on any weapon, not just melee weapons.
 	 *
-	 * @see BaseMeleeAttributes.dmgPenaltyWhileHalfAlive
+	 * @see BaseMeleeAttributes.DamageAttributes.multDmgWhileHalfAlive
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.dmgPenaltyWhileHalfAlive: Number?
-		get() = BaseMeleeAttributes.dmgPenaltyWhileHalfAlive
-		set(value) { BaseMeleeAttributes.dmgPenaltyWhileHalfAlive = value }
+	val WeaponBaseAttributes.DamageAttributes.multDmgWhileHalfAlive get() = BaseMeleeAttributes.damage.multDmgWhileHalfAlive
 	
 	/**
 	 * Rafmod expansion of a vanilla attribute.  Now works on the [Mantreads][btpos.source.vdfdsl.tf2.items.weapons.Weapons.MANTREADS].
 	 *
-	 * @see WeaponBaseAttributes.damage
+	 * @see WeaponBaseAttributes.DamageAttributes.damage
 	 */
-	val WearableAttributes.damage
-		get() = WeaponBaseAttributes.damage
+	val WearableAttributes.DamageAttributes.damage get() = WeaponBaseAttributes.damage.damage
 	
 	/**
 	 * Rafmod expansion of a vanilla attribute.  Now works on the [Mantreads][btpos.source.vdfdsl.tf2.items.weapons.Weapons.MANTREADS].
 	 *
-	 * @see WeaponBaseAttributes.dmgPenaltyVsPlayers
+	 * @see WeaponBaseAttributes.DamageAttributes.dmgPenaltyVsPlayers
 	 */
-	context(attrs: IKeyValueMap)
-	var WearableAttributes.dmgPenaltyVsPlayers
-		get() = WeaponBaseAttributes.dmgPenaltyVsPlayers
-		set(value) { WeaponBaseAttributes.dmgPenaltyVsPlayers = value }
+	val WearableAttributes.DamageAttributes.dmgPenaltyVsPlayers get() = WeaponBaseAttributes.damage.dmgPenaltyVsPlayers
 	
 	/**
 	 * Rafmod expansion of a vanilla attribute.  Now works on the [Mantreads][btpos.source.vdfdsl.tf2.items.weapons.Weapons.MANTREADS].
 	 *
-	 * @see WeaponBaseAttributes.restoreHealthOnKill
+	 * @see WeaponBaseAttributes.OnKillAttributes.restoreHealthOnKill
 	 */
-	context(attrs: IKeyValueMap)
-	var WearableAttributes.restoreHealthOnKill: Int?
-	    get() = WeaponBaseAttributes.restoreHealthOnKill
-	    set(value) { WeaponBaseAttributes.restoreHealthOnKill = value }
+	val WearableAttributes.restoreHealthOnKill get() = WeaponBaseAttributes.onKill.healOnKill
 	
 	
 	/**
@@ -98,32 +73,23 @@ object RafmodVanillaAttributes {
 	 *
 	 * Multiplier to firing speed, inversely scaled by the user's "current health to maximum health" proportion.
 	 *
-	 * Formerly the attribute used for the Panic Attack, now unimplemented in the base game.
+	 * Formerly the attribute used for the Panic Attack, now unused in the base game.
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.fireRateBonusWithReducedHealth: Number?
-		get() = attrs.getTyped("fire rate bonus with reduced health")
-		set(value) = attrs.setNullable("fire rate bonus with reduced health", value)
+	val WeaponBaseAttributes.FiringAttributes.multFireRateWithReducedHealth: ItemAttributeNamed<Number> by ItemAttributeNamed("fire rate bonus with reduced health")
 	
 	/**
 	 * Rafmod expansion of a vanilla attribute.  Now works on any weapon.
 	 *
 	 * @see MinigunAttributes.attackProjectiles
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.attackProjectiles
-		get() = MinigunAttributes.attackProjectiles
-		set(value) { MinigunAttributes.attackProjectiles = value }
+	val WeaponBaseAttributes.canAttackProjectiles get() = MinigunAttributes.attackProjectiles
 	
 	/**
 	 * Rafmod expansion of a vanilla attribute.  Now works on any weapon.
 	 *
-	 * @see BaseMeleeAttributes.critFromBehind
+	 * @see BaseMeleeAttributes.CritsAttributes.critFromBehind
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.critFromBehind
-		get() = BaseMeleeAttributes.critFromBehind
-		set(value) { BaseMeleeAttributes.critFromBehind = value }
+	val WeaponBaseAttributes.CritsAttributes.critFromBehind get() = BaseMeleeAttributes.crits.critFromBehind
 	
 	
 	
@@ -134,31 +100,19 @@ object RafmodVanillaAttributes {
 	 *
 	 * Prevents parachute from being deployed, but still allows it to be retracted.
 	 */
-	context(attrs: IKeyValueMap)
-	var EntityAttributes.parachuteDisabled: Boolean?
-		get() = attrs.getTyped("parachute disabled", BinaryIntCodec)
-		set(value) = attrs.setNullable("parachute disabled", value, BinaryIntCodec)
-	
+	val PlayerAttributes.MovementAttributes.parachuteDisabled: ItemAttributeNamed<Boolean> by ItemAttributeNamed("parachute disabled")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * If true, alt-fire fires a crossbow bolt that applies Mad Milk to its target.
 	 */
-	context(attrs: IKeyValueMap)
-	var CrossbowAttributes.firesMilkBolt: Boolean?
-		get() = attrs.getTyped("fires milk bolt", BinaryIntCodec)
-		set(value) = attrs.setNullable("fires milk bolt", value, BinaryIntCodec)
-	
+	val CrossbowAttributes.firesMilkBolt: ItemAttributeNamed<Boolean> by ItemAttributeNamed("fires milk bolt")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * Hit all targets in swing instead of just the first valid one.
 	 */
-	context(attrs: IKeyValueMap)
-	var BaseMeleeAttributes.meleeCleaveAttack: Boolean?
-		get() = attrs.getTyped("melee cleave attack", BinaryIntCodec)
-		set(value) = attrs.setNullable("melee cleave attack", value, BinaryIntCodec)
-	
+	val BaseMeleeAttributes.meleeCleaveAttack: ItemAttributeNamed<Boolean> by ItemAttributeNamed("melee cleave attack")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
@@ -166,10 +120,7 @@ object RafmodVanillaAttributes {
 	 *
 	 * @see extraDamageOnHit
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.headsGainedOnHit: Int?
-		get() = attrs.getTyped("extra damage on hit")
-		set(value) = attrs.setNullable("extra damage on hit", value)
+	val WeaponBaseAttributes.HeadsAttributes.headsGainedOnHit: ItemAttributeNamed<Int> by ItemAttributeNamed("extra damage on hit")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
@@ -181,10 +132,7 @@ object RafmodVanillaAttributes {
 	 * @see headsGainedOnHit
 	 * @see extraDamageOnHitPenalty
 	 */
-	context(attrs: IKeyValueMap)
-	var RevolverAttributes.extraDamageOnHit: Int?
-		get() = attrs.getTyped("extra damage on hit")
-		set(value) = attrs.setNullable("extra damage on hit", value)
+	val RevolverAttributes.DamageAttributes.extraDamageOnHit: ItemAttributeNamed<Int> by ItemAttributeNamed("extra damage on hit")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
@@ -194,71 +142,43 @@ object RafmodVanillaAttributes {
 	 * @see extraDamageOnHit
 	 * @see headsGainedOnHit
 	 */
-	context(attrs: IKeyValueMap)
-	var RevolverAttributes.extraDamageOnHitPenalty: Int?
-		get() = attrs.getTyped("extra damage on hit penalty")
-		set(value) = attrs.setNullable("extra damage on hit penalty", value)
-	
+	val RevolverAttributes.HeadsAttributes.extraDamageOnHitPenalty: ItemAttributeNamed<Int> by ItemAttributeNamed("extra damage on hit penalty")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
-	 * If true, teleporter adds the [speed boost condition][btpos.source.vdfdsl.tf2.tftypes.TFCondition.SpeedBoost] with arg `4.0` to the teleported player.
+	 * If true, teleporter adds the [speed boost condition][btpos.source.vdfdsl.tf2.tftypes.TFCondition.SpeedBoost] for 4 seconds to players it teleports.
 	 */
-	context(attrs: IKeyValueMap)
-	var TeleporterAttributes.modTeleporterSpeedBoost: Boolean?
-		get() = attrs.getTyped("mod teleporter speed boost", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod teleporter speed boost", value, BinaryIntCodec)
-	
+	val PlayerAttributes.BuildingsAttributes.TeleporterAttributes.givesSpeedBoost: ItemAttributeNamed<Boolean> by ItemAttributeNamed("mod teleporter speed boost")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * If true, the player can breathe underwater.
 	 */
-	context(attrs: IKeyValueMap)
-	var PlayerAttributes.canBreatheUnderwater: Boolean?
-		get() = attrs.getTyped("can breathe under water", BinaryIntCodec)
-		set(value) = attrs.setNullable("can breathe under water", value, BinaryIntCodec)
-	
+	val PlayerAttributes.MovementAttributes.canBreatheUnderwater: ItemAttributeNamed<Boolean> by ItemAttributeNamed("can breathe under water")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * If true, forbids you from Numbering upwards with the jump button in the water.
 	 */
-	context(attrs: IKeyValueMap)
-	var PlayerAttributes.cannotSwim: Boolean?
-		get() = attrs.getTyped("cannot swim", BinaryIntCodec)
-		set(value) = attrs.setNullable("cannot swim", value, BinaryIntCodec)
-	
+	val PlayerAttributes.MovementAttributes.cannotSwim: ItemAttributeNamed<Boolean> by ItemAttributeNamed("cannot swim")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * If false or not present, move speed is 80% while swimming.
 	 */
-	context(attrs: IKeyValueMap)
-	var PlayerAttributes.swimmingMastery: Boolean?
-		get() = attrs.getTyped("swimming mastery", BinaryIntCodec)
-		set(value) = attrs.setNullable("swimming mastery", value, BinaryIntCodec)
-	
+	val PlayerAttributes.MovementAttributes.swimmingMastery: ItemAttributeNamed<Boolean> by ItemAttributeNamed("swimming mastery")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * If true, add `kills + captures + defenses + buildingsdestroyed - (3 * deaths)` to player score, on top of the default scoring algorithm.
 	 */
-	context(attrs: IKeyValueMap)
-	var PlayerAttributes.scoreboardMinigame: Boolean?
-		get() = attrs.getTyped("scoreboard minigame", BinaryIntCodec)
-		set(value) = attrs.setNullable("scoreboard minigame", value, BinaryIntCodec)
-	
+	val PlayerAttributes.MetaAttributes.scoreboardMinigame: ItemAttributeNamed<Boolean> by ItemAttributeNamed("scoreboard minigame")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * If true, makes the player immune to "wet" status effects: Jarate, Mad Milk, Gas Passer.
 	 */
-	context(attrs: IKeyValueMap)
-	var PlayerAttributes.wetImmunity: Boolean?
-		get() = attrs.getTyped("wet immunity", BinaryIntCodec)
-		set(value) = attrs.setNullable("wet immunity", value, BinaryIntCodec)
-	
+	val PlayerAttributes.ResistanceAttributes.wetImmunity: ItemAttributeNamed<Boolean> by ItemAttributeNamed("wet immunity")
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
@@ -269,10 +189,7 @@ object RafmodVanillaAttributes {
 	 *
 	 * Value: the level of the ability.
 	 */
-	context(attrs: IKeyValueMap)
-	var SniperRifleAttributes.abilityMasterSniper: Int?
-		get() = attrs.getTyped("ability master sniper")
-		set(value) = attrs.setNullable("ability master sniper", value)
+	val SniperRifleAttributes.masterSniperLevel: ItemAttributeNamed<Int> by ItemAttributeNamed("ability master sniper")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
@@ -281,375 +198,243 @@ object RafmodVanillaAttributes {
 	 *
 	 * Does not stack with Haste powerup.
 	 */
-	context(attrs: IKeyValueMap)
-	var CompoundBowAttributes.abilityMasterSniper: Int?
-		get() = attrs.getTyped("ability master sniper")
-		set(value) = attrs.setNullable("ability master sniper", value)
+	val CompoundBowAttributes.masterSniperLevel: ItemAttributeNamed<Int> by ItemAttributeNamed("ability master sniper")
+	
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * When reloading, if you only have 1 round left in your clip, get crit-boosted.
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.lastShotCrits: Boolean?
-		get() = attrs.getTyped("last shot crits", BinaryIntCodec)
-		set(value) = attrs.setNullable("last shot crits", value, BinaryIntCodec)
+	val WeaponBaseAttributes.lastShotCrits: ItemAttributeNamed<Boolean> by ItemAttributeNamed("last shot crits")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * If true, spies will keep their disguise when attacking with this weapon.
 	 */
-	context(attrs: IKeyValueMap)
-	var BaseGunAttributes.keepDisguiseOnAttacking: Boolean?
-		get() = attrs.getTyped("keep disguise on attack", BinaryIntCodec)
-		set(value) = attrs.setNullable("keep disguise on attack", value, BinaryIntCodec)
+	val BaseGunAttributes.DisguiseAttributes.keepDisguiseOnAttacking: ItemAttributeNamed<Boolean> by ItemAttributeNamed("keep disguise on attack")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * Transfer this amount of health from yourself to your teammate when hitting them.
 	 */
-	context(attrs: IKeyValueMap)
-	var BaseMeleeAttributes.giveHealthToTeammateOnHit: Int?
-		get() = attrs.getTyped("add give health to teammate on hit")
-		set(value) = attrs.setNullable("add give health to teammate on hit", value)
+	val BaseMeleeAttributes.OnHitAttributes.giveHealthToTeammate: ItemAttributeNamed<Int> by ItemAttributeNamed("add give health to teammate on hit")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * Can switch to other weapons while spinning minigun.
 	 */
-	context(attrs: IKeyValueMap)
-	var MinigunAttributes.minigunCanHolsterWhileSpinning: Boolean?
-		get() = attrs.getTyped("mod minigun can holster while spinning", BinaryIntCodec)
-		set(value) = attrs.setNullable("mod minigun can holster while spinning", value, BinaryIntCodec)
+	val MinigunAttributes.canHolsterWhileSpinning: ItemAttributeNamed<Boolean> by ItemAttributeNamed("mod minigun can holster while spinning")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * On kill, gives N% fire-rate bonus, stacking up to 3 times.  Killing a different class than the previous kill resets the combo.
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.killComboFireRateBoost: Number?
-		get() = attrs.getTyped("kill combo fire rate boost")
-		set(value) = attrs.setNullable("kill combo fire rate boost", value)
+	val WeaponBaseAttributes.FiringAttributes.FireRateAttributes.killComboFireRateBoost: ItemAttributeNamed<Number> by ItemAttributeNamed("kill combo fire rate boost")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * Multiplier for health, ammo, and metal dispenser rate. Queried on the builder.
 	 */
-	context(attrs: IKeyValueMap)
-	var DispenserAttributes.multDispenserResupplyRate: Number?
-		get() = attrs.getTyped("mult dispenser rate")
-		set(value) = attrs.setNullable("mult dispenser rate", value)
+	val PlayerAttributes.BuildingsAttributes.DispenserAttributes.multDispenserResupplyRate: ItemAttributeNamed<Number> by ItemAttributeNamed("mult dispenser rate")
 	
 	/**
 	 * Unused base-game attribute made accessible by Rafmod.
 	 *
 	 * Sentry max ammo multiplier. Queried on the builder.
 	 */
-	context(attrs: IKeyValueMap)
-	var SentryGunAttributes.multSentryAmmo: Number?
-		get() = attrs.getTyped("mvm sentry ammo")
-		set(value) = attrs.setNullable("mvm sentry ammo", value)
-	
+	val PlayerAttributes.BuildingsAttributes.SentryGunAttributes.multSentryAmmo: ItemAttributeNamed<Number> by ItemAttributeNamed("mvm sentry ammo")
 	/**
 	 * Sentry is 20% smaller with 33% less health, and requires 25% less metal to upgrade. Queried on the builder.
 	 */
-	context(attrs: IKeyValueMap)
-	var SentryGunAttributes.buildSmallSentries: Boolean?
-		get() = attrs.getTyped("build small sentries")
-		set(value) = attrs.setNullable("build small sentries", value)
-	
+	val PlayerAttributes.BuildingsAttributes.SentryGunAttributes.buildSmallSentries: ItemAttributeNamed<Boolean> by ItemAttributeNamed("build small sentries")
 	/**
 	 * Teleporter recharge duration multiplier. Queried on the builder.
 	 */
-	context(attrs: IKeyValueMap)
-	var TeleporterAttributes.multTeleporterRechargeRate: Number?
-		get() = attrs.getTyped("mult teleporter recharge rate")
-		set(value) = attrs.setNullable("mult teleporter recharge rate", value)
+	val PlayerAttributes.BuildingsAttributes.TeleporterAttributes.multRechargeRate: ItemAttributeNamed<Number> by ItemAttributeNamed("mult teleporter recharge rate")
+	/**
+	 * Disguise as a dispenser when crouching. Hardcoded to only work on Spy.
+	 */
+	val PlayerAttributes.DisguiseAttributes.disguiseAsDispenserOnCrouch: ItemAttributeNamed<Boolean> by ItemAttributeNamed("disguise as dispenser on crouch")
+	/**
+	 * If a Syringe Gun, uses this much ubercharge % per shot instead of normal ammunition.  Otherwise does nothing.
+	 *
+	 * Using Ubercharge for ammo only works on Syringe guns, but [uberchargeTransfer] works on all weapons.
+	 */
+	val WeaponBaseAttributes.AmmoAttributes.uberchargeAmmo: ItemAttributeNamed<Number> by ItemAttributeNamed("ubercharge ammo")
 	
 	/**
-	 * As spy, disguise as a dispenser when crouching.
+	 * If [uberchargeAmmo] is set, hitting any other medic with the weapon will transfer this much ubercharge % to them.
 	 */
-	context(attrs: IKeyValueMap)
-	var SpyOnlyAttributes.disguiseAsDispenserOnCrouch: Boolean?
-		get() = attrs.getTyped("disguise as dispenser on crouch")
-		set(value) = attrs.setNullable("disguise as dispenser on crouch", value)
-	
-	/**
-	 * Uses this much ubercharge % per shot instead of normal ammunition.
-	 */
-	context(attrs: IKeyValueMap)
-	var SyringeGunAttributes.uberchargeAmmo: Number?
-		get() = attrs.getTyped("ubercharge ammo")
-		set(value) = attrs.setNullable("ubercharge ammo", value)
-	
-	/**
-	 * If `ubercharge_ammo` is set, hitting any other medic with the weapon will transfer this much ubercharge % to them.
-	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.uberchargeTransfer: Number?
-		get() = attrs.getTyped("ubercharge transfer")
-		set(value) = attrs.setNullable("ubercharge transfer", value)
-	
-	
-	
+	val WeaponBaseAttributes.OnHitAttributes.uberchargeTransfer: ItemAttributeNamed<Number> by ItemAttributeNamed("ubercharge transfer")
 	
 	/**
 	 * On receiving fatal damage: x% chance of being immediately revived at spawn with 1 health.
 	 */
-	context(attrs: IKeyValueMap)
-	var PlayerAttributes.teleportInsteadOfDie: Number?
-		get() = attrs.getTyped("teleport instead of die")
-		set(value) = attrs.setNullable("teleport instead of die", value)
+	val PlayerAttributes.WhenHitAttributes.teleportInsteadOfDie: ItemAttributeNamed<Number> by ItemAttributeNamed("teleport instead of die")
 	
 	/**
 	 * Damage vs same class multiplier
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.multDmgVsSameClass: Number?
-		get() = attrs.getTyped("mult dmg vs same class")
-		set(value) = attrs.setNullable("mult dmg vs same class", value)
+	val WeaponBaseAttributes.DamageAttributes.multDmgVsSameClass: ItemAttributeNamed<Number> by ItemAttributeNamed("mult dmg vs same class")
 	
 	/**
 	 * On taking damage: x% chance of being ubercharged for 3 seconds
 	 */
-	context(attrs: IKeyValueMap)
-	var PlayerAttributes.uberOnDamageTaken: Number?
-		get() = attrs.getTyped("uber on damage taken")
-		set(value) = attrs.setNullable("uber on damage taken", value)
+	val PlayerAttributes.WhenHitAttributes.uberOnDamageTaken: ItemAttributeNamed<Number> by ItemAttributeNamed("uber on damage taken")
 	
 	/**
 	 * Damage taken from melee multiplier
 	 */
-	context(attrs: IKeyValueMap)
-	var PlayerAttributes.multDmgtakenFromMelee: Number?
-		get() = attrs.getTyped("mult dmgtaken from melee")
-		set(value) = attrs.setNullable("mult dmgtaken from melee", value)
+	val PlayerAttributes.ResistanceAttributes.multDmgTakenFromMelee: ItemAttributeNamed<Number> by ItemAttributeNamed("mult dmgtaken from melee")
 	
 	/**
 	 * Gain crit boost when below this proportion of health. (e.g. 0.6 = 60%)
 	 */
-	context(attrs: IKeyValueMap)
-	var BaseEntityAttributes.multCritWhenHealthIsBelowPercent: Number?
-		get() = attrs.getTyped("mult crit when health is below percent")
-		set(value) = attrs.setNullable("mult crit when health is below percent", value)
+	val PlayerAttributes.CritsAttributes.multCritWhenHealthIsBelowPercent: ItemAttributeNamed<Number> by ItemAttributeNamed("mult crit when health is below percent")
 	
 	/**
-	 * Multiplier applied to a bullet's damage after each successive player it penetrates.  Can also be used as a damage bonus applied exponentially per player penetrated.
+	 * Multiplier applied to a bullet's damage after each successive player it penetrates.
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.penetrationDamagePenalty: Number?
-		get() = attrs.getTyped("penetration damage penalty")
-		set(value) = attrs.setNullable("penetration damage penalty", value)
+	val WeaponBaseAttributes.DamageAttributes.multDmgAfterPenetration: ItemAttributeNamed<Number> by ItemAttributeNamed("penetration damage penalty")
 	
 	/**
 	 * Pulls the user forward with x velocity while firing the weapon.  Limited by ground move speed cap.
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.firingForwardPull: Number?
-		get() = attrs.getTyped("firing forward pull")
-		set(value) = attrs.setNullable("firing forward pull", value)
+	val WeaponBaseAttributes.FiringAttributes.firingForwardPull: ItemAttributeNamed<Number> by ItemAttributeNamed("firing forward pull")
 	
 	/**
 	 * On all weapons, pulls the user forward with x velocity while firing the weapon.  Limited by ground move speed cap.
 	 *
 	 * Additionally on the flamethrower: applies [speed boost condition][btpos.source.vdfdsl.tf2.tftypes.TFCondition.SpeedBoost] while firing.
 	 */
-	context(attrs: IKeyValueMap)
-	var FlamethrowerAttributes.firingForwardPull: Number?
-		get() = attrs.getTyped("firing forward pull")
-		set(value) = attrs.setNullable("firing forward pull", value)
-	
-	
+	val FlamethrowerAttributes.FiringAttributes.firingForwardPull: ItemAttributeNamed<Number> by ItemAttributeNamed("firing forward pull")
 	
 	/**
 	 * Multiplier for Soldier's banner buff range. Base is 450 HU.
 	 */
-	context(attrs: IKeyValueMap)
-	var BuffItemAttributes.multSoldierBuffRange: Number?
-		get() = attrs.getTyped("mod soldier buff range")
-		set(value) = attrs.setNullable("mod soldier buff range", value)
+	val BuffItemAttributes.BuffItemsAttributes.multBuffRange: ItemAttributeNamed<Number> by ItemAttributeNamed("mod soldier buff range")
 	
 	/**
 	 * Deploy speed bonus when rocket jumping
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.multRocketjumpDeployTime: Number?
-		get() = attrs.getTyped("mult rocketjump deploy time")
-		set(value) = attrs.setNullable("mult rocketjump deploy time", value)
+	val WeaponBaseAttributes.SwapWeaponsAttributes.DeployAttributes.multRocketjumpDeployTime: ItemAttributeNamed<Number> by ItemAttributeNamed("mult rocketjump deploy time")
 	
 	/**
 	 * Fire rate multiplier when not rocket jumping.
 	 */
-	context(attrs: IKeyValueMap)
-	var BaseGunAttributes.mulNonrocketjumpAttackrate: Number?
-		get() = attrs.getTyped("mul nonrocketjump attackrate")
-		set(value) = attrs.setNullable("mul nonrocketjump attackrate", value)
-	
+	val BaseGunAttributes.FiringAttributes.FireRateAttributes.multNonRocketJumpFireRate: ItemAttributeNamed<Number> by ItemAttributeNamed("mul nonrocketjump attackrate")
 	/**
-	 * On hit: refire time * (x/60) % chance for aoe heal for 1s (24 hp healed total). use 60 for 100% chance on 1s refire time weapon, 600 for 0.1s
+	 * On hit: `refire time * (x/60)` % chance for AoE heal for 1s (24 hp healed total). use 60 for 100% chance on 1s refire time weapon, 600 for 0.1s
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.aoeHealChance: Number?
-		get() = attrs.getTyped("aoe heal chance")
-		set(value) = attrs.setNullable("aoe heal chance", value)
-	
+	val WeaponBaseAttributes.HealthAndHealingAttributes.aoeHealChance: ItemAttributeNamed<Number> by ItemAttributeNamed("aoe heal chance")
 	/**
-	 * On hit: refire time * (x/60) % chance for crit boost for 3s.  use 60 for 100% chance on 1s refire time weapon, 600 for 0.1s
+	 * On hit: `refire time * (x/60)` % chance for crit boost for 3s.  use 60 for 100% chance on 1s refire time weapon, 600 for 0.1s
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.critsOnDamage: Number?
-		get() = attrs.getTyped("crits on damage")
-		set(value) = attrs.setNullable("crits on damage", value)
-	
+	val WeaponBaseAttributes.OnHitAttributes.gainCritBoostChance: ItemAttributeNamed<Number> by ItemAttributeNamed("crits on damage")
 	/**
-	 * On hit: refire time * (x/60) % chance for stun for 3s. use 60 for 100% chance on 1s refire time weapon, 600 for 0.1s
+	 * On hit: `refire time * (x/60)` % chance for stun for 3s. use 60 for 100% chance on 1s refire time weapon, 600 for 0.1s
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.stunOnDamage: Number?
-		get() = attrs.getTyped("stun on damage")
-		set(value) = attrs.setNullable("stun on damage", value)
-	
+	val WeaponBaseAttributes.OnHitAttributes.stunTargetChance: ItemAttributeNamed<Number> by ItemAttributeNamed("stun on damage")
 	/**
-	 * On hit: refire time * (x/60) % chance for 100 hu blast that stuns players for 2 seconds and applies bleed. use 60 for 100% chance on 1s refire time weapon, 600 for 0.1s
+	 * On hit: `refire time * (x/60)` % chance for 100 hu blast that stuns players for 2 seconds and applies bleed. use 60 for 100% chance on 1s refire time weapon, 600 for 0.1s
 	 */
-	context(attrs: IKeyValueMap)
-	var WeaponBaseAttributes.aoeBlastOnDamage: Number?
-		get() = attrs.getTyped("aoe blast on damage")
-		set(value) = attrs.setNullable("aoe blast on damage", value)
-	
+	val WeaponBaseAttributes.aoeBlastChance: ItemAttributeNamed<Number> by ItemAttributeNamed("aoe blast on damage")
 	/**
 	 * Multiplier applied to damage proportion that is multiplied by "player maximum health" / "player current health".
 	 */
-	context(attrs: IKeyValueMap)
-	var BaseMeleeAttributes.multDmgWithReducedHealth: Number?
-		get() = attrs.getTyped("mult dmg with reduced health")
-		set(value) = attrs.setNullable("mult dmg with reduced health", value)
+	val BaseMeleeAttributes.DamageAttributes.multDmgWithReducedHealth: ItemAttributeNamed<Number> by ItemAttributeNamed("mult dmg with reduced health")
 	
 	/**
 	 * Multiplier of how fast primary fire specifically can be used after airblasting.
 	 *
 	 * Primary attack delay = this * refire_time * base
 	 */
-	context(attrs: IKeyValueMap)
-	var FlamethrowerAttributes.multAirblastPrimaryRefireTime: Number?
-		get() = attrs.getTyped("mult airblast primary refire time")
-		set(value) = attrs.setNullable("mult airblast primary refire time", value)
+	val FlamethrowerAttributes.AirblastAttributes.multPrimaryRefireTime: ItemAttributeNamed<Number> by ItemAttributeNamed("mult airblast primary refire time")
 	
 	/**
 	 * Spin up time for flamethrowers, like the delay between starting to rev up a minigun and being able to fire.
 	 */
-	context(attrs: IKeyValueMap)
-	var FlamethrowerAttributes.modFlamethrowerSpinupTime: Duration?
-		get() = attrs.getTyped("mod flamethrower spinup time", DurationCodec)
-		set(value) = attrs.setNullable("mod flamethrower spinup time", value, DurationCodec)
-	
+	val FlamethrowerAttributes.spinupTime: ItemAttributeNamed<Duration> by ItemAttributeNamed("mod flamethrower spinup time", Duration::toSeconds)
 	/**
 	 * Scales the cone used to push players by this amount.
 	 */
-	context(attrs: IKeyValueMap)
-	var FlamethrowerAttributes.multAirblastConeScale: Number?
-		get() = attrs.getTyped("mult airblast cone scale")
-		set(value) = attrs.setNullable("mult airblast cone scale", value)
+	val FlamethrowerAttributes.AirblastAttributes.multConeScale: ItemAttributeNamed<Number> by ItemAttributeNamed("mult airblast cone scale")
 	
 	/**
 	 * Combination of flamethrower flags, used to limit airblast functionality.
 	 *
-	 * If empty or not set,
+	 * If empty or not set, all abilities will work.
 	 */
-	context(attrs: IKeyValueMap)
-	var FlamethrowerAttributes.airblastFunctionalityFlags: EnumSet<AirblastFunctionalityFlags>?
-		get() = attrs.getTyped("airblast functionality flags", EnumSetOrCodec())
-		set(value) = attrs.setNullable("airblast functionality flags", value, EnumSetOrCodec())
+	val FlamethrowerAttributes.airblastFunctionalityFlags: ItemAttributeNamed<Set<AirblastFunctionalityFlag>> by ItemAttributeNamed<Set<AirblastFunctionalityFlag>>("airblast functionality flags", SetToIntCodec({ 1 shl it.ordinal }, { 0 }))
 	
 	/**
 	 * Determines which of these things an airblast can do.
 	 *
 	 * @see airblastFunctionalityFlags
 	 */
-	enum class AirblastFunctionalityFlags : IEnumCustomValue {
-		/**
-		 * If set, airblast knocks targets away from the user in a cone.
-		 *
-		 * @see PUSHBACK_STUN
-		 * @see PUSHBACK_VIEW_PUNCH
-		 */
-		PUSHBACK,
-		/** If set, airblast can put out teammates that are on fire. */
-		EXTINGUISH_TEAMMATES,
-		/** If set, the airblast can reflect any projectiles back at enemy players. */
-		REFLECT_PROJECTILES,
-		/**
-		 * If set, airblast hinders players' air acceleration until they next touch the ground.
-		 *
-		 * Requires [PUSHBACK].
-		 */
-		PUSHBACK_STUN,
-		/**
-		 * If set, airblast flinches ("aimpunches") players it connects with.
-		 *
-		 * Requires [PUSHBACK].
-		 */
-		PUSHBACK_VIEW_PUNCH;
+	open class AirblastFunctionalityFlag(val ordinal: Int) {
+		companion object {
+			/**
+			 * If set, airblast knocks targets away from the user in a cone.
+			 *
+			 * @see PUSHBACK_STUN
+			 * @see PUSHBACK_VIEW_PUNCH
+			 */
+			@JvmField val PUSHBACK = AirblastFunctionalityFlag(0)
+			
+			/** If set, airblast can put out teammates that are on fire. */
+			@JvmField val EXTINGUISH_TEAMMATES = AirblastFunctionalityFlag(1)
+			/** If set, the airblast can reflect any projectiles back at enemy players. */
+			@JvmField val REFLECT_PROJECTILES = AirblastFunctionalityFlag(2)
+			/**
+			 * If set, airblast hinders players' air acceleration until they next touch the ground.
+			 *
+			 * Requires [PUSHBACK].
+			 */
+			@JvmField val PUSHBACK_STUN = AirblastFunctionalityFlag(3)
+			/**
+			 * If set, airblast flinches ("aimpunches") players it connects with.
+			 *
+			 * Requires [PUSHBACK].
+			 */
+			@JvmField val PUSHBACK_VIEW_PUNCH = AirblastFunctionalityFlag(4)
+			
+		}
 		
-		override val value: Int
-			get() = 1 shl ordinal
 	}
 	
 	/**
 	 * Airblast pushes players towards the user.
 	 *
-	 * If [airblastFunctionalityFlags] is configured, requires [the ability to push enemies back][AirblastFunctionalityFlags.PUSHBACK].
+	 * If [airblastFunctionalityFlags] is configured, requires [the ability to push enemies back][AirblastFunctionalityFlag.PUSHBACK].
 	 */
-	context(attrs: IKeyValueMap)
-	var FlamethrowerAttributes.reverseAirblast: Boolean?
-		get() = attrs.getTyped("reverse airblast")
-		set(value) = attrs.setNullable("reverse airblast", value)
-	
+	val FlamethrowerAttributes.AirblastAttributes.reverseAirblast: ItemAttributeNamed<Boolean> by ItemAttributeNamed("reverse airblast")
 	/**
 	 * Airblast pushes the pyro instead of enemies. Affected by airblast push force.
 	 *
 	 * Flamethrowers with this attribute cannot reflect projectiles.
 	 */
-	context(attrs: IKeyValueMap)
-	var FlamethrowerAttributes.airblastDashes: Boolean?
-		get() = attrs.getTyped("airblast dashes")
-		set(value) = attrs.setNullable("airblast dashes", value)
-	
+	val FlamethrowerAttributes.AirblastAttributes.airblastDashes: ItemAttributeNamed<Boolean> by ItemAttributeNamed("airblast dashes")
 	/**
 	 * Sniper rifle charge rate when looking at the enemy. Still subject to the 200% charge rate limit
 	 */
-	context(attrs: IKeyValueMap)
-	var SniperRifleAttributes.multSniperChargePerSecWithEnemyUnderCrosshair: Number?
-		get() = attrs.getTyped("mult sniper charge per sec with enemy under crosshair")
-		set(value) = attrs.setNullable("mult sniper charge per sec with enemy under crosshair", value)
-	
+	val SniperRifleAttributes.multSniperChargePerSecWithEnemyUnderCrosshair: ItemAttributeNamed<Number> by ItemAttributeNamed("mult sniper charge per sec with enemy under crosshair")
 	/**
 	 * Plays `doomsday.warhead` sound when an enemy appears under your crosshair.
 	 */
-	context(attrs: IKeyValueMap)
-	var SniperRifleAttributes.sniperBeepWithEnemyUnderCrosshair: Boolean?
-		get() = attrs.getTyped("sniper beep with enemy under crosshair")
-		set(value) = attrs.setNullable("sniper beep with enemy under crosshair", value)
-	
+	val SniperRifleAttributes.sniperBeepWithEnemyUnderCrosshair: ItemAttributeNamed<Boolean> by ItemAttributeNamed("sniper beep with enemy under crosshair")
 	/**
 	 * If set to 1, enables healing buildings as medic. increases building healing rate by 10% for each point
 	 */
-	context(attrs: IKeyValueMap)
-	var MedigunAttributes.medicMachineryBeam: Int?
-		get() = attrs.getTyped("medic machinery beam")
-		set(value) = attrs.setNullable("medic machinery beam", value)
-	
+	val MedigunAttributes.medicMachineryBeam: ItemAttributeNamed<Int> by ItemAttributeNamed("medic machinery beam")
 	/**
 	 * Bots with this attribute distribute their currency on death, like with sniper kills (red money)
 	 */
-	context(attrs: IKeyValueMap)
-	var MvMBotAttributes.forceDistributeCurrencyOnDeath: Boolean?
-		get() = attrs.getTyped("force distribute currency on death")
-		set(value) = attrs.setNullable("force distribute currency on death", value)
+	val MvMBotAttributes.forceDistributeCurrencyOnDeath by ItemAttributeNamed<Boolean>("force distribute currency on death")
 }
