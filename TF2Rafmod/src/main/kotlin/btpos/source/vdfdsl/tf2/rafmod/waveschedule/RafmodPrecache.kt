@@ -1,13 +1,14 @@
 package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
+import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants
 import btpos.source.vdfdsl.types.WaveSchedule
 
 /**
  * Precaching helps to ensure that the content used in the mission will be loaded properly and downloaded to the clients.
  */
-abstract class RafmodPrecache {
+abstract class RafmodPrecache : IBlockScoped {
 	companion object {
 		@PublishedApi @JvmField internal val INSTANCE = object : RafmodPrecache() {}
 	}

@@ -1,10 +1,11 @@
 package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.types.WaveSchedule
 
-abstract class RafmodModelsAndAnimations {
+abstract class RafmodModelsAndAnimations : IBlockScoped {
 	companion object {
 		@PublishedApi @JvmField internal val INSTANCE = object : RafmodModelsAndAnimations() {}
 	}

@@ -2,12 +2,13 @@ package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.time.Duration
 
-abstract class RafmodGameplay {
+abstract class RafmodGameplay : IBlockScoped {
 	companion object {
 		@PublishedApi @JvmField internal val INSTANCE = object : RafmodGameplay() {}
 	}

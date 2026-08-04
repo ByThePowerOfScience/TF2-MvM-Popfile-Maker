@@ -5,6 +5,7 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
+import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFTeam
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
@@ -12,7 +13,7 @@ import btpos.source.vdfdsl.tf2.rafmod.tftypes.TFSpell
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.collections.map
 
-abstract class RafmodHalloween {
+abstract class RafmodHalloween : IBlockScoped {
 	companion object {
 		@PublishedApi @JvmField internal val INSTANCE = object : RafmodHalloween() {}
 	}
@@ -60,7 +61,7 @@ abstract class RafmodHalloween {
 	 * spellDropRateCommon = 0.5
 	 * ```
 	 */
-	open var WaveSchedule.spellDropRateCommon: Double? by addField("SpellDropRateCommon", conditional = SIGSEGV)
+	open var WaveSchedule.spellDropRateCommon: Number? by addField("SpellDropRateCommon", conditional = SIGSEGV)
 	
 	/**
 	 * Drop chance for rare spell books from giants when [giantsDropRareSpells] is set, from `0` to `1`.
@@ -70,7 +71,7 @@ abstract class RafmodHalloween {
 	 * spellDropRateGiant = 0.5
 	 * ```
 	 */
-	open var WaveSchedule.spellDropRateGiant: Double? by addField("SpellDropRateGiant", conditional = SIGSEGV)
+	open var WaveSchedule.spellDropRateGiant: Number? by addField("SpellDropRateGiant", conditional = SIGSEGV)
 	
 	/**
 	 * When set, drop spells only if bots are from the given team.

@@ -2,11 +2,12 @@ package btpos.source.vdfdsl.tf2.rafmod.waveschedule
 
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.durationInSeconds
+import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.time.Duration
 
-abstract class RafmodTeleporters {
+abstract class RafmodTeleporters : IBlockScoped {
 	companion object {
 		@PublishedApi @JvmField internal val INSTANCE = object : RafmodTeleporters() {}
 	}
