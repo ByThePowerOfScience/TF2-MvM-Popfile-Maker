@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -373,7 +374,7 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	open class AmmoAttributes : BuilderAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
-		override val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		override val multMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class ClipSizeAttributes : BuilderAttributes.AmmoAttributes.ClipSizeAttributes() 
 	
@@ -403,9 +404,12 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	}
 	
 	open class DemoChargeAttributes : BuilderAttributes.DemoChargeAttributes() {
-		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+		/**
+		 * Default is 0.45f, and this is a multiplier applied to it.
+		 */
+		override val multChargeTurnControl: ChargeTurnControlAttributes = ChargeTurnControlAttributes()
 	
-		open class MultChargeTurnControlAttributes : BuilderAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+		open class ChargeTurnControlAttributes : BuilderAttributes.DemoChargeAttributes.ChargeTurnControlAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class FiringAttributes : BuilderAttributes.FiringAttributes() {
@@ -415,16 +419,25 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	}
 	
 	open class HealthAndHealingAttributes : BuilderAttributes.HealthAndHealingAttributes() {
-		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+		/**
+		 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
+		 */
+		override val healthRegenPerSecond: AddHealthRegenAttributes = AddHealthRegenAttributes()
 	
-		override val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		/**
+		 * Additive maximum health increase. Influences the player's overheal cap.
+		 */
+		override val addMaxHealth: AddMaxhealthAttributes = AddMaxhealthAttributes()
 	
-		open class HealthRegenAttributes : BuilderAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+		open class AddHealthRegenAttributes : BuilderAttributes.HealthAndHealingAttributes.AddHealthRegenAttributes(), ItemAttribute<Int> 
 	
-		open class MaxHealthAdditiveAttributes : BuilderAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+		open class AddMaxhealthAttributes : BuilderAttributes.HealthAndHealingAttributes.AddMaxhealthAttributes(), ItemAttribute<Int> 
 	}
 	
 	open class KnockbackReceivedAttributes : BuilderAttributes.KnockbackReceivedAttributes() {
+		/**
+		 * Attribute class is a flat multiplier applied to push force received from damage.
+		 */
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
 	
 		open class DamageForceReductionAttributes : BuilderAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
@@ -461,41 +474,63 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	}
 	
 	open class MeterAttributes : BuilderAttributes.MeterAttributes() {
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Only works on Engineer and Heavy.
+		 * 
+		 * On Engineer, adds all damage dealt to the rage meter.
+		 * 
+		 * On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
-		open class GenerateRageOnDamageAttributes : BuilderAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : BuilderAttributes.MeterAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	}
 	
 	open class MovementAttributes : BuilderAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		override val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		override val multJumpHeight: ModJumpHeightAttributes = ModJumpHeightAttributes()
 	
 		open class MoveSpeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes() {
-			override val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			/**
+			 * Only applies to players that have TF_COND_AIMING.
+			 * 
+			 * If Heavy, default aiming movespeed is 110.
+			 * 
+			 * Else if player is using a compound bow, 160.
+			 * 
+			 * Else 80.
+			 */
+			override val multPlayerAimingMovespeed: MultPlayerAimingMovespeedAttributes = MultPlayerAimingMovespeedAttributes()
 	
-			override val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
+			override val multMoveSpeed: MultPlayerMovespeedAttributes = MultPlayerMovespeedAttributes()
 	
-			open class AimingMovespeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+			open class MultPlayerAimingMovespeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerAimingMovespeedAttributes() 
 	
-			open class MoveSpeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+			open class MultPlayerMovespeedAttributes : BuilderAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerMovespeedAttributes(), ItemAttribute<Number> 
 		}
 	
-		open class jumpHeightAttributes : BuilderAttributes.MovementAttributes.jumpHeightAttributes() 
+		open class ModJumpHeightAttributes : BuilderAttributes.MovementAttributes.ModJumpHeightAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HeadsAttributes : BuilderAttributes.HeadsAttributes() 
 	
 	open class OnHitAttributes : BuilderAttributes.OnHitAttributes() {
-		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+		/**
+		 * Add this amount of health on hit.
+		 */
+		override val addOnhitAddhealth: AddOnhitAddhealthAttributes = AddOnhitAddhealthAttributes()
 	
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Knockback rage on enemy if you're a heavy and your rage is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
 		override val falling: FallingAttributes = FallingAttributes()
 	
-		open class HealOnHitForRapidfireAttributes : BuilderAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+		open class AddOnhitAddhealthAttributes : BuilderAttributes.OnHitAttributes.AddOnhitAddhealthAttributes() 
 	
-		open class GenerateRageOnDamageAttributes : BuilderAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : BuilderAttributes.OnHitAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	
 		open class FallingAttributes : BuilderAttributes.OnHitAttributes.FallingAttributes() 
 	}
@@ -503,7 +538,10 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	open class OnKillAttributes : BuilderAttributes.OnKillAttributes() 
 	
 	open class ProjectilesAttributes : BuilderAttributes.ProjectilesAttributes() {
-		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		/**
+		 * How many players your "projectile" (*including bullets*) should penetrate.
+		 */
+		override val penetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
 	
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
@@ -515,19 +553,19 @@ interface SapperAttributes : IBlockScoped, BuilderAttributes {
 	open class ReloadingAttributes : BuilderAttributes.ReloadingAttributes() 
 	
 	open class ResistanceAttributes : BuilderAttributes.ResistanceAttributes() {
-		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+		override val multDmgTakenCrits: MultDmgtakenFromCritAttributes = MultDmgtakenFromCritAttributes()
 	
-		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+		override val multDmgTakenFire: MultDmgtakenFromFireAttributes = MultDmgtakenFromFireAttributes()
 	
-		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+		override val multDmgTakenBullets: MultDmgtakenFromBulletsAttributes = MultDmgtakenFromBulletsAttributes()
 	
 		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
 	
-		open class DmgTakenFromCritReducedAttributes : BuilderAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+		open class MultDmgtakenFromCritAttributes : BuilderAttributes.ResistanceAttributes.MultDmgtakenFromCritAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromFireReducedAttributes : BuilderAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+		open class MultDmgtakenFromFireAttributes : BuilderAttributes.ResistanceAttributes.MultDmgtakenFromFireAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromBulletsReducedAttributes : BuilderAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+		open class MultDmgtakenFromBulletsAttributes : BuilderAttributes.ResistanceAttributes.MultDmgtakenFromBulletsAttributes(), ItemAttribute<Number> 
 	
 		open class VaccinatorAttributes : BuilderAttributes.ResistanceAttributes.VaccinatorAttributes() 
 	}

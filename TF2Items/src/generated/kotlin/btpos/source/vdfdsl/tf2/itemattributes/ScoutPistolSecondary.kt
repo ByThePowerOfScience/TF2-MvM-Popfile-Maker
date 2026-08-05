@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -327,7 +328,7 @@ interface ScoutPistolSecondaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	open class AmmoAttributes : ScoutPistolAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
-		override val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		override val multMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class ClipSizeAttributes : ScoutPistolAttributes.AmmoAttributes.ClipSizeAttributes() 
 	
@@ -349,7 +350,10 @@ interface ScoutPistolSecondaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	open class ProjectilesAttributes : ScoutPistolAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
-		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		/**
+		 * How many players your "projectile" (*including bullets*) should penetrate.
+		 */
+		override val penetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
 	
 		open class BulletsAttributes : ScoutPistolAttributes.ProjectilesAttributes.BulletsAttributes() 
 	
@@ -375,22 +379,34 @@ interface ScoutPistolSecondaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	open class CritsAttributes : ScoutPistolAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : ScoutPistolAttributes.DemoChargeAttributes() {
-		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+		/**
+		 * Default is 0.45f, and this is a multiplier applied to it.
+		 */
+		override val multChargeTurnControl: ChargeTurnControlAttributes = ChargeTurnControlAttributes()
 	
-		open class MultChargeTurnControlAttributes : ScoutPistolAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+		open class ChargeTurnControlAttributes : ScoutPistolAttributes.DemoChargeAttributes.ChargeTurnControlAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HealthAndHealingAttributes : ScoutPistolAttributes.HealthAndHealingAttributes() {
-		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+		/**
+		 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
+		 */
+		override val healthRegenPerSecond: AddHealthRegenAttributes = AddHealthRegenAttributes()
 	
-		override val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		/**
+		 * Additive maximum health increase. Influences the player's overheal cap.
+		 */
+		override val addMaxHealth: AddMaxhealthAttributes = AddMaxhealthAttributes()
 	
-		open class HealthRegenAttributes : ScoutPistolAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+		open class AddHealthRegenAttributes : ScoutPistolAttributes.HealthAndHealingAttributes.AddHealthRegenAttributes(), ItemAttribute<Int> 
 	
-		open class MaxHealthAdditiveAttributes : ScoutPistolAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+		open class AddMaxhealthAttributes : ScoutPistolAttributes.HealthAndHealingAttributes.AddMaxhealthAttributes(), ItemAttribute<Int> 
 	}
 	
 	open class KnockbackReceivedAttributes : ScoutPistolAttributes.KnockbackReceivedAttributes() {
+		/**
+		 * Attribute class is a flat multiplier applied to push force received from damage.
+		 */
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
 	
 		open class DamageForceReductionAttributes : ScoutPistolAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
@@ -427,41 +443,63 @@ interface ScoutPistolSecondaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	}
 	
 	open class MeterAttributes : ScoutPistolAttributes.MeterAttributes() {
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Only works on Engineer and Heavy.
+		 * 
+		 * On Engineer, adds all damage dealt to the rage meter.
+		 * 
+		 * On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
-		open class GenerateRageOnDamageAttributes : ScoutPistolAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : ScoutPistolAttributes.MeterAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	}
 	
 	open class MovementAttributes : ScoutPistolAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		override val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		override val multJumpHeight: ModJumpHeightAttributes = ModJumpHeightAttributes()
 	
 		open class MoveSpeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes() {
-			override val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			/**
+			 * Only applies to players that have TF_COND_AIMING.
+			 * 
+			 * If Heavy, default aiming movespeed is 110.
+			 * 
+			 * Else if player is using a compound bow, 160.
+			 * 
+			 * Else 80.
+			 */
+			override val multPlayerAimingMovespeed: MultPlayerAimingMovespeedAttributes = MultPlayerAimingMovespeedAttributes()
 	
-			override val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
+			override val multMoveSpeed: MultPlayerMovespeedAttributes = MultPlayerMovespeedAttributes()
 	
-			open class AimingMovespeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+			open class MultPlayerAimingMovespeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerAimingMovespeedAttributes() 
 	
-			open class MoveSpeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+			open class MultPlayerMovespeedAttributes : ScoutPistolAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerMovespeedAttributes(), ItemAttribute<Number> 
 		}
 	
-		open class jumpHeightAttributes : ScoutPistolAttributes.MovementAttributes.jumpHeightAttributes() 
+		open class ModJumpHeightAttributes : ScoutPistolAttributes.MovementAttributes.ModJumpHeightAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HeadsAttributes : ScoutPistolAttributes.HeadsAttributes() 
 	
 	open class OnHitAttributes : ScoutPistolAttributes.OnHitAttributes() {
-		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+		/**
+		 * Add this amount of health on hit.
+		 */
+		override val addOnhitAddhealth: AddOnhitAddhealthAttributes = AddOnhitAddhealthAttributes()
 	
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Knockback rage on enemy if you're a heavy and your rage is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
 		override val falling: FallingAttributes = FallingAttributes()
 	
-		open class HealOnHitForRapidfireAttributes : ScoutPistolAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+		open class AddOnhitAddhealthAttributes : ScoutPistolAttributes.OnHitAttributes.AddOnhitAddhealthAttributes() 
 	
-		open class GenerateRageOnDamageAttributes : ScoutPistolAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : ScoutPistolAttributes.OnHitAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	
 		open class FallingAttributes : ScoutPistolAttributes.OnHitAttributes.FallingAttributes() 
 	}
@@ -471,19 +509,19 @@ interface ScoutPistolSecondaryAttributes : IBlockScoped, ScoutPistolAttributes {
 	open class ReloadingAttributes : ScoutPistolAttributes.ReloadingAttributes() 
 	
 	open class ResistanceAttributes : ScoutPistolAttributes.ResistanceAttributes() {
-		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+		override val multDmgTakenCrits: MultDmgtakenFromCritAttributes = MultDmgtakenFromCritAttributes()
 	
-		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+		override val multDmgTakenFire: MultDmgtakenFromFireAttributes = MultDmgtakenFromFireAttributes()
 	
-		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+		override val multDmgTakenBullets: MultDmgtakenFromBulletsAttributes = MultDmgtakenFromBulletsAttributes()
 	
 		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
 	
-		open class DmgTakenFromCritReducedAttributes : ScoutPistolAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+		open class MultDmgtakenFromCritAttributes : ScoutPistolAttributes.ResistanceAttributes.MultDmgtakenFromCritAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromFireReducedAttributes : ScoutPistolAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+		open class MultDmgtakenFromFireAttributes : ScoutPistolAttributes.ResistanceAttributes.MultDmgtakenFromFireAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromBulletsReducedAttributes : ScoutPistolAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+		open class MultDmgtakenFromBulletsAttributes : ScoutPistolAttributes.ResistanceAttributes.MultDmgtakenFromBulletsAttributes(), ItemAttribute<Number> 
 	
 		open class VaccinatorAttributes : ScoutPistolAttributes.ResistanceAttributes.VaccinatorAttributes() 
 	}

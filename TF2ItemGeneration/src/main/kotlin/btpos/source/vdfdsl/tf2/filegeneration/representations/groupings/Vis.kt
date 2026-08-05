@@ -51,7 +51,12 @@ class Vis(
 	
 	override fun propertyBuilder(): PropertyBuilder {
 		return PropertyBuilder(varName, "VisHidden<${getKotlinType()}>") {
-			initializer = "VisHidden(${visible.propertyBuilder().initializer}, ${hidden.propertyBuilder().initializer})"
+			docComment += notes
+			docComment += innateDescription
+			initializer = "VisHidden(" +
+			              "\n${visible.propertyBuilder().initializer.prependIndent()}," +
+			              "\n${hidden.propertyBuilder().initializer.prependIndent()}" +
+			              "\n)"
 		}
 	}
 	

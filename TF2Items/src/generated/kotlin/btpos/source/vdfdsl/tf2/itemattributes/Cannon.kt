@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -327,7 +328,10 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	open class ProjectilesAttributes : GrenadeLauncherAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
-		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		/**
+		 * How many players your "projectile" (*including bullets*) should penetrate.
+		 */
+		override val penetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
 	
 		open class BulletsAttributes : GrenadeLauncherAttributes.ProjectilesAttributes.BulletsAttributes() 
 	
@@ -343,7 +347,7 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	open class AmmoAttributes : GrenadeLauncherAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
-		override val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		override val multMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class ClipSizeAttributes : GrenadeLauncherAttributes.AmmoAttributes.ClipSizeAttributes() 
 	
@@ -375,22 +379,34 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	open class CritsAttributes : GrenadeLauncherAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : GrenadeLauncherAttributes.DemoChargeAttributes() {
-		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+		/**
+		 * Default is 0.45f, and this is a multiplier applied to it.
+		 */
+		override val multChargeTurnControl: ChargeTurnControlAttributes = ChargeTurnControlAttributes()
 	
-		open class MultChargeTurnControlAttributes : GrenadeLauncherAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+		open class ChargeTurnControlAttributes : GrenadeLauncherAttributes.DemoChargeAttributes.ChargeTurnControlAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HealthAndHealingAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes() {
-		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+		/**
+		 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
+		 */
+		override val healthRegenPerSecond: AddHealthRegenAttributes = AddHealthRegenAttributes()
 	
-		override val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		/**
+		 * Additive maximum health increase. Influences the player's overheal cap.
+		 */
+		override val addMaxHealth: AddMaxhealthAttributes = AddMaxhealthAttributes()
 	
-		open class HealthRegenAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+		open class AddHealthRegenAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes.AddHealthRegenAttributes(), ItemAttribute<Int> 
 	
-		open class MaxHealthAdditiveAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+		open class AddMaxhealthAttributes : GrenadeLauncherAttributes.HealthAndHealingAttributes.AddMaxhealthAttributes(), ItemAttribute<Int> 
 	}
 	
 	open class KnockbackReceivedAttributes : GrenadeLauncherAttributes.KnockbackReceivedAttributes() {
+		/**
+		 * Attribute class is a flat multiplier applied to push force received from damage.
+		 */
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
 	
 		open class DamageForceReductionAttributes : GrenadeLauncherAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
@@ -427,41 +443,63 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	}
 	
 	open class MeterAttributes : GrenadeLauncherAttributes.MeterAttributes() {
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Only works on Engineer and Heavy.
+		 * 
+		 * On Engineer, adds all damage dealt to the rage meter.
+		 * 
+		 * On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
-		open class GenerateRageOnDamageAttributes : GrenadeLauncherAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : GrenadeLauncherAttributes.MeterAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	}
 	
 	open class MovementAttributes : GrenadeLauncherAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		override val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		override val multJumpHeight: ModJumpHeightAttributes = ModJumpHeightAttributes()
 	
 		open class MoveSpeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes() {
-			override val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			/**
+			 * Only applies to players that have TF_COND_AIMING.
+			 * 
+			 * If Heavy, default aiming movespeed is 110.
+			 * 
+			 * Else if player is using a compound bow, 160.
+			 * 
+			 * Else 80.
+			 */
+			override val multPlayerAimingMovespeed: MultPlayerAimingMovespeedAttributes = MultPlayerAimingMovespeedAttributes()
 	
-			override val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
+			override val multMoveSpeed: MultPlayerMovespeedAttributes = MultPlayerMovespeedAttributes()
 	
-			open class AimingMovespeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+			open class MultPlayerAimingMovespeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerAimingMovespeedAttributes() 
 	
-			open class MoveSpeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+			open class MultPlayerMovespeedAttributes : GrenadeLauncherAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerMovespeedAttributes(), ItemAttribute<Number> 
 		}
 	
-		open class jumpHeightAttributes : GrenadeLauncherAttributes.MovementAttributes.jumpHeightAttributes() 
+		open class ModJumpHeightAttributes : GrenadeLauncherAttributes.MovementAttributes.ModJumpHeightAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HeadsAttributes : GrenadeLauncherAttributes.HeadsAttributes() 
 	
 	open class OnHitAttributes : GrenadeLauncherAttributes.OnHitAttributes() {
-		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+		/**
+		 * Add this amount of health on hit.
+		 */
+		override val addOnhitAddhealth: AddOnhitAddhealthAttributes = AddOnhitAddhealthAttributes()
 	
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Knockback rage on enemy if you're a heavy and your rage is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
 		override val falling: FallingAttributes = FallingAttributes()
 	
-		open class HealOnHitForRapidfireAttributes : GrenadeLauncherAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+		open class AddOnhitAddhealthAttributes : GrenadeLauncherAttributes.OnHitAttributes.AddOnhitAddhealthAttributes() 
 	
-		open class GenerateRageOnDamageAttributes : GrenadeLauncherAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : GrenadeLauncherAttributes.OnHitAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	
 		open class FallingAttributes : GrenadeLauncherAttributes.OnHitAttributes.FallingAttributes() 
 	}
@@ -471,19 +509,19 @@ interface CannonAttributes : IBlockScoped, GrenadeLauncherAttributes {
 	open class ReloadingAttributes : GrenadeLauncherAttributes.ReloadingAttributes() 
 	
 	open class ResistanceAttributes : GrenadeLauncherAttributes.ResistanceAttributes() {
-		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+		override val multDmgTakenCrits: MultDmgtakenFromCritAttributes = MultDmgtakenFromCritAttributes()
 	
-		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+		override val multDmgTakenFire: MultDmgtakenFromFireAttributes = MultDmgtakenFromFireAttributes()
 	
-		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+		override val multDmgTakenBullets: MultDmgtakenFromBulletsAttributes = MultDmgtakenFromBulletsAttributes()
 	
 		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
 	
-		open class DmgTakenFromCritReducedAttributes : GrenadeLauncherAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+		open class MultDmgtakenFromCritAttributes : GrenadeLauncherAttributes.ResistanceAttributes.MultDmgtakenFromCritAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromFireReducedAttributes : GrenadeLauncherAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+		open class MultDmgtakenFromFireAttributes : GrenadeLauncherAttributes.ResistanceAttributes.MultDmgtakenFromFireAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromBulletsReducedAttributes : GrenadeLauncherAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+		open class MultDmgtakenFromBulletsAttributes : GrenadeLauncherAttributes.ResistanceAttributes.MultDmgtakenFromBulletsAttributes(), ItemAttribute<Number> 
 	
 		open class VaccinatorAttributes : GrenadeLauncherAttributes.ResistanceAttributes.VaccinatorAttributes() 
 	}

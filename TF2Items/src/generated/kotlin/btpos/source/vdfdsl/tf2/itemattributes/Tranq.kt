@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -327,7 +328,7 @@ interface TranqAttributes : IBlockScoped, BaseGunAttributes {
 	open class AmmoAttributes : BaseGunAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
-		override val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		override val multMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class ClipSizeAttributes : BaseGunAttributes.AmmoAttributes.ClipSizeAttributes() 
 	
@@ -349,7 +350,10 @@ interface TranqAttributes : IBlockScoped, BaseGunAttributes {
 	open class ProjectilesAttributes : BaseGunAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
-		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		/**
+		 * How many players your "projectile" (*including bullets*) should penetrate.
+		 */
+		override val penetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
 	
 		open class BulletsAttributes : BaseGunAttributes.ProjectilesAttributes.BulletsAttributes() 
 	
@@ -375,22 +379,34 @@ interface TranqAttributes : IBlockScoped, BaseGunAttributes {
 	open class CritsAttributes : BaseGunAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : BaseGunAttributes.DemoChargeAttributes() {
-		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+		/**
+		 * Default is 0.45f, and this is a multiplier applied to it.
+		 */
+		override val multChargeTurnControl: ChargeTurnControlAttributes = ChargeTurnControlAttributes()
 	
-		open class MultChargeTurnControlAttributes : BaseGunAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+		open class ChargeTurnControlAttributes : BaseGunAttributes.DemoChargeAttributes.ChargeTurnControlAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HealthAndHealingAttributes : BaseGunAttributes.HealthAndHealingAttributes() {
-		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+		/**
+		 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
+		 */
+		override val healthRegenPerSecond: AddHealthRegenAttributes = AddHealthRegenAttributes()
 	
-		override val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		/**
+		 * Additive maximum health increase. Influences the player's overheal cap.
+		 */
+		override val addMaxHealth: AddMaxhealthAttributes = AddMaxhealthAttributes()
 	
-		open class HealthRegenAttributes : BaseGunAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+		open class AddHealthRegenAttributes : BaseGunAttributes.HealthAndHealingAttributes.AddHealthRegenAttributes(), ItemAttribute<Int> 
 	
-		open class MaxHealthAdditiveAttributes : BaseGunAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+		open class AddMaxhealthAttributes : BaseGunAttributes.HealthAndHealingAttributes.AddMaxhealthAttributes(), ItemAttribute<Int> 
 	}
 	
 	open class KnockbackReceivedAttributes : BaseGunAttributes.KnockbackReceivedAttributes() {
+		/**
+		 * Attribute class is a flat multiplier applied to push force received from damage.
+		 */
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
 	
 		open class DamageForceReductionAttributes : BaseGunAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
@@ -427,41 +443,63 @@ interface TranqAttributes : IBlockScoped, BaseGunAttributes {
 	}
 	
 	open class MeterAttributes : BaseGunAttributes.MeterAttributes() {
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Only works on Engineer and Heavy.
+		 * 
+		 * On Engineer, adds all damage dealt to the rage meter.
+		 * 
+		 * On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
-		open class GenerateRageOnDamageAttributes : BaseGunAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : BaseGunAttributes.MeterAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	}
 	
 	open class MovementAttributes : BaseGunAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		override val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		override val multJumpHeight: ModJumpHeightAttributes = ModJumpHeightAttributes()
 	
 		open class MoveSpeedAttributes : BaseGunAttributes.MovementAttributes.MoveSpeedAttributes() {
-			override val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			/**
+			 * Only applies to players that have TF_COND_AIMING.
+			 * 
+			 * If Heavy, default aiming movespeed is 110.
+			 * 
+			 * Else if player is using a compound bow, 160.
+			 * 
+			 * Else 80.
+			 */
+			override val multPlayerAimingMovespeed: MultPlayerAimingMovespeedAttributes = MultPlayerAimingMovespeedAttributes()
 	
-			override val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
+			override val multMoveSpeed: MultPlayerMovespeedAttributes = MultPlayerMovespeedAttributes()
 	
-			open class AimingMovespeedAttributes : BaseGunAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+			open class MultPlayerAimingMovespeedAttributes : BaseGunAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerAimingMovespeedAttributes() 
 	
-			open class MoveSpeedAttributes : BaseGunAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+			open class MultPlayerMovespeedAttributes : BaseGunAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerMovespeedAttributes(), ItemAttribute<Number> 
 		}
 	
-		open class jumpHeightAttributes : BaseGunAttributes.MovementAttributes.jumpHeightAttributes() 
+		open class ModJumpHeightAttributes : BaseGunAttributes.MovementAttributes.ModJumpHeightAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HeadsAttributes : BaseGunAttributes.HeadsAttributes() 
 	
 	open class OnHitAttributes : BaseGunAttributes.OnHitAttributes() {
-		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+		/**
+		 * Add this amount of health on hit.
+		 */
+		override val addOnhitAddhealth: AddOnhitAddhealthAttributes = AddOnhitAddhealthAttributes()
 	
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Knockback rage on enemy if you're a heavy and your rage is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
 		override val falling: FallingAttributes = FallingAttributes()
 	
-		open class HealOnHitForRapidfireAttributes : BaseGunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+		open class AddOnhitAddhealthAttributes : BaseGunAttributes.OnHitAttributes.AddOnhitAddhealthAttributes() 
 	
-		open class GenerateRageOnDamageAttributes : BaseGunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : BaseGunAttributes.OnHitAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	
 		open class FallingAttributes : BaseGunAttributes.OnHitAttributes.FallingAttributes() 
 	}
@@ -471,19 +509,19 @@ interface TranqAttributes : IBlockScoped, BaseGunAttributes {
 	open class ReloadingAttributes : BaseGunAttributes.ReloadingAttributes() 
 	
 	open class ResistanceAttributes : BaseGunAttributes.ResistanceAttributes() {
-		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+		override val multDmgTakenCrits: MultDmgtakenFromCritAttributes = MultDmgtakenFromCritAttributes()
 	
-		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+		override val multDmgTakenFire: MultDmgtakenFromFireAttributes = MultDmgtakenFromFireAttributes()
 	
-		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+		override val multDmgTakenBullets: MultDmgtakenFromBulletsAttributes = MultDmgtakenFromBulletsAttributes()
 	
 		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
 	
-		open class DmgTakenFromCritReducedAttributes : BaseGunAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+		open class MultDmgtakenFromCritAttributes : BaseGunAttributes.ResistanceAttributes.MultDmgtakenFromCritAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromFireReducedAttributes : BaseGunAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+		open class MultDmgtakenFromFireAttributes : BaseGunAttributes.ResistanceAttributes.MultDmgtakenFromFireAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromBulletsReducedAttributes : BaseGunAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+		open class MultDmgtakenFromBulletsAttributes : BaseGunAttributes.ResistanceAttributes.MultDmgtakenFromBulletsAttributes(), ItemAttribute<Number> 
 	
 		open class VaccinatorAttributes : BaseGunAttributes.ResistanceAttributes.VaccinatorAttributes() 
 	}

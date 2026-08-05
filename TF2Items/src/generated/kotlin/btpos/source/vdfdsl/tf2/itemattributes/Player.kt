@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -267,7 +268,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Multiplier applied to metal gained from ammo boxes.
 		 */
-		open val metalPickupDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("metal_pickup_decreased")
+		open val multMetalPickup: ItemAttributeNamed<Number> = ItemAttributeNamed("metal_pickup_decreased")
 	
 		/**
 		 * In-Game: "+N metal regenerated every 5 seconds on wearer"
@@ -276,7 +277,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 */
 		open val metalRegen: ItemAttributeNamed<Int> = ItemAttributeNamed("metal regen")
 	
-		open val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		open val multMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class MaxAmmoAttributes : IBlockScoped {
 			/**
@@ -290,10 +291,10 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * Hidden:
 			 */
-			open val primary: BonusPenaltyHidden<Int, ItemAttributeNamed<Int>> = BonusPenaltyHidden(
-			    ItemAttributeNamed<Int>("maxammo primary increased"),
-			    ItemAttributeNamed<Int>("maxammo primary reduced"),
-			    ItemAttributeNamed<Int>("hidden primary max ammo bonus"),
+			open val primary: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+			    ItemAttributeNamed<Number>("maxammo primary increased"),
+			    ItemAttributeNamed<Number>("maxammo primary reduced"),
+			    ItemAttributeNamed<Number>("hidden primary max ammo bonus"),
 			)
 	
 			/**
@@ -307,10 +308,10 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * Hidden:
 			 */
-			open val secondary: BonusPenaltyHidden<Int, ItemAttributeNamed<Int>> = BonusPenaltyHidden(
-			    ItemAttributeNamed<Int>("maxammo secondary increased"),
-			    ItemAttributeNamed<Int>("maxammo secondary reduced"),
-			    ItemAttributeNamed<Int>("hidden secondary max ammo penalty"),
+			open val secondary: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+			    ItemAttributeNamed<Number>("maxammo secondary increased"),
+			    ItemAttributeNamed<Number>("maxammo secondary reduced"),
+			    ItemAttributeNamed<Number>("hidden secondary max ammo penalty"),
 			)
 	
 			/**
@@ -322,7 +323,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * 	- In-Game: "N% max metal on wearer"
 			 */
-			open val metal: BonusPenalty<Int> = BonusPenalty(
+			open val metal: BonusPenalty<Number> = BonusPenalty(
 			    ItemAttributeNamed("maxammo metal increased"),
 			    ItemAttributeNamed("maxammo metal reduced"),
 			)
@@ -332,7 +333,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * Only used for bat balls.
 			 */
-			open val batBalls: ItemAttributeNamed<Int> = ItemAttributeNamed("maxammo grenades1 increased")
+			open val batBalls: ItemAttributeNamed<Number> = ItemAttributeNamed("maxammo grenades1 increased")
 		}
 	}
 	
@@ -347,7 +348,23 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 */
 		open val demoBuffType: ItemAttributeNamed<Int> = ItemAttributeNamed("mod demo buff type")
 	
-		open val buffDuration: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("increase buff duration"), ItemAttributeNamed<Number>("increase buff duration HIDDEN"))
+		/**
+		 * Multiplier applied to buff duration.
+		 * 
+		 * Visible:
+		 * 
+		 * 	- In-Game: "+N% buff duration"
+		 * 
+		 * 
+		 * 
+		 * Hidden:
+		 * 
+		 * 	- In-Game: "+N% buff duration"
+		 */
+		open val multBuffDuration: VisHidden<Number> = VisHidden(
+		    ItemAttributeNamed("increase buff duration"),
+		    ItemAttributeNamed("increase buff duration HIDDEN")
+		)
 	}
 	
 	open class BuildingsAttributes : IBlockScoped {
@@ -356,23 +373,23 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Multiplies building build time by this amount.
 		 */
-		open val buildRateBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("build rate bonus")
+		open val multBuildRate: ItemAttributeNamed<Number> = ItemAttributeNamed("build rate bonus")
 	
 		/**
 		 * In-Game: "N% slower upgrade rate"
 		 * 
-		 * Add this amount of metal to any building hit by this player, using player's metal reserve.
+		 * Multiplier to the amount of metal given to any building hit by this player, using player's metal reserve.
 		 * 
 		 * Recall that all players have 100 hidden metal.
 		 */
-		open val metalAddedPerHit: ItemAttributeNamed<Int> = ItemAttributeNamed("upgrade rate decrease")
+		open val multMetalGivenOnHit: ItemAttributeNamed<Number> = ItemAttributeNamed("upgrade rate decrease")
 	
 		/**
 		 * In-Game: "+N% max building health"
 		 * 
 		 * Only applied if the building is NOT a disposable sentry.
 		 */
-		open val modBuildingHealth: ItemAttributeNamed<Int> = ItemAttributeNamed("engy building health bonus")
+		open val multBuildingHealth: ItemAttributeNamed<Number> = ItemAttributeNamed("engy building health bonus")
 	
 		/**
 		 * In-Game: "Cannot carry buildings"
@@ -384,9 +401,9 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		/**
 		 * In-Game: "N metal reduction in building cost"
 		 * 
-		 * Sets the cost to construct any building type to this value.
+		 * Multiplier to the metal required to construct a building.
 		 */
-		open val setConstructionCost: ItemAttributeNamed<Int> = ItemAttributeNamed("building cost reduction")
+		open val multConstructionCost: ItemAttributeNamed<Number> = ItemAttributeNamed("building cost reduction")
 	
 		open val sentryGun: SentryGunAttributes = SentryGunAttributes()
 	
@@ -403,12 +420,12 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			/**
 			 * In-Game: "+N% sentry range"
 			 */
-			open val engySentryRadiusIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("engy sentry radius increased")
+			open val multRadius: ItemAttributeNamed<Number> = ItemAttributeNamed("engy sentry radius increased")
 	
 			/**
 			 * In-Game: "+N% sentry firing speed"
 			 */
-			open val engySentryFireRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("engy sentry fire rate increased")
+			open val multFireRate: ItemAttributeNamed<Number> = ItemAttributeNamed("engy sentry fire rate increased")
 	
 			/**
 			 * In-Game: "Build +N additional disposable-sentry"
@@ -419,21 +436,21 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * Only works if the "uses upgrades" gamerule is set.
 			 */
-			open val engyDisposableSentries: ItemAttributeNamed<Int> = ItemAttributeNamed("engy disposable sentries")
+			open val numDisposableSentries: ItemAttributeNamed<Int> = ItemAttributeNamed("engy disposable sentries")
 		}
 	
 		open class DispenserAttributes : IBlockScoped {
 			/**
 			 * In-Game: "+N% dispenser range"
 			 */
-			open val engyDispenserRadiusIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("engy dispenser radius increased")
+			open val multRadius: ItemAttributeNamed<Number> = ItemAttributeNamed("engy dispenser radius increased")
 	
 			/**
 			 * In-Game: "Increases teleporter build speed by N%."
 			 * 
 			 * Multiplier applied to passive build time for dispensers and teleporters.
 			 */
-			open val engineerTeleporterBuildRateMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("engineer teleporter build rate multiplier")
+			open val multBuildRate: ItemAttributeNamed<Number> = ItemAttributeNamed("engineer teleporter build rate multiplier")
 		}
 	
 		open class TeleporterAttributes : IBlockScoped {
@@ -447,14 +464,14 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * Multiplier applied to teleporter construction cost.
 			 */
-			open val teleporterCost: ItemAttributeNamed<Number> = ItemAttributeNamed("mod teleporter cost")
+			open val multMetalCost: ItemAttributeNamed<Number> = ItemAttributeNamed("mod teleporter cost")
 	
 			/**
 			 * In-Game: "Increases teleporter build speed by N%."
 			 * 
 			 * Multiplier applied to passive build time for dispensers and teleporters.
 			 */
-			open val engineerTeleporterBuildRateMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("engineer teleporter build rate multiplier")
+			open val multBuildRate: ItemAttributeNamed<Number> = ItemAttributeNamed("engineer teleporter build rate multiplier")
 		}
 	}
 	
@@ -464,7 +481,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Multiplier.
 		 */
-		open val setBonusCloakBlinkTimePenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: cloak blink time penalty")
+		open val multBlinkTime: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: cloak blink time penalty")
 	
 		/**
 		 * In-Game: "N sec increase in time to cloak"
@@ -476,7 +493,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * If true, plays `Player.Spy_UnCloakReduced` when decloaking.
 		 */
-		open val setBonusQuietUnstealth: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SET BONUS: quiet unstealth")
+		open val quietDecloak: ItemAttributeNamed<Boolean> = ItemAttributeNamed("SET BONUS: quiet unstealth")
 	
 		open val multDecloakRate: ItemAttributeNamed<Number> = ItemAttributeNamed("mult decloak rate")
 	}
@@ -494,7 +511,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Multiplier applied to headshot damage.
 		 */
-		open val headshotDamageIncrease: ItemAttributeNamed<Number> = ItemAttributeNamed("headshot damage increase")
+		open val multHeadshotDamage: ItemAttributeNamed<Number> = ItemAttributeNamed("headshot damage increase")
 	
 		open val alien: AlienAttributes = AlienAttributes()
 	
@@ -516,7 +533,10 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	}
 	
 	open class DemoChargeAttributes : IBlockScoped {
-		open val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+		/**
+		 * Default is 0.45f, and this is a multiplier applied to it.
+		 */
+		open val multChargeTurnControl: ChargeTurnControlAttributes = ChargeTurnControlAttributes()
 	
 		/**
 		 * In-Game: "Taking damage while shield charging reduces remaining charging time"
@@ -532,29 +552,61 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 */
 		open val killRefillsMeter: ItemAttributeNamed<Number> = ItemAttributeNamed("kill refills meter")
 	
-		open val chargeTime: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("charge time increased"), ItemAttributeNamed<Number>("charge time decreased"))
+		/**
+		 * Only applies to Demoman, even if a targe is equipped on another class.
+		 * 
+		 * Flat multiplier applied to total charge time when charging.
+		 * 
+		 * Visible:
+		 * 
+		 * 	- In-Game: "N sec increase in charge duration"
+		 * 
+		 * 
+		 * 
+		 * Hidden:
+		 * 
+		 * 	- In-Game: "N sec decrease in charge duration"
+		 */
+		open val modChargeTime: VisHidden<Number> = VisHidden(
+		    ItemAttributeNamed("charge time increased"),
+		    ItemAttributeNamed("charge time decreased")
+		)
 	
 		/**
 		 * In-Game: "+N% increase in charge recharge rate"
 		 * 
 		 * Only applies to Demoman.
 		 */
-		open val chargeRechargeRateIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("charge recharge rate increased")
+		open val multRechargeRate: ItemAttributeNamed<Number> = ItemAttributeNamed("charge recharge rate increased")
 	
-		open class MultChargeTurnControlAttributes : IBlockScoped {
+		open class ChargeTurnControlAttributes : IBlockScoped, ItemAttribute<Number> {
 			/**
 			 * In-Game: "+N% increase in turning control while charging"
 			 * 
 			 * Default is 0.45f, and this is a multiplier applied to it.
 			 */
-			open val multChargeTurnControl: ItemAttributeNamed<Number> = ItemAttributeNamed("mult charge turn control")
+			open val standard: ItemAttributeNamed<Number> = ItemAttributeNamed("mult charge turn control")
 	
 			/**
 			 * In-Game: "Full turning control while charging"
 			 * 
 			 * Default is 0.45f, and this is a multiplier applied to it.
 			 */
-			open val fullChargeTurnControl: ItemAttributeNamed<Number> = ItemAttributeNamed("full charge turn control")
+			open val fullTurnControl: ItemAttributeNamed<Number> = ItemAttributeNamed("full charge turn control")
+	
+			context(attrs: IAttributeContainer)
+			override fun set(value: Number?) {
+			    standard.set(value)
+			}
+	
+			context(attrs: IAttributeContainer)
+			override fun get(): Number? {
+			    return standard.get()
+			}
+	
+			override fun serialize(value: Number?): IVDFRepresentableKeyValue {
+			    return standard.serialize(value)
+			}
 		}
 	}
 	
@@ -587,7 +639,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Will not work if the player is not a Medic wielding the VitaSaw.
 		 */
-		open val addHeadOnHit: ItemAttributeNamed<Boolean> = ItemAttributeNamed("add head on hit")
+		open val addHeadOnHit: ItemAttributeNamed<Number> = ItemAttributeNamed("add head on hit")
 	}
 	
 	open class HealthAndHealingAttributes : IBlockScoped {
@@ -607,7 +659,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * 	- In-Game: "N% health from packs on wearer"
 		 */
-		open val healthFromPacks: BonusPenalty<Number> = BonusPenalty(
+		open val multHealthFromPacks: BonusPenalty<Number> = BonusPenalty(
 		    ItemAttributeNamed("health from packs increased"),
 		    ItemAttributeNamed("health from packs decreased"),
 		)
@@ -617,7 +669,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Specifically checked on Crossbow Bolt impacts.
 		 */
-		open val reducedHealingFromMedics: ItemAttributeNamed<Number> = ItemAttributeNamed("reduced_healing_from_medics")
+		open val multHealingFromMedics: ItemAttributeNamed<Number> = ItemAttributeNamed("reduced_healing_from_medics")
 	
 		/**
 		 * Bonus:
@@ -628,7 +680,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * 	- In-Game: "N% health from healers on wearer"
 		 */
-		open val healthFromHealersReduced: BonusPenalty<Number> = BonusPenalty(
+		open val multHealthFromHealers: BonusPenalty<Number> = BonusPenalty(
 		    ItemAttributeNamed("health from healers increased"),
 		    ItemAttributeNamed("health from healers reduced"),
 		)
@@ -640,75 +692,109 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 */
 		open val weaponBlocksHealing: ItemAttributeNamed<Boolean> = ItemAttributeNamed("mod weapon blocks healing")
 	
-		open val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+		/**
+		 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
+		 */
+		open val healthRegenPerSecond: AddHealthRegenAttributes = AddHealthRegenAttributes()
 	
 		/**
 		 * In-Game: "+N max health on wearer"
 		 * 
-		 * Additive maximum health increase. See also: [addMaxHealth].
+		 * Additive maximum health increase that does not influence the player's overheal cap. See also: [addMaxHealth].
 		 */
-		open val hiddenMaxhealthNonBuffed: ItemAttributeNamed<Int> = ItemAttributeNamed("hidden maxhealth non buffed")
+		open val addMaxHealth_nonBuffed: ItemAttributeNamed<Int> = ItemAttributeNamed("hidden maxhealth non buffed")
 	
-		open val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		/**
+		 * Additive maximum health increase. Influences the player's overheal cap.
+		 */
+		open val addMaxHealth: AddMaxhealthAttributes = AddMaxhealthAttributes()
 	
-		open class HealthRegenAttributes : IBlockScoped {
+		open class AddHealthRegenAttributes : IBlockScoped, ItemAttribute<Int> {
 			/**
 			 * In-Game: "+N health regenerated per second on wearer"
 			 * 
 			 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
 			 */
-			open val healthRegen: ItemAttributeNamed<Number> = ItemAttributeNamed("health regen")
+			open val regen: ItemAttributeNamed<Int> = ItemAttributeNamed("health regen")
 	
 			/**
 			 * In-Game: "N health drained per second on wearer"
 			 * 
 			 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
 			 */
-			open val healthDrain: ItemAttributeNamed<Number> = ItemAttributeNamed("health drain")
+			open val drain: ItemAttributeNamed<Int> = ItemAttributeNamed("health drain")
 	
 			/**
 			 * In-Game: "+N health regenerated per second on wearer"
 			 * 
 			 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
 			 */
-			open val setBonusHealthRegenSetBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: health regen set bonus")
+			open val regen_setBonus: ItemAttributeNamed<Int> = ItemAttributeNamed("SET BONUS: health regen set bonus")
 	
 			/**
 			 * In-Game: "N health regenerated per second on wearer"
 			 * 
 			 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
 			 */
-			open val healthDrainMedic: ItemAttributeNamed<Number> = ItemAttributeNamed("health drain medic")
+			open val drain_medic: ItemAttributeNamed<Int> = ItemAttributeNamed("health drain medic")
 	
 			/**
 			 * In-Game: "+N health regenerated per second on wearer"
 			 * 
 			 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
 			 */
-			open val cardHealthRegen: ItemAttributeNamed<Number> = ItemAttributeNamed("CARD: health regen")
+			open val card: ItemAttributeNamed<Int> = ItemAttributeNamed("CARD: health regen")
+	
+			context(attrs: IAttributeContainer)
+			override fun set(value: Int?) {
+			    regen.set(value)
+			}
+	
+			context(attrs: IAttributeContainer)
+			override fun get(): Int? {
+			    return regen.get()
+			}
+	
+			override fun serialize(value: Int?): IVDFRepresentableKeyValue {
+			    return regen.serialize(value)
+			}
 		}
 	
-		open class MaxHealthAdditiveAttributes : IBlockScoped {
+		open class AddMaxhealthAttributes : IBlockScoped, ItemAttribute<Int> {
 			/**
 			 * In-Game: "+N max health on wearer"
 			 * 
-			 * Additive maximum health increase only checked when overhealing.
+			 * Additive maximum health increase. Influences the player's overheal cap.
 			 */
-			open val maxHealthAdditiveBonus: ItemAttributeNamed<Int> = ItemAttributeNamed("max health additive bonus")
+			open val bonus: ItemAttributeNamed<Int> = ItemAttributeNamed("max health additive bonus")
 	
 			/**
 			 * In-Game: "N max health on wearer"
 			 * 
-			 * Additive maximum health increase only checked when overhealing.
+			 * Additive maximum health increase. Influences the player's overheal cap.
 			 */
-			open val maxHealthAdditivePenalty: ItemAttributeNamed<Int> = ItemAttributeNamed("max health additive penalty")
+			open val penalty: ItemAttributeNamed<Int> = ItemAttributeNamed("max health additive penalty")
 	
 			/**
 			 * In-Game: "+N max health on wearer"
 			 * 
-			 * Additive maximum health increase only checked when overhealing.
+			 * Additive maximum health increase. Influences the player's overheal cap.
 			 */
-			open val setBonusMaxHealthAdditiveBonus: ItemAttributeNamed<Int> = ItemAttributeNamed("SET BONUS: max health additive bonus")
+			open val setBonus: ItemAttributeNamed<Int> = ItemAttributeNamed("SET BONUS: max health additive bonus")
+	
+			context(attrs: IAttributeContainer)
+			override fun set(value: Int?) {
+			    bonus.set(value)
+			}
+	
+			context(attrs: IAttributeContainer)
+			override fun get(): Int? {
+			    return bonus.get()
+			}
+	
+			override fun serialize(value: Int?): IVDFRepresentableKeyValue {
+			    return bonus.serialize(value)
+			}
 		}
 	}
 	
@@ -738,16 +824,30 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	}
 	
 	open class KnockbackReceivedAttributes : BaseEntityAttributes.KnockbackReceivedAttributes() {
-		open val airblastVulnerabilityMultiplier: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("airblast vulnerability multiplier"), ItemAttributeNamed<Number>("airblast vulnerability multiplier hidden"))
+		/**
+		 * Visible:
+		 * 
+		 * 	- In-Game: "N% reduction in airblast vulnerability"
+		 * 
+		 * 
+		 * 
+		 * Hidden:
+		 * 
+		 * 	- In-Game: "N% reduction in airblast vulnerability"
+		 */
+		open val multAirblastVulnerability: VisHidden<Number> = VisHidden(
+		    ItemAttributeNamed("airblast vulnerability multiplier"),
+		    ItemAttributeNamed("airblast vulnerability multiplier hidden")
+		)
 	
-		open val airblastVerticalVulnerabilityMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("airblast vertical vulnerability multiplier")
+		open val multAirblastVerticalVulnerability: ItemAttributeNamed<Number> = ItemAttributeNamed("airblast vertical vulnerability multiplier")
 	
 		/**
 		 * In-Game: "Knockback reduced by N% when aiming"
 		 * 
 		 * Only works on Sniper.
 		 */
-		open val aimingKnockbackResistance: ItemAttributeNamed<Number> = ItemAttributeNamed("aiming knockback resistance")
+		open val multKnockbackWhileAiming: ItemAttributeNamed<Number> = ItemAttributeNamed("aiming knockback resistance")
 	}
 	
 	open class MetaAttributes : BaseEntityAttributes.MetaAttributes() {
@@ -790,7 +890,21 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 */
 			open val noiseMaker: ItemAttributeNamed<Boolean> = ItemAttributeNamed("noise maker")
 	
-			open val unlimitedQuantity: VisHidden<Boolean> = VisHidden(ItemAttributeNamed<Boolean>("unlimited quantity"), ItemAttributeNamed<Boolean>("unlimited quantity hidden"))
+			/**
+			 * If true, noisemakers are unlimited usage.
+			 * 
+			 * Visible:
+			 * 
+			 * 	- In-Game: "Unlimited use"
+			 * 
+			 * 
+			 * 
+			 * Hidden:
+			 */
+			open val unlimitedQuantity: VisHidden<Boolean> = VisHidden(
+			    ItemAttributeNamed("unlimited quantity"),
+			    ItemAttributeNamed("unlimited quantity hidden")
+			)
 		}
 	
 		open class ItemsAttributes : IBlockScoped {
@@ -825,7 +939,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			/**
 			 * If true, the Voodoo-Cursed Soul skin is equipped.
 			 */
-			open val zombiezombiezombiezombie: ItemAttributeNamed<Boolean> = ItemAttributeNamed("zombiezombiezombiezombie")
+			open val useZombieSkin: ItemAttributeNamed<Boolean> = ItemAttributeNamed("zombiezombiezombiezombie")
 	
 			/**
 			 * In-Game: "Disables double jump"
@@ -892,19 +1006,26 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 */
 		open val hypeResetsOnJump: ItemAttributeNamed<Int> = ItemAttributeNamed("hype resets on jump")
 	
-		open val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Only works on Engineer and Heavy.
+		 * 
+		 * On Engineer, adds all damage dealt to the rage meter.
+		 * 
+		 * On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
+		 */
+		open val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
 		/**
 		 * Multiplier applied to rage gained by dealing damage, taking damage, or dealing burn damage.
 		 */
-		open val rageGivingScale: ItemAttributeNamed<Number> = ItemAttributeNamed("rage giving scale")
+		open val multRageGained: ItemAttributeNamed<Number> = ItemAttributeNamed("rage giving scale")
 	
 		/**
 		 * In-Game: "On Hit: Builds Hype"
 		 * 
 		 * Adds the amount of damage dealt to the Scout hype meter, to a maximum of 200 damage which adds 50% meter.
 		 */
-		open val hypeOnDamage: ItemAttributeNamed<Boolean> = ItemAttributeNamed("hype on damage")
+		open val gainHypeOnDamage: ItemAttributeNamed<Boolean> = ItemAttributeNamed("hype on damage")
 	
 		/**
 		 * Only procs on Sniper. Gain this amount of rage meter on assists.
@@ -928,9 +1049,9 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * Amount of hype lost per point of damage taken.
 		 */
-		open val loseHypeOnTakeDamage: ItemAttributeNamed<Int> = ItemAttributeNamed("lose hype on take damage")
+		open val hypeLostPerDamageTaken: ItemAttributeNamed<Int> = ItemAttributeNamed("lose hype on take damage")
 	
-		open class GenerateRageOnDamageAttributes : IBlockScoped {
+		open class GenerateRageOnDmgAttributes : IBlockScoped, ItemAttribute<Boolean> {
 			/**
 			 * In-Game: "Generate Rage by dealing damage.  When fully charged, press the Special-Attack key to activate knockback"
 			 * 
@@ -951,12 +1072,26 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 			 * 
 			 * On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
 			 */
-			open val engineerRageOnDmg: ItemAttributeNamed<Boolean> = ItemAttributeNamed("engineer rage on dmg")
+			open val buildingRescue: ItemAttributeNamed<Boolean> = ItemAttributeNamed("engineer rage on dmg")
+	
+			context(attrs: IAttributeContainer)
+			override fun set(value: Boolean?) {
+			    standard.set(value)
+			}
+	
+			context(attrs: IAttributeContainer)
+			override fun get(): Boolean? {
+			    return standard.get()
+			}
+	
+			override fun serialize(value: Boolean?): IVDFRepresentableKeyValue {
+			    return standard.serialize(value)
+			}
 		}
 	}
 	
 	open class MovementAttributes : IBlockScoped {
-		open val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		open val multJumpHeight: ModJumpHeightAttributes = ModJumpHeightAttributes()
 	
 		/**
 		 * Allows parachute to be deployed. Parachute prop only appears if the BASE Jumper is equipped, but the functionality is the same regardless.
@@ -994,28 +1129,54 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	
 		open val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		open class jumpHeightAttributes : IBlockScoped {
+		open class ModJumpHeightAttributes : IBlockScoped, ItemAttribute<Number> {
 			/**
 			 * In-Game: "+N% greater jump height when active"
 			 */
-			open val increasedJumpHeight: ItemAttributeNamed<Number> = ItemAttributeNamed("increased jump height")
+			open val standard: ItemAttributeNamed<Number> = ItemAttributeNamed("increased jump height")
 	
-			open val majorIncreasedJumpHeight: ItemAttributeNamed<Number> = ItemAttributeNamed("major increased jump height")
+			/**
+			 * Shows in the "On Wearer:" list in the loadout screen. Note that _all_ attributes apply on wearer unless [provideOnActive][WeaponBaseAttributes.SwapWeaponsAttributes.provideOnActive] is set.
+			 */
+			open val descOnWearer: ItemAttributeNamed<Number> = ItemAttributeNamed("major increased jump height")
 	
-			open val halloweenIncreasedJumpHeight: ItemAttributeNamed<Number> = ItemAttributeNamed("halloween increased jump height")
+			open val halloween: ItemAttributeNamed<Number> = ItemAttributeNamed("halloween increased jump height")
+	
+			context(attrs: IAttributeContainer)
+			override fun set(value: Number?) {
+			    standard.set(value)
+			}
+	
+			context(attrs: IAttributeContainer)
+			override fun get(): Number? {
+			    return standard.get()
+			}
+	
+			override fun serialize(value: Number?): IVDFRepresentableKeyValue {
+			    return standard.serialize(value)
+			}
 		}
 	
 		open class MoveSpeedAttributes : IBlockScoped {
-			open val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			/**
+			 * Only applies to players that have TF_COND_AIMING.
+			 * 
+			 * If Heavy, default aiming movespeed is 110.
+			 * 
+			 * Else if player is using a compound bow, 160.
+			 * 
+			 * Else 80.
+			 */
+			open val multPlayerAimingMovespeed: MultPlayerAimingMovespeedAttributes = MultPlayerAimingMovespeedAttributes()
 	
-			open val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
+			open val multMoveSpeed: MultPlayerMovespeedAttributes = MultPlayerMovespeedAttributes()
 	
 			/**
 			 * In-Game: "+N% faster move speed on wearer (shield required)"
 			 */
 			open val moveSpeedBonusShieldRequired: ItemAttributeNamed<Number> = ItemAttributeNamed("move speed bonus shield required")
 	
-			open class AimingMovespeedAttributes : IBlockScoped {
+			open class MultPlayerAimingMovespeedAttributes : IBlockScoped {
 				/**
 				 * In-Game: "+N% faster move speed while deployed"
 				 * 
@@ -1027,7 +1188,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 				 * 
 				 * Else 80.
 				 */
-				open val aimingMovespeedIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("aiming movespeed increased")
+				open val bonus: ItemAttributeNamed<Number> = ItemAttributeNamed("aiming movespeed increased")
 	
 				/**
 				 * In-Game: "N% slower move speed while deployed"
@@ -1040,7 +1201,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 				 * 
 				 * Else 80.
 				 */
-				open val aimingMovespeedDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("aiming movespeed decreased")
+				open val penalty: ItemAttributeNamed<Number> = ItemAttributeNamed("aiming movespeed decreased")
 	
 				/**
 				 * In-Game: "N% slower move speed when aiming"
@@ -1053,31 +1214,48 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 				 * 
 				 * Else 80.
 				 */
-				open val sniperAimingMovespeedDecreased: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper aiming movespeed decreased")
+				open val penalty_sniper: ItemAttributeNamed<Number> = ItemAttributeNamed("sniper aiming movespeed decreased")
 			}
 	
-			open class MoveSpeedAttributes : IBlockScoped {
+			open class MultPlayerMovespeedAttributes : IBlockScoped, ItemAttribute<Number> {
 				/**
 				 * In-Game: "N% slower move speed on wearer"
 				 */
-				open val moveSpeedPenalty: ItemAttributeNamed<Number> = ItemAttributeNamed("move speed penalty")
+				open val penalty: ItemAttributeNamed<Number> = ItemAttributeNamed("move speed penalty")
 	
 				/**
 				 * In-Game: "+N% faster move speed on wearer"
 				 */
-				open val moveSpeedBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("move speed bonus")
+				open val bonus: ItemAttributeNamed<Number> = ItemAttributeNamed("move speed bonus")
 	
-				open val majorMoveSpeedBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("major move speed bonus")
+				/**
+				 * Shows in the "On Wearer:" list in the loadout screen. Note that _all_ attributes apply on wearer unless [provideOnActive][WeaponBaseAttributes.SwapWeaponsAttributes.provideOnActive] is set.
+				 */
+				open val bonus_descOnWearer: ItemAttributeNamed<Number> = ItemAttributeNamed("major move speed bonus")
 	
 				/**
 				 * In-Game: "+N% faster move speed on wearer"
 				 */
-				open val setBonusMoveSpeedSetBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: move speed set bonus")
+				open val bonus_setBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: move speed set bonus")
 	
 				/**
 				 * In-Game: "+N% faster move speed on wearer"
 				 */
-				open val cardMoveSpeedBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("CARD: move speed bonus")
+				open val bonus_card: ItemAttributeNamed<Number> = ItemAttributeNamed("CARD: move speed bonus")
+	
+				context(attrs: IAttributeContainer)
+				override fun set(value: Number?) {
+				    bonus.set(value)
+				}
+	
+				context(attrs: IAttributeContainer)
+				override fun get(): Number? {
+				    return bonus.get()
+				}
+	
+				override fun serialize(value: Number?): IVDFRepresentableKeyValue {
+				    return bonus.serialize(value)
+				}
 			}
 		}
 	}
@@ -1117,7 +1295,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * On killing an enemy, schadenfreude.
 		 */
-		open val killForcesAttackerToLaugh: ItemAttributeNamed<Boolean> = ItemAttributeNamed("kill forces attacker to laugh")
+		open val forceLaugh: ItemAttributeNamed<Boolean> = ItemAttributeNamed("kill forces attacker to laugh")
 	
 		/**
 		 * In-Game: "N% damage penalty"
@@ -1139,9 +1317,9 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	}
 	
 	open class ResistanceAttributes : BaseEntityAttributes.ResistanceAttributes() {
-		open val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+		open val multDmgTakenCrits: MultDmgtakenFromCritAttributes = MultDmgtakenFromCritAttributes()
 	
-		open val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+		open val multDmgTakenFire: MultDmgtakenFromFireAttributes = MultDmgtakenFromFireAttributes()
 	
 		/**
 		 * Bonus:
@@ -1152,26 +1330,42 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		 * 
 		 * 	- In-Game: "N% explosive damage vulnerability on wearer"
 		 */
-		open val dmgTakenFromBlast: BonusPenalty<Number> = BonusPenalty(
+		open val multDmgTakenExplosives: BonusPenalty<Number> = BonusPenalty(
 		    ItemAttributeNamed("dmg taken from blast reduced"),
 		    ItemAttributeNamed("dmg taken from blast increased"),
 		)
 	
-		open val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+		open val multDmgTakenBullets: MultDmgtakenFromBulletsAttributes = MultDmgtakenFromBulletsAttributes()
 	
 		/**
 		 * In-Game: "N% damage vulnerability on wearer"
 		 * 
 		 * Multiplier to damage taken from all sources.
 		 */
-		open val dmgTakenIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken increased")
+		open val multDmgTaken: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken increased")
 	
 		/**
 		 * In-Game: "+N% sentry damage resistance on wearer"
 		 */
-		open val setBonusDmgFromSentryReduced: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: dmg from sentry reduced")
+		open val multDmgTakenSentry: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: dmg from sentry reduced")
 	
-		open val rocketJumpDamageReduction: VisHidden<Number> = VisHidden(ItemAttributeNamed<Number>("rocket jump damage reduction"), ItemAttributeNamed<Number>("rocket jump damage reduction HIDDEN"))
+		/**
+		 * Multiplier applied to damage taken IF: it's blast damage or a flare explosion, the damage was caused by the user (self-damage), the user did not damage other players, and it is not a taunt-kill grenade (Escape Plan, Equalizer).
+		 * 
+		 * Visible:
+		 * 
+		 * 	- In-Game: "N% blast damage from rocket jumps"
+		 * 
+		 * 
+		 * 
+		 * Hidden:
+		 * 
+		 * 	- In-Game: "N% blast damage from rocket jumps"
+		 */
+		open val rocketJumpDmgReduction: VisHidden<Number> = VisHidden(
+		    ItemAttributeNamed("rocket jump damage reduction"),
+		    ItemAttributeNamed("rocket jump damage reduction HIDDEN")
+		)
 	
 		/**
 		 * In-Game: "Wearer never takes falling damage"
@@ -1187,60 +1381,102 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 	
 		open val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
 	
-		open class DmgTakenFromCritReducedAttributes : IBlockScoped {
+		open class MultDmgtakenFromCritAttributes : IBlockScoped, ItemAttribute<Number> {
 			/**
 			 * In-Game: "+N% critical hit damage resistance on wearer"
 			 */
-			open val dmgTakenFromCritReduced: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from crit reduced")
+			open val bonus: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from crit reduced")
 	
 			/**
 			 * In-Game: "N% critical hit damage vulnerability on wearer"
 			 */
-			open val dmgTakenFromCritIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from crit increased")
+			open val penalty: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from crit increased")
 	
 			/**
 			 * In-Game: "+N% critical hit damage resistance on wearer"
 			 */
-			open val setBonusDmgTakenFromCritReducedSetBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: dmg taken from crit reduced set bonus")
+			open val bonus_setBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: dmg taken from crit reduced set bonus")
+	
+			context(attrs: IAttributeContainer)
+			override fun set(value: Number?) {
+			    bonus.set(value)
+			}
+	
+			context(attrs: IAttributeContainer)
+			override fun get(): Number? {
+			    return bonus.get()
+			}
+	
+			override fun serialize(value: Number?): IVDFRepresentableKeyValue {
+			    return bonus.serialize(value)
+			}
 		}
 	
-		open class DmgTakenFromFireReducedAttributes : IBlockScoped {
+		open class MultDmgtakenFromFireAttributes : IBlockScoped, ItemAttribute<Number> {
 			/**
 			 * In-Game: "+N% fire damage resistance on wearer"
 			 */
-			open val dmgTakenFromFireReduced: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from fire reduced")
+			open val bonus: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from fire reduced")
 	
 			/**
 			 * In-Game: "N% fire damage vulnerability on wearer"
 			 */
-			open val dmgTakenFromFireIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from fire increased")
+			open val penalty: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from fire increased")
 	
 			/**
 			 * In-Game: "+N% fire damage resistance on wearer"
 			 */
-			open val setBonusDmgTakenFromFireReducedSetBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: dmg taken from fire reduced set bonus")
+			open val bonus_setBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: dmg taken from fire reduced set bonus")
+	
+			context(attrs: IAttributeContainer)
+			override fun set(value: Number?) {
+			    bonus.set(value)
+			}
+	
+			context(attrs: IAttributeContainer)
+			override fun get(): Number? {
+			    return bonus.get()
+			}
+	
+			override fun serialize(value: Number?): IVDFRepresentableKeyValue {
+			    return bonus.serialize(value)
+			}
 		}
 	
-		open class DmgTakenFromBulletsReducedAttributes : IBlockScoped {
+		open class MultDmgtakenFromBulletsAttributes : IBlockScoped, ItemAttribute<Number> {
 			/**
 			 * In-Game: "+N% bullet damage resistance on wearer"
 			 */
-			open val dmgTakenFromBulletsReduced: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from bullets reduced")
+			open val bonus: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from bullets reduced")
 	
 			/**
 			 * In-Game: "N% bullet damage vulnerability on wearer"
 			 */
-			open val dmgTakenFromBulletsIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from bullets increased")
+			open val penalty: ItemAttributeNamed<Number> = ItemAttributeNamed("dmg taken from bullets increased")
 	
 			/**
 			 * In-Game: "N% bullet damage vulnerability on wearer"
 			 */
-			open val setBonusDmgTakenFromBulletsIncreased: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: dmg taken from bullets increased")
+			open val penalty_setBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("SET BONUS: dmg taken from bullets increased")
 	
 			/**
 			 * In-Game: "+N% bullet damage resistance on wearer"
 			 */
-			open val cardDmgTakenFromBulletsReduced: ItemAttributeNamed<Number> = ItemAttributeNamed("CARD: dmg taken from bullets reduced")
+			open val penalty_card: ItemAttributeNamed<Number> = ItemAttributeNamed("CARD: dmg taken from bullets reduced")
+	
+			context(attrs: IAttributeContainer)
+			override fun set(value: Number?) {
+			    bonus.set(value)
+			}
+	
+			context(attrs: IAttributeContainer)
+			override fun get(): Number? {
+			    return bonus.get()
+			}
+	
+			override fun serialize(value: Number?): IVDFRepresentableKeyValue {
+			    return bonus.serialize(value)
+			}
 		}
 	
 		open class VaccinatorAttributes : IBlockScoped {

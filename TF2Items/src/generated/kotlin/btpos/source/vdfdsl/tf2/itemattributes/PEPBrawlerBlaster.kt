@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -325,15 +326,21 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	override val spyOnly: SpyOnlyAttributes get() = PEPBrawlerBlasterAttributes.spyOnly
 	
 	open class OnHitAttributes : ScattergunAttributes.OnHitAttributes() {
-		override val healOnHitForRapidfire: HealOnHitForRapidfireAttributes = HealOnHitForRapidfireAttributes()
+		/**
+		 * Add this amount of health on hit.
+		 */
+		override val addOnhitAddhealth: AddOnhitAddhealthAttributes = AddOnhitAddhealthAttributes()
 	
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Knockback rage on enemy if you're a heavy and your rage is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
 		override val falling: FallingAttributes = FallingAttributes()
 	
-		open class HealOnHitForRapidfireAttributes : ScattergunAttributes.OnHitAttributes.HealOnHitForRapidfireAttributes() 
+		open class AddOnhitAddhealthAttributes : ScattergunAttributes.OnHitAttributes.AddOnhitAddhealthAttributes() 
 	
-		open class GenerateRageOnDamageAttributes : ScattergunAttributes.OnHitAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : ScattergunAttributes.OnHitAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	
 		open class FallingAttributes : ScattergunAttributes.OnHitAttributes.FallingAttributes() 
 	}
@@ -343,7 +350,7 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	open class AmmoAttributes : ScattergunAttributes.AmmoAttributes() {
 		override val clipSize: ClipSizeAttributes = ClipSizeAttributes()
 	
-		override val modMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
+		override val multMaxAmmo: MaxAmmoAttributes = MaxAmmoAttributes()
 	
 		open class ClipSizeAttributes : ScattergunAttributes.AmmoAttributes.ClipSizeAttributes() 
 	
@@ -365,7 +372,10 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	open class ProjectilesAttributes : ScattergunAttributes.ProjectilesAttributes() {
 		override val bullets: BulletsAttributes = BulletsAttributes()
 	
-		override val projectilePenetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
+		/**
+		 * How many players your "projectile" (*including bullets*) should penetrate.
+		 */
+		override val penetration: ProjectilePenetrationAttributes = ProjectilePenetrationAttributes()
 	
 		open class BulletsAttributes : ScattergunAttributes.ProjectilesAttributes.BulletsAttributes() 
 	
@@ -391,22 +401,34 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	open class CritsAttributes : ScattergunAttributes.CritsAttributes() 
 	
 	open class DemoChargeAttributes : ScattergunAttributes.DemoChargeAttributes() {
-		override val multChargeTurnControl: MultChargeTurnControlAttributes = MultChargeTurnControlAttributes()
+		/**
+		 * Default is 0.45f, and this is a multiplier applied to it.
+		 */
+		override val multChargeTurnControl: ChargeTurnControlAttributes = ChargeTurnControlAttributes()
 	
-		open class MultChargeTurnControlAttributes : ScattergunAttributes.DemoChargeAttributes.MultChargeTurnControlAttributes() 
+		open class ChargeTurnControlAttributes : ScattergunAttributes.DemoChargeAttributes.ChargeTurnControlAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HealthAndHealingAttributes : ScattergunAttributes.HealthAndHealingAttributes() {
-		override val healthRegen: HealthRegenAttributes = HealthRegenAttributes()
+		/**
+		 * Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
+		 */
+		override val healthRegenPerSecond: AddHealthRegenAttributes = AddHealthRegenAttributes()
 	
-		override val maxHealthAdditiveBonus: MaxHealthAdditiveAttributes = MaxHealthAdditiveAttributes()
+		/**
+		 * Additive maximum health increase. Influences the player's overheal cap.
+		 */
+		override val addMaxHealth: AddMaxhealthAttributes = AddMaxhealthAttributes()
 	
-		open class HealthRegenAttributes : ScattergunAttributes.HealthAndHealingAttributes.HealthRegenAttributes() 
+		open class AddHealthRegenAttributes : ScattergunAttributes.HealthAndHealingAttributes.AddHealthRegenAttributes(), ItemAttribute<Int> 
 	
-		open class MaxHealthAdditiveAttributes : ScattergunAttributes.HealthAndHealingAttributes.MaxHealthAdditiveAttributes() 
+		open class AddMaxhealthAttributes : ScattergunAttributes.HealthAndHealingAttributes.AddMaxhealthAttributes(), ItemAttribute<Int> 
 	}
 	
 	open class KnockbackReceivedAttributes : ScattergunAttributes.KnockbackReceivedAttributes() {
+		/**
+		 * Attribute class is a flat multiplier applied to push force received from damage.
+		 */
 		override val damageForceReduction: DamageForceReductionAttributes = DamageForceReductionAttributes()
 	
 		open class DamageForceReductionAttributes : ScattergunAttributes.KnockbackReceivedAttributes.DamageForceReductionAttributes() 
@@ -443,27 +465,43 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	}
 	
 	open class MeterAttributes : ScattergunAttributes.MeterAttributes() {
-		override val generateRageOnDamage: GenerateRageOnDamageAttributes = GenerateRageOnDamageAttributes()
+		/**
+		 * Only works on Engineer and Heavy.
+		 * 
+		 * On Engineer, adds all damage dealt to the rage meter.
+		 * 
+		 * On Heavy, adds `0.22` * the damage to the meter, and reduces damage by 50% while the meter is draining.
+		 */
+		override val generateRageOnDmg: GenerateRageOnDmgAttributes = GenerateRageOnDmgAttributes()
 	
-		open class GenerateRageOnDamageAttributes : ScattergunAttributes.MeterAttributes.GenerateRageOnDamageAttributes() 
+		open class GenerateRageOnDmgAttributes : ScattergunAttributes.MeterAttributes.GenerateRageOnDmgAttributes(), ItemAttribute<Boolean> 
 	}
 	
 	open class MovementAttributes : ScattergunAttributes.MovementAttributes() {
 		override val moveSpeed: MoveSpeedAttributes = MoveSpeedAttributes()
 	
-		override val increasedJumpHeight: jumpHeightAttributes = jumpHeightAttributes()
+		override val multJumpHeight: ModJumpHeightAttributes = ModJumpHeightAttributes()
 	
 		open class MoveSpeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes() {
-			override val aimingMovespeedIncreased: AimingMovespeedAttributes = AimingMovespeedAttributes()
+			/**
+			 * Only applies to players that have TF_COND_AIMING.
+			 * 
+			 * If Heavy, default aiming movespeed is 110.
+			 * 
+			 * Else if player is using a compound bow, 160.
+			 * 
+			 * Else 80.
+			 */
+			override val multPlayerAimingMovespeed: MultPlayerAimingMovespeedAttributes = MultPlayerAimingMovespeedAttributes()
 	
-			override val moveSpeedPenalty: MoveSpeedAttributes = MoveSpeedAttributes()
+			override val multMoveSpeed: MultPlayerMovespeedAttributes = MultPlayerMovespeedAttributes()
 	
-			open class AimingMovespeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes.AimingMovespeedAttributes() 
+			open class MultPlayerAimingMovespeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerAimingMovespeedAttributes() 
 	
-			open class MoveSpeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes.MoveSpeedAttributes() 
+			open class MultPlayerMovespeedAttributes : ScattergunAttributes.MovementAttributes.MoveSpeedAttributes.MultPlayerMovespeedAttributes(), ItemAttribute<Number> 
 		}
 	
-		open class jumpHeightAttributes : ScattergunAttributes.MovementAttributes.jumpHeightAttributes() 
+		open class ModJumpHeightAttributes : ScattergunAttributes.MovementAttributes.ModJumpHeightAttributes(), ItemAttribute<Number> 
 	}
 	
 	open class HeadsAttributes : ScattergunAttributes.HeadsAttributes() 
@@ -471,19 +509,19 @@ interface PEPBrawlerBlasterAttributes : IBlockScoped, ScattergunAttributes {
 	open class OnKillAttributes : ScattergunAttributes.OnKillAttributes() 
 	
 	open class ResistanceAttributes : ScattergunAttributes.ResistanceAttributes() {
-		override val dmgTakenFromCritReduced: DmgTakenFromCritReducedAttributes = DmgTakenFromCritReducedAttributes()
+		override val multDmgTakenCrits: MultDmgtakenFromCritAttributes = MultDmgtakenFromCritAttributes()
 	
-		override val dmgTakenFromFireReduced: DmgTakenFromFireReducedAttributes = DmgTakenFromFireReducedAttributes()
+		override val multDmgTakenFire: MultDmgtakenFromFireAttributes = MultDmgtakenFromFireAttributes()
 	
-		override val dmgTakenFromBulletsReduced: DmgTakenFromBulletsReducedAttributes = DmgTakenFromBulletsReducedAttributes()
+		override val multDmgTakenBullets: MultDmgtakenFromBulletsAttributes = MultDmgtakenFromBulletsAttributes()
 	
 		override val vaccinator: VaccinatorAttributes = VaccinatorAttributes()
 	
-		open class DmgTakenFromCritReducedAttributes : ScattergunAttributes.ResistanceAttributes.DmgTakenFromCritReducedAttributes() 
+		open class MultDmgtakenFromCritAttributes : ScattergunAttributes.ResistanceAttributes.MultDmgtakenFromCritAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromFireReducedAttributes : ScattergunAttributes.ResistanceAttributes.DmgTakenFromFireReducedAttributes() 
+		open class MultDmgtakenFromFireAttributes : ScattergunAttributes.ResistanceAttributes.MultDmgtakenFromFireAttributes(), ItemAttribute<Number> 
 	
-		open class DmgTakenFromBulletsReducedAttributes : ScattergunAttributes.ResistanceAttributes.DmgTakenFromBulletsReducedAttributes() 
+		open class MultDmgtakenFromBulletsAttributes : ScattergunAttributes.ResistanceAttributes.MultDmgtakenFromBulletsAttributes(), ItemAttribute<Number> 
 	
 		open class VaccinatorAttributes : ScattergunAttributes.ResistanceAttributes.VaccinatorAttributes() 
 	}

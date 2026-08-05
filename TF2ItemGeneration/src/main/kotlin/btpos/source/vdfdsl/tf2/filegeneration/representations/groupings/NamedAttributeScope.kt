@@ -9,6 +9,7 @@ import btpos.source.vdfdsl.tf2.filegeneration.representations.Modality
 import btpos.source.vdfdsl.tf2.filegeneration.representations.NamedAttribute
 import btpos.source.vdfdsl.tf2.filegeneration.representations.PropertyBuilder
 import btpos.source.vdfdsl.tf2.filegeneration.representations.overrideVarName
+import com.sun.tools.javac.tree.TreeInfo.args
 
 /**
  * Scopes are all top-level object declarations. Any properties just reference them with getters.
@@ -35,6 +36,7 @@ open class NamedAttributeScope(
 		return PropertyBuilder(varName, getKotlinType()) {
 			initializer = "$clsname()"
 			docComment += innateDescription
+			docComment += notes
 		}
 	}
 	
@@ -78,19 +80,20 @@ open class NamedAttributeScope(
 		
 		functions += FunctionBuilder("set").apply {
 			valueParams += "value" to "$valueType?"
-			contextParams += "_" to "IAttributeContainer"
-			body += "${attr.varName} = value"
+			contextParams += "attrs" to "IAttributeContainer"
+			body += "${attr.varName}.set(value)"
 			modality = Modality.OVERRIDE
 		}
 		
 		functions += FunctionBuilder("get", "$valueType?").apply {
-			contextParams += "_" to "IAttributeContainer"
+			contextParams += "attrs" to "IAttributeContainer"
 			body += "return ${attr.varName}.get()"
 			modality = Modality.OVERRIDE
 		}
 		
-		functions += FunctionBuilder("serialize", "$valueType?").apply {
-			body += "return ${attr.varName}.serialize()"
+		functions += FunctionBuilder("serialize", "IVDFRepresentableKeyValue").apply {
+			body += "return ${attr.varName}.serialize(value)"
+			valueParams += "value" to "$valueType?"
 			modality = Modality.OVERRIDE
 		}
 	}

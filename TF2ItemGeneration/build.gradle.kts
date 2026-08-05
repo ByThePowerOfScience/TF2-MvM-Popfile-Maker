@@ -26,7 +26,7 @@ dependencies {
 val basePackage = Constants.Groups.TF2
 
 buildConfig {
-	buildConfigField("String", "OUT_DIR", "\"${gradle.includedBuild("TF2Items").projectDir.toPath().resolve("src/generated/kotlin")}\"")
+	buildConfigField("String", "OUT_DIR", "\"${projectDir.resolve("../TF2Items/src/generated/kotlin")}\"")
 	
 	buildConfigField("String", "BASE_PACKAGE", "\"$basePackage\"")
 	

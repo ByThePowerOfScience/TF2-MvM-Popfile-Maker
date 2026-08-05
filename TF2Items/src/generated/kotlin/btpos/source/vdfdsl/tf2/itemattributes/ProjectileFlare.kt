@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -22,7 +23,7 @@ interface ProjectileFlareAttributes : IBlockScoped, BaseProjectileAttributes {
 		 * 
 		 * 	- In-Game: "+N% projectile speed"
 		 */
-		val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+		val multProjectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
 		    ItemAttributeNamed<Number>("Projectile speed increased"),
 		    ItemAttributeNamed<Number>("Projectile speed decreased"),
 		    ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
@@ -37,7 +38,7 @@ interface ProjectileFlareAttributes : IBlockScoped, BaseProjectileAttributes {
 		 * 
 		 * 	- In-Game: "N% explosion radius"
 		 */
-		val blastRadius: BonusPenalty<Number> = BonusPenalty(
+		val multExplosionRadius: BonusPenalty<Number> = BonusPenalty(
 		    ItemAttributeNamed("Blast radius increased"),
 		    ItemAttributeNamed("Blast radius decreased"),
 		)
@@ -56,7 +57,7 @@ interface ProjectileFlareAttributes : IBlockScoped, BaseProjectileAttributes {
 	 * 
 	 * 	- In-Game: "+N% projectile speed"
 	 */
-	val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> get() = ProjectileFlareAttributes.projectileSpeed
+	val multProjectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> get() = ProjectileFlareAttributes.multProjectileSpeed
 	
 	/**
 	 * Bonus:
@@ -67,7 +68,7 @@ interface ProjectileFlareAttributes : IBlockScoped, BaseProjectileAttributes {
 	 * 
 	 * 	- In-Game: "N% explosion radius"
 	 */
-	val blastRadius: BonusPenalty<Number> get() = ProjectileFlareAttributes.blastRadius
+	val multExplosionRadius: BonusPenalty<Number> get() = ProjectileFlareAttributes.multExplosionRadius
 	
 	object Inherited : ProjectileFlareAttributes 
 }

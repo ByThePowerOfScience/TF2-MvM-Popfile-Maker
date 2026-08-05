@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -32,7 +33,7 @@ interface BaseRocketAttributes : IBlockScoped, BaseProjectileAttributes {
 		 * 
 		 * 	- In-Game: "+N% projectile speed"
 		 */
-		val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
+		val multProjectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> = BonusPenaltyHidden(
 		    ItemAttributeNamed<Number>("Projectile speed increased"),
 		    ItemAttributeNamed<Number>("Projectile speed decreased"),
 		    ItemAttributeNamed<Number>("Projectile speed increased HIDDEN"),
@@ -64,7 +65,7 @@ interface BaseRocketAttributes : IBlockScoped, BaseProjectileAttributes {
 		 * 
 		 * 	- In-Game: "N% explosion radius"
 		 */
-		val blastRadius: BonusPenalty<Number> = BonusPenalty(
+		val multExplosionRadius: BonusPenalty<Number> = BonusPenalty(
 		    ItemAttributeNamed("Blast radius increased"),
 		    ItemAttributeNamed("Blast radius decreased"),
 		)
@@ -93,7 +94,7 @@ interface BaseRocketAttributes : IBlockScoped, BaseProjectileAttributes {
 	 * 
 	 * 	- In-Game: "+N% projectile speed"
 	 */
-	val projectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> get() = BaseRocketAttributes.projectileSpeed
+	val multProjectileSpeed: BonusPenaltyHidden<Number, ItemAttributeNamed<Number>> get() = BaseRocketAttributes.multProjectileSpeed
 	
 	/**
 	 * In-Game: "+15% rocket speed per point.  On direct hits: rocket does maximum damage, stuns target, and blast radius increased +15% per point."
@@ -121,7 +122,7 @@ interface BaseRocketAttributes : IBlockScoped, BaseProjectileAttributes {
 	 * 
 	 * 	- In-Game: "N% explosion radius"
 	 */
-	val blastRadius: BonusPenalty<Number> get() = BaseRocketAttributes.blastRadius
+	val multExplosionRadius: BonusPenalty<Number> get() = BaseRocketAttributes.multExplosionRadius
 	
 	object Inherited : BaseRocketAttributes 
 }

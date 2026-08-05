@@ -12,11 +12,6 @@
                   <project path="$PROJECT_DIR$/build-logic" />
                 </projects>
               </build>
-              <build path="$PROJECT_DIR$/TF2Items" name="TF2Items">
-                <projects>
-                  <project path="$PROJECT_DIR$/TF2Items" />
-                </projects>
-              </build>
               <build path="$PROJECT_DIR$/vdf-modeling" name="vdf-modeling">
                 <projects>
                   <project path="$PROJECT_DIR$/vdf-modeling" />
@@ -34,7 +29,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/TF2ItemGeneration" />
-            <option value="$PROJECT_DIR$/TF2Items" />
             <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/vdf-modeling" />
             <option value="$PROJECT_DIR$/vdf-parser" />

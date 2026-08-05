@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.modeling.*
+import btpos.source.vdfdsl.serialization.*
 import btpos.source.vdfdsl.serialization.codecs.*
 import btpos.source.vdfdsl.tf2.itemattributes.impl.*
 import btpos.source.vdfdsl.tf2.tftypes.*
@@ -97,21 +98,7 @@ interface BaseEntityAttributes : IBlockScoped {
 	
 	open class CritsAttributes : IBlockScoped 
 	
-	open class DamageAttributes : IBlockScoped {
-		/**
-		 * Applies to all damage falloff, including blast-radius damage falloff.
-		 * 
-		 * Bonus:
-		 * 
-		 * 	- In-Game: "N% splash damage fall off"
-		 * 
-		 * Penalty:
-		 */
-		open val multDmgFalloff: BonusPenalty<Number> = BonusPenalty(
-		    ItemAttributeNamed("dmg falloff decreased"),
-		    ItemAttributeNamed("dmg falloff increased"),
-		)
-	}
+	open class DamageAttributes : IBlockScoped 
 	
 	open class MetaAttributes : IBlockScoped {
 		open val killfeed: KillfeedAttributes = KillfeedAttributes()
@@ -160,7 +147,7 @@ interface BaseEntityAttributes : IBlockScoped {
 		 * 
 		 * Only procs if Heavy and has a spun up minigun.
 		 */
-		open val spunupPushForceImmunity: ItemAttributeNamed<Boolean> = ItemAttributeNamed("spunup_push_force_immunity")
+		open val spunupPushForceImmunity: ItemAttributeNamed<Number> = ItemAttributeNamed("spunup_push_force_immunity")
 	}
 	
 	open class ResistanceAttributes : IBlockScoped {

@@ -1,7 +1,9 @@
 package btpos.source.vdfdsl.tf2.filegeneration.representations
 
 import btpos.source.vdfdsl.tf2.filegeneration.ArmoryDesc
+import btpos.source.vdfdsl.tf2.filegeneration.UsefulWikiTableParser.attrName
 import btpos.source.vdfdsl.tf2.filegeneration.camelCase
+import btpos.source.vdfdsl.tf2.filegeneration.unaryPlus
 
 /**
  * This should correspond to a raw row from the wiki table, or a raw scope from the attributes schema.
@@ -41,21 +43,33 @@ data class NamedAttribute(
 
 	override var notes: List<String> = listOf()
 	
-	override val innateDescription: List<String> = listOfNotNull(inGameDesc).map { "In-Game: \"$it\"" }
+	override val innateDescription: List<String> get() = listOfNotNull(
+		inGameDesc?.let {"In-Game: \"$it\"" },
+//		when (attrType) {
+//			"percentage", "inverted_percentage" -> "a multiplier".takeIf {
+//				"mult" !in this.varName && notes.none { it.contains("multiplier", ignoreCase = true) }
+//			}
+//			"additive" -> null
+//			"additive_percentage" -> "an additive percentage"
+//			else -> null
+//		}?.let { "Value is $it." }
+	)
 	
 	override fun getKotlinType(): String {
 		codec?.let { // trust codecs over attribute class notes
 			return it.visibleType
 		}
+		
+		if ("percentage" in attrType) // trust percentage over in-game usage, since those can be applied like that
+			return "Number"
+		
 		forceType?.let {
 			return it.takeIf { it != "Float" && it != "Double" } ?: "Number"
 		}
 		
-		if ("percentage" in attrType)
-			return "Number"
-		
 		return when (attrType) {
 			"additive" -> "Int"
+			"additive_percentage" -> "Number" // TODO force-type these manually
 			"particle_index" -> "Int"
 			"or" -> "Boolean"
 			"date" -> "Date"

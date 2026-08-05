@@ -15,7 +15,6 @@ dependencyResolutionManagement {
 	}
 }
 
-includeBuild("../TF2Items")
 includeBuild("../vdf-parser") {
 	dependencySubstitution {
 		substitute(module("btpos.source.vdfdsl.vdf:vdf-parser")).using(project(":"))

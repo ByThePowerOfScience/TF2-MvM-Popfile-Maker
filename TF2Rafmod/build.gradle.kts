@@ -1,5 +1,6 @@
 plugins {
 	id("general-convention")
+	kotlin("plugin.assignment") version libs.versions.kotlin
 }
 
 group = "btpos.source.vdfdsl.tf2.rafmod"
@@ -15,6 +16,10 @@ dependencies {
 	testImplementation(platform("org.junit:junit-bom:6.0.0"))
 	testImplementation("org.junit.jupiter:junit-jupiter")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+assignment {
+	annotation("btpos.source.vdfdsl.tf2.itemattributes.SupportsCustomAssignment")
 }
 
 tasks.test {

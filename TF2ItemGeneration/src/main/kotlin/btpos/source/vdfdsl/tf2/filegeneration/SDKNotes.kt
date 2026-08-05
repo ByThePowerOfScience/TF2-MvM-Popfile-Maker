@@ -329,7 +329,7 @@ object SDKNotes {
 			),
 			AttrClassScope(
 				DAMAGE,
-				"- `mult_dmg_falloff`: Float"
+				
 			),
 			AttrClassScope(
 				META,
@@ -372,7 +372,6 @@ object SDKNotes {
 				""".trimIndent()
 			),
 		),
-		
 		HierarchyAttrClassScope(
 			"BaseCombatWeapon",
 			AttrClassScope(
@@ -730,6 +729,8 @@ object SDKNotes {
 			AttrClassScope(
 				PROJECTILES,
 				"""
+					- `mult_dmg_falloff`: Float
+						- Falloff from the center of a blast-radius.
 					- `projectile_penetration`: Int
 						- How many players your "projectile" (*including bullets*) should penetrate.
 					- `centerfire_projectile`: Boolean
@@ -1859,15 +1860,14 @@ object SDKNotes {
 					- `mod_build_rate`: Float
 						- Multiplies building build time by this amount
 					- `upgrade_rate_mod`: Int
-						- Add this amount of metal to any building hit by this player, using player's metal reserve
+						- Multiplier to the amount of metal given to any building hit by this player, using player's metal reserve
 						- Recall that all players have 100 hidden metal
-					- `mult_engy_building_health`: Int
+					- `mult_engy_building_health`: Float
 						- Only applied if the building is NOT a disposable sentry
 					- `cannot_pick_up_buildings`: Boolean
 						- Prevents player from picking up buildings.
 					- `building_cost_reduction`: Int
-						- Sets the cost to construct any building type to this value.
-					
+						- Multiplier to the metal required to construct a building.
 				""".trimIndent(),
 				AttrClassScope(
 					BUILDINGS_SENTRY,
@@ -1950,7 +1950,7 @@ object SDKNotes {
 						- Amount of targe-charge meter gained on kill.  Scaled by various values.
 					- `mod_charge_time`: Float
 						- Only applies to Demoman, even if a targe is equipped on another class.
-						- Attribute class is a flat multiplier applied to total charge time when charging
+						- Flat multiplier applied to total charge time when charging
 					- `charge_recharge_rate`: Float
 						- Only applies to Demoman
 				""".trimIndent()
@@ -1994,12 +1994,12 @@ object SDKNotes {
 						- Applies to all heal-beam sources of healing: Dispensers, Mediguns
 					- `weapon_blocks_healing`: Boolean
 						- If set, this player may not be targeted by heal-beams or healed from Crossbow impacts.
-					- `add_health_regen`: Float
+					- `add_health_regen`: Int
 						- Amount of health regenerated per regen tick.  Scales by the amount of time since the player last took damage in non-MvM modes.
 					- `add_maxhealth_nonbuffed`: Int
-						- Additive maximum health increase. See also: [addMaxHealth]
+						- Additive maximum health increase that does not influence the player's overheal cap. See also: [addMaxHealth]
 					- `add_maxhealth`: Int
-						- Additive maximum health increase only checked when overhealing.
+						- Additive maximum health increase. Influences the player's overheal cap.
 				""".trimIndent()
 			),
 			AttrClassScope(

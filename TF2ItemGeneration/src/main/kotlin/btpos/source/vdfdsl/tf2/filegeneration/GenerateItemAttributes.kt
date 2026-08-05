@@ -53,6 +53,7 @@ fun main() {
 		Path(BuildConfig.OUT_DIR),
 		BuildConfig.ATTRIBUTES_TARGET_PACKAGE,
 		"import btpos.source.vdfdsl.modeling.*\n" +
+		"import btpos.source.vdfdsl.serialization.*\n" +
 		"import btpos.source.vdfdsl.serialization.codecs.*\n" +
 		"import ${BuildConfig.ATTRIBUTES_TARGET_PACKAGE}.impl.*\n" +
 		"import ${BuildConfig.BASE_PACKAGE}.tftypes.*\n" +
