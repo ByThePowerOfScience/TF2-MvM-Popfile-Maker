@@ -25,6 +25,7 @@ dependencies {
 	api("btpos.source.vdfdsl.vdf:vdf-modeling:${Constants.PROJECT_VERSION}")
 	api("btpos.source.vdfdsl.vdf:vdf-parser:${Constants.PROJECT_VERSION}")
 	api("btpos.source.vdfdsl.tf2:TF2Items:${Constants.PROJECT_VERSION}")
+	implementation(kotlin("reflect"))
 }
 /*
 

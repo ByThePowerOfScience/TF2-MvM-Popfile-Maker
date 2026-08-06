@@ -12,3 +12,8 @@ repositories {
 		dir("../libs")
 	}
 }
+
+dependencies {
+	implementation(kotlin("reflect"))
+	implementation(libs.kotlinpoet)
+}
