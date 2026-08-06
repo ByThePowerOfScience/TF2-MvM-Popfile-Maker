@@ -1,12 +1,10 @@
 package btpos.source.vdfdsl.codegen.kt
 
-import btpos.source.vdfdsl.codegen.IKtCodeGenerator
-
-class KtAssignmentExpression(val lhs: KtQualifiedName, val operator: String,  val rhs: KtExpression) : KtExpression {
+class KtAssignmentExpression(val lhs: KtName, val rhs: KtExpression, val operator: String = "=") : KtExpression {
 	override val importsNeeded: Sequence<String>
 		get() = sequenceOf(lhs, rhs).flatMap { it.importsNeeded }
 	
 	override fun toKotlinCode(): String {
-		return "$lhs $operator $rhs"
+		return "${lhs.toKotlinCode()} $operator ${rhs.toKotlinCode()}"
 	}
 }

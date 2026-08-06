@@ -16,6 +16,6 @@ open class KtLambda : KtExpression {
 		val bodySep = if (lines.size > 1) "\n" else " "
 		val bodyIndent = if (lines.size > 1) { { it: String -> it.prependIndent("\t") } } else { { it } }
 		
-		return "{$paramsString$bodySep${bodyIndent(lines.joinToString("\n"))}$bodySep}"
+		return "{$paramsString$bodySep${bodyIndent(lines.joinToString("\n") { it.toKotlinCode() })}$bodySep}"
 	}
 }

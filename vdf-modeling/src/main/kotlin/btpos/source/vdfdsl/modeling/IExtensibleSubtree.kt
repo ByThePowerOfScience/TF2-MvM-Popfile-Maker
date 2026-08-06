@@ -15,7 +15,7 @@ import btpos.source.vdfdsl.codegen.SubtreeDecoder
 import btpos.source.vdfdsl.codegen.TypeDecoder
 import btpos.source.vdfdsl.codegen.kt.KtAssignmentExpression
 import btpos.source.vdfdsl.codegen.kt.KtExpression
-import btpos.source.vdfdsl.codegen.kt.KtQualifiedName
+import btpos.source.vdfdsl.codegen.kt.KtName
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
@@ -238,7 +238,7 @@ interface IExtensibleSubtree {
 				true if propOwner != null -> propOwner::class.qualifiedName
 				else -> prop.javaGetter!!.declaringClass.packageName
 			}
-			_addCodegen(receiverType, SelfNamedDecoder(KtQualifiedName(prop.name, namespace), propType))
+			_addCodegen(receiverType, SelfNamedDecoder(KtName(prop.name, namespace), propType))
 		}
 		
 		private fun KProperty<*>.getExtensionReceiverType(): KClass<*>? {
@@ -247,14 +247,14 @@ interface IExtensibleSubtree {
 			}
 		}
 		
-		class SelfNamedDecoder(val propName: KtQualifiedName, val valueType: KClass<*>) : SubtreeFieldDecoder {
+		class SelfNamedDecoder(val propName: KtName, val valueType: KClass<*>) : SubtreeFieldDecoder {
 			val valueDecoder by lazy {
 				Decoders.getTypeDecoder(valueType)
 			}
 			
 			override fun decodeField(subtree: VDFSubtree): List<KtAssignmentExpression> {
 				return valueDecoder.decodeValue(subtree)?.let {
-					listOf(KtAssignmentExpression(propName, "=", it))
+					listOf(KtAssignmentExpression(propName, it))
 				}.orEmpty()
 			}
 		}
@@ -318,7 +318,7 @@ interface IExtensibleSubtree {
 				for (kv in liter) {
 					if (kv.key.stringValue == key) {
 						val x = valueDecoder.decodeValue(kv.value) ?: continue;
-						out += KtAssignmentExpression(KtQualifiedName(propName), operator, x)
+						out += KtAssignmentExpression(KtName(propName), x, operator)
 						liter.remove()
 					}
 				}
