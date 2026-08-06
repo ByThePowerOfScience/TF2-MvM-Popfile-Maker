@@ -57,7 +57,7 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	var desiredCount: Number? by addField("DesiredCount")
 }
 
-data class Objective(val item: String) : IVDFRepresentableValue_Trivial {
+open class Objective(val item: String) : IVDFRepresentableValue_Trivial {
 	override val _vdfRepr: VDFPrimitive
 		get() = VDFPrimitive(item)
 	
