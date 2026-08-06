@@ -14,6 +14,10 @@ sealed class VDFObject {
 	}
 	
 	abstract fun writeToVDF(writer: Appendable, indent: Int = 0)
+	
+	abstract fun <DATA, RET> accept(visitor: VDFVisitor<DATA, RET>, data: DATA): RET
+	
+	abstract fun <DATA> acceptChildren(visitor: VDFVisitor<DATA, *>, data: DATA)
 }
 
 val VDFObject.asSubtree get() = this as? VDFSubtree

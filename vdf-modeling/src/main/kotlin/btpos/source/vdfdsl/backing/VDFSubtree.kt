@@ -41,6 +41,16 @@ open class VDFSubtree(val parent: VDFSubtree?, val entries: MutableList<VDFKeyVa
 			writer.writeLine(indent).append('}')
 	}
 	
+	override fun <DATA, RET> accept(visitor: VDFVisitor<DATA, RET>, data: DATA): RET {
+		return visitor.visitSubtree(this, data)
+	}
+	
+	override fun <DATA> acceptChildren(visitor: VDFVisitor<DATA, *>, data: DATA) {
+		entries.forEach {
+			it.accept(visitor, data)
+		}
+	}
+	
 	override fun toString(): String {
 		return "VDFSubtree[entries=$entries]"
 	}

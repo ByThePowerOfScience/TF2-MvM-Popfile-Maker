@@ -36,6 +36,15 @@ data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject, val conditio
 		return "VDFKeyValue(key=$key, value=$value${conditional?.let{ ", conditional=$it" }.orEmpty()})"
 	}
 	
+	override fun <DATA, RET> accept(visitor: VDFVisitor<DATA, RET>, data: DATA): RET {
+		return visitor.visitKeyValue(this, data)
+	}
+	
+	override fun <DATA> acceptChildren(visitor: VDFVisitor<DATA, *>, data: DATA) {
+		this.key.accept(visitor, data)
+		this.value.accept(visitor, data)
+	}
+	
 	
 	companion object {
 		/**

@@ -16,6 +16,12 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 		}
 	}
 	
+	override fun <DATA, RET> accept(visitor: VDFVisitor<DATA, RET>, data: DATA): RET {
+		return visitor.visitPrimitive(this, data)
+	}
+	
+	override fun <DATA> acceptChildren(visitor: VDFVisitor<DATA, *>, data: DATA) {}
+	
 	companion object {
 		fun notInterned(value: String): VDFPrimitive {
 			return VDFPrimitive(stringValue = value)
