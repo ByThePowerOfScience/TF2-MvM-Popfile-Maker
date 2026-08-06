@@ -53,23 +53,14 @@ sealed class RafmodPeriodicTask(subtree: IExtensibleSubtree_VDFRepresentable = E
 		/**
 		 * If true, this task activates only when the bot can see a target. (Default: false - "always activate")
 		 */
-		private var activateOnSeeTarget: Boolean? by IExtensibleSubtree.Companion.addField("IfSeeTarget")
+		var canSeeTarget: Boolean? by IExtensibleSubtree.Companion.addField("IfSeeTarget")
 		
-		fun ifCanSeeTarget() {
-			activateOnSeeTarget = true
-		}
 		
 		/**
 		 * If true, this task only activates if the bot does _not_ have a target.
 		 */
-		private var activateOnNoTarget: Boolean? by IExtensibleSubtree.Companion.addField("IfNoTarget")
+		var hasNoTarget: Boolean? by IExtensibleSubtree.Companion.addField("IfNoTarget")
 		
-		/**
-		 * If true, this task only activates if the bot does _not_ have a target.
-		 */
-		fun ifHasNoTarget() {
-			activateOnNoTarget = true
-		}
 		
 		/**
 		 * If set, the task activates only when the bot's health is below the specified value.
@@ -79,11 +70,7 @@ sealed class RafmodPeriodicTask(subtree: IExtensibleSubtree_VDFRepresentable = E
 		 * ifHealthBelow(100) // activates when the bot's HP is below 100
 		 * ```
 		 */
-		fun ifHealthBelow(amount: Int) {
-			activateIfHealthBelow = amount
-		}
-		
-		private var activateIfHealthBelow: Int? by IExtensibleSubtree.Companion.addField("IfHealthBelow")
+		var healthBelow: Int? by IExtensibleSubtree.Companion.addField("IfHealthBelow")
 		
 		/**
 		 * If set, the task activates only when the bot's health is above the specified value.
@@ -93,15 +80,8 @@ sealed class RafmodPeriodicTask(subtree: IExtensibleSubtree_VDFRepresentable = E
 		 * ifHealthAbove(100) // activates when the bot's HP is above 100
 		 * ```
 		 */
-		fun ifHealthAbove(amount: Int) {
-			activateIfHealthAbove = amount
-		}
+		var healthAbove: Int? by IExtensibleSubtree.Companion.addField("IfHealthAbove")
 		
-		private var activateIfHealthAbove: Int? by IExtensibleSubtree.Companion.addField("IfHealthAbove")
-		
-		
-		
-		private var maxTargetRange: Int? by IExtensibleSubtree.Companion.addField("MaxTargetRange", conditional = RafmodConstants.SIGSEGV)
 		
 		/**
 		 * If set, the task activates only when the bot's target is within this number of units from the bot.
@@ -111,10 +91,7 @@ sealed class RafmodPeriodicTask(subtree: IExtensibleSubtree_VDFRepresentable = E
 		 * ifTargetWithinRange(150) // activates when the bot's target is within 150 HU
 		 * ```
 		 */
-		fun ifTargetWithinRange(units: Int) {
-			maxTargetRange = units
-		}
-		private var minTargetRange: Int? by IExtensibleSubtree.Companion.addField("MinTargetRange", conditional = RafmodConstants.SIGSEGV)
+		var withinDistance: Int? by IExtensibleSubtree.Companion.addField("MaxTargetRange", conditional = RafmodConstants.SIGSEGV)
 		
 		/**
 		 * If set, the task activates only when the bot's target is further than this number of units from the bot.
@@ -124,9 +101,8 @@ sealed class RafmodPeriodicTask(subtree: IExtensibleSubtree_VDFRepresentable = E
 		 * ifTargetOutsideRange(150) // activates when the bot's target is over 150 HU away
 		 * ```
 		 */
-		fun ifTargetOutsideRange(units: Int) {
-			minTargetRange = units
-		}
+		var outsideDistance: Int? by IExtensibleSubtree.Companion.addField("MinTargetRange", conditional = RafmodConstants.SIGSEGV)
+		
 		
 		override fun copy(): TaskActivationCondition {
 			return TaskActivationCondition(_rawEntries.toMutableMap(), Throwable().stackTrace)
