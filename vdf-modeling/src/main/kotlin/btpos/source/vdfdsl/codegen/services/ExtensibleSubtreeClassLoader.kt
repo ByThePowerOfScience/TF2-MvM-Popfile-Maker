@@ -10,10 +10,12 @@ interface ExtensibleSubtreeClassLoader {
 	fun registerStructFactoryMethods()
 	
 	/**
-	 * Reference either the object containing struct extension members or some property in each file containing struct extension members, to ensure the `addField` functions are run.
+	 * [addField][btpos.source.vdfdsl.modeling.IExtensibleSubtree.addField] (and other field creators) automatically creates a code generator mapping the data to that property,
+	 * but the addField delegate has to be invoked to generate that.
 	 *
-	 * [addField][btpos.source.vdfdsl.modeling.IExtensibleSubtree.addField] automatically creates a code generator mapping the data to that property,
-	 * but the file it's in needs to be referenced to do that.
+	 * For member properties: create an empty instance of each struct you add to create the member delegates.
+	 *
+	 * For extensions: reference either the object containing struct extension members or some property in each file containing struct extension members, to ensure the `addField` functions are run.
 	 */
-	fun loadExtensionsForCodegen()
+	fun loadFieldsForCodegen()
 }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 class KtFunctionCallTest {
 	@Test
 	fun createApply() {
-	    val x = KtFunctionCall.createApply(KtName("foo"), listOf(), listOf(
+	    val x = KtFunctionCall.createApply(KtFunctionCall(KtName("foo")), listOf(
 		    KtAssignmentExpression(KtName("foo"), KtLiteral("bar")),
 		    KtFunctionCall(KtName("Ohio"))
 		))

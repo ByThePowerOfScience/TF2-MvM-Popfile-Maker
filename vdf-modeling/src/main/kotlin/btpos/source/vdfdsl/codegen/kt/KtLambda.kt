@@ -18,4 +18,13 @@ open class KtLambda : KtExpression {
 		
 		return "{$paramsString$bodySep${bodyIndent(lines.joinToString("\n") { it.toKotlinCode() })}$bodySep}"
 	}
+	
+	companion object {
+	    operator fun invoke(namedParams: List<KtParameter> = listOf(), lines: List<IKtCodeGenerator>): KtLambda {
+	        return KtLambda().apply {
+				this.namedParams += namedParams
+		        this.lines += lines
+	        }
+	    }
+	}
 }

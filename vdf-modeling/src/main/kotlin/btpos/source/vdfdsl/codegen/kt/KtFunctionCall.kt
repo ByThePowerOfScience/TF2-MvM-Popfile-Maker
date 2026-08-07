@@ -24,16 +24,26 @@ open class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf(
 	
 	companion object {
 		/**
-		 * Create `FunctionName(...args).apply { ...body }`
+		 * Create `<FunctionCall>.apply { ...body }`
 		 */
-		fun createApply(functionName: KtName, args: List<KtExpression>, body: List<IKtCodeGenerator>): KtFunctionCall {
+		fun createApply(call: KtFunctionCall, lambdaBody: List<IKtCodeGenerator>): KtFunctionCall {
 			return KtFunctionCall(KtName("apply")).apply {
-				receiver = KtFunctionCall(functionName, args)
+				receiver = call
 				
 				this.args += KtLambda().apply {
-					lines += body
+					lines += lambdaBody
 				}
 			}
 		}
+		
+		fun KtFunctionCall.thenApply(lambdaBody: List<IKtCodeGenerator>): KtFunctionCall {
+			return createApply(this, lambdaBody)
+		}
+	}
+}
+
+open class KtNamedFunctionCallArgument(val name: String, val value: KtExpression) : KtExpression {
+	override fun toKotlinCode(): String {
+		return "$name = ${value.toKotlinCode()}"
 	}
 }

@@ -1,28 +1,27 @@
 package btpos.source.vdfdsl.codegen
 
 import btpos.source.vdfdsl.backing.VDFObject
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.source.vdfdsl.backing.asString
 import btpos.source.vdfdsl.backing.asSubtree
-
-open class DecoderCollector {
-	val items = mutableListOf<IKtCodeGenerator>()
-}
+import btpos.source.vdfdsl.codegen.kt.KtExpression
 
 fun interface Decoder {
 	fun decode(obj: VDFObject): List<IKtCodeGenerator>
 }
 
-fun interface StringDecoder : Decoder {
-	override fun decode(obj: VDFObject): List<IKtCodeGenerator> {
-		return obj.asString?.let { decode(it) }.orEmpty()
+fun interface StringDecoder : ValueDecoder {
+	override fun decodeValue(obj: VDFObject): KtExpression? {
+		return obj.asPrimitive?.let { decode(it) }
 	}
 	
-	fun decode(it: String): List<IKtCodeGenerator>
+	fun decode(it: VDFPrimitive): KtExpression?
 	
 	companion object {
 		val IDENTITY = StringDecoder {
-			listOf(Codegen.string(it))
+			Codegen.string(it.stringValue)
 		}
 	}
 }
@@ -37,62 +36,16 @@ fun interface SubtreeDecoder : Decoder {
 
 
 interface StringDecoderMap : StringDecoder {
-	val values: MutableMap<String, List<IKtCodeGenerator>>
+	val values: MutableMap<VDFPrimitive, KtExpression>
 	
 	var default: StringDecoder?
 	
-	override fun decode(it: String): List<IKtCodeGenerator> {
-		val lc = it.lowercase()
-		return (values[lc] ?: default?.decode(lc)).orEmpty()
+	override fun decode(it: VDFPrimitive): KtExpression? {
+		return (values[it] ?: default?.decode(it))
 	}
 }
 
 open class StringDecoderMapImpl : StringDecoderMap {
-	override val values: MutableMap<String, List<IKtCodeGenerator>> = mutableMapOf()
+	override val values: MutableMap<VDFPrimitive, KtExpression> = mutableMapOf()
 	override var default: StringDecoder? = null
-}
-
-
-/**
- * Can read the subtree itself and take keyvaleus from it.
- */
-interface StructDecoder : SubtreeDecoder {
-	val decoders: MutableList<SubtreeDecoder>
-	
-	var remainderDecoder: SubtreeDecoder?
-	
-	
-	override fun decode(subtree: VDFSubtree): List<IKtCodeGenerator> {
-		return decoders.flatMap {
-			it.decode(subtree)
-		} + if (subtree.isNotEmpty()) {
-			remainderDecoder?.decode(subtree)
-				?: throw DecoderException("No remainder decoder set, but unrecognized values found.\n" +
-				                          "Leftover values: ${subtree.entries}")
-		} else emptyList()
-	}
-}
-
-open class StructDecoderImpl(
-	decoders: Iterable<SubtreeDecoder>,
-	override var remainderDecoder: SubtreeDecoder? = null
-) : StructDecoder {
-	constructor(
-		vararg decoders: SubtreeDecoder,
-		remainderDecoder: SubtreeDecoder? = null
-	) : this(decoders.asList(), remainderDecoder)
-	
-	override val decoders = decoders.toMutableList()
-}
-
-
-fun interface MapDecoder {
-	fun decode(subtree: VDFSubtree): List<IKtCodeGenerator>
-}
-
-/**
- * Let's just hardcode this first, then we'll see about actually doing it better
- */
-object MissionDecoder {
-
 }

@@ -1,12 +1,18 @@
 package btpos.source.vdfdsl.codegen
 
+import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.codegen.kt.KtExpression
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
 import java.util.ServiceLoader
+import kotlin.collections.plusAssign
 import kotlin.reflect.KClass
+import kotlin.time.Duration
 
-interface TypeDecoder : Decoder {
+/**
+ * Doesn't use the key or other information, just a raw value.
+ */
+fun interface ValueDecoder : Decoder {
 	override fun decode(obj: VDFObject): List<IKtCodeGenerator> {
 		return listOfNotNull(decodeValue(obj))
 	}
@@ -15,27 +21,56 @@ interface TypeDecoder : Decoder {
 }
 
 object Decoders {
-	private val decoders: Map<KClass<*>, TypeDecoder> = ServiceLoader.load(TypeDecoderProvider::class.java).fold(mutableMapOf()) { acc, it -> acc += it.decoders; acc }
+	private val valueDecoders: Map<KClass<*>, ValueDecoder>
 	
-	fun getTypeDecoder(type: KClass<*>): TypeDecoder {
-		return decoders[type] ?: error("No decoder(s) defined for '$type'.")
+	private val selfNamedDecoders: Map<KClass<*>, StructSubclassDecoder>
+	
+	val DURATION = StringDecoder { str ->
+		str.stringValue.toDoubleOrNull()?.let {
+			Codegen.code("$str.seconds", "kotlin.time.Duration")
+		}
 	}
 	
-	val DURATION: StringDecoder = { str ->
-		str.toDoubleOrNull()?.let {
-			listOf(Codegen.code("$str.seconds", "kotlin.time.Duration"))
-		} ?: emptyList()
+	val NUMBER = StringDecoder { str ->
+		str.stringValue.toDoubleOrNull()?.run {
+			Codegen.code(str.stringValue)
+		}
 	}
 	
-	val NUMBER: StringDecoder = { str ->
-		str.toDoubleOrNull()?.run {
-			listOf(Codegen.code(str))
-		}.orEmpty()
+	val INT = StringDecoder { str ->
+		str.stringValue.toIntOrNull()?.run {
+			Codegen.code(str.stringValue)
+		}
 	}
 	
-	val INT: StringDecoder = { str ->
-		str.toIntOrNull()?.run {
-			listOf(Codegen.code(str))
-		}.orEmpty()
+	init {
+		val services = ServiceLoader.load(TypeDecoderProvider::class.java)
+		val valueDecodersTemp = mutableMapOf<KClass<*>, ValueDecoder>()
+		val navTemp = mutableMapOf<KClass<*>, StructSubclassDecoder>()
+		
+		services.forEach {
+			valueDecodersTemp += it.valueDecoders
+			navTemp += it.selfNamedDecoders
+		}
+		
+		valueDecodersTemp[Int::class] = INT
+		valueDecodersTemp[Double::class] = NUMBER
+		valueDecodersTemp[Float::class] = NUMBER
+		valueDecodersTemp[Number::class] = NUMBER
+		valueDecodersTemp[Duration::class] = DURATION
+		valueDecodersTemp[String::class] = StringDecoder.IDENTITY
+		
+		valueDecoders = valueDecodersTemp
+		selfNamedDecoders = navTemp
 	}
+	
+	
+	fun getTypeDecoder(type: KClass<*>): ValueDecoder {
+		return valueDecoders[type] ?: error("No decoder(s) defined for '$type'.")
+	}
+	
+	fun getSelfNamedDecoder(type: KClass<*>): StructSubclassDecoder {
+		return selfNamedDecoders[type] ?: error("No decoder defined for '$type'.")
+	}
+	
 }

@@ -1,13 +1,23 @@
 @file:Suppress("UNUSED")
 package btpos.source.vdfdsl.types.spawners
 
+import btpos.source.vdfdsl.codegen.Codegen
+import btpos.source.vdfdsl.codegen.kt.KtExpression
+import btpos.source.vdfdsl.codegen.kt.KtFunctionCall
+import btpos.source.vdfdsl.codegen.kt.KtLambda
+import btpos.source.vdfdsl.codegen.kt.KtName
+import btpos.source.vdfdsl.codegen.kt.KtNamedFunctionCallArgument
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.compose
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
+import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerImpl
 import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerSubtreeSerializable
+import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
 import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.types.bots.BehaviorModifiers
@@ -16,6 +26,7 @@ import btpos.source.vdfdsl.types.bots.EventChangeAttributes
 import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
 import btpos.source.vdfdsl.types.bots.WeaponRestrictions
+import btpos.source.vdfdsl.util.forEachWithIter
 
 
 interface ChangeableBotAttributes : IExtensibleSubtree
@@ -64,6 +75,8 @@ inline fun <ATTR : Any> ChangeableBotAttributes.addAttributesForExisting(item: T
 	itemAttributes += item.configureAttributes(AttributeContainerSubtreeSerializable(), attrScope)
 }
 
+
+
 @Suppress("RedundantModalityModifier")
 open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : ChangeableBotAttributes, AbstractSpawner(_subtree) {
 	override val _structIdentifier: String
@@ -109,6 +122,29 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 			newSpawner.apply(configure)
 			return newSpawner
 		}
+		
+		init {
+			if (Codegen.IS_DOING_CODEGEN) {
+				IExtensibleSubtree.Codegen._registerStructFactory<TFBotSpawner>(::TFBotSpawner) { assignments ->
+					val args = mutableListOf<KtExpression>()
+					
+					val assignments = assignments.toMutableList()
+					assignments.forEachWithIter {
+						if (it.lhs.name == TFBotSpawner::template.name) {
+							args += KtNamedFunctionCallArgument("template", it.rhs)
+							remove()
+						} else if (it.lhs.name == TFBotSpawner::name.name) {
+							args += KtNamedFunctionCallArgument("name", it.rhs)
+							remove()
+						}
+					}
+					
+					KtFunctionCall(KtName(Spawners::TFBot), args + KtLambda(lines = assignments))
+				}
+			}
+		}
+		
+		val CODEGEN get() = IExtensibleSubtree.Codegen._codegen<TFBotSpawner>()
 	}
 }
 

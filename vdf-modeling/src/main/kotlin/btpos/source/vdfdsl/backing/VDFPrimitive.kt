@@ -2,8 +2,7 @@ package btpos.source.vdfdsl.backing
 
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 
-@ExposedCopyVisibility
-data class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), IVDFRepresentableValue_Trivial {
+class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), IVDFRepresentableValue_Trivial {
 	constructor(i: Int) : this(i.toString())
 	
 	constructor(i: Float) : this(i.toString())
@@ -28,6 +27,10 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 		if (other !is VDFPrimitive) return false
 		
 		return stringValue.equals(other.stringValue, ignoreCase = true)
+	}
+	
+	fun equals(other: VDFPrimitive, caseSensitive: Boolean = false): Boolean {
+		return this === other || stringValue.equals(other.stringValue, !caseSensitive)
 	}
 	
 	private val hashcode by lazy {
