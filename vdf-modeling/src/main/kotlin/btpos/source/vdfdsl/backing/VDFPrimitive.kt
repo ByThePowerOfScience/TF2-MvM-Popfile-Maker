@@ -22,6 +22,23 @@ data class VDFPrimitive private constructor(val stringValue: String) : VDFObject
 	
 	override fun <DATA> acceptChildren(visitor: VDFVisitor<DATA, *>, data: DATA) {}
 	
+	
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other !is VDFPrimitive) return false
+		
+		return stringValue.equals(other.stringValue, ignoreCase = true)
+	}
+	
+	private val hashcode by lazy {
+		stringValue.lowercase().hashCode()
+	}
+	
+	override fun hashCode(): Int {
+		return hashcode
+	}
+	
+	
 	companion object {
 		fun notInterned(value: String): VDFPrimitive {
 			return VDFPrimitive(stringValue = value)
