@@ -70,10 +70,12 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	companion object {
 		init {
 			IExtensibleSubtree.Codegen._registerStructFactory<MissionPopulator>(
-				customFieldDecoders = mapOf(
-					"Where" to Where.DECODER,
-					"Objective" to Objective.CODEGEN
-				),
+				customFieldDecoders = {
+					mapOf(
+						"Where" to Where.DECODER,
+						"Objective" to Objective.CODEGEN
+					)
+				},
 				factoryMethod = {
 					Codegen.basicBlockScope(
 						Populators::Mission,

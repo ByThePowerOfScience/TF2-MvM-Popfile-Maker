@@ -136,6 +136,6 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
  * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
  */
 inline fun <ATTR : Any> TFBotSpawner.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(IAttributeContainer) ATTR.() -> Unit) {
-	itemAttributes = (itemAttributes + item.configureAttributes(AttributeContainerImpl(), attrScope) as IAttributeContainer) as List<IAttributeContainer> // ??????? why is this glitching out
+	itemAttributes += item.configureAttributes(AttributeContainerImpl(), attrScope)
 }
 

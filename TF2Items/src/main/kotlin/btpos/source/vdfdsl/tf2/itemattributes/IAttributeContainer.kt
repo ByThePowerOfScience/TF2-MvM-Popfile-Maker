@@ -3,18 +3,20 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 
-interface IAttributeContainer : Iterable<Pair<ItemAttribute<Any>, Any?>> {
+interface IAttributeContainer {
 	operator fun <T : Any> get(key: ItemAttribute<T>): T?
 	
 	operator fun <T : Any> set(key: ItemAttribute<T>, value: T?)
 	
 	fun copy(): IAttributeContainer
+	
+	operator fun iterator(): Iterator<Pair<ItemAttribute<Any>, Any?>>
 }
 
 open class AttributeContainerImpl(protected val map: MutableMap<ItemAttribute<Any>, Any?> = mutableMapOf())
 	: IAttributeContainer
 {
-	override fun iterator(): Iterator<Pair<ItemAttribute<Any>, Any?>> {
+	override operator fun iterator(): Iterator<Pair<ItemAttribute<Any>, Any?>> {
 		return map.entries.asSequence().map { it.key to it.value }.iterator()
 	}
 	
@@ -51,3 +53,4 @@ class AttributeContainerSubtreeSerializable(private val impl: IAttributeContaine
 	
 	override fun copy() = AttributeContainerSubtreeSerializable(impl.copy())
 }
+
