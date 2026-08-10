@@ -1,9 +1,35 @@
 package btpos.source.vdfdsl.util
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 inline fun <T> MutableCollection<T>.forEachWithIter(action: MutableIterator<T>.(T) -> Unit) {
 	val liter = this.iterator()
 	
 	for (el in liter) {
 		liter.action(el)
 	}
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun <T, C : Collection<T>> C.ifNotEmpty(action: (C) -> Unit): C {
+	contract {
+		callsInPlace(action, InvocationKind.AT_MOST_ONCE)
+	}
+	if (this.isNotEmpty())
+		action(this)
+	
+	return this;
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun <T, C : Collection<T>> C?.ifNullOrEmpty(action: () -> C): C {
+	contract {
+		callsInPlace(action, InvocationKind.AT_MOST_ONCE)
+	}
+	if (this.isNullOrEmpty())
+		return action()
+	
+	return this;
 }

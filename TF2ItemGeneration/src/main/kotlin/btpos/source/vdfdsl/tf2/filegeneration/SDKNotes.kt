@@ -1300,9 +1300,8 @@ object SDKNotes {
 			AttrClassScope(
 				CLOAK,
 				"""
-					- `mult_decloak_rate`: Duration
-						- How many seconds it takes to decloak.
-						- Note that values less than or equal to 0 become 1 second
+					- `mult_decloak_rate`: Number
+						- Note that values less than or equal to 0 become 1
 					- On player: `mult_cloak_meter_consume_rate`: Float
 						- Multiply cloak consumed per second by this value.
 					- `mult_cloak_meter_regen_rate`: Float

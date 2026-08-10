@@ -2,16 +2,10 @@
 package btpos.source.vdfdsl.types.spawners
 
 import btpos.source.vdfdsl.codegen.Codegen
-import btpos.source.vdfdsl.codegen.kt.KtExpression
-import btpos.source.vdfdsl.codegen.kt.KtFunctionCall
-import btpos.source.vdfdsl.codegen.kt.KtLambda
-import btpos.source.vdfdsl.codegen.kt.KtName
-import btpos.source.vdfdsl.codegen.kt.KtNamedFunctionCallArgument
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.compose
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
@@ -26,7 +20,6 @@ import btpos.source.vdfdsl.types.bots.EventChangeAttributes
 import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
 import btpos.source.vdfdsl.types.bots.WeaponRestrictions
-import btpos.source.vdfdsl.util.forEachWithIter
 
 
 interface ChangeableBotAttributes : IExtensibleSubtree
@@ -51,15 +44,15 @@ var ChangeableBotAttributes.maxVisionRange: Number? by addField("MaxVisionRange"
  *
  * @see addAttributesForExisting
  */
-var ChangeableBotAttributes.itemAttributes: List<AttributeContainerSubtreeSerializable> by addField("ItemAttributes", serializer=flatListWithKey()) { listOf() }
+var ChangeableBotAttributes.itemAttributes: List<IAttributeContainer> by addField("ItemAttributes", serializer=flatListWithKey<AttributeContainerSubtreeSerializable>().mapEach(::AttributeContainerSubtreeSerializable)) { listOf() }
 
 
 var ChangeableBotAttributes.attributes: List<TFBotAttributes> by addField("Attributes", serializer = flatListWithKey()) { listOf() }
 
-var ChangeableBotAttributes.characterAttributes: AttributeContainerSubtreeSerializable? by addField("CharacterAttributes")
+var ChangeableBotAttributes.characterAttributes: IAttributeContainer? by addField("CharacterAttributes", serializer=::AttributeContainerSubtreeSerializable)
 
-inline fun ChangeableBotAttributes.characterAttributes(configure: AttributeContainerSubtreeSerializable.() -> Unit) {
-	characterAttributes = AttributeContainerSubtreeSerializable().apply(configure)
+inline fun ChangeableBotAttributes.characterAttributes(configure: IAttributeContainer.() -> Unit) {
+	characterAttributes = AttributeContainerImpl().apply(configure)
 }
 
 
@@ -71,8 +64,8 @@ var ChangeableBotAttributes.tags: List<String> by addField("Tag", serializer = f
  *
  * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
  */
-inline fun <ATTR : Any> ChangeableBotAttributes.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(AttributeContainerSubtreeSerializable) ATTR.() -> Unit) {
-	itemAttributes += item.configureAttributes(AttributeContainerSubtreeSerializable(), attrScope)
+inline fun <ATTR : Any> ChangeableBotAttributes.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(AttributeContainerImpl) ATTR.() -> Unit) {
+	itemAttributes = (itemAttributes + item.configureAttributes(AttributeContainerImpl(), attrScope) as IAttributeContainer) as List<IAttributeContainer>
 }
 
 
@@ -124,27 +117,15 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 		}
 		
 		init {
-			if (Codegen.IS_DOING_CODEGEN) {
-				IExtensibleSubtree.Codegen._registerStructFactory<TFBotSpawner>(::TFBotSpawner) { assignments ->
-					val args = mutableListOf<KtExpression>()
-					
-					val assignments = assignments.toMutableList()
-					assignments.forEachWithIter {
-						if (it.lhs.name == TFBotSpawner::template.name) {
-							args += KtNamedFunctionCallArgument("template", it.rhs)
-							remove()
-						} else if (it.lhs.name == TFBotSpawner::name.name) {
-							args += KtNamedFunctionCallArgument("name", it.rhs)
-							remove()
-						}
-					}
-					
-					KtFunctionCall(KtName(Spawners::TFBot), args + KtLambda(lines = assignments))
-				}
+			IExtensibleSubtree.Codegen._registerStructFactory<TFBotSpawner> {
+				Codegen.basicBlockScope(Spawners::TFBot, mapOf(
+					TFBotSpawner::name.name to "name",
+					TFBotSpawner::template.name to "template",
+				))
 			}
 		}
 		
-		val CODEGEN get() = IExtensibleSubtree.Codegen._codegen<TFBotSpawner>()
+		val CODEGEN by IExtensibleSubtree.Codegen.forType<TFBotSpawner>()
 	}
 }
 
@@ -154,7 +135,7 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
  *
  * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
  */
-inline fun <ATTR : Any> TFBotSpawner.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(AttributeContainerSubtreeSerializable) ATTR.() -> Unit) {
-	itemAttributes += item.configureAttributes(AttributeContainerSubtreeSerializable(), attrScope)
+inline fun <ATTR : Any> TFBotSpawner.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(IAttributeContainer) ATTR.() -> Unit) {
+	itemAttributes = (itemAttributes + item.configureAttributes(AttributeContainerImpl(), attrScope) as IAttributeContainer) as List<IAttributeContainer> // ??????? why is this glitching out
 }
 

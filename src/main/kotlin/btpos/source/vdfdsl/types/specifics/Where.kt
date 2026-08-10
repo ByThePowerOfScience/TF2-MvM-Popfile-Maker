@@ -1,23 +1,20 @@
 package btpos.source.vdfdsl.types.specifics
 
-import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.codegen.Codegen
-import btpos.source.vdfdsl.codegen.StringDecoder
-import btpos.source.vdfdsl.codegen.StringDecoderMapImpl
+import btpos.source.vdfdsl.codegen.CodegenProvider
+import btpos.source.vdfdsl.codegen.StringDecoderMap
+import btpos.source.vdfdsl.codegen.kt.KtName
 
 /**
  * Presets for where
  */
 object Where {
-	val DECODER = StringDecoderMapImpl().apply {
-		values += sequenceOf(
-			VDFPrimitive(AHEAD) to Codegen.code("Where.AHEAD"),
-			VDFPrimitive(BEHIND) to Codegen.code("Where.BEHIND"),
-			VDFPrimitive(ANYWHERE) to Codegen.code("Where.ANYWHERE"),
+	val DECODER by CodegenProvider {
+		StringDecoderMap(
+			AHEAD to KtName(Where::AHEAD),
+			BEHIND to KtName(Where::BEHIND),
+			ANYWHERE to KtName(Where::ANYWHERE)
 		)
-		default = StringDecoder.IDENTITY
 	}
-	
 	
 	const val AHEAD = "Ahead"
 	const val BEHIND = "Behind"

@@ -1,6 +1,8 @@
 package btpos.source.vdfdsl.types.spawners
 
 import btpos.source.vdfdsl.codegen.Codegen
+import btpos.source.vdfdsl.codegen.Decoder
+import btpos.source.vdfdsl.codegen.Decoders
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
@@ -19,11 +21,9 @@ class SentryGunSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	@Suppress("DEPRECATION")
 	companion object {
 		init {
-			if (Codegen.IS_DOING_CODEGEN) {
-				IExtensibleSubtree._registerStructFactory<SentryGunSpawner>(Codegen.basicApplyFactory<SentryGunSpawner>())
-			}
+			IExtensibleSubtree.Codegen._registerStructFactory<SentryGunSpawner> { Codegen.basicApplyFactory<SentryGunSpawner>() }
 		}
 		
-		val CODEGEN get() = IExtensibleSubtree._codegen<SentryGunSpawner>()
+		val CODEGEN by IExtensibleSubtree.Codegen.forType<SentryGunSpawner>()
 	}
 }

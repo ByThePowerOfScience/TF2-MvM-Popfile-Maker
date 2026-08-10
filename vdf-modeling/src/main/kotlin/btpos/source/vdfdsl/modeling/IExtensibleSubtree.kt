@@ -3,22 +3,29 @@
 package btpos.source.vdfdsl.modeling
 
 import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.codegen.Codegen.IS_DOING_CODEGEN
-import btpos.source.vdfdsl.codegen.SubtreeFieldDecoder2
-import btpos.source.vdfdsl.codegen.SelfNamedDecoder
-import btpos.source.vdfdsl.codegen.StructDecoder
-import btpos.source.vdfdsl.codegen.kt.KtFunctionCall
-import btpos.source.vdfdsl.codegen.SubtreeFieldDecoder
+import btpos.source.vdfdsl.codegen.CodegenProvider
+import btpos.source.vdfdsl.codegen.Decoder
+import btpos.source.vdfdsl.codegen.Decoders
+import btpos.source.vdfdsl.codegen.IKtCodeGenerator
+import btpos.source.vdfdsl.codegen.SubtreeDecoderWithFields
+import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.codegen.kt.KtAssignmentExpression
+import btpos.source.vdfdsl.codegen.kt.KtFunctionCall
+import btpos.source.vdfdsl.codegen.kt.KtExpression
 import btpos.source.vdfdsl.codegen.kt.KtName
+import btpos.source.vdfdsl.codegen.orElse
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.serialization.plusAssign
+import btpos.source.vdfdsl.util.TrivialDelegateProvider
+import btpos.source.vdfdsl.util.ifNotEmpty
 import java.util.Collections.emptyList
 import kotlin.collections.forEach
 import kotlin.error
@@ -193,7 +200,12 @@ interface IExtensibleSubtree {
 		 */
 		@JvmName("addFieldSerializer")
 		inline fun <T : Any, reified S : Any> addField(serializationKey: String, conditional: String? = null, noinline serializer: (T.() -> S?)): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T?>> {
-			return Codegen._CodegenDelegateProvider(addField_serializer(serializationKey, conditional, serializer, null, S::class.java), serializationKey, conditional)
+			return addField_serializer(serializationKey, conditional, serializer, null, S::class.java).let {
+				if (IS_DOING_CODEGEN)
+					Codegen._CodegenDelegateProvider(it, serializationKey, conditional)
+				else
+					TrivialDelegateProvider(it)
+			}
 		}
 		
 		
@@ -216,7 +228,12 @@ interface IExtensibleSubtree {
 		 */
 		inline fun <reified T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: T.() -> S?, conditional: String? = null, noinline initialValue: () -> T): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T>> {
 			@Suppress("UNCHECKED_CAST")
-			return Codegen._CodegenDelegateProvider(addField_serializer(serializationKey, conditional, serializer, initialValue, S::class.java) as ReadWriteProperty<IExtensibleSubtree, T>, serializationKey, conditional)
+			return (addField_serializer(serializationKey, conditional, serializer, initialValue, S::class.java) as ReadWriteProperty<IExtensibleSubtree, T>).let {
+				if (IS_DOING_CODEGEN)
+					Codegen._CodegenDelegateProvider(it, serializationKey, conditional)
+				else
+					TrivialDelegateProvider(it)
+			}
 		}
 		
 		@PublishedApi
@@ -247,12 +264,17 @@ interface IExtensibleSubtree {
 		/**
 		 * Extend a subtree with a field that can only exist a single time per subtree.
 		 *
-		 * This method may only be used with natively-serializable values, i.e. numbers, booleans, strings, [VDFObjects][btpos.source.vdfdsl.backing.VDFObject], or objects that implement either [IVDFRepresentableValue_Trivial] or [IVDFRepresentableKeyValue].
+		 * This method may only be used with natively-serializable values, i.e. numbers, booleans, strings, [VDFObjects][VDFObject], or objects that implement either [IVDFRepresentableValue_Trivial] or [IVDFRepresentableKeyValue].
 		 *
 		 * @param key The key this item will be serialized under.
 		 */
 		inline fun <reified T : Any> addField(key: String, conditional: String? = null): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T?>> {
-			return Codegen._CodegenDelegateProvider(addField_noSerializer(key, T::class.java, conditional, null), key, conditional)
+			return addField_noSerializer(key, T::class.java, conditional, null).let {
+				if (IS_DOING_CODEGEN)
+					Codegen._CodegenDelegateProvider(it, key, conditional)
+				else
+					TrivialDelegateProvider(it)
+			}
 		}
 		
 		
@@ -260,14 +282,19 @@ interface IExtensibleSubtree {
 		/**
 		 * Extend a subtree with a field that can only exist a single time per subtree.
 		 *
-		 * This method may only be used with natively-serializable values, i.e. numbers, booleans, strings, [VDFObjects][btpos.source.vdfdsl.backing.VDFObject], or objects that implement either [IVDFRepresentableValue_Trivial] or [IVDFRepresentableKeyValue].
+		 * This method may only be used with natively-serializable values, i.e. numbers, booleans, strings, [VDFObjects][VDFObject], or objects that implement either [IVDFRepresentableValue_Trivial] or [IVDFRepresentableKeyValue].
 		 *
 		 * @param key The key this item will be serialized under.
 		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
 		 */
 		inline fun <reified T : Any> addField(key: String, conditional: String? = null, noinline initialValue: () -> T): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T>> {
 			@Suppress("UNCHECKED_CAST")
-			return Codegen._CodegenDelegateProvider(addField_noSerializer(key, T::class.java, conditional, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>, key, conditional)
+			return (addField_noSerializer(key, T::class.java, conditional, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>).let {
+				if (IS_DOING_CODEGEN)
+					Codegen._CodegenDelegateProvider(it, key, conditional)
+				else
+					TrivialDelegateProvider(it)
+			}
 		}
 		
 		@PublishedApi
@@ -301,7 +328,7 @@ interface IExtensibleSubtree {
 		 * As such, there is no way to name these.
 		 *
 		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [AbstractVDFStruct] and its subclasses),
-		 * use [addField] with an [IVDFRepresentableValue_Subtree][btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree] as its value to allow the parent scope to decide its name.
+		 * use [addField] with an [IVDFRepresentableValue_Subtree][IVDFRepresentableValue_Subtree] as its value to allow the parent scope to decide its name.
 		 *
 		 * Note: Self-named values are expected to provide their own conditionals.
 		 */
@@ -314,13 +341,16 @@ interface IExtensibleSubtree {
 		 * As such, there is no way to name these.
 		 *
 		 * If a structure doesn't use its name to determine what kind of structure it is (e.g. [AbstractVDFStruct] and its subclasses),
-		 * use [addField] with an [IVDFRepresentableValue_Subtree][btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree] as its value to allow the parent scope to decide its name.
+		 * use [addField] with an [IVDFRepresentableValue_Subtree][IVDFRepresentableValue_Subtree] as its value to allow the parent scope to decide its name.
 		 *
 		 * Note: Self-named values are expected to provide their own conditionals.
 		 *
 		 * @param transformer Something to turn the item saved in this field into 1+ keyvalues, or otherwise postprocess the value (like adding a conditional if the struct doesn't have one already).
 		 */
 		fun <T : Any> selfNamed(transformer: (T) -> IVDFRepresentableKeyValue) = PropertyDelegateProvider<Any?, _> { owner, prop ->
+			if (IS_DOING_CODEGEN)
+				Codegen._registerCodegenSelfNamedMapping(owner, prop)
+			
 			object : ReadWriteProperty<IExtensibleSubtree, T?> {
 				@Suppress("UNCHECKED_CAST")
 				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries[prop] as SelfNamedValue<T>?
@@ -355,9 +385,12 @@ interface IExtensibleSubtree {
 		 * ```
 		 *
 		 */
-		fun <T : IVDFRepresentableKeyValue> selfNamedList(transformer: (T) -> IVDFRepresentableKeyValue = { it }): ReadWriteProperty<IExtensibleSubtree, List<T>> {
+		fun <T : IVDFRepresentableKeyValue> selfNamedList(transformer: (T) -> IVDFRepresentableKeyValue = { it }): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, List<T>>> = { owner, prop ->
+			if (IS_DOING_CODEGEN)
+				Codegen._registerCodegenSelfNamedListMapping(owner, prop)
+			
 			@Suppress("UNCHECKED_CAST")
-			return object : ReadWriteProperty<IExtensibleSubtree, List<T>> {
+			object : ReadWriteProperty<IExtensibleSubtree, List<T>> {
 				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): List<T> {
 					return (thisRef._rawEntries[property] as SelfNamedValueList<T>?)?.innerList ?: emptyList()
 				}
@@ -369,15 +402,19 @@ interface IExtensibleSubtree {
 		}
 	}
 	
+	
+	
+	
 	object Codegen {
-		val _codegenFieldMappings = mutableMapOf<KClass<*>, StructDecoder>()
+		internal val _codegenFieldMappings = mutableMapOf<KClass<*>, SubtreeDecoderWithFields>()
 		
-		val _deferredCodegenFieldMappings = mutableMapOf<KClass<*>, MutableList<SubtreeFieldDecoder>>()
+		inline fun <reified T : IExtensibleSubtree> forType() = forType(T::class)
 		
-		inline fun <reified T : IExtensibleSubtree> _codegen() = _codegen(T::class)
+		fun forType(kclass: KClass<*>) = CodegenProvider { _codegenFieldMappings[kclass] ?: error("Codegen: Struct decoder not initialized for '${kclass.qualifiedName}'.") }
 		
-		fun _codegen(kclass: KClass<*>) = _codegenFieldMappings[kclass] ?: if (!IS_DOING_CODEGEN) error("Attempted to fetch codegen when codegen is disabled. Use the JVM argument -Dvdfdsl.codegen=true to enable code generation.") else error("Codegen: Struct decoder not initialized for '${kclass.qualifiedName}'.")
-		
+		/**
+		 * Solely exists because the JVM freaked out with a security exception from referencing [_registerCodegenFieldMapping] from an inline-function's property delegate provider.
+		 */
 		@PublishedApi internal class _CodegenDelegateProvider<T>(val thingToProvide: T, val key: String, val conditional: String?) : PropertyDelegateProvider<Any?, T> {
 			override fun provideDelegate(thisRef: Any?, property: KProperty<*>): T {
 				_registerCodegenFieldMapping(thisRef, property, key, conditional)
@@ -401,9 +438,18 @@ interface IExtensibleSubtree {
 				"="
 			}
 			
-			val fieldDecoder = SubtreeFieldDecoder2(prop.name, serializationKey, valueType.jvmErasure, operator)
-			
-			_addCodegen(receiverType, fieldDecoder)
+			getOrCreateStructDecoder(receiverType).let {
+				it.fieldDecoders.merge(VDFPrimitive.notInterned(serializationKey), StructFieldDecoderPropExt_Keyed(prop.name, VDFPrimitive(serializationKey), valueType.jvmErasure, operator)) { first, second ->
+					first.orElse(second)
+				}
+			}
+		}
+		
+		@JvmRecord
+		data class DeferredValueDecoder<out T : IKtCodeGenerator>(val getter: () -> ValueDecoder<T>) : ValueDecoder<T> {
+			override fun decodeValue(obj: VDFObject): List<T> {
+				return getter().decodeValue(obj)
+			}
 		}
 		
 		fun _registerCodegenSelfNamedMapping(propOwner: Any?, prop: KProperty<*>) {
@@ -419,7 +465,34 @@ interface IExtensibleSubtree {
 				true if propOwner != null -> propOwner::class.qualifiedName
 				else -> prop.javaGetter!!.declaringClass.packageName
 			}
-			_addCodegen(receiverType, SelfNamedDecoder(KtName(prop.name, namespace), propType))
+			
+			
+			getOrCreateStructDecoder(receiverType).apply {
+				selfNamedDecoders += StructFieldDecoderPropExt_SelfNamed(KtName(prop.name, namespace), propType, "=")
+			}
+		}
+		
+		fun _registerCodegenSelfNamedListMapping(propOwner: Any?, prop: KProperty<*>) {
+			var isExtension = false
+			val receiverType: KClass<*> = prop.getExtensionReceiverType()?.also {
+				isExtension = true
+			} ?: propOwner!!::class // must extend IExtensibleSubtree, thus must be the receiver of this property
+			
+			assert(prop.returnType.classifier as? KClass<*> == List::class) {
+				"Self-named-list property $prop type is not List."
+			}
+			
+			val propType = prop.returnType.arguments.first().type?.classifier as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $prop")
+			
+			val namespace = when (isExtension) {
+				false -> null // not needed since they have to import the struct
+				true if propOwner != null -> propOwner::class.qualifiedName
+				else -> prop.javaGetter!!.declaringClass.packageName
+			}
+			
+			getOrCreateStructDecoder(receiverType).apply {
+				selfNamedDecoders += StructFieldDecoderPropExt_SelfNamed(KtName(prop.name, namespace), propType, "+=")
+			}
 		}
 		
 		private fun KProperty<*>.getExtensionReceiverType(): KClass<*>? {
@@ -428,30 +501,76 @@ interface IExtensibleSubtree {
 			}
 		}
 		
-		private fun _addCodegen(structType: KClass<*>, decoder: SubtreeFieldDecoder) {
-			val addTo = _codegenFieldMappings[structType]?.fieldDecoders
-			            ?: _deferredCodegenFieldMappings.computeIfAbsent(structType) { mutableListOf() }
+		fun getOrCreateStructDecoder(structType: KClass<*>): SubtreeDecoderWithFields {
+			if (!IS_DOING_CODEGEN)
+				error("Attempted to get struct decoder with type ${structType.qualifiedName} when not in codegen mode.\n" +
+				      "Ensure any codegen decoders are wrapped in a CodegenProvider so they're only created or accessed when in codegen mode.")
 			
-			addTo.add(decoder)
+			return _codegenFieldMappings.computeIfAbsent(structType) { SubtreeDecoderWithFields(it) }
 		}
 		
 		/**
-		 * @param dummyConstructor This is needed to make sure all the properties declared inside the struct are instantiated and have their field codegen entries autogenerated
-		 * @param factoryMethod What is used to generate the thing for the source code, like `MyStruct { ...assignments }`
+		 * @param dummyConstructor We need to create an instance of the struct to ensure any properties declared inside the struct are instantiated and have their field codegen entries autogenerated from the `addField` calls
+		 * @param factoryMethod What is used to generate the thing for the source code, like `MyStruct { ...assignments }`.
 		 */
-		inline fun <reified T : IExtensibleSubtree> _registerStructFactory(noinline dummyConstructor: () -> T = T::class.java.getConstructor()::newInstance, noinline factoryMethod: StructFactoryMethod) {
+		inline fun <reified T : IExtensibleSubtree> _registerStructFactory(noinline dummyConstructor: (() -> T)? = null, customFieldDecoders: Map<String, Decoder<KtExpression>>? = null, factoryMethod: () -> StructFactoryMethod) {
 			if (!IS_DOING_CODEGEN)
 				return;
 			
+			return _registerStructFactory(T::class, dummyConstructor, customFieldDecoders, factoryMethod())
+		}
+		
+		@PublishedApi internal fun <T : IExtensibleSubtree> _registerStructFactory(cls: KClass<T>, dummyConstructor: (() -> T)?, customFieldDecoders: Map<String, Decoder<KtExpression>>?, factoryMethod: StructFactoryMethod) {
+			if (!IS_DOING_CODEGEN)
+				return;
+			
+			val dummyConstructor: () -> T = dummyConstructor ?: cls.java.getConstructor()::newInstance
+			
+			val customFieldDecoders = customFieldDecoders ?: mapOf()
+			
 			val _ = dummyConstructor()
 			
-			_codegenFieldMappings[T::class] = StructDecoder(factoryMethod).apply {
-				fieldDecoders += _deferredCodegenFieldMappings.remove(T::class).orEmpty()
+			getOrCreateStructDecoder(cls).apply {
+				this.factoryMethod = factoryMethod
+				
+				this.fieldDecoders += customFieldDecoders.mapKeys { VDFPrimitive.notInterned(it.key) }
 			}
 		}
 		
-		typealias StructFactoryMethod = (fields: List<KtAssignmentExpression>) -> KtFunctionCall
+		typealias StructFactoryMethod = (fields: List<IKtCodeGenerator>) -> KtFunctionCall
 		
+		data class StructFieldDecoderPropExt_Keyed(val propName: String, val key: VDFPrimitive, val valueType: KClass<*>, val operator: String) : Decoder<KtExpression> {
+			private val valueDecoder by lazy {
+				Decoders.forType(valueType)
+			}
+			
+			override fun decode(keyvalue: VDFKeyValue): List<KtAssignmentExpression> {
+				if (keyvalue.key == key) {
+					return valueDecoder.decode(keyvalue).map { KtAssignmentExpression(KtName(propName), it, operator) }
+				}
+				return emptyList()
+			}
+		}
+		
+		
+		/**
+		 * Purpose: decode based on some property's type using a lazily-fetched decoder for said type
+		 */
+		data class StructFieldDecoderPropExt_SelfNamed(val propName: KtName, val valueType: KClass<*>, val operator: String) : Decoder<KtExpression> {
+			private val valueDecoder by lazy {
+				Decoders.forType(valueType)
+			}
+			
+			override fun decode(keyvalue: VDFKeyValue): List<KtExpression> {
+				return valueDecoder.decode(keyvalue).ifNotEmpty { code ->
+					return code.map { KtAssignmentExpression(propName, it, operator) }
+				}
+			}
+			
+			override fun toString(): String {
+				return "SelfNamedDecoder(propName=$propName, valueType=$valueType)"
+			}
+		}
 	}
 }
 

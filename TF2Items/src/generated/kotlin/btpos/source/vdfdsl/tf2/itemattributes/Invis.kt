@@ -359,7 +359,7 @@ interface InvisAttributes : IBlockScoped, WeaponBaseAttributes {
 		 * 
 		 * Note that values less than or equal to 0 become 1 second.
 		 */
-		override val multDecloakRate: ItemAttributeNamed<Duration> get() = super.multDecloakRate
+		override val multDecloakRate: ItemAttributeNamed<Number> get() = super.multDecloakRate
 	
 		/**
 		 * Multiply cloak consumed per second by this value.

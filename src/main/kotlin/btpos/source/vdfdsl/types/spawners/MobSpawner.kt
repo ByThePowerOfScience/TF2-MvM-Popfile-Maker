@@ -23,11 +23,11 @@ class MobSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 	companion object {
 		init {
 			if (Codegen.IS_DOING_CODEGEN) {
-				IExtensibleSubtree.Codegen._registerStructFactory<MobSpawner>(Codegen.basicApplyFactory<MobSpawner>())
+				IExtensibleSubtree.Codegen._registerStructFactory<MobSpawner> { Codegen.basicApplyFactory<MobSpawner>() }
 				MobSpawner()
 			}
 		}
 		
-		val CODEGEN get() = IExtensibleSubtree.Codegen._codegen<MobSpawner>()
+		val CODEGEN get() = IExtensibleSubtree.Codegen.forType<MobSpawner>()
 	}
 }

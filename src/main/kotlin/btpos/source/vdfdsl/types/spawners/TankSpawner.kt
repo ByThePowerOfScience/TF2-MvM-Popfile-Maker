@@ -31,11 +31,11 @@ class TankSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubt
 	companion object {
 		init {
 			if (Codegen.IS_DOING_CODEGEN) {
-				IExtensibleSubtree.Codegen._registerStructFactory<TankSpawner>(factoryMethod = Codegen.basicBlockScope(Spawners::Tank))
+				IExtensibleSubtree.Codegen._registerStructFactory<TankSpawner>(factoryMethod = { Codegen.basicBlockScope(Spawners::Tank) })
 				TankSpawner()
 			}
 		}
 		
-		val CODEGEN get() = IExtensibleSubtree.Codegen._codegen<TankSpawner>()
+		val CODEGEN get() = IExtensibleSubtree.Codegen.forType<TankSpawner>()
 	}
 }

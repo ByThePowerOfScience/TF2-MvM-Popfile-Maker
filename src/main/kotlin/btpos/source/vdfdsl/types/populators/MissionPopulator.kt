@@ -1,11 +1,20 @@
 package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.codegen.Codegen
+import btpos.source.vdfdsl.codegen.CodegenProvider
+import btpos.source.vdfdsl.codegen.StringDecoderMap
+import btpos.source.vdfdsl.codegen.kt.KtName
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
+import btpos.source.vdfdsl.types.specifics.Where
+import btpos.source.vdfdsl.util.forEachWithIter
+import btpos.source.vdfdsl.utils.toSeconds
+import kotlin.time.Duration
 
 class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
 	override val _structIdentifier: String
@@ -18,7 +27,9 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	 */
 	override var spawner: AbstractSpawner?
 		get() = super.spawner
-		set(value) { super.spawner = value }
+		set(value) {
+			super.spawner = value
+		}
 	
 	
 	/**
@@ -32,14 +43,14 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	var objective: Objective? by addField("Objective")
 	
 	/**
-	 * Delay this mission starting by this many seconds after the start of the [specified wave][beginAtWave].
+	 * Delay this mission starting by this much time after the start of the [specified wave][beginAtWave].
 	 */
-	var initialCooldown: Number? by addField("InitialCooldown")
+	var initialCooldown: Duration? by addField("InitialCooldown", serializer = Duration::toSeconds)
 	
 	/**
-	 * How many seconds should elapse between procs of this mission.
+	 * How long should elapse between procs of this mission.
 	 */
-	var cooldownTime: Number? by addField("CooldownTime")
+	var cooldownTime: Duration? by addField("CooldownTime", serializer = Duration::toSeconds)
 	
 	/**
 	 * What wave this mission should start being activated on.
@@ -55,7 +66,28 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	 * How many of the [specified spawner][AbstractPopulator.spawner] should be spawned when this mission procs.
 	 */
 	var desiredCount: Number? by addField("DesiredCount")
+	
+	companion object {
+		init {
+			IExtensibleSubtree.Codegen._registerStructFactory<MissionPopulator>(
+				customFieldDecoders = mapOf(
+					"Where" to Where.DECODER,
+					"Objective" to Objective.CODEGEN
+				),
+				factoryMethod = {
+					Codegen.basicBlockScope(
+						Populators::Mission,
+						mapOf(
+							MissionPopulator::beginAtWave.name to "waveNumber",
+							MissionPopulator::runForThisManyWaves.name to "runForWaves"
+						)
+					)
+				}
+			)
+		}
+	}
 }
+
 
 open class Objective(val item: String) : IVDFRepresentableValue_Trivial {
 	override val _vdfRepr: VDFPrimitive
@@ -67,6 +99,20 @@ open class Objective(val item: String) : IVDFRepresentableValue_Trivial {
 		val Sniper = Objective("Sniper")
 		val Spy = Objective("Spy")
 		val Engineer = Objective("Engineer")
+		
+		
+		
+		val CODEGEN by CodegenProvider {
+			StringDecoderMap (
+				listOf(
+					Objective::DestroySentries,
+					Objective::SeekAndDestroy,
+					Objective::Sniper,
+					Objective::Spy,
+					Objective::Engineer
+				).map { it.name to KtName(it) }
+			)
+		}
 	}
 }
 

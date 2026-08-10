@@ -1,29 +1,15 @@
 package btpos.source.vdfdsl.codegen
 
-import btpos.source.vdfdsl.backing.VDFKeyValue
-import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.codegen.kt.KtExpression
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import java.util.ServiceLoader
 import kotlin.collections.plusAssign
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 
-/**
- * Doesn't use the key or other information, just a raw value.
- */
-fun interface ValueDecoder : Decoder {
-	override fun decode(obj: VDFObject): List<IKtCodeGenerator> {
-		return listOfNotNull(decodeValue(obj))
-	}
-	
-	fun decodeValue(obj: VDFObject): KtExpression?
-}
-
 object Decoders {
-	private val valueDecoders: Map<KClass<*>, ValueDecoder>
-	
-	private val selfNamedDecoders: Map<KClass<*>, StructSubclassDecoder>
+	private val typeDecoders: Map<KClass<*>, Decoder<KtExpression>>
 	
 	val DURATION = StringDecoder { str ->
 		str.stringValue.toDoubleOrNull()?.let {
@@ -45,12 +31,10 @@ object Decoders {
 	
 	init {
 		val services = ServiceLoader.load(TypeDecoderProvider::class.java)
-		val valueDecodersTemp = mutableMapOf<KClass<*>, ValueDecoder>()
-		val navTemp = mutableMapOf<KClass<*>, StructSubclassDecoder>()
+		val valueDecodersTemp = mutableMapOf<KClass<*>, Decoder<KtExpression>>()
 		
 		services.forEach {
 			valueDecodersTemp += it.valueDecoders
-			navTemp += it.selfNamedDecoders
 		}
 		
 		valueDecodersTemp[Int::class] = INT
@@ -60,17 +44,10 @@ object Decoders {
 		valueDecodersTemp[Duration::class] = DURATION
 		valueDecodersTemp[String::class] = StringDecoder.IDENTITY
 		
-		valueDecoders = valueDecodersTemp
-		selfNamedDecoders = navTemp
+		typeDecoders = valueDecodersTemp
 	}
 	
-	
-	fun getTypeDecoder(type: KClass<*>): ValueDecoder {
-		return valueDecoders[type] ?: error("No decoder(s) defined for '$type'.")
+	fun forType(type: KClass<*>): Decoder<KtExpression> {
+		return typeDecoders[type] ?: error("No decoder(s) defined for '$type'.")
 	}
-	
-	fun getSelfNamedDecoder(type: KClass<*>): StructSubclassDecoder {
-		return selfNamedDecoders[type] ?: error("No decoder defined for '$type'.")
-	}
-	
 }

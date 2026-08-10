@@ -45,6 +45,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.inputStream
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -82,13 +83,13 @@ class mvm_coaltown_expert1 {
 			tags = listOf(tag_preferFlankRight)
 		}
 	
-	fun spyMission(startWave: Int, startCooldown: Int) = Mission {
+	fun spyMission(startWave: Int, startCooldown: Duration) = Mission {
 		objective = Objective.Spy
 		initialCooldown = startCooldown
 		where = "spawnbot_mission_spy"
 		beginAtWave = startWave
 		runForThisManyWaves = 1
-		cooldownTime = 30
+		cooldownTime = 30.seconds
 		desiredCount = 4
 		
 		+TFBot {
@@ -108,25 +109,25 @@ class mvm_coaltown_expert1 {
 			+Mission(1, 9) {
 				objective = Objective.DestroySentries
 				
-				initialCooldown = 5
+				initialCooldown = 5.seconds
 				where = basicSpawn
 				
-				cooldownTime = 20
+				cooldownTime = 20.seconds
 				
 				+TFBot(template = RobotGiantTemplates.SENTRY_BUSTER)
 			}
 			
-			+spyMission(1, 10)
-			+spyMission(2, 20)
-			+spyMission(4, 80).apply {
-				cooldownTime = 50
+			+spyMission(1, 10.seconds)
+			+spyMission(2, 20.seconds)
+			+spyMission(4, 80.seconds).apply {
+				cooldownTime = 50.seconds
 			}
 			
 			+Mission(1) {
 				objective = Objective.Sniper
-				initialCooldown = 75
+				initialCooldown = 75.seconds
 				where = "spawnbot_mission_sniper"
-				cooldownTime = 20
+				cooldownTime = 20.seconds
 				desiredCount = 4
 				
 				+TFBot("Sniper") {
@@ -138,8 +139,8 @@ class mvm_coaltown_expert1 {
 			+Mission(5) {
 				objective = Objective.Sniper
 				where = "spawnbot_mission_sniper"
-				initialCooldown = 30
-				cooldownTime = 20
+				initialCooldown = 30.seconds
+				cooldownTime = 20.seconds
 				desiredCount = 6
 				
 				+TFBot {
@@ -782,7 +783,7 @@ fun wave7() = WaveBuilder {
 		}
 		val huntsmanSniper = TFBot(template = RobotStandardTemplates.Sniper.HUNTSMAN) {
 			addAttributesForExisting(Weapons.HUNTSMAN) {
-				damage.damage.damageBonus = 0.075
+				damage.multDmg.bonus = 0.075
 				fasterReloadRate = 0.4
 			}
 		}
@@ -832,7 +833,7 @@ fun wave7() = WaveBuilder {
 			items += Weapons.BUFF_BANNER
 			attributes += Attributes.SpawnWithFullCharge
 			characterAttributes {
-				BuffItemAttributes.increaseBuffDuration = 9.0f
+				BuffItemAttributes.buffItems.multBuffDuration = 9.0f
 			}
 		}
 	}

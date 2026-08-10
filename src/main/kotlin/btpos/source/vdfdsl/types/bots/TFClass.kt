@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.types.bots
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.codegen.ConstantsDecoder
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 
 open class TFClass(val name: String) : IVDFRepresentableValue_Trivial {
@@ -14,9 +15,9 @@ open class TFClass(val name: String) : IVDFRepresentableValue_Trivial {
 		@JvmField val Medic = TFClass("Medic")
 		@JvmField val Sniper = TFClass("Sniper")
 		@JvmField val Spy = TFClass("Spy")
+		
+		val CODEGEN by ConstantsDecoder<TFClass>()
 	}
-	
-	
 	
 	override val _vdfRepr: VDFPrimitive = VDFPrimitive(name)
 	

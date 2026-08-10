@@ -1,23 +1,46 @@
 package btpos.source.vdfdsl.codegen
 
+import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.asPrimitive
-import btpos.source.vdfdsl.backing.asString
-import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.codegen.kt.KtExpression
+import btpos.source.vdfdsl.codegen.kt.KtLiteral
+import btpos.source.vdfdsl.codegen.kt.KtName
+import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
+import javax.swing.text.html.HTML.Tag.I
+import kotlin.jvm.java
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.declaredMemberProperties
 
-fun interface Decoder {
-	fun decode(obj: VDFObject): List<IKtCodeGenerator>
+fun interface Decoder<out T : IKtCodeGenerator> {
+	/**
+	 * Transforms a [VDFKeyValue] into a list of Kotlin statements.
+	 *
+	 * @return A list of the statement(s) that represent this keyvalue, or an empty list if this is not applicable.
+	 */
+	fun decode(keyvalue: VDFKeyValue): List<T>
 }
 
-fun interface StringDecoder : ValueDecoder {
-	override fun decodeValue(obj: VDFObject): KtExpression? {
-		return obj.asPrimitive?.let { decode(it) }
+fun <T : IKtCodeGenerator> Decoder<T>.orElse(other: Decoder<T>): Decoder<T> {
+	return Decoder { kv ->
+		this.decode(kv).ifEmpty { other.decode(kv) }
+	}
+}
+
+/**
+ * A helper that only calls [decodePrimitive] if the value of the keyvalue given is a [VDFPrimitive].
+ */
+fun interface StringDecoder : ValueDecoder<KtExpression> {
+	override fun decodeValue(obj: VDFObject): List<KtExpression> {
+		return obj.asPrimitive?.let { listOfNotNull(decodePrimitive(it)) }.orEmpty()
 	}
 	
-	fun decode(it: VDFPrimitive): KtExpression?
+	fun decodePrimitive(primitive: VDFPrimitive): KtExpression?
 	
 	companion object {
 		val IDENTITY = StringDecoder {
@@ -26,26 +49,84 @@ fun interface StringDecoder : ValueDecoder {
 	}
 }
 
-fun interface SubtreeDecoder : Decoder {
-	override fun decode(obj: VDFObject): List<IKtCodeGenerator> {
-		return obj.asSubtree?.let { decode(it) }.orEmpty()
-	}
-	
-	fun decode(subtree: VDFSubtree): List<IKtCodeGenerator>
+/**
+ * Create a default code generator for constants in the companion object of a class using reflection.
+ *
+ * More entries can be added to the resulting MultiDecoder.
+ */
+inline fun <reified T : IVDFRepresentableValue_Trivial> ConstantsDecoder(): CodegenProvider<MultiDecoder<KtExpression>> {
+	return ConstantsDecoder(T::class)
 }
 
-
-interface StringDecoderMap : StringDecoder {
-	val values: MutableMap<VDFPrimitive, KtExpression>
-	
-	var default: StringDecoder?
-	
-	override fun decode(it: VDFPrimitive): KtExpression? {
-		return (values[it] ?: default?.decode(it))
+/**
+ * Create a default code generator for constants in the companion object of a class using reflection.
+ *
+ * More entries can be added to the resulting MultiDecoder.
+ */
+fun <T : IVDFRepresentableValue_Trivial> ConstantsDecoder(cls: KClass<T>): CodegenProvider<MultiDecoder<KtExpression>> {
+	return CodegenProvider {
+		val clsjava = cls.java
+		val companionInst = cls.companionObjectInstance ?: error("No companion object")
+		
+		StringDecoderMap(
+			cls.companionObject!!.declaredMemberProperties.mapNotNull {
+				if (it.returnType.classifier != cls)
+					return@mapNotNull null;
+				
+				val it = it as KProperty1<Any, T>
+				
+				it.get(companionInst)._vdfRepr to KtName(it, clsjava)
+			}
+		)
 	}
 }
 
-open class StringDecoderMapImpl : StringDecoderMap {
-	override val values: MutableMap<VDFPrimitive, KtExpression> = mutableMapOf()
-	override var default: StringDecoder? = null
+fun StringDecoderMap(vararg vanillaStringMappings: Pair<String, KtExpression>) = StringDecoderMap(vanillaStringMappings.asList())
+
+fun StringDecoderMap(vanillaStringMappings: Iterable<Pair<String, KtExpression>>): MultiDecoder<KtExpression> {
+	return StringDecoderMap(vanillaStringMappings.map {
+		VDFPrimitive(it.first) to it.second
+	})
+}
+
+@JvmName("StringDecoderMap_Primitive")
+fun StringDecoderMap(vanillaStringMappings: Iterable<Pair<VDFPrimitive, KtExpression>>): MultiDecoder<KtExpression> {
+	return MultiDecoder(vanillaStringMappings.mapTo(mutableListOf()) { StringToCodeDecoder(it.first, it.second) })
+		.apply {
+			finalDecoder = StringDecoder.IDENTITY
+		}
+}
+
+class StringToCodeDecoder(val string: VDFPrimitive, val expr: KtExpression) : StringDecoder {
+	override fun decodePrimitive(primitive: VDFPrimitive): KtExpression? {
+		return expr.takeIf { primitive == string }
+	}
+}
+
+/**
+ * Takes the first decoder that returns a valid value
+ */
+class MultiDecoder<T : IKtCodeGenerator>(val decoders: MutableList<Decoder<T>> = mutableListOf()) : Decoder<T> {
+	/**
+	 * The final decoder that will be run in the set.
+	 */
+	var finalDecoder: Decoder<T>? = null
+	
+	constructor(decoders: Iterable<Decoder<T>>) : this(decoders.toMutableList())
+	
+	override fun decode(keyvalue: VDFKeyValue): List<T> {
+		decoders.forEach {
+			val x = it.decode(keyvalue)
+			if (x.isEmpty())
+				return@forEach;
+			else
+				return x;
+		}
+		
+		finalDecoder?.decode(keyvalue)?.let {
+			return it
+		}
+		
+		return emptyList()
+	}
 }

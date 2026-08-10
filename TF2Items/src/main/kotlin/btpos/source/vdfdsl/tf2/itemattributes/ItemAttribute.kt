@@ -26,21 +26,25 @@ interface ItemAttribute<T : Any> {
 }
 
 
+@JvmName("plusAssignList")
 context(_: IAttributeContainer)
 operator fun <T> ItemAttribute<List<T>>.plusAssign(item: T) {
 	this.set((this.get() ?: emptyList()) + item)
 }
 
+@JvmName("plusAssignSet")
 context(_: IAttributeContainer)
 operator fun <T> ItemAttribute<Set<T>>.plusAssign(item: T) {
 	this.set((this.get() ?: emptySet()) + item)
 }
 
+@JvmName("plusAssignListIterable")
 context(_: IAttributeContainer)
 operator fun <T> ItemAttribute<List<T>>.plusAssign(items: Iterable<T>) {
 	this.set((this.get() ?: emptyList()) + items)
 }
 
+@JvmName("plusAssignSetIterable")
 context(_: IAttributeContainer)
 operator fun <T> ItemAttribute<Set<T>>.plusAssign(items: Iterable<T>) {
 	this.set((this.get() ?: emptySet()) + items)
