@@ -4,20 +4,18 @@ import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.asPrimitive
-import btpos.source.vdfdsl.codegen.kt.KtExpression
-import btpos.source.vdfdsl.codegen.kt.KtLiteral
-import btpos.source.vdfdsl.codegen.kt.KtName
+import btpos.misc.kt.codegen.KtStatement
+import btpos.misc.kt.codegen.KtExpression
+import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
-import javax.swing.text.html.HTML.Tag.I
 import kotlin.jvm.java
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredMemberProperties
 
-fun interface Decoder<out T : IKtCodeGenerator> {
+fun interface Decoder<out T : KtStatement> {
 	/**
 	 * Transforms a [VDFKeyValue] into a list of Kotlin statements.
 	 *
@@ -26,7 +24,7 @@ fun interface Decoder<out T : IKtCodeGenerator> {
 	fun decode(keyvalue: VDFKeyValue): List<T>
 }
 
-fun <T : IKtCodeGenerator> Decoder<T>.orElse(other: Decoder<T>): Decoder<T> {
+fun <T : KtStatement> Decoder<T>.orElse(other: Decoder<T>): Decoder<T> {
 	return Decoder { kv ->
 		this.decode(kv).ifEmpty { other.decode(kv) }
 	}
@@ -106,7 +104,7 @@ class StringToCodeDecoder(val string: VDFPrimitive, val expr: KtExpression) : St
 /**
  * Takes the first decoder that returns a valid value
  */
-class MultiDecoder<T : IKtCodeGenerator>(val decoders: MutableList<Decoder<T>> = mutableListOf()) : Decoder<T> {
+class MultiDecoder<T : KtStatement>(val decoders: MutableList<Decoder<T>> = mutableListOf()) : Decoder<T> {
 	/**
 	 * The final decoder that will be run in the set.
 	 */

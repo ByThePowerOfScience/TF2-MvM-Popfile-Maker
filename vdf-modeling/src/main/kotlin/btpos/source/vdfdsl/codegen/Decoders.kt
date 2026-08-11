@@ -1,16 +1,12 @@
 package btpos.source.vdfdsl.codegen
 
-import btpos.source.vdfdsl.codegen.kt.KtExpression
+import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.misc.kt.codegen.KtExpression
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import java.util.ServiceLoader
-import kotlin.collections.plusAssign
 import kotlin.reflect.KClass
-import kotlin.time.Duration
 
 object Decoders {
-	private val typeDecoders: Map<KClass<*>, Decoder<KtExpression>>
-	
 	val DURATION = StringDecoder { str ->
 		str.stringValue.toDoubleOrNull()?.let {
 			Codegen.code("$str.seconds", "kotlin.time.Duration")
@@ -29,25 +25,37 @@ object Decoders {
 		}
 	}
 	
-	init {
-		val services = ServiceLoader.load(TypeDecoderProvider::class.java)
-		val valueDecodersTemp = mutableMapOf<KClass<*>, Decoder<KtExpression>>()
-		
-		services.forEach {
-			valueDecodersTemp += it.valueDecoders
+	private val services = ServiceLoader.load(TypeDecoderProvider::class.java)
+	
+	private class CompositeTypeNavigator(
+		val subclassNav: StructSubclassNavigator,
+		val ownFields: Decoder<KtExpression>?
+	) : Decoder<KtExpression> {
+		override fun decode(keyvalue: VDFKeyValue): List<KtExpression> {
+			return subclassNav.decode(keyvalue).ifEmpty {
+				ownFields?.decode(keyvalue).orEmpty()
+			}
 		}
-		
-		valueDecodersTemp[Int::class] = INT
-		valueDecodersTemp[Double::class] = NUMBER
-		valueDecodersTemp[Float::class] = NUMBER
-		valueDecodersTemp[Number::class] = NUMBER
-		valueDecodersTemp[Duration::class] = DURATION
-		valueDecodersTemp[String::class] = StringDecoder.IDENTITY
-		
-		typeDecoders = valueDecodersTemp
+	}
+	
+	private fun getTypeDecoder(type: KClass<*>): Decoder<KtExpression>? {
+		return services.firstNotNullOfOrNull { it.typeDecoders[type] }
 	}
 	
 	fun forType(type: KClass<*>): Decoder<KtExpression> {
-		return typeDecoders[type] ?: error("No decoder(s) defined for '$type'.")
+		val subclassNav = services.firstNotNullOfOrNull {
+			it.subtypeNavigation[type]
+		}
+		
+		val type = getTypeDecoder(type)
+		
+		if (subclassNav != null) {
+			return CompositeTypeNavigator(
+				subclassNav,
+				type
+			)
+		}
+		
+		return type ?: error("No decoder(s) defined for '$type'.")
 	}
 }

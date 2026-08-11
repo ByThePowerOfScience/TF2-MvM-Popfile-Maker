@@ -1,1 +1,2 @@
 btpos.source.vdfdsl.codegen.services.impl.ExtensibleSubtreeTypeDecoderProvider
+btpos.source.vdfdsl.codegen.services.impl.StandardTypeDecoderProvider

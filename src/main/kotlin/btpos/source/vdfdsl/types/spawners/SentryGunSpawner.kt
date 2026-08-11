@@ -24,6 +24,6 @@ class SentryGunSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 			IExtensibleSubtree.Codegen._registerStructFactory<SentryGunSpawner> { Codegen.basicApplyFactory<SentryGunSpawner>() }
 		}
 		
-		val CODEGEN by IExtensibleSubtree.Codegen.forType<SentryGunSpawner>()
+		val CODEGEN = IExtensibleSubtree.Codegen.forType<SentryGunSpawner>()
 	}
 }

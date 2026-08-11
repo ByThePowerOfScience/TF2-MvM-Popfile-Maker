@@ -1,6 +1,8 @@
-package btpos.source.vdfdsl.codegen.kt
+package btpos.misc.kt.codegen.expressions
 
-import btpos.source.vdfdsl.codegen.IKtCodeGenerator
+import btpos.misc.kt.codegen.KtExpression
+import btpos.misc.kt.codegen.identifiers.KtParameter
+import btpos.misc.kt.codegen.KtStatement
 
 open class KtLambda : KtExpression {
 	override val importsNeeded: Sequence<String>
@@ -8,7 +10,7 @@ open class KtLambda : KtExpression {
 	
 	val namedParams = mutableListOf<KtParameter>()
 	
-	val lines = mutableListOf<IKtCodeGenerator>()
+	val lines = mutableListOf<KtStatement>()
 	
 	override fun toKotlinCode(): String {
 		val paramsString = if (namedParams.isEmpty() || (namedParams.size == 1 && namedParams[0].name == "it")) ""
@@ -20,7 +22,7 @@ open class KtLambda : KtExpression {
 	}
 	
 	companion object {
-	    operator fun invoke(namedParams: List<KtParameter> = listOf(), lines: List<IKtCodeGenerator>): KtLambda {
+	    operator fun invoke(namedParams: List<KtParameter> = listOf(), lines: List<KtStatement>): KtLambda {
 	        return KtLambda().apply {
 				this.namedParams += namedParams
 		        this.lines += lines

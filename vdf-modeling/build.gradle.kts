@@ -16,4 +16,5 @@ repositories {
 dependencies {
 	implementation(kotlin("reflect"))
 	implementation(libs.kotlinpoet)
+	api("btpos.misc.kt.codegen:KotlinCodeGen:1.0-SNAPSHOT")
 }

@@ -2,13 +2,13 @@ package btpos.source.vdfdsl.types.specifics
 
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.StringDecoderMap
-import btpos.source.vdfdsl.codegen.kt.KtName
+import btpos.misc.kt.codegen.identifiers.KtName
 
 /**
  * Presets for where
  */
 object Where {
-	val DECODER by CodegenProvider {
+	val CODEGEN = CodegenProvider {
 		StringDecoderMap(
 			AHEAD to KtName(Where::AHEAD),
 			BEHIND to KtName(Where::BEHIND),

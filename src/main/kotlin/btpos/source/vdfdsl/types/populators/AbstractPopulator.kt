@@ -1,5 +1,7 @@
 package btpos.source.vdfdsl.types.populators
 
+import btpos.source.vdfdsl.codegen.CodegenProvider
+import btpos.source.vdfdsl.codegen.StructSubclassNavigator
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamed
@@ -17,9 +19,6 @@ import kotlin.properties.ReadOnlyProperty
  */
 @PopFileDSL
 abstract class AbstractPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
-	companion object;
-	
-	
 	/**
 	 * The spawner used for this populator.
 	 *
@@ -32,6 +31,16 @@ abstract class AbstractPopulator(_subtree: IExtensibleSubtree_VDFRepresentable =
 	operator fun AbstractSpawner.unaryPlus() {
 		this@AbstractPopulator.spawner = this@unaryPlus.copy()
 	}
+	
+	companion object {
+		val NAV = CodegenProvider {
+			StructSubclassNavigator(
+				"Mission" to MissionPopulator.CODEGEN,
+				
+			)
+		}
+	}
+	
 }
 
 @MustUseReturnValues

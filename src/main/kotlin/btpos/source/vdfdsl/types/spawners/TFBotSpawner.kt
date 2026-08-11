@@ -103,8 +103,6 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	var eventChangeAttributes: List<EventChangeAttributes> by addField("EventChangeAttributes", initialValue=::listOf, serializer = IExtensibleSubtree.Serializers.subtreeOfSubtrees())
 	
 	
-	
-	
 	companion object {
 		inline operator fun invoke(name: String? = null, template: PopFileTemplate? = null, configure: TFBotSpawner.() -> Unit = {}): TFBotSpawner {
 			val newSpawner = TFBotSpawner()
@@ -125,7 +123,7 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 			}
 		}
 		
-		val CODEGEN by IExtensibleSubtree.Codegen.forType<TFBotSpawner>()
+		val CODEGEN = IExtensibleSubtree.Codegen.forType<TFBotSpawner>()
 	}
 }
 

@@ -25,6 +25,6 @@ class RandomChoiceSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extens
 			}
 		}
 		
-		val CODEGEN get() = IExtensibleSubtree.Codegen.forType<RandomChoiceSpawner>()
+		val CODEGEN = IExtensibleSubtree.Codegen.forType<RandomChoiceSpawner>()
 	}
 }

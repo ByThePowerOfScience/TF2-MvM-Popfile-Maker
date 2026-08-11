@@ -2,7 +2,7 @@ package btpos.source.vdfdsl.codegen
 
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.util.ifNullOrEmpty
+import btpos.misc.kt.codegen.KtExpression
 import kotlin.reflect.KClass
 
 /**
@@ -11,32 +11,32 @@ import kotlin.reflect.KClass
  * For example, when the key is `"TFBot"`, the value is always a `TFBot` instance.
  * There is no case where a `TFBot` instance can be keyed by anything other than the `"TFBot"` key.
  */
-class StructSubclassDecoder(val typeDecodersByKey: MutableMap<VDFPrimitive, Decoder<*>> = mutableMapOf(), val ownDecoder: Decoder<*>? = null) : Decoder<IKtCodeGenerator> {
-	override fun decode(keyvalue: VDFKeyValue): List<IKtCodeGenerator> {
-		return typeDecodersByKey[keyvalue.key]?.decode(keyvalue)
-			.ifNullOrEmpty {
-				ownDecoder?.decode(keyvalue).orEmpty()
-			}
+class StructSubclassNavigator(
+	val typeDecodersByKey: MutableMap<VDFPrimitive, Decoder<KtExpression>> = mutableMapOf(),
+) : Decoder<KtExpression> {
+	override fun decode(keyvalue: VDFKeyValue): List<KtExpression> {
+		return typeDecodersByKey[keyvalue.key]?.decode(keyvalue).orEmpty()
 	}
 	
 	companion object {
-		operator fun invoke(vararg mappings: Pair<VDFPrimitive, Any>, ownDecoder: Decoder<*>? = null): StructSubclassDecoder {
-			val m = HashMap<VDFPrimitive, Decoder<*>>()
+		operator fun invoke(vararg mappings: Pair<VDFPrimitive, Any>): StructSubclassNavigator {
+			val m = HashMap<VDFPrimitive, Decoder<KtExpression>>()
 			mappings.forEach { (prim, v) ->
 				m[prim] = when (v) {
 					is KClass<*> -> Decoders.forType(v)
-					is Decoder<*> -> v
+					is Decoder<*> -> v as Decoder<KtExpression>
+					is CodegenProvider<*> -> v.get() as Decoder<KtExpression>
 					else -> throw IllegalArgumentException("Expected KClass or Decoder, got ${v::class.qualifiedName} for $prim = $v")
 				}
 			}
-			return StructSubclassDecoder(m, ownDecoder)
+			return StructSubclassNavigator(m)
 		}
 		
 		@JvmName("invokeString")
-		operator fun invoke(vararg mappings: Pair<String, Any>, ownDecoder: Decoder<*>? = null): StructSubclassDecoder {
+		operator fun invoke(vararg mappings: Pair<String, Any>): StructSubclassNavigator {
 			return invoke(*mappings.map { pair ->
 				VDFPrimitive.Companion(pair.first) to pair.second
-			}.toTypedArray(), ownDecoder = ownDecoder)
+			}.toTypedArray())
 		}
 	}
 }

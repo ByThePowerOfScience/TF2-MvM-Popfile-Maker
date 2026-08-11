@@ -1,6 +1,6 @@
-package btpos.source.vdfdsl.codegen
+package btpos.misc.kt.codegen
 
-fun interface IKtCodeGenerator {
+interface IKtCodeGenerator {
 	val importsNeeded: Sequence<String> get() = emptySequence()
 	
 	fun toKotlinCode(): String

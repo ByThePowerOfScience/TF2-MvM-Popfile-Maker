@@ -1,6 +1,9 @@
-package btpos.source.vdfdsl.codegen.kt
+package btpos.misc.kt.codegen.expressions
 
-import btpos.source.vdfdsl.codegen.IKtCodeGenerator
+import btpos.misc.kt.codegen.KtExpression
+import btpos.misc.kt.codegen.identifiers.KtName
+import btpos.misc.kt.codegen.KtStatement
+import kotlin.collections.plusAssign
 
 open class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf()) : KtExpression {
 	override val importsNeeded: Sequence<String>
@@ -26,7 +29,7 @@ open class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf(
 		/**
 		 * Create `<FunctionCall>.apply { ...body }`
 		 */
-		fun createApply(call: KtFunctionCall, lambdaBody: List<IKtCodeGenerator>): KtFunctionCall {
+		fun createApply(call: KtFunctionCall, lambdaBody: List<KtStatement>): KtFunctionCall {
 			return KtFunctionCall(KtName("apply")).apply {
 				receiver = call
 				
@@ -36,7 +39,7 @@ open class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf(
 			}
 		}
 		
-		fun KtFunctionCall.thenApply(lambdaBody: List<IKtCodeGenerator>): KtFunctionCall {
+		fun KtFunctionCall.thenApply(lambdaBody: List<KtStatement>): KtFunctionCall {
 			return createApply(this, lambdaBody)
 		}
 	}

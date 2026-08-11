@@ -3,8 +3,10 @@ package btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.CodegenProvider
+import btpos.source.vdfdsl.codegen.MultiDecoder
 import btpos.source.vdfdsl.codegen.StringDecoderMap
-import btpos.source.vdfdsl.codegen.kt.KtName
+import btpos.misc.kt.codegen.KtExpression
+import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
@@ -12,7 +14,6 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 import btpos.source.vdfdsl.types.specifics.Where
-import btpos.source.vdfdsl.util.forEachWithIter
 import btpos.source.vdfdsl.utils.toSeconds
 import kotlin.time.Duration
 
@@ -33,7 +34,7 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	
 	
 	/**
-	 * The name of the `info_teamspawn` entity the bots for this mission should spawn, or one of the [presets][btpos.source.vdfdsl.types.specifics.Where].
+	 * The name of the `info_teamspawn` entity the bots for this mission should spawn, or one of the [presets][Where].
 	 */
 	var where: String? by addField("Where")
 	
@@ -72,7 +73,7 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 			IExtensibleSubtree.Codegen._registerStructFactory<MissionPopulator>(
 				customFieldDecoders = {
 					mapOf(
-						"Where" to Where.DECODER,
+						"Where" to Where.CODEGEN,
 						"Objective" to Objective.CODEGEN
 					)
 				},
@@ -87,6 +88,8 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 				}
 			)
 		}
+		
+		val CODEGEN = IExtensibleSubtree.Codegen.forType<MissionPopulator>()
 	}
 }
 
@@ -104,7 +107,7 @@ open class Objective(val item: String) : IVDFRepresentableValue_Trivial {
 		
 		
 		
-		val CODEGEN by CodegenProvider {
+		val CODEGEN: CodegenProvider<MultiDecoder<KtExpression>> = CodegenProvider {
 			StringDecoderMap (
 				listOf(
 					Objective::DestroySentries,

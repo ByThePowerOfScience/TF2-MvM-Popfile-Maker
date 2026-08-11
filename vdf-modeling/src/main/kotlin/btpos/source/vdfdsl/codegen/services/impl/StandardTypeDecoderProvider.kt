@@ -1,0 +1,50 @@
+package btpos.source.vdfdsl.codegen.services.impl
+
+import btpos.source.vdfdsl.codegen.Decoder
+import btpos.source.vdfdsl.codegen.Decoders.DURATION
+import btpos.source.vdfdsl.codegen.Decoders.INT
+import btpos.source.vdfdsl.codegen.Decoders.NUMBER
+import btpos.source.vdfdsl.codegen.StringDecoder
+import btpos.source.vdfdsl.codegen.StructSubclassNavigator
+import btpos.misc.kt.codegen.KtExpression
+import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
+import kotlin.collections.set
+import kotlin.reflect.KClass
+import kotlin.time.Duration
+
+class StandardTypeDecoderProvider : TypeDecoderProvider {
+	override val typeDecoders: Map<KClass<*>, Decoder<KtExpression>>
+		get() = buildMap {
+			setOf(
+				Integer.TYPE.kotlin, Integer::class,
+				java.lang.Long.TYPE.kotlin, java.lang.Long::class
+			).forEach {
+				put(it, INT)
+			}
+			
+			setOf(
+				java.lang.Double.TYPE.kotlin, java.lang.Double::class,
+				java.lang.Float.TYPE.kotlin, java.lang.Float::class,
+				Number::class, java.lang.Number::class,
+			).distinct().forEach {
+				put(it, NUMBER)
+			}
+			
+			sequenceOf(
+				Char::class, Character::class,
+				String::class, java.lang.String::class,
+				CharSequence::class, java.lang.CharSequence::class
+			).forEach {
+				put(it, StringDecoder.IDENTITY)
+			}
+			
+			this[Int::class] = INT
+			this[Double::class] = NUMBER
+			this[Float::class] = NUMBER
+			this[Number::class] = NUMBER
+			this[Duration::class] = DURATION
+			this[String::class] = StringDecoder.IDENTITY
+		}
+	
+	override val subtypeNavigation: Map<KClass<*>, StructSubclassNavigator> get() = mapOf()
+}

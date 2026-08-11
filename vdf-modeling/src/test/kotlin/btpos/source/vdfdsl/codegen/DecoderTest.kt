@@ -1,9 +1,10 @@
 package btpos.source.vdfdsl.codegen
 
-import btpos.source.vdfdsl.codegen.kt.KtAssignmentExpression
-import btpos.source.vdfdsl.codegen.kt.KtFunctionCall
-import btpos.source.vdfdsl.codegen.kt.KtLambda
-import btpos.source.vdfdsl.codegen.kt.KtName
+import btpos.misc.kt.codegen.KtStatement
+import btpos.misc.kt.codegen.statements.KtAssignment
+import btpos.misc.kt.codegen.expressions.KtFunctionCall
+import btpos.misc.kt.codegen.expressions.KtLambda
+import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
@@ -12,23 +13,29 @@ import kotlin.test.Test
 class MyStruct(override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf()) : IExtensibleSubtree {
 	companion object {
 		init {
-			IExtensibleSubtree.Codegen._registerStructFactory<MyStruct> { fields: List<KtAssignmentExpression> ->
-				val arg = fields.find { it.lhs.name == MyStruct::insideStruct.name }
-				
-				val body = fields.filter { it.lhs.name != MyStruct::insideStruct.name }
-				
-				val funName = KtName("MyStruct", this::class.java.packageName)
-				
-				if (arg != null)
-					KtFunctionCall(
-						callee = funName,
-						args = listOf(
-							arg.rhs,
-							KtLambda(lines = body)
+			IExtensibleSubtree.Codegen._registerStructFactory<MyStruct> {
+				{ fields: List<KtStatement> ->
+					
+					val arg = fields.find { it is KtAssignment && it.lhs.name == MyStruct::insideStruct.name }
+					
+					
+					
+					val funName = KtName("MyStruct", this::class.java.packageName)
+					
+					if (arg != null) {
+						val body = fields - arg
+						
+						KtFunctionCall(
+							callee = funName,
+							args = listOf(
+								(arg as KtAssignment).rhs,
+								KtLambda(lines = body)
+							)
 						)
-					)
-				else {
-					KtFunctionCall.createApply(KtFunctionCall(funName), body)
+					}
+					else {
+						KtFunctionCall.createApply(KtFunctionCall(funName), fields)
+					}
 				}
 			}
 		}
@@ -60,6 +67,5 @@ class DecoderTest {
 		MyStruct() // need to create an instance to instantiate the instance delegates
 		
 	    println("_codegenFieldMappings: " + IExtensibleSubtree.Codegen._codegenFieldMappings)
-	    println("deferred: " + IExtensibleSubtree.Codegen._deferredCodegenFieldMappings)
 	}
 }

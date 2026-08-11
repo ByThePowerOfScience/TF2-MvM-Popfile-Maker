@@ -1,7 +1,6 @@
 package btpos.source.vdfdsl.types.spawners
 
 import btpos.source.vdfdsl.codegen.Codegen
-import btpos.source.vdfdsl.codegen.kt.KtName
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
@@ -56,6 +55,6 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 			IExtensibleSubtree.Codegen._registerStructFactory<SquadSpawner> { Codegen.basicBlockScope(Spawners::Squad) }
 		}
 		
-		val CODEGEN by IExtensibleSubtree.Codegen.forType<SquadSpawner>()
+		val CODEGEN = IExtensibleSubtree.Codegen.forType<SquadSpawner>()
 	}
 }

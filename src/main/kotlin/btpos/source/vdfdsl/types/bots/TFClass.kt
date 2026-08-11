@@ -16,7 +16,7 @@ open class TFClass(val name: String) : IVDFRepresentableValue_Trivial {
 		@JvmField val Sniper = TFClass("Sniper")
 		@JvmField val Spy = TFClass("Spy")
 		
-		val CODEGEN by ConstantsDecoder<TFClass>()
+		val CODEGEN = ConstantsDecoder<TFClass>()
 	}
 	
 	override val _vdfRepr: VDFPrimitive = VDFPrimitive(name)

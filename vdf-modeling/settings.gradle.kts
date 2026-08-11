@@ -16,3 +16,9 @@ dependencyResolutionManagement {
 		}
 	}
 }
+
+includeBuild("../KotlinCodeGen") {
+	dependencySubstitution {
+		substitute(module("btpos.misc.kt.codegen:KotlinCodeGen")).using(project(":"))
+	}
+}

@@ -1,14 +1,15 @@
 package btpos.source.vdfdsl.codegen
 
-import btpos.source.vdfdsl.codegen.kt.KtAssignmentExpression
-import btpos.source.vdfdsl.codegen.kt.KtFunctionCall
-import btpos.source.vdfdsl.codegen.kt.KtLambda
-import btpos.source.vdfdsl.codegen.kt.KtLiteral
-import btpos.source.vdfdsl.codegen.kt.KtName
-import btpos.source.vdfdsl.codegen.kt.KtNamedFunctionCallArgument
-import btpos.source.vdfdsl.codegen.kt.KtString
+import btpos.misc.kt.codegen.statements.KtAssignment
+import btpos.misc.kt.codegen.expressions.KtFunctionCall
+import btpos.misc.kt.codegen.expressions.KtLambda
+import btpos.misc.kt.codegen.expressions.KtLiteral
+import btpos.misc.kt.codegen.identifiers.KtName
+import btpos.misc.kt.codegen.expressions.KtNamedFunctionCallArgument
+import btpos.misc.kt.codegen.expressions.KtString
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.util.forEachWithIter
+import kotlin.collections.toMutableList
 import kotlin.error
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -45,7 +46,7 @@ object Codegen {
 	 * Example: `basicApplyFactory(MobSpawner::class)` -> `MobSpawner().apply { ...assignments }`
 	 */
 	fun basicApplyFactory(kclass: KClass<*>): IExtensibleSubtree.Codegen.StructFactoryMethod {
-		val ctor = KtName(kclass)
+		val ctor = KtName.qualified(kclass.qualifiedName!!)
 		
 		return { assignments ->
 			KtFunctionCall.createApply(KtFunctionCall(ctor), assignments)
@@ -74,7 +75,7 @@ object Codegen {
 			val namedArguments = mutableListOf<KtNamedFunctionCallArgument>()
 			
 			assignments.forEachWithIter { assignment ->
-				if (assignment !is KtAssignmentExpression)
+				if (assignment !is KtAssignment)
 					return@forEachWithIter;
 				
 				fieldsToArgNames[assignment.lhs.name]?.let {
@@ -96,19 +97,41 @@ object Codegen {
  *
  * Everything should stay hidden in a function that hopefully gets elided by the JIT since [Codegen.IS_DOING_CODEGEN] will never change.
  */
-class CodegenProvider<D : Decoder<*>> private constructor(val getCodegen: () -> D) : Lazy<D> {
-	private lateinit var codegen: D
+class CodegenProvider<out D : Decoder<*>> private constructor(private val getCodegen: () -> D) {
+	private var codegen: D? = null
 	
-	override val value: D
-		get() {
-			if (!::codegen.isInitialized)
-				codegen = getCodegen()
-			
-			return codegen
+	private val toApply = ArrayList<(D) -> Unit>(0)
+	
+	fun get(): D {
+		if (!Codegen.IS_DOING_CODEGEN)
+			error(ERROR_MESSAGE)
+		
+		codegen?.let {
+			return it;
 		}
+		
+		val x = getCodegen()
+		toApply.forEach {
+			it(x)
+		}
+		
+		toApply.clear()
+		codegen = x
+		
+		return x
+	}
 	
-	override fun isInitialized(): Boolean {
-		return ::codegen.isInitialized
+	/**
+	 * Apply this function to the item this provides only if/when the thing is actually instantiated,
+	 * to avoid collapsing the lazy instantiation.
+	 */
+	fun applyToContained(action: (D) -> Unit) {
+		codegen?.let {
+			it.apply(action)
+			return;
+		}
+		
+		toApply += action
 	}
 	
 	companion object {
@@ -123,7 +146,9 @@ class CodegenProvider<D : Decoder<*>> private constructor(val getCodegen: () -> 
 		fun <D : Decoder<*>> errorInstance(): CodegenProvider<D> = ERROR_INSTANCE as CodegenProvider<D>
 		
 		private val ERROR_INSTANCE = CodegenProvider<Decoder<*>> {
-			error("Attempted to run code generation when not in codegen mode.  Rerun the program with the JVM argument \"-D${Codegen.CODEGEN_PROP}=true\".")
+			error(ERROR_MESSAGE)
 		}
+		
+		const val ERROR_MESSAGE = "Attempted to run code generation when not in codegen mode.  Rerun the program with the JVM argument \"-D${Codegen.CODEGEN_PROP}=true\"."
 	}
 }
