@@ -14,7 +14,13 @@ open class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf(
 	val args: MutableList<KtExpression> = args.toMutableList()
 	
 	override fun toKotlinCode(): String {
-		val argsString = when {
+		val operator = if (callee.name == "invoke") {
+			receiver?.toKotlinCode()
+		} else {
+			receiver?.let { "${it.toKotlinCode()}." } + callee.toKotlinCode()
+		}
+		
+		val operand = when {
 			args.size == 1 && args[0] is KtLambda -> " " + args[0].toKotlinCode()
 			args.isNotEmpty() && args.last() is KtLambda -> "(${
 				args.dropLast(1).joinToString(", ") { it.toKotlinCode() }
@@ -22,7 +28,7 @@ open class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf(
 			else -> "(${args.joinToString(", ") { it.toKotlinCode() }})"
 		}
 		
-		return receiver?.let { "${it.toKotlinCode()}." }.orEmpty() + callee.toKotlinCode() + argsString
+		return operator + operand
 	}
 	
 	companion object {
