@@ -1,6 +1,10 @@
 package btpos.source.vdfdsl.types.bots
 
+import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.codegen.Codegen
+import btpos.source.vdfdsl.codegen.ConstantsDecoder
+import btpos.source.vdfdsl.codegen.StringToCodeDecoder
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 
@@ -43,6 +47,15 @@ open class TFBotAttributes(name: String) : IVDFRepresentableValue_Trivial {
 			@JvmField val BulletImmune = TFBotAttributes("BulletImmune")
 			@JvmField val BlastImmune = TFBotAttributes("BlastImmune")
 			@JvmField val FireImmune = TFBotAttributes("FireImmune")
+		}
+		
+		val CODEGEN = ConstantsDecoder<TFBotAttributes>().applyToContained {
+			it.decoders += StringToCodeDecoder(Vaccinator.Bullet._vdfRepr, KtName(Vaccinator::Bullet))
+			it.decoders += StringToCodeDecoder(Vaccinator.Blast._vdfRepr, KtName(Vaccinator::Blast))
+			it.decoders += StringToCodeDecoder(Vaccinator.Fire._vdfRepr, KtName(Vaccinator::Fire))
+			it.decoders += StringToCodeDecoder(Immunities.BulletImmune._vdfRepr, KtName(Immunities::BulletImmune))
+			it.decoders += StringToCodeDecoder(Immunities.BlastImmune._vdfRepr, KtName(Immunities::BlastImmune))
+			it.decoders += StringToCodeDecoder(Immunities.FireImmune._vdfRepr, KtName(Immunities::FireImmune))
 		}
 	}
 }

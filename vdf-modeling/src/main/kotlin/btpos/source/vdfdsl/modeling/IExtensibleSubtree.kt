@@ -579,7 +579,7 @@ interface IExtensibleSubtree {
 	}
 }
 
-interface IExtensibleSubtree_VDFRepresentable : IExtensibleSubtree, IVDFRepresentableValue {
+interface IExtensibleSubtree_VDFRepresentable : IExtensibleSubtree, IVDFRepresentableValue_Subtree {
 	override fun copy(): IExtensibleSubtree_VDFRepresentable
 }
 
@@ -591,12 +591,10 @@ open class ExtensibleSubtreeImpl(
 	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf(),
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
 ) : IExtensibleSubtree_VDFRepresentable {
-	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
-		return { parent ->
-			val ourSub = VDFSubtree(parent)
-			_rawEntries.values.forEach { it._serializeInto(ourSub) }
-			parent += VDFKeyValue(key, ourSub, conditional)
-		}
+	override fun _vdfRepr(parent: VDFSubtree): VDFSubtree {
+		val ourSub = VDFSubtree(parent)
+		_rawEntries.values.forEach { it._serializeInto(ourSub) }
+		return ourSub
 	}
 	
 	protected fun copyEntries() = _rawEntries.toMutableMap()

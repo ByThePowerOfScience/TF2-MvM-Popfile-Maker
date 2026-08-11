@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED")
 package btpos.source.vdfdsl.types.spawners
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
@@ -16,6 +17,7 @@ import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.types.bots.BehaviorModifiers
 import btpos.source.vdfdsl.types.bots.BotSkill
+import btpos.source.vdfdsl.types.bots.EventChangeAttributesEntry
 import btpos.source.vdfdsl.types.bots.EventChangeAttributes
 import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
@@ -99,8 +101,8 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	
 	var autoJumpMax: Number? by addField("AutoJumpMax")
 	
-	
-	var eventChangeAttributes: List<EventChangeAttributes> by addField("EventChangeAttributes", initialValue=::listOf, serializer = IExtensibleSubtree.Serializers.subtreeOfSubtrees())
+	// TODO document these, also make sure I understand EventChangeAttributes
+	var eventChangeAttributes: EventChangeAttributes by addField("EventChangeAttributes", initialValue = ::EventChangeAttributes)
 	
 	
 	companion object {

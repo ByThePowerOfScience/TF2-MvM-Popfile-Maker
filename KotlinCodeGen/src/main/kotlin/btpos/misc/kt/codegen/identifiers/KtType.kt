@@ -21,3 +21,10 @@ data class KtType(val fqName: String): IKtCodeGenerator {
 	    }
 	}
 }
+
+/**
+ * Used to reference this object instance
+ */
+fun KtType.toName(): KtName {
+	return KtName.qualified(fqName)
+}

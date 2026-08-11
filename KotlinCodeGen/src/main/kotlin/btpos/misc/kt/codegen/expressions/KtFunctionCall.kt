@@ -14,10 +14,10 @@ open class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf(
 	val args: MutableList<KtExpression> = args.toMutableList()
 	
 	override fun toKotlinCode(): String {
-		val operator = if (callee.name == "invoke") {
-			receiver?.toKotlinCode()
+		val operator = if (callee.name == "invoke" && receiver != null) {
+			receiver!!.toKotlinCode()
 		} else {
-			receiver?.let { "${it.toKotlinCode()}." } + callee.toKotlinCode()
+			receiver?.let { "${it.toKotlinCode()}." }.orEmpty() + callee.toKotlinCode()
 		}
 		
 		val operand = when {

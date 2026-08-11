@@ -2,6 +2,7 @@ package btpos.misc.kt.codegen.identifiers
 
 import btpos.misc.kt.codegen.KtExpression
 import kotlin.reflect.KCallable
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.instanceParameter
@@ -83,7 +84,7 @@ data class KtName(val name: String, val qualifier: String? = null) : KtExpressio
 			return invoke(ref, ref.javaGetter?.declaringClass ?: ref.javaField!!.declaringClass)
 	    }
 		
-		operator fun invoke(ref: KCallable<*>, declaringClass: Class<*>): KtName {
+		private operator fun invoke(ref: KCallable<*>, declaringClass: Class<*>): KtName {
 			val qualifier = if (ref.instanceParameter == null) { // top level
 				declaringClass.packageName
 			} else {
@@ -91,6 +92,10 @@ data class KtName(val name: String, val qualifier: String? = null) : KtExpressio
 			}
 			
 			return KtName(ref.name, qualifier)
+		}
+		
+		operator fun invoke(name: String, declaringClass: KClass<*>): KtName {
+			return KtName(name, declaringClass.qualifiedName)
 		}
 	}
 }

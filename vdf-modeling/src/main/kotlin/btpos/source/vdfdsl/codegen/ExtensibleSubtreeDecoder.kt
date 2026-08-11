@@ -6,11 +6,12 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.asSubtree
 import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.KtStatement
+import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.util.forEachWithIter
 import kotlin.reflect.KClass
 
-class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> {
+class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtFunctionCall> {
 	/**
 	 * Takes in the items being set on the struct and returns a function call
 	 * to some factory method, with any parameters being filled in and the rest being inside the scope block.
@@ -48,7 +49,7 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 			}
 	}
 	
-	override fun decodeValue(obj: VDFObject): List<KtExpression> {
+	override fun decodeValue(obj: VDFObject): List<KtFunctionCall> {
 		return obj.asSubtree?.let { subtree ->
 			val factoryMethod = factoryMethod ?: dummyFactoryMethod
 			

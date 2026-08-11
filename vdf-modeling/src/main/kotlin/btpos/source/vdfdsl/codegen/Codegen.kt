@@ -7,12 +7,16 @@ import btpos.misc.kt.codegen.expressions.KtLiteral
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.expressions.KtNamedFunctionCallArgument
 import btpos.misc.kt.codegen.expressions.KtString
+import btpos.misc.kt.codegen.identifiers.KtType
+import btpos.misc.kt.codegen.identifiers.toName
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.util.forEachWithIter
 import kotlin.collections.toMutableList
 import kotlin.error
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
+import kotlin.reflect.jvm.javaConstructor
+import kotlin.reflect.jvm.javaMethod
 
 object Codegen {
 	const val CODEGEN_PROP = "vdfdsl.codegen"
@@ -125,13 +129,15 @@ class CodegenProvider<out D : Decoder<*>> private constructor(private val getCod
 	 * Apply this function to the item this provides only if/when the thing is actually instantiated,
 	 * to avoid collapsing the lazy instantiation.
 	 */
-	fun applyToContained(action: (D) -> Unit) {
+	fun applyToContained(action: (D) -> Unit): CodegenProvider<D> {
 		codegen?.let {
 			it.apply(action)
-			return;
+			return this;
 		}
 		
 		toApply += action
+		
+		return this;
 	}
 	
 	companion object {

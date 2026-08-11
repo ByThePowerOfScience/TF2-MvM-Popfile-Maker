@@ -63,7 +63,6 @@ inline fun <reified T : IVDFRepresentableValue_Trivial> ConstantsDecoder(): Code
  */
 fun <T : IVDFRepresentableValue_Trivial> ConstantsDecoder(cls: KClass<T>): CodegenProvider<MultiDecoder<KtExpression>> {
 	return CodegenProvider {
-		val clsjava = cls.java
 		val companionInst = cls.companionObjectInstance ?: error("No companion object")
 		
 		StringDecoderMap(
@@ -73,7 +72,7 @@ fun <T : IVDFRepresentableValue_Trivial> ConstantsDecoder(cls: KClass<T>): Codeg
 				
 				val it = it as KProperty1<Any, T>
 				
-				it.get(companionInst)._vdfRepr to KtName(it, clsjava)
+				it.get(companionInst)._vdfRepr to KtName(it.name, cls)
 			}
 		)
 	}

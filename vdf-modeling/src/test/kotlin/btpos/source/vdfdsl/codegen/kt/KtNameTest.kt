@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Assertions.*
 import kotlin.test.Test
 
 class KtNameTest {
-	fun dummyFunction() {
-	
-	}
+	fun dummyFunction() {}
 	
 	
 	@Test

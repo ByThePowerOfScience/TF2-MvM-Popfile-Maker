@@ -34,7 +34,9 @@ class CodegenTest1 {
 //			toCode.first())
 		
 		
-		println(AbstractSpawner.NAV.get().decode(spawner.first()).forEach { println(it.toKotlinCode()) })
+		println(AbstractSpawner.NAV.get().decode(spawner.first()).forEach {
+			println(it.toKotlinCode())
+		})
 	}
 	
 	companion object {
