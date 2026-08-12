@@ -4,11 +4,11 @@ import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.asSubtree
-import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.KtStatement
+import btpos.misc.kt.codegen.statements.KtComment
 import btpos.misc.kt.codegen.expressions.KtFunctionCall
+import btpos.source.vdfdsl.backing.toFormattedString
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
-import btpos.source.vdfdsl.util.forEachWithIter
 import kotlin.reflect.KClass
 
 class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtFunctionCall> {
@@ -54,24 +54,31 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtFunctionCall
 			val factoryMethod = factoryMethod ?: dummyFactoryMethod
 			
 			val out = mutableListOf<KtStatement>()
+			val failedParses = mutableListOf<String>()
 			
-			val unconsumedKeyValues = subtree.toMutableList() // make copy cause we're removing stuff from it
-			
-			unconsumedKeyValues.forEachWithIter { kv ->
+			subtree.forEach { kv ->
 				val x = decodeByFieldName(kv) ?: decodeSelfNamed(kv)
 				
 				if (!x.isNullOrEmpty()) {
 					out += x
-					remove()
+				} else {
+					val prev = out.lastOrNull()
+					if (prev is KtComment.Block) { // merge into previous block comment
+						prev.body += kv.toFormattedString()
+					} else {
+						val formatted = kv.toFormattedString()
+						out += Codegen.blockComment(formatted)
+						failedParses += formatted
+					}
 				}
 			}
 			
-			if (unconsumedKeyValues.isNotEmpty()) {
-				out += Codegen.blockComment(buildString {
-					unconsumedKeyValues.forEach {
-						it.writeToVDF(this)
-					}
-				})
+			if (failedParses.isNotEmpty()) {
+				System.err.println("Code generator for class ${cls.qualifiedName} failed to decode the following fields:")
+				failedParses.forEach {
+					System.err.println(it)
+					System.err.println()
+				}
 			}
 			
 			listOf(factoryMethod(out))
@@ -79,7 +86,7 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtFunctionCall
 	}
 	
 	override fun toString(): String {
-		return "StructDecoder(factoryMethod=$factoryMethod, fieldDecoders=$fieldDecoders)"
+		return "StructDecoder(type=${cls.qualifiedName})"
 	}
 }
 
