@@ -136,7 +136,6 @@ object SDKNotes {
 			"Builder" to listOf(
 				"Sapper"
 			),
-			
 			"PassTimeGun",
 			"ProjectileGrenade"
 		),
@@ -244,6 +243,7 @@ object SDKNotes {
 			"Wrench" to listOf("RobotArm"),
 			"Fists",
 			"RocketPack",
+			"Katana",
 			"BreakableMelee" to listOf(
 				"Bottle",
 				"BreakableSign",
@@ -267,15 +267,26 @@ object SDKNotes {
 				),
 				"ProjectileEnergyBall"
 			),
-			"ProjectileEnergyRing",
+			"BaseGrenadeProjectile",
 			"ProjectileFlare",
-			"ProjectileSyringe"
+			"ProjectileBaseMisc" to listOf(
+				"ProjectileEnergyRing",
+				"ProjectileSyringe"
+			)
 		),
 		
 		"BaseGrenadeProjectile" to listOf(
-			"ProjectileStickybomb" to listOf(
+			"ProjectileMerasmusGrenade",
+			"ProjectilePipebomb" to listOf(
+				"ProjectileBaseball" to listOf("ProjectileOrnament"),
 				"ProjectileJar" to listOf(
+					"ProjectileThrowable" to listOf(
+						"ProjectileThrowableBreadMonster",
+						"ProjectileThrowableBrick",
+						"ProjectileRepel",
+					),
 					"ProjectileJarMilk",
+					"ProjectileJarGas",
 					"ProjectileCleaver",
 					"ProjectileSpellBats" to listOf(
 						"ProjectileSpellSpawnZombie",
@@ -678,9 +689,9 @@ object SDKNotes {
 						- Subtracts an actual value
 						- Drain still scaled over distance
 					- `mult_onhit_enemyspeed`: Float
-						- Gain speedboost on hit.
-					- `mult_onhit_enemyspeed_major`: Float
-						- Gain speedboost for N seconds.
+						- Chance (out of `1.0`) to reduce enemy's speed for 0.2 seconds. Calculation uses the distance from the target, from -60% speed when < 512 HU from the target to -0% speed at 1536 HU from the target.
+					- `mult_onhit_enemyspeed_major`: Duration
+						- Amount of time to slow the enemy's movespeed by 40%.
 					- `mad_milk_syringes`: Boolean
 						- Applies Mad Milk with a duration of 4 seconds, and each subsequent hit on the same target adds 0.5 seconds to the duration.
 					- `stun_enemies_wielding_same_weapon`: Boolean
@@ -782,8 +793,10 @@ object SDKNotes {
 					- Multiplier applied to incoming melee damage
 				- `dmg_from_ranged`: Float
 					- Multiplier applied to incoming blast, bullet, buckshot, ignite, and sonic damage
-				- `no_self_blast_dmg`: Boolean
-					- Also forces the "whistling" sound to play when rocket jumping.
+				- `no_self_blast_dmg`: Int
+					- If set to 2, do not take self-damage from any explosives.
+					- If set to 1, only don't take self-damage if the weapon dealing the damage deals "sticky jumper" damage. (`TF_DMG_CUSTOM_PRACTICE_STICKY`)
+					- If not 0, forces the "whistling" sound to play when rocket jumping.
 				- `blast_dmg_to_self`: Float
 					- Multiplier applied to blast damage taken from an explosion caused by said entity
 				- `mult_dmgtaken_from_fire_active`: Float
@@ -2119,7 +2132,7 @@ object SDKNotes {
 					- `hype_resets_on_jump`: Int
 						- The amount to be subtracted from the hype meter when the Scout double-jumps.
 					- `item_meter_charge_type`: TFMeterRechargeType
-						- If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAMEBALL
+						- If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAMEBALL (Dragon's Fury).
 					- `hype_decays_over_time`: Float
 						- How much the Scout's hype meter decays every tick
 					- `lose_hype_on_take_damage`: Int
@@ -2292,7 +2305,7 @@ object SDKNotes {
 		),
 		
 		HierarchyAttrClassScope(
-			"BaseProjectile",
+			"ProjectileBaseMisc",
 			"""
 			- `mad_milk_syringes`: Boolean
 				- If true, applies mad milk to hit target for 4 seconds, with successive hits adding 0.5 seconds to the effect time per shot.
@@ -2366,7 +2379,7 @@ object SDKNotes {
 		),
 		
 		HierarchyAttrClassScope(
-			"ProjectileStickybomb",
+			"ProjectilePipebomb",
 			"""
 			- On launcher: `stickybomb_fizzle_time`: Float
 			- On launcher: `grenade_no_bounce`: Boolean

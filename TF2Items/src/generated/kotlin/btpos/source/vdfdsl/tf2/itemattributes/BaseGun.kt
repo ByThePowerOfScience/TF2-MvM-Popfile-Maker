@@ -348,7 +348,7 @@ interface BaseGunAttributes : IBlockScoped, WeaponBaseAttributes {
 		 * 
 		 * When disguised (only checks if the player has the condition, doesn't check class), multiply damage by this amount.
 		 */
-		open val damageBonusWhileDisguised: ItemAttributeNamed<Number> = ItemAttributeNamed("damage bonus while disguised")
+		open val multDmgWhileDisguised: ItemAttributeNamed<Number> = ItemAttributeNamed("damage bonus while disguised")
 	
 		/**
 		 * In-Game: "Gains a damage bonus as rage increases, up to N%"
@@ -362,14 +362,14 @@ interface BaseGunAttributes : IBlockScoped, WeaponBaseAttributes {
 		 * 
 		 * Multiply damage by this value once for each healer you have. (with 2 healers, that's `bonus * bonus`, exponential).
 		 */
-		open val medicHealedDamageBonus: ItemAttributeNamed<Number> = ItemAttributeNamed("mod medic healed damage bonus")
+		open val multDmgPerHealer: ItemAttributeNamed<Number> = ItemAttributeNamed("mod medic healed damage bonus")
 	
 		/**
 		 * In-Game: "Accuracy scales damage"
 		 * 
 		 * If the projectile being fired is a bullet, multiply damage by your hit ratio over the past few seconds.
 		 */
-		open val accuracyScalesDamage: ItemAttributeNamed<Number> = ItemAttributeNamed("accuracy scales damage")
+		open val accuracyDamageMultiplier: ItemAttributeNamed<Number> = ItemAttributeNamed("accuracy scales damage")
 	
 		override val alien: AlienAttributes = AlienAttributes()
 	
@@ -478,7 +478,7 @@ interface BaseGunAttributes : IBlockScoped, WeaponBaseAttributes {
 			/**
 			 * By default, all guns have perfect accuracy on the first shot, unless this is set.
 			 */
-			open val multSpreadScaleFirstShot: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_spread_scale_first_shot")
+			open val multBulletSpreadFirstShot: ItemAttributeNamed<Number> = ItemAttributeNamed("mult_spread_scale_first_shot")
 	
 			/**
 			 * In-Game: "Fires a wide, fixed shot pattern"

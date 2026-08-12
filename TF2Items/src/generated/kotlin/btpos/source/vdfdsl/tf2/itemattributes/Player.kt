@@ -1033,7 +1033,7 @@ interface PlayerAttributes : IBlockScoped, BaseEntityAttributes {
 		open val rageOnAssists: ItemAttributeNamed<Number> = ItemAttributeNamed("rage on assists")
 	
 		/**
-		 * If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAMEBALL.
+		 * If `mult_item_meter_charge_rate` is set, checks this attribute to see what type of meter should be modified, and also only allows it to activate if the active weapon is not a TF_WEAPON_FLAMEBALL (Dragon's Fury).
 		 */
 		override val chargeType: ItemAttributeNamed<TFMeterRechargeType> get() = super.chargeType
 	

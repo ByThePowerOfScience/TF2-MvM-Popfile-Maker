@@ -1157,16 +1157,16 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		/**
 		 * In-Game: "On Hit: N% chance to slow target"
 		 * 
-		 * Gain speedboost on hit.
+		 * Chance (out of `1.0`) to reduce enemy's speed for 0.2 seconds. Calculation uses the distance from the target, from -60% speed when < 512 HU from the target to -0% speed at 1536 HU from the target.
 		 */
 		open val slowEnemy: ItemAttributeNamed<Number> = ItemAttributeNamed("slow enemy on hit")
 	
 		/**
 		 * In-Game: "On Hit: Slow target movement by 40% for Ns"
 		 * 
-		 * Gain speedboost for N seconds.
+		 * Amount of time to slow the enemy's movespeed by 40%.
 		 */
-		open val slowEnemyMajor: ItemAttributeNamed<Number> = ItemAttributeNamed("slow enemy on hit major")
+		open val slowEnemyMajor: ItemAttributeNamed<Duration> = ItemAttributeNamed("slow enemy on hit major")
 	
 		/**
 		 * In-Game: "Syringes deliver a highly concentrated dose of Mad Milk. Duration increases per hit to a max of 4 seconds."
@@ -1500,9 +1500,13 @@ interface WeaponBaseAttributes : IBlockScoped, BaseCombatWeaponAttributes {
 		/**
 		 * In-Game: "No self inflicted blast damage taken"
 		 * 
-		 * Also forces the "whistling" sound to play when rocket jumping.
+		 * If set to 2, do not take self-damage from any explosives.
+		 * 
+		 * If set to 1, only don't take self-damage if the weapon dealing the damage deals "sticky jumper" damage. (`TF_DMG_CUSTOM_PRACTICE_STICKY`).
+		 * 
+		 * If not 0, forces the "whistling" sound to play when rocket jumping.
 		 */
-		open val noSelfBlastDmg: ItemAttributeNamed<Boolean> = ItemAttributeNamed("no self blast dmg")
+		open val noSelfBlastDmg: ItemAttributeNamed<Int> = ItemAttributeNamed("no self blast dmg")
 	
 		/**
 		 * In-Game: "+N% damage to self"

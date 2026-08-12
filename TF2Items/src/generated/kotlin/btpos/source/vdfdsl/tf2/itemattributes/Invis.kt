@@ -355,9 +355,7 @@ interface InvisAttributes : IBlockScoped, WeaponBaseAttributes {
 	
 	open class CloakAttributes : WeaponBaseAttributes.CloakAttributes() {
 		/**
-		 * How many seconds it takes to decloak.
-		 * 
-		 * Note that values less than or equal to 0 become 1 second.
+		 * Note that values less than or equal to 0 become 1.
 		 */
 		override val multDecloakRate: ItemAttributeNamed<Number> get() = super.multDecloakRate
 	

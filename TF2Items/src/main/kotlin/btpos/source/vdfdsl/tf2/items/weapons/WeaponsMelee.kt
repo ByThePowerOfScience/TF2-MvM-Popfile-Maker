@@ -128,7 +128,7 @@ object WeaponsMelee {
 	val NESSIES_NINE_IRON = TFItemFactories.SWORD("Nessie's Nine Iron")
 	val EYELANDER_FESTIVE = TFItemFactories.SWORD("Festive Eyelander")
 	
-	val HALFZATOICHI = TFItemFactories.SWORD("The Half-Zatoichi")
+	val HALFZATOICHI = TFItemFactories.KATANA("The Half-Zatoichi")
 	
 	
 	

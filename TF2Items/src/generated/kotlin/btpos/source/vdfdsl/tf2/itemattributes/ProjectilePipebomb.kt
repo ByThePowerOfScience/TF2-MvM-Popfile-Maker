@@ -8,7 +8,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileStickybombAttributes : IBlockScoped, BaseGrenadeProjectileAttributes {
+interface ProjectilePipebombAttributes : IBlockScoped, BaseGrenadeProjectileAttributes {
 	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Stickybombs fizzle N seconds after landing"
@@ -51,14 +51,14 @@ interface ProjectileStickybombAttributes : IBlockScoped, BaseGrenadeProjectileAt
 	 * 
 	 * Checked on launcher.
 	 */
-	val stickybombFizzleTime: ItemAttributeNamed<Number> get() = ProjectileStickybombAttributes.stickybombFizzleTime
+	val stickybombFizzleTime: ItemAttributeNamed<Number> get() = ProjectilePipebombAttributes.stickybombFizzleTime
 	
 	/**
 	 * In-Game: "Grenades have very little bounce and roll"
 	 * 
 	 * Checked on launcher.
 	 */
-	val grenadeNoBounce: ItemAttributeNamed<Boolean> get() = ProjectileStickybombAttributes.grenadeNoBounce
+	val grenadeNoBounce: ItemAttributeNamed<Boolean> get() = ProjectilePipebombAttributes.grenadeNoBounce
 	
 	/**
 	 * Bonus:
@@ -69,14 +69,14 @@ interface ProjectileStickybombAttributes : IBlockScoped, BaseGrenadeProjectileAt
 	 * 
 	 * 	- In-Game: "N sec slower bomb arm time"
 	 */
-	val stickyArmTime: BonusPenalty<Number> get() = ProjectileStickybombAttributes.stickyArmTime
+	val stickyArmTime: BonusPenalty<Number> get() = ProjectilePipebombAttributes.stickyArmTime
 	
 	/**
 	 * In-Game: "N% damage on contact with surfaces"
 	 * 
 	 * Checked on launcher.
 	 */
-	val grenadeDamageReductionOnWorldContact: ItemAttributeNamed<Number> get() = ProjectileStickybombAttributes.grenadeDamageReductionOnWorldContact
+	val grenadeDamageReductionOnWorldContact: ItemAttributeNamed<Number> get() = ProjectilePipebombAttributes.grenadeDamageReductionOnWorldContact
 	
-	object Inherited : ProjectileStickybombAttributes 
+	object Inherited : ProjectilePipebombAttributes 
 }

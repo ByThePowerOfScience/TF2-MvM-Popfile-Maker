@@ -8,8 +8,8 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface BaseProjectileAttributes : IBlockScoped {
+interface ProjectileJarGasAttributes : IBlockScoped, ProjectileJarAttributes {
 	companion object : IBlockScoped 
 	
-	object Inherited : BaseProjectileAttributes 
+	object Inherited : ProjectileJarGasAttributes 
 }

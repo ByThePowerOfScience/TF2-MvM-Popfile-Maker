@@ -8,7 +8,7 @@ import btpos.source.vdfdsl.tf2.tftypes.*
 import java.util.*
 import kotlin.time.Duration
 
-interface ProjectileEnergyRingAttributes : IBlockScoped, BaseProjectileAttributes {
+interface ProjectileEnergyRingAttributes : IBlockScoped, ProjectileBaseMiscAttributes {
 	companion object : IBlockScoped {
 		/**
 		 * In-Game: "Projectile penetrates enemy targets"
