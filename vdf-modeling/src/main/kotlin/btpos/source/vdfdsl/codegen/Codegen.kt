@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.codegen
 
+import btpos.misc.kt.codegen.statements.KtComment
 import btpos.misc.kt.codegen.statements.KtAssignment
 import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.expressions.KtLambda
@@ -7,16 +8,12 @@ import btpos.misc.kt.codegen.expressions.KtLiteral
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.expressions.KtNamedFunctionCallArgument
 import btpos.misc.kt.codegen.expressions.KtString
-import btpos.misc.kt.codegen.identifiers.KtType
-import btpos.misc.kt.codegen.identifiers.toName
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.util.forEachWithIter
 import kotlin.collections.toMutableList
 import kotlin.error
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.jvm.javaConstructor
-import kotlin.reflect.jvm.javaMethod
 
 object Codegen {
 	const val CODEGEN_PROP = "vdfdsl.codegen"
@@ -36,8 +33,12 @@ object Codegen {
 		return KtLiteral(code, imports.toSet())
 	}
 	
-	fun blockComment(body: String): KtLiteral {
-		return KtLiteral("/*\n" + body + "\n*/")
+	fun blockComment(body: String): KtComment.Block {
+		return KtComment.Block(mutableListOf(body))
+	}
+	
+	fun lineComment(str: String): KtComment.Line {
+		return KtComment.Line(str)
 	}
 	
 	inline fun <reified T : Any> basicApplyFactory(): IExtensibleSubtree.Codegen.StructFactoryMethod {
