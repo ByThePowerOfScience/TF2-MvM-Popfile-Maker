@@ -3,20 +3,27 @@ package btpos.misc.kt.codegen
 import btpos.misc.kt.codegen.enums.AccessModifier
 import btpos.misc.kt.codegen.enums.Modality
 import btpos.misc.kt.codegen.identifiers.KtParameter
-import btpos.misc.kt.codegen.identifiers.KtType
+import btpos.misc.kt.codegen.types.KtType
 import btpos.misc.kt.codegen.declarations.KtClassDeclaration
 import btpos.misc.kt.codegen.declarations.KtFunctionBody
 import btpos.misc.kt.codegen.declarations.KtFunctionDeclaration
 import btpos.misc.kt.codegen.declarations.KtPropertyDeclaration
 import btpos.misc.kt.codegen.declarations.statements
+import btpos.misc.kt.codegen.types.KtClass
+import btpos.misc.kt.codegen.types.KtSimpleType
+import btpos.misc.kt.codegen.types.KtTypeParameter
+import btpos.misc.kt.codegen.enums.KtVariance
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ContextParameter
 import com.squareup.kotlinpoet.ExperimentalKotlinPoetApi
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.TypeVariableName
 
 fun Modality.toSpec(): KModifier {
 	return when (this) {
@@ -28,7 +35,7 @@ fun Modality.toSpec(): KModifier {
 
 @OptIn(ExperimentalKotlinPoetApi::class)
 fun KtPropertyDeclaration.toSpec(): PropertySpec {
-	fun makeSetterWithBody(type: ClassName, body: KtFunctionBody): FunSpec {
+	fun makeSetterWithBody(type: TypeName, body: KtFunctionBody): FunSpec {
 		return FunSpec.setterBuilder()
 			.addParameter(ParameterSpec.builder("value", type).build())
 			.apply {
@@ -136,7 +143,36 @@ fun KtParameter.toContextParameterSpec(): ContextParameter {
 	return ContextParameter(this.name, this.type.toSpec())
 }
 
-fun KtType.toSpec(): ClassName {
+fun KtType.toSpec(): TypeName {
+	when (this) {
+		is KtSimpleType -> {
+			val baseType = this.classifier.toSpec()
+			if (typeArguments.isEmpty()) {
+				return baseType.copy(isNullable)
+			}
+			
+			return baseType.parameterizedBy(
+				typeArguments.map { it.toSpec() }
+			).copy(isNullable)
+		}
+		
+		is KtTypeParameter -> {
+			val upper = this.upperBound?.toSpec()
+			val variance = this.variance.toSpec()
+			return TypeVariableName(this.name, listOfNotNull(upper), variance)
+		}
+	}
+}
+
+fun KtVariance.toSpec(): KModifier? {
+	return when (this) {
+		KtVariance.INVARIANT -> null
+		KtVariance.IN -> KModifier.IN
+		KtVariance.OUT -> KModifier.OUT
+	}
+}
+
+fun KtClass.toSpec(): ClassName {
 	return ClassName.bestGuess(this.fqName)
 }
 

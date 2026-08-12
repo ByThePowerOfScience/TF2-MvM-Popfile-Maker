@@ -2,7 +2,7 @@ package btpos.misc.kt.codegen.declarations
 
 import btpos.misc.kt.codegen.identifiers.KtParameter
 import btpos.misc.kt.codegen.KtStatement
-import btpos.misc.kt.codegen.identifiers.KtType
+import btpos.misc.kt.codegen.types.KtType
 import btpos.misc.kt.codegen.enums.AccessModifier
 import btpos.misc.kt.codegen.enums.Modality
 import kotlin.collections.joinToString

@@ -1,7 +1,7 @@
 package btpos.misc.kt.codegen.declarations
 
 import btpos.misc.kt.codegen.IKtCodeGenerator
-import btpos.misc.kt.codegen.identifiers.KtType
+import btpos.misc.kt.codegen.types.KtType
 
 
 class KtClassDeclaration(var name: String, var type: Type) : IKtCodeGenerator {
