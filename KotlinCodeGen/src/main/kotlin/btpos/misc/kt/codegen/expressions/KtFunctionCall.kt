@@ -5,7 +5,7 @@ import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.KtStatement
 import kotlin.collections.plusAssign
 
-open class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf()) : KtExpression {
+class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf()) : KtExpression {
 	override val importsNeeded: Sequence<String>
 		get() = callee.importsNeeded + args.asSequence().flatMap { it.importsNeeded }
 	

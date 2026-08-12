@@ -1,7 +1,5 @@
 package btpos.misc.kt.codegen.declarations
 
-import btpos.misc.kt.codegen.IKtCodeGenerator
-import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.identifiers.KtParameter
 import btpos.misc.kt.codegen.KtStatement
 import btpos.misc.kt.codegen.identifiers.KtType
@@ -58,32 +56,6 @@ class KtFunctionDeclaration(var name: String, var returnType: KtType = KtType.UN
 			this.contextParameters.asSequence().flatMap { it.importsNeeded },
 			this.returnType.importsNeeded,
 		).filterNotNull().flatten()
-}
-
-sealed class KtFunctionBody : IKtCodeGenerator {
-	abstract override fun toKotlinCode(): String
-	
-	class Expression(var expression: KtExpression) : KtFunctionBody() {
-		override val importsNeeded: Sequence<String>
-			get() = expression.importsNeeded
-		
-		override fun toKotlinCode(): String {
-			return "= ${expression.toKotlinCode()}"
-		}
-	}
-	
-	class Block : KtFunctionBody() {
-		override val importsNeeded: Sequence<String>
-			get() = statements.asSequence().flatMap { it.importsNeeded }
-		
-		val statements = mutableListOf<KtStatement>()
-		
-		override fun toKotlinCode(): String {
-			return " {\n\t" +
-			       statements.joinToString("\n\t") { it.toKotlinCode() } +
-			       "\n}"
-		}
-	}
 }
 
 val KtFunctionBody.statements: List<KtStatement> get() = when (this) {

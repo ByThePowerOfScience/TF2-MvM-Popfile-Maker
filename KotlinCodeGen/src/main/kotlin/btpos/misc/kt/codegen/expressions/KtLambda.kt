@@ -4,7 +4,7 @@ import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.identifiers.KtParameter
 import btpos.misc.kt.codegen.KtStatement
 
-open class KtLambda : KtExpression {
+class KtLambda : KtExpression {
 	override val importsNeeded: Sequence<String>
 		get() = sequenceOf(namedParams, lines).flatten().flatMap { it.importsNeeded }
 	
