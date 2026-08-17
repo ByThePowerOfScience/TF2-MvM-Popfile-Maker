@@ -1,13 +1,13 @@
 package btpos.misc.kt.codegen.types
 
-import btpos.misc.kt.codegen.IKtCodeGenerator
+import btpos.misc.kt.codegen.KtElement
 import btpos.misc.kt.codegen.identifiers.KtName
 import kotlin.reflect.KClass
 
 /**
  * The name of a class or interface. Not to be confused with [btpos.misc.kt.codegen.identifiers.KtName]
  */
-data class KtClass(val fqName: String): IKtCodeGenerator {
+data class KtClass(val fqName: String): KtElement {
 	override val importsNeeded: Sequence<String> get() = sequenceOf(fqName)
 	
 	val simpleName get() = fqName.substringAfterLast('.')

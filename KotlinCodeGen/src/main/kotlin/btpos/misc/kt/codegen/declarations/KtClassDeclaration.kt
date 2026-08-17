@@ -1,10 +1,10 @@
 package btpos.misc.kt.codegen.declarations
 
-import btpos.misc.kt.codegen.IKtCodeGenerator
+import btpos.misc.kt.codegen.KtElement
 import btpos.misc.kt.codegen.types.KtType
 
 
-class KtClassDeclaration(var name: String, var type: Type) : IKtCodeGenerator {
+class KtClassDeclaration(var name: String, var type: Type) : KtElement {
 	companion object {
 		inline operator fun invoke(name: String, type: Type, configure: KtClassDeclaration.() -> Unit): KtClassDeclaration {
 			return KtClassDeclaration(name, type).apply(configure)

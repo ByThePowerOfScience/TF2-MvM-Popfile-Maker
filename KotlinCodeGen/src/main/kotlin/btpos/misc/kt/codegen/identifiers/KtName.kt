@@ -1,6 +1,5 @@
 package btpos.misc.kt.codegen.identifiers
 
-import btpos.misc.kt.codegen.KtExpression
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -14,8 +13,11 @@ import kotlin.reflect.jvm.javaMethod
 /**
  * The [name] of a callable.  May or may not be namespaced with [qualifier].
  */
-data class KtName(val name: String, val qualifier: String? = null) : KtExpression {
+data class KtName(val name: String, val qualifier: String? = null) : KtCallable {
 	val sanitizedName = if (name in reservedWords || name.contains(re_notWord)) "`$name`" else name
+	
+	override val callableName: KtName
+		get() = this
 	
 	override val importsNeeded: Sequence<String>
 		get() = qualifier?.let { sequenceOf(it + "." + sanitizedName) }.orEmpty()

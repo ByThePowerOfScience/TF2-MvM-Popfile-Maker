@@ -1,25 +1,27 @@
 package btpos.misc.kt.codegen.expressions
 
 import btpos.misc.kt.codegen.KtExpression
-import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.KtStatement
+import btpos.misc.kt.codegen.identifiers.KtCallable
+import btpos.misc.kt.codegen.identifiers.KtMemberReference
+import btpos.misc.kt.codegen.identifiers.StandardNames
 import kotlin.collections.plusAssign
 
-class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf()) : KtExpression {
+class KtFunctionCall(var callee: KtCallable, val args: MutableList<KtExpression> = mutableListOf()) : KtExpression {
+	constructor(callee: KtCallable, args: Iterable<KtExpression>) : this(callee, args.toMutableList())
+	
 	override val importsNeeded: Sequence<String>
 		get() = callee.importsNeeded + args.asSequence().flatMap { it.importsNeeded }
 	
 	var receiver: KtExpression? = null
 	
-	val args: MutableList<KtExpression> = args.toMutableList()
-	
 	override fun toKotlinCode(): String {
-		val operator = if (callee.name == "invoke" && receiver != null) {
-			receiver!!.toKotlinCode()
-		} else {
-			receiver?.let { "${it.toKotlinCode()}." }.orEmpty() + callee.toKotlinCode()
-		}
-		
+//		val operator = if (callee.target.name == "invoke" && callee.receiver != null) {
+//			callee.receiver!!.toKotlinCode()
+//		} else {
+//			callee.receiver?.let { "${it.toKotlinCode()}." }.orEmpty() + callee.toKotlinCode()
+//		}
+//
 		val operand = when {
 			args.size == 1 && args[0] is KtLambda -> " " + args[0].toKotlinCode()
 			args.isNotEmpty() && args.last() is KtLambda -> "(${
@@ -28,7 +30,7 @@ class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf()) : 
 			else -> "(${args.joinToString(", ") { it.toKotlinCode() }})"
 		}
 		
-		return operator + operand
+		return callee.toKotlinCode() + operand
 	}
 	
 	companion object {
@@ -36,9 +38,8 @@ class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf()) : 
 		 * Create `<FunctionCall>.apply { ...body }`
 		 */
 		fun createApply(call: KtFunctionCall, lambdaBody: List<KtStatement>): KtFunctionCall {
-			return KtFunctionCall(KtName("apply")).apply {
-				receiver = call
-				
+			return KtFunctionCall(KtMemberReference(StandardNames.FUNC_APPLY, isExtension = true)).apply {
+				this.receiver = call
 				this.args += KtLambda().apply {
 					lines += lambdaBody
 				}
@@ -48,11 +49,5 @@ class KtFunctionCall(var callee: KtName, args: List<KtExpression> = listOf()) : 
 		fun KtFunctionCall.thenApply(lambdaBody: List<KtStatement>): KtFunctionCall {
 			return createApply(this, lambdaBody)
 		}
-	}
-}
-
-open class KtNamedFunctionCallArgument(val name: String, val value: KtExpression) : KtExpression {
-	override fun toKotlinCode(): String {
-		return "$name = ${value.toKotlinCode()}"
 	}
 }

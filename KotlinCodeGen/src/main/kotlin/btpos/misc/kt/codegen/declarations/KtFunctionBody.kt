@@ -1,10 +1,10 @@
 package btpos.misc.kt.codegen.declarations
 
-import btpos.misc.kt.codegen.IKtCodeGenerator
+import btpos.misc.kt.codegen.KtElement
 import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.KtStatement
 
-sealed class KtFunctionBody : IKtCodeGenerator {
+sealed class KtFunctionBody : KtElement {
 	abstract override fun toKotlinCode(): String
 	
 	class Expression(var expression: KtExpression) : KtFunctionBody() {

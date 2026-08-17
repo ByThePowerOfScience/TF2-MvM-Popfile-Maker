@@ -1,10 +1,11 @@
 package btpos.misc.kt.codegen.statements
 
 import btpos.misc.kt.codegen.KtExpression
-import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.KtStatement
+import btpos.misc.kt.codegen.expressions.KtGetValueExpression
+import btpos.misc.kt.codegen.identifiers.KtMemberReference
 
-class KtAssignment(val lhs: KtName, val rhs: KtExpression, val operator: String = "=") : KtStatement {
+data class KtAssignment(val lhs: KtGetValueExpression, val rhs: KtExpression, val operator: String = "=") : KtStatement {
 	override val importsNeeded: Sequence<String>
 		get() = sequenceOf(lhs, rhs).flatMap { it.importsNeeded }
 	

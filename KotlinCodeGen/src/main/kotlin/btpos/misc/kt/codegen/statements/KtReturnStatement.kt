@@ -11,6 +11,6 @@ class KtReturnStatement(var expr: KtExpression) : KtStatement {
 		get() = expr.importsNeeded
 	
 	override fun toKotlinCode(): String {
-		return "return${returnTarget?.let { "@${it.callee.name}" }.orEmpty()} ${expr.toKotlinCode()}"
+		return "return${returnTarget?.let { "@${it.callee.toKotlinCode()}" }.orEmpty()} ${expr.toKotlinCode()}"
 	}
 }
