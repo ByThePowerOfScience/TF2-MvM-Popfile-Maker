@@ -21,12 +21,8 @@ class MobSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 	override fun copy() = MobSpawner(copyInternal())
 	
 	companion object {
-		init {
-			if (Codegen.IS_DOING_CODEGEN) {
-				IExtensibleSubtree.Codegen._registerStructFactory<MobSpawner> { Codegen.basicApplyFactory<MobSpawner>() }
-			}
-		}
 		
-		val CODEGEN = IExtensibleSubtree.Codegen.forType<MobSpawner>()
+		
+		val CODEGEN = IExtensibleSubtree.Codegen._registerCodegen<MobSpawner> { Codegen.basicApplyFactory<MobSpawner>() }
 	}
 }

@@ -24,7 +24,7 @@ inline fun <T, C : Collection<T>> C.ifNotEmpty(action: (C) -> Unit): C {
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun <T, C : Collection<T>> C?.ifNullOrEmpty(action: () -> C): C {
+inline fun <T, C : Collection<T>> C?.ifNullOrEmpty(action: () -> C?): C? {
 	contract {
 		callsInPlace(action, InvocationKind.AT_MOST_ONCE)
 	}
@@ -32,4 +32,9 @@ inline fun <T, C : Collection<T>> C?.ifNullOrEmpty(action: () -> C): C {
 		return action()
 	
 	return this;
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T> ArrayList<T>.compacted(): ArrayList<T> = apply {
+	trimToSize()
 }

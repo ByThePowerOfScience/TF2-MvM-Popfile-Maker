@@ -18,6 +18,8 @@ sealed class VDFObject {
 	abstract fun <DATA, RET> accept(visitor: VDFVisitor<DATA, RET>, data: DATA): RET
 	
 	abstract fun <DATA> acceptChildren(visitor: VDFVisitor<DATA, *>, data: DATA)
+	
+	abstract fun deepCopy(parent: VDFSubtree? = null): VDFObject
 }
 
 val VDFObject.asSubtree get() = this as? VDFSubtree

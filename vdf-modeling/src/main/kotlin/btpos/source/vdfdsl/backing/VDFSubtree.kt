@@ -51,30 +51,47 @@ open class VDFSubtree(val parent: VDFSubtree?, val entries: MutableList<VDFKeyVa
 		}
 	}
 	
+	override fun deepCopy(parent: VDFSubtree?) = VDFSubtree(parent, ArrayList(this.entries.size)).also { newSubtree ->
+		for (entry in this.entries) {
+			newSubtree.entries += entry.deepCopy(newSubtree)
+		}
+	}
+	
 	override fun toString(): String {
 		return "VDFSubtree[entries=$entries]"
 	}
 }
 
-operator fun VDFSubtree.get(index: String) = getSingle(index)
+operator fun VDFSubtree.get(index: String) = get(VDFPrimitive.notInterned(index))
 
-fun VDFSubtree.getSingle(index: String): VDFObject? {
-	return this.entries.filter { it.key.stringValue == index }.ifEmpty {
+operator fun VDFSubtree.get(index: VDFPrimitive) = getSingle(index)
+
+
+fun VDFSubtree.getSingle(index: String) = getSingle(VDFPrimitive.notInterned(index))
+fun VDFSubtree.getSingle(index: VDFPrimitive): VDFObject? {
+	return this.entries.filter { it.key == index }.ifEmpty {
 		return null;
 	}.single().value
 }
 
-fun VDFSubtree.getAll(index: String): List<VDFObject> {
-	return this.entries.asSequence().filter { it.key.stringValue == index }.map { it.value }.toList()
+fun VDFSubtree.getAll(index: String) = getAll(VDFPrimitive.notInterned(index))
+fun VDFSubtree.getAll(index: VDFPrimitive): List<VDFObject> {
+	return this.entries.asSequence().filter { it.key == index }.map { it.value }.toList()
 }
 
-fun VDFSubtree.getSubtree(index: String): VDFSubtree? {
+fun VDFSubtree.getSubtree(index: String) = getSubtree(VDFPrimitive.notInterned(index))
+fun VDFSubtree.getSubtree(index: VDFPrimitive): VDFSubtree? {
 	return this.getSingle(index) as? VDFSubtree
 }
 
-fun VDFSubtree.getString(index: String): String? {
-	return (this.getSingle(index) as? VDFPrimitive)?.stringValue
+fun VDFSubtree.getPrimitive(index: String) = getPrimitive(VDFPrimitive.notInterned(index))
+fun VDFSubtree.getPrimitive(index: VDFPrimitive): VDFPrimitive? {
+	return (this.getSingle(index) as? VDFPrimitive)
 }
+
+fun VDFSubtree.getString(index: String) = getString(VDFPrimitive.notInterned(index))
+fun VDFSubtree.getString(index: VDFPrimitive) = getPrimitive(index)?.stringValue
+
 
 fun VDFSubtree.toMap(): Map<String, VDFObject> {
 	val map = this.associate { it.key.stringValue to it.value }
@@ -97,15 +114,4 @@ fun VDFSubtree.getRoot(): VDFSubtree {
 		curr = curr.parent
 	}
 	return curr;
-}
-
-/**
- * Creates a new subtree inside [this] with the specified [key] and [conditional], and returns it for modification.
- *
- * Does not check if the key already exists in this.
- */
-fun VDFSubtree.addSubtree(key: VDFPrimitive, conditional: String? = null): VDFSubtree {
-	return VDFSubtree(parent=this).also { newSubtree ->
-		this += VDFKeyValue(key, newSubtree, conditional)
-	}
 }

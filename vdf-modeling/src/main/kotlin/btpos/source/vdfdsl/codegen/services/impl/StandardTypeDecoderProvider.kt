@@ -1,20 +1,20 @@
 package btpos.source.vdfdsl.codegen.services.impl
 
-import btpos.source.vdfdsl.codegen.Decoder
+import btpos.source.vdfdsl.codegen.SelfNamedDecoder
 import btpos.source.vdfdsl.codegen.Decoders.DURATION
 import btpos.source.vdfdsl.codegen.Decoders.INT
 import btpos.source.vdfdsl.codegen.Decoders.NUMBER
 import btpos.source.vdfdsl.codegen.StringDecoder
 import btpos.source.vdfdsl.codegen.StructSubclassNavigator
 import btpos.misc.kt.codegen.KtExpression
+import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
 import kotlin.collections.set
 import kotlin.reflect.KClass
 import kotlin.time.Duration
 
 class StandardTypeDecoderProvider : TypeDecoderProvider {
-	override val typeDecoders: Map<KClass<*>, Decoder<KtExpression>>
-		get() = buildMap {
+	override val valueDecoders: Map<KClass<*>, ValueDecoder<KtExpression>> = buildMap {
 			setOf(
 				Integer.TYPE.kotlin, Integer::class,
 				java.lang.Long.TYPE.kotlin, java.lang.Long::class
@@ -46,5 +46,4 @@ class StandardTypeDecoderProvider : TypeDecoderProvider {
 			this[String::class] = StringDecoder.IDENTITY
 		}
 	
-	override val subtypeNavigation: Map<KClass<*>, StructSubclassNavigator> get() = mapOf()
 }

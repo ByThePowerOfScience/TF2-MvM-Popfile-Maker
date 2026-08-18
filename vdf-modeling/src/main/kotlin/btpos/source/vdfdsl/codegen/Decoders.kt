@@ -1,6 +1,5 @@
 package btpos.source.vdfdsl.codegen
 
-import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.misc.kt.codegen.KtExpression
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
 import java.util.ServiceLoader
@@ -27,35 +26,23 @@ object Decoders {
 	
 	private val services = ServiceLoader.load(TypeDecoderProvider::class.java)
 	
-	private class CompositeTypeNavigator(
-		val subclassNav: StructSubclassNavigator,
-		val ownFields: Decoder<KtExpression>?
-	) : Decoder<KtExpression> {
-		override fun decode(keyvalue: VDFKeyValue): List<KtExpression> {
-			return subclassNav.decode(keyvalue).ifEmpty {
-				ownFields?.decode(keyvalue).orEmpty()
-			}
-		}
+	/**
+	 * Return a decoder suitable for evaluating an already-identified type.
+	 */
+	fun getValueDecoder(type: KClass<*>): ValueDecoder<KtExpression>? {
+		return services.firstNotNullOfOrNull { it.valueDecoders[type] }
 	}
 	
-	private fun getTypeDecoder(type: KClass<*>): Decoder<KtExpression>? {
-		return services.firstNotNullOfOrNull { it.typeDecoders[type] }
+	/**
+	 * Return a decoder suitable for evaluating instances of this self-named type
+	 */
+	fun getDecoder(type: KClass<*>): SelfNamedDecoder<KtExpression>? {
+		return services.firstNotNullOfOrNull { it.selfNamedDecoders[type] }
 	}
 	
-	fun forType(type: KClass<*>): Decoder<KtExpression> {
-		val subclassNav = services.firstNotNullOfOrNull {
-			it.subtypeNavigation[type]
-		}
-		
-		val type = getTypeDecoder(type)
-		
-		if (subclassNav != null) {
-			return CompositeTypeNavigator(
-				subclassNav,
-				type
-			)
-		}
-		
-		return type ?: error("No decoder(s) defined for '$type'.")
+	
+	fun getDecoderOrThrow(type: KClass<*>): SelfNamedDecoder<KtExpression> {
+		return getDecoder(type)
+		       ?: error("No decoder(s) defined for '${type}'.")
 	}
 }

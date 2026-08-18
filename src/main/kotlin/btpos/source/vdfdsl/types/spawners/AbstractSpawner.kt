@@ -13,7 +13,9 @@ import btpos.source.vdfdsl.tf2.PopFileDSL
 @PopFileDSL
 abstract class AbstractSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
 	companion object {
-		val NAV = CodegenProvider {
+		val CODEGEN = IExtensibleSubtree.Codegen.forType<AbstractSpawner>()
+		
+		val CODEGEN_NAV = CodegenProvider {
 			StructSubclassNavigator(
 				"Mob" to MobSpawner.CODEGEN,
 				"RandomChoice" to RandomChoiceSpawner.CODEGEN,
@@ -23,8 +25,6 @@ abstract class AbstractSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = E
 				"TFBot" to TFBotSpawner.CODEGEN
 			)
 		}
-		
-		val CODEGEN = IExtensibleSubtree.Codegen.forType<AbstractSpawner>()
 	}
 	
 	abstract override fun copy(): AbstractSpawner

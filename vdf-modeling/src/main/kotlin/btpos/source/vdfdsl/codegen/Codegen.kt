@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.codegen
 
+import btpos.misc.kt.codegen.identifiers.KtMemberReference
 import btpos.misc.kt.codegen.statements.KtComment
 import btpos.misc.kt.codegen.statements.KtAssignment
 import btpos.misc.kt.codegen.expressions.KtFunctionCall
@@ -67,7 +68,7 @@ object Codegen {
 		if (!IS_DOING_CODEGEN)
 			return { TODO("Error message for trying to make a block scope when codegen mode is disabled") }
 		
-		val funcName = KtName(function)
+		val funcName = KtMemberReference(function)
 		
 		if (fieldsToArgNames.isEmpty()) {
 			return {
@@ -83,7 +84,7 @@ object Codegen {
 				if (assignment !is KtAssignment)
 					return@forEachWithIter;
 				
-				fieldsToArgNames[assignment.lhs.name]?.let {
+				fieldsToArgNames[assignment.lhs.callee.callableName.name]?.let {
 					namedArguments += KtNamedFunctionCallArgument(it, assignment.rhs)
 					remove()
 				}
@@ -102,7 +103,7 @@ object Codegen {
  *
  * Everything should stay hidden in a function that hopefully gets elided by the JIT since [Codegen.IS_DOING_CODEGEN] will never change.
  */
-class CodegenProvider<out D : Decoder<*>> private constructor(private val getCodegen: () -> D) {
+class CodegenProvider<out D : Any> private constructor(private val getCodegen: () -> D) {
 	private var codegen: D? = null
 	
 	private val toApply = ArrayList<(D) -> Unit>(0)
@@ -142,7 +143,7 @@ class CodegenProvider<out D : Decoder<*>> private constructor(private val getCod
 	}
 	
 	companion object {
-	    operator fun <D : Decoder<*>> invoke(getCodegen: () -> D): CodegenProvider<D> {
+	    operator fun <D : Any> invoke(getCodegen: () -> D): CodegenProvider<D> {
 	        if (!Codegen.IS_DOING_CODEGEN)
 				return errorInstance()
 		    
@@ -150,12 +151,18 @@ class CodegenProvider<out D : Decoder<*>> private constructor(private val getCod
 	    }
 		
 		@Suppress("UNCHECKED_CAST")
-		fun <D : Decoder<*>> errorInstance(): CodegenProvider<D> = ERROR_INSTANCE as CodegenProvider<D>
+		fun <D : Any> errorInstance(): CodegenProvider<D> = ERROR_INSTANCE as CodegenProvider<D>
 		
-		private val ERROR_INSTANCE = CodegenProvider<Decoder<*>> {
+		private val ERROR_INSTANCE = CodegenProvider<SelfNamedDecoder<*>> {
 			error(ERROR_MESSAGE)
 		}
 		
 		const val ERROR_MESSAGE = "Attempted to run code generation when not in codegen mode.  Rerun the program with the JVM argument \"-D${Codegen.CODEGEN_PROP}=true\"."
+	}
+}
+
+inline fun <D : Any, U : Any> CodegenProvider<D>.map(crossinline mapper: (D) -> U): CodegenProvider<U> {
+	return CodegenProvider {
+		mapper(this.get())
 	}
 }

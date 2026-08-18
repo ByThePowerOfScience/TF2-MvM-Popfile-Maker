@@ -19,12 +19,8 @@ class RandomChoiceSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extens
 	}
 	
 	companion object {
-		init {
-			if (Codegen.IS_DOING_CODEGEN) {
-				IExtensibleSubtree.Codegen._registerStructFactory<RandomChoiceSpawner>(factoryMethod = { Codegen.basicBlockScope(Spawners::RandomChoice) })
-			}
-		}
 		
-		val CODEGEN = IExtensibleSubtree.Codegen.forType<RandomChoiceSpawner>()
+		
+		val CODEGEN = IExtensibleSubtree.Codegen._registerCodegen<RandomChoiceSpawner>(factoryMethod = { Codegen.basicBlockScope(Spawners::RandomChoice) })
 	}
 }

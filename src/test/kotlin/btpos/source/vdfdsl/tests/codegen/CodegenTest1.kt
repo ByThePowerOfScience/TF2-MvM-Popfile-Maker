@@ -23,7 +23,7 @@ class CodegenTest1 {
 			}._serializeInto(it)
 		}
 		
-		val toCode = Decoders.forType(AbstractSpawner::class).decode(spawner.first())
+		val toCode = Decoders.getDecoder(AbstractSpawner::class)?.decode(spawner)
 //		assertEquals(
 //			KtFunctionCall(
 //				KtName(Spawners::TFBot),
@@ -34,7 +34,7 @@ class CodegenTest1 {
 //			toCode.first())
 		
 		
-		println(AbstractSpawner.NAV.get().decode(spawner.first()).forEach {
+		println(AbstractSpawner.CODEGEN_NAV.get().decode(spawner.first()).forEach {
 			println(it.toKotlinCode())
 		})
 	}

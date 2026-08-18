@@ -56,17 +56,34 @@
                   <project path="$PROJECT_DIR$/build-logic" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/KotlinCodeGen" name="KotlinCodeGen">
+                <projects>
+                  <project path="$PROJECT_DIR$/KotlinCodeGen" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/vdf-modeling" name="vdf-modeling">
+                <projects>
+                  <project path="$PROJECT_DIR$/vdf-modeling" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/vdf-parser" name="vdf-parser">
+                <projects>
+                  <project path="$PROJECT_DIR$/vdf-parser" />
+                </projects>
+              </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/KotlinCodeGen" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/TF2ItemGeneration" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/KotlinCodeGen" />
+            <option value="$PROJECT_DIR$/TF2ItemGeneration" />
             <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/vdf-modeling" />
+            <option value="$PROJECT_DIR$/vdf-parser" />
           </set>
         </option>
-        <option name="myGradleHome" value="" />
       </GradleProjectSettings>
     </option>
   </component>

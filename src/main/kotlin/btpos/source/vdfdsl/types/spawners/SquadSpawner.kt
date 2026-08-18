@@ -51,10 +51,6 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	}
 	
 	companion object {
-		init {
-			IExtensibleSubtree.Codegen._registerStructFactory<SquadSpawner> { Codegen.basicBlockScope(Spawners::Squad) }
-		}
-		
-		val CODEGEN = IExtensibleSubtree.Codegen.forType<SquadSpawner>()
+		val CODEGEN = IExtensibleSubtree.Codegen._registerCodegen<SquadSpawner> { Codegen.basicBlockScope(Spawners::Squad) }
 	}
 }

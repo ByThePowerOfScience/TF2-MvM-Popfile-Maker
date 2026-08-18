@@ -52,4 +52,8 @@ class ClassHierarchyGraph() {
 	fun getParentsRecursive(cls: KClass<*>): Sequence<KClass<*>> {
 		return getOrCreateNode(cls).getAllParents()
 	}
+	
+	fun getChildren(cls: KClass<*>): Sequence<KClass<*>> {
+		return getOrCreateNode(cls).children.asSequence().map { it.value }
+	}
 }

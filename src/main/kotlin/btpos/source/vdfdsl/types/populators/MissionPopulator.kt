@@ -3,7 +3,7 @@ package btpos.source.vdfdsl.types.populators
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.CodegenProvider
-import btpos.source.vdfdsl.codegen.MultiDecoder
+import btpos.source.vdfdsl.codegen.ValueDecoderMulti
 import btpos.source.vdfdsl.codegen.StringDecoderMap
 import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.identifiers.KtName
@@ -70,7 +70,7 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	
 	companion object {
 		init {
-			IExtensibleSubtree.Codegen._registerStructFactory<MissionPopulator>(
+			IExtensibleSubtree.Codegen._registerCodegen<MissionPopulator>(
 				customFieldDecoders = {
 					mapOf(
 						"Where" to Where.CODEGEN,
@@ -107,7 +107,7 @@ open class Objective(val item: String) : IVDFRepresentableValue_Trivial {
 		
 		
 		
-		val CODEGEN: CodegenProvider<MultiDecoder<KtExpression>> = CodegenProvider {
+		val CODEGEN: CodegenProvider<ValueDecoderMulti<KtExpression>> = CodegenProvider {
 			StringDecoderMap (
 				listOf(
 					Objective::DestroySentries,

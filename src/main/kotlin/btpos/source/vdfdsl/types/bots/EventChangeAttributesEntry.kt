@@ -1,9 +1,9 @@
 package btpos.source.vdfdsl.types.bots
 
-import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtName
+import btpos.misc.kt.codegen.identifiers.StandardNames
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
@@ -43,7 +43,7 @@ open class EventChangeAttributesEntry(
 		
 		
 		init {
-			IExtensibleSubtree.Codegen._registerStructFactory<EventChangeAttributesEntry> { Codegen.basicBlockScope(::invoke) }
+			IExtensibleSubtree.Codegen._registerCodegen<EventChangeAttributesEntry> { Codegen.basicBlockScope(::invoke) }
 		}
 		
 		val CODEGEN = IExtensibleSubtree.Codegen.forType<EventChangeAttributesEntry>()
@@ -99,12 +99,12 @@ open class EventChangeAttributes(private val eventListeners: MutableMap<String, 
 		
 		
 		val CODEGEN = CodegenProvider {
-			ValueDecoder<KtExpression> { obj ->
-				fun VDFKeyValue.toStringInvoke(): KtFunctionCall {
+			ValueDecoder { obj, parent ->
+				fun VDFKeyValue.toStringInvoke(subtree: VDFSubtree): KtFunctionCall {
 					// will be a block scope with "EventChangeAttributes.Companion" as the receiver and the lambda with the assignments as the arg.
 					// Just need to change the receiver to a string and keep the lambda the same
-					val eventChangeBlock = EventChangeAttributesEntry.CODEGEN.get().decode(this).single()
-					eventChangeBlock.callee = KtName("invoke")
+					val eventChangeBlock = EventChangeAttributesEntry.CODEGEN.get().decode(this, subtree) ?: error("Failed to parse event change attributes")
+					eventChangeBlock.callee = StandardNames.INVOKE
 					eventChangeBlock.receiver = Codegen.string(key.stringValue)
 					
 					return eventChangeBlock
@@ -114,7 +114,7 @@ open class EventChangeAttributes(private val eventListeners: MutableMap<String, 
 				
 				val body = KtLambda()
 				subtree.mapTo(body.lines) {
-					it.toStringInvoke()
+					it.toStringInvoke(subtree)
 				}
 				
 				listOf(KtFunctionCall(KtName("invoke", EventChangeAttributes::class), listOf(body)))

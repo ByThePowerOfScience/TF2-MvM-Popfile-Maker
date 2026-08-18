@@ -1,8 +1,8 @@
-@file:Suppress("UNUSED")
 package btpos.source.vdfdsl.types.spawners
 
-import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.codegen.Codegen
+import btpos.source.vdfdsl.codegen.keyed
+import btpos.source.vdfdsl.codegen.map
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
@@ -17,7 +17,6 @@ import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.types.bots.BehaviorModifiers
 import btpos.source.vdfdsl.types.bots.BotSkill
-import btpos.source.vdfdsl.types.bots.EventChangeAttributesEntry
 import btpos.source.vdfdsl.types.bots.EventChangeAttributes
 import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
@@ -116,16 +115,15 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 			return newSpawner
 		}
 		
-		init {
-			IExtensibleSubtree.Codegen._registerStructFactory<TFBotSpawner> {
-				Codegen.basicBlockScope(Spawners::TFBot, mapOf(
-					TFBotSpawner::name.name to "name",
-					TFBotSpawner::template.name to "template",
-				))
-			}
+		
+		val CODEGEN = IExtensibleSubtree.Codegen._registerCodegen<TFBotSpawner> {
+			Codegen.basicBlockScope(Spawners::TFBot, mapOf(
+				TFBotSpawner::name.name to "name",
+				TFBotSpawner::template.name to "template",
+			))
 		}
 		
-		val CODEGEN = IExtensibleSubtree.Codegen.forType<TFBotSpawner>()
+		val CODEGEN_SELF = CODEGEN.map { it.keyed("TFBot") }
 	}
 }
 

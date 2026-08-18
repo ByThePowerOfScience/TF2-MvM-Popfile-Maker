@@ -45,6 +45,7 @@ data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject, val conditio
 		this.value.accept(visitor, data)
 	}
 	
+	override fun deepCopy(parent: VDFSubtree?) = VDFKeyValue(key.deepCopy(parent), value.deepCopy(parent), conditional)
 	
 	companion object {
 		/**

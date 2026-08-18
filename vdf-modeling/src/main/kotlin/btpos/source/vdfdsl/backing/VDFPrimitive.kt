@@ -21,6 +21,7 @@ class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), I
 	
 	override fun <DATA> acceptChildren(visitor: VDFVisitor<DATA, *>, data: DATA) {}
 	
+	override fun deepCopy(parent: VDFSubtree?) = this
 	
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
