@@ -2,6 +2,7 @@ package btpos.misc.kt.codegen.identifiers
 
 import btpos.misc.kt.codegen.util.ReflectionUtils.fqName
 import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty
 import kotlin.reflect.full.extensionReceiverParameter
 
 // TODO what is the point of this?
@@ -12,6 +13,8 @@ data class KtMemberReference(
 	val isExtension: Boolean = false
 ) : KtCallable {
 	constructor(ref: KFunction<*>) : this(ref.fqName, ref.extensionReceiverParameter != null)
+	
+	constructor(prop: KProperty<*>) : this(prop.fqName, prop.extensionReceiverParameter != null)
 	
 	override val importsNeeded: Sequence<String>
 		get() = if (isExtension) target.importsNeeded else emptySequence()
