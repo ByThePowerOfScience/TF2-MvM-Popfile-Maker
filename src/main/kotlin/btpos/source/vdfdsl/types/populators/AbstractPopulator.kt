@@ -4,6 +4,7 @@ import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.StructSubclassNavigator
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamed
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
@@ -36,7 +37,10 @@ abstract class AbstractPopulator(_subtree: IExtensibleSubtree_VDFRepresentable =
 		val NAV = CodegenProvider {
 			StructSubclassNavigator(
 				"Mission" to MissionPopulator.CODEGEN,
-				
+				"PeriodicSpawn" to PeriodicSpawnPopulator.CODEGEN,
+				"RandomPlacement" to RandomPlacementPopulator.CODEGEN,
+				"Wave" to WavePopulator.CODEGEN,
+				"WaveSpawn" to WaveSpawnPopulator.CODEGEN
 			)
 		}
 	}

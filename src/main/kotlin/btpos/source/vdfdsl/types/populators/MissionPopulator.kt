@@ -69,27 +69,23 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	var desiredCount: Number? by addField("DesiredCount")
 	
 	companion object {
-		init {
-			IExtensibleSubtree.Codegen._registerCodegen<MissionPopulator>(
-				customFieldDecoders = {
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<MissionPopulator>(
+			customFieldDecoders = {
+				mapOf(
+					"Where" to Where.CODEGEN,
+					"Objective" to Objective.CODEGEN
+				)
+			},
+			factoryMethod = {
+				Codegen.basicBlockScope(
+					Populators::Mission,
 					mapOf(
-						"Where" to Where.CODEGEN,
-						"Objective" to Objective.CODEGEN
+						MissionPopulator::beginAtWave.name to "waveNumber",
+						MissionPopulator::runForThisManyWaves.name to "runForWaves"
 					)
-				},
-				factoryMethod = {
-					Codegen.basicBlockScope(
-						Populators::Mission,
-						mapOf(
-							MissionPopulator::beginAtWave.name to "waveNumber",
-							MissionPopulator::runForThisManyWaves.name to "runForWaves"
-						)
-					)
-				}
-			)
-		}
-		
-		val CODEGEN = IExtensibleSubtree.Codegen.forType<MissionPopulator>()
+				)
+			}
+		)
 	}
 }
 

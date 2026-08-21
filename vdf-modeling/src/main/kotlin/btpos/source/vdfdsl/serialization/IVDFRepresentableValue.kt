@@ -53,6 +53,8 @@ fun interface IVDFRepresentableValue : IVDFRepresentable {
 			}
 		}
 		
+		fun serializeDynamic(value: Any): IVDFRepresentableValue = IVDFRepresentableValue { key, cond -> serializeDynamic(key, value, cond) }
+		
 		fun isValueRepresentable(cls: Class<*>): Boolean {
 			return IVDFRepresentableValue::class.java.isAssignableFrom(cls)
 			       || VDFPrimitive.isPrimitive(cls)

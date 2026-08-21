@@ -1,6 +1,8 @@
 package btpos.source.vdfdsl.types.populators
 
+import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.types.PopulationManager
@@ -18,6 +20,11 @@ class RandomPlacementPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = E
 	var minimumSeparation: Int? by addField("MinimumSeparation")
 	
 	var navAreaFilter: NavArea? by addField("NavAreaFilter")
+	
+	
+	companion object {
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<RandomPlacementPopulator> { Codegen.basicBlockScope(Populators::RandomPlacement) }
+	}
 }
 
 

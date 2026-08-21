@@ -59,6 +59,15 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	
 	var isEndless: Boolean? by addField("IsEndless")
 	
+	
+	companion object {
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<PopulationManager> {
+			val x: (PopulationManager.() -> Unit) -> PopulationManager = ::WaveSchedule
+			Codegen.basicBlockScope(x as KFunction<*>)
+		}
+		
+		val CODEGEN_TYPE = CODEGEN.map { it.keyed("WaveSchedule") }
+	}
 }
 
 typealias WaveSchedule = PopulationManager

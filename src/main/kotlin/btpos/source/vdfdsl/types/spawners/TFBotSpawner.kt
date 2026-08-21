@@ -116,7 +116,7 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 		}
 		
 		
-		val CODEGEN = IExtensibleSubtree.Codegen._registerCodegen<TFBotSpawner> {
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<TFBotSpawner> {
 			Codegen.basicBlockScope(Spawners::TFBot, mapOf(
 				TFBotSpawner::name.name to "name",
 				TFBotSpawner::template.name to "template",

@@ -4,12 +4,13 @@ import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
+import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 
 private const val INT_BITMASK: Long = (1L shl 33) - 1L
 
-open class ItemAttributeLong(
-	protected val lowBits: ItemAttribute<Int>,
-	protected val highBits: ItemAttribute<Int>
+data class ItemAttributeLong(
+	val lowBits: ItemAttributeNamed<Int>,
+	val highBits: ItemAttributeNamed<Int>
 ) : ItemAttribute<Long> {
 	
 	

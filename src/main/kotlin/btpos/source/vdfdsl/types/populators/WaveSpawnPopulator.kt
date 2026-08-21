@@ -1,7 +1,10 @@
 package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.codegen.Codegen
+import btpos.source.vdfdsl.codegen.ConstantsDecoder
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.notNull
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
@@ -12,27 +15,6 @@ import btpos.source.vdfdsl.types.specifics.OutputAction
 class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
 	override val _structIdentifier: String
 		get() = "WaveSpawn"
-	
-	open class Support(val name: String) : IVDFRepresentableValue_Trivial {
-		override val _vdfRepr = VDFPrimitive(name)
-		
-		companion object {
-			/**
-			 * When set, enables support bots, respecting the maximum number of bots set by [WaveSpawner.totalCount][totalCount].
-			 */
-			@JvmField val LIMITED = Support("Limited")
-			
-			/**
-			 * When set, enables support bots, **ignoring** the maximum number of bots set by [WaveSpawner.totalCount][totalCount].
-			 */
-			@JvmField val IGNORED = Support("Ignored")
-			
-			/**
-			 * When set, this WaveSpawn defines support bots that will continue spawning throughout the wave.
-			 */
-			@JvmField val INFINITE = Support("1")
-		}
-	}
 	
 	override fun copy() = WaveSpawnPopulator(this.copyInternal())
 	
@@ -95,10 +77,39 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	var waitForAllDead: WaveSpawnPopulator? by addField("WaitForAllDead", serializer = notNull(WaveSpawnPopulator::name))
 	
 	var randomSpawn: Boolean? by addField("RandomSpawn")
+	
 	/**
 	 * { enables support; "Limited" => TotalCount enforced, else => TotalCount ignored }
 	 */
 	var support: Support? by addField("Support")
+	
+	
+	companion object {
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<WaveSpawnPopulator> { Codegen.basicBlockScope(::WaveSpawn, mapOf(WaveSpawnPopulator::name.name to "name")) }
+	}
+	
+	open class Support(val name: String) : IVDFRepresentableValue_Trivial {
+		override val _vdfRepr = VDFPrimitive(name)
+		
+		companion object {
+			/**
+			 * When set, enables support bots, respecting the maximum number of bots set by [WaveSpawner.totalCount][totalCount].
+			 */
+			@JvmField val LIMITED = Support("Limited")
+			
+			/**
+			 * When set, enables support bots, **ignoring** the maximum number of bots set by [WaveSpawner.totalCount][totalCount].
+			 */
+			@JvmField val IGNORED = Support("Ignored")
+			
+			/**
+			 * When set, this WaveSpawn defines support bots that will continue spawning throughout the wave.
+			 */
+			@JvmField val INFINITE = Support("1")
+			
+			val CODEGEN = ConstantsDecoder<Support>()
+		}
+	}
 }
 
 inline fun WaveSpawn(name: String? = null, configure: WaveSpawnPopulator.() -> Unit) = WaveSpawnPopulator().apply { name?.let { this.name = it } }.apply(configure)

@@ -6,8 +6,11 @@ import btpos.source.vdfdsl.types.bots.BehaviorModifiers
 import btpos.source.vdfdsl.types.bots.BotSkill
 import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
+import btpos.source.vdfdsl.types.populators.AbstractPopulator
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
+import btpos.source.vdfdsl.types.specifics.NavArea
+import btpos.source.vdfdsl.types.specifics.Where
 import kotlin.reflect.KClass
 
 class PopFileTypeDecoderProvider : TypeDecoderProvider {
@@ -15,11 +18,13 @@ class PopFileTypeDecoderProvider : TypeDecoderProvider {
 		TFClass::class to TFClass.CODEGEN.get(),
 		BotSkill::class to BotSkill.CODEGEN.get(),
 		BehaviorModifiers::class to BehaviorModifiers.CODEGEN.get(),
-		TFBotAttributes::class to TFBotAttributes.CODEGEN.get()
+		TFBotAttributes::class to TFBotAttributes.CODEGEN.get(),
+		NavArea::class to NavArea.CODEGEN.get(),
+		Where::class to Where.CODEGEN.get()
 	)
-	
+	// Subtypes of these are already registered as value decoders for their types through IExtensibleSubtree.Codegen
 	override val selfNamedDecoders: Map<KClass<*>, SelfNamedDecoder<KtExpression>> = mapOf(
-		TFBotSpawner::class to TFBotSpawner.CODEGEN_SELF.get(),
-		AbstractSpawner::class to AbstractSpawner.CODEGEN_NAV.get()
+		AbstractSpawner::class to AbstractSpawner.CODEGEN_NAV.get(),
+		AbstractPopulator::class to AbstractPopulator.NAV.get()
 	)
 }

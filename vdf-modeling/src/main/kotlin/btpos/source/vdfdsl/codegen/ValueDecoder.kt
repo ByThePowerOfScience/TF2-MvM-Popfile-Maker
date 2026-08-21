@@ -29,7 +29,7 @@ fun <T : KtStatement> ValueDecoder<T>.keyed(key: VDFPrimitive): SelfNamedDecoder
 		val out = ArrayList<T>()
 		subtree.forEachWithIter { kv ->
 			if (kv.key == key) {
-				val ret = this@keyed.decodeValue(kv, subtree)
+				val ret = this@keyed.decodeValue(kv.value, subtree)
 				if (ret.isNullOrEmpty())
 					return@forEachWithIter;
 				out += ret

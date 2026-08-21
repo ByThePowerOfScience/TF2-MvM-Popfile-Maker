@@ -42,6 +42,12 @@ class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), I
 		return hashcode
 	}
 	
+	override fun toString(): String {
+		return "VDFPrimitive($stringValue)"
+	}
+	
+	override val _vdfRepr: VDFPrimitive
+		get() = this
 	
 	companion object {
 		fun notInterned(value: String): VDFPrimitive {
@@ -77,9 +83,9 @@ class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), I
 		val FALSE = VDFPrimitive(s="0")
 		val EMPTY = VDFPrimitive(s="")
 		
-	    operator fun invoke(bool: Boolean): VDFPrimitive {
-	        return if (bool) TRUE else FALSE
-	    }
+		operator fun invoke(bool: Boolean): VDFPrimitive {
+			return if (bool) TRUE else FALSE
+		}
 		
 		operator fun invoke(s: String): VDFPrimitive {
 			return VDFPrimitive(stringValue = s.intern())
@@ -110,12 +116,9 @@ class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), I
 			}
 		}
 	}
-	
-	override val _vdfRepr: VDFPrimitive
-		get() = this
 }
 
-val VDFPrimitive.intValue get() = this.stringValue.toInt()
+val VDFPrimitive.intValue get() = this.stringValue.toIntOrNull()
 
-val VDFPrimitive.floatValue get() = this.stringValue.toFloat()
+val VDFPrimitive.floatValue get() = this.stringValue.toFloatOrNull()
 

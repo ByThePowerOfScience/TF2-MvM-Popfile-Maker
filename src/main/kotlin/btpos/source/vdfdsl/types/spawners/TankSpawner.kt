@@ -29,6 +29,6 @@ class TankSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubt
 	var onBombDroppedOutput: OutputAction? by addField("OnBombDroppedOutput")
 	
 	companion object {
-		val CODEGEN = IExtensibleSubtree.Codegen._registerCodegen<TankSpawner>(factoryMethod = { Codegen.basicBlockScope(Spawners::Tank) })
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<TankSpawner>(factoryMethod = { Codegen.basicBlockScope(Spawners::Tank) })
 	}
 }

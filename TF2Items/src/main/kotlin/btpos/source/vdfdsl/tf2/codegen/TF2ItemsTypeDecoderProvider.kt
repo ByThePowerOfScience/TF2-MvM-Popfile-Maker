@@ -7,11 +7,31 @@ import btpos.source.vdfdsl.codegen.SelfNamedDecoder
 import btpos.source.vdfdsl.codegen.StringDecoderMap
 import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
+import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
+import btpos.source.vdfdsl.tf2.items.PaintColors
 import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.items.weapons.Weapons
+import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
+import btpos.source.vdfdsl.tf2.templates.RobotGatebotTemplates
+import btpos.source.vdfdsl.tf2.templates.RobotGiantTemplates
+import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
+import java.awt.Color
 import kotlin.reflect.KClass
 
 object TF2ItemsTypeDecoderProvider : TypeDecoderProvider {
+	override val valueDecoders: Map<KClass<*>, ValueDecoder<KtExpression>>
+		get() = mapOf(
+			Color::class to PaintColors.CODEGEN.get(),
+			PopFileTemplate::class to PopFileTemplate.CODEGEN.get(),
+			IAttributeContainer::class to IAttributeContainer.CODEGEN_TYPE.get()
+		)
+	
+	override val selfNamedDecoders: Map<KClass<*>, SelfNamedDecoder<KtExpression>>
+		get() = mapOf(
+			TFItem::class to TFItem.CODEGEN.get()
+		)
+	
+	//region items
 	private val x get() =
 		sequenceOf(
 			"Upgradeable TF_WEAPON_SCATTERGUN" to "Weapons.STOCK_SCATTERGUN",
@@ -221,10 +241,17 @@ object TF2ItemsTypeDecoderProvider : TypeDecoderProvider {
 			val name = Weapons::class.qualifiedName!!.intern()
 			map { VDFPrimitive(it.first) to Codegen.code(it.second, name) }
 		}
+	//endregion
 	
 	init {
 		TFItem.CODEGEN.applyToContained {
 			it.itemNameToTFItemInstance += x
+		}
+		
+		PopFileTemplate.CODEGEN.applyToContained {
+			it.decoders += RobotStandardTemplates.CODEGEN.get()
+			it.decoders += RobotGiantTemplates.CODEGEN.get()
+			it.decoders += RobotGatebotTemplates.CODEGEN.get()
 		}
 	}
 }

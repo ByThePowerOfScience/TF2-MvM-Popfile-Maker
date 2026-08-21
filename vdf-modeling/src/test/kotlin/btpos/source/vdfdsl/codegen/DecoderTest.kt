@@ -13,7 +13,7 @@ import kotlin.test.Test
 class MyStruct(override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf()) : IExtensibleSubtree {
 	companion object {
 		init {
-			IExtensibleSubtree.Codegen._registerCodegen<MyStruct> {
+			IExtensibleSubtree.Codegen.registerCodegen<MyStruct> {
 				{ fields: List<KtStatement> ->
 					
 					val arg = fields.find { it is KtAssignment && it.lhs.callee.callableName.name == MyStruct::insideStruct.name }

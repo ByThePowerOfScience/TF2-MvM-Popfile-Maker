@@ -43,13 +43,13 @@ open class EventChangeAttributesEntry(
 		
 		
 		init {
-			IExtensibleSubtree.Codegen._registerCodegen<EventChangeAttributesEntry> { Codegen.basicBlockScope(::invoke) }
+			IExtensibleSubtree.Codegen.registerCodegen<EventChangeAttributesEntry> { Codegen.basicBlockScope(::invoke) }
 		}
 		
 		val CODEGEN = IExtensibleSubtree.Codegen.forType<EventChangeAttributesEntry>()
 	}
 	
-	override fun copy() = EventChangeAttributesEntry(copyEntries())
+	override fun copy() = EventChangeAttributesEntry(_copyInternal())
 }
 
 

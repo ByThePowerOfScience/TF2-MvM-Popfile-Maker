@@ -34,7 +34,7 @@ class CodegenTest1 {
 //			toCode.first())
 		
 		
-		println(AbstractSpawner.CODEGEN_NAV.get().decode(spawner.first()).forEach {
+		println(AbstractSpawner.CODEGEN_NAV.get().decode(spawner).forEach {
 			println(it.toKotlinCode())
 		})
 	}

@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.codegen.services.impl
 
 import btpos.misc.kt.codegen.KtExpression
+import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.codegen.services.ExtensibleSubtreeClassLoader
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider

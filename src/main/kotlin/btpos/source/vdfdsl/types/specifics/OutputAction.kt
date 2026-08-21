@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.types.specifics
 
+import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
@@ -22,5 +23,7 @@ open class OutputAction : ExtensibleSubtreeImpl() {
 		inline operator fun invoke(configure: OutputAction.() -> Unit): OutputAction {
 			return OutputAction().apply(configure)
 		}
+		
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<OutputAction> { Codegen.basicBlockScope(::invoke) }
 	}
 }

@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.misc.kt.codegen.KtExpression
+import btpos.misc.kt.codegen.KtStatement
 import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtName
@@ -11,6 +12,9 @@ import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
+import btpos.source.vdfdsl.tf2.codegen.AttributesCodegenTraverser
+import btpos.source.vdfdsl.util.ifNullOrEmpty
+import kotlin.reflect.KClass
 
 interface IAttributeContainer {
 	operator fun <T : Any> get(key: ItemAttribute<T>): T?
@@ -22,39 +26,20 @@ interface IAttributeContainer {
 	operator fun iterator(): Iterator<Pair<ItemAttribute<Any>, Any?>>
 	
 	companion object {
-		/**
-		 * A map of "named attribute" to "location of that attribute in code", like this:
-		 * - `"fire rate bonus"` -> "WeaponBaseAttributes.Inherited.fireRate.bonus"
-		 * there's something we could do here with actual decoders that extract from the subtree, though.
-		 * Like each sub-thing finding all of the ones that can be grouped into a single scope.
-		 *
-		 * oh but that doesn't work with extensibility nvm
-		 */
-		val CODEGEN_ATTRIBUTE_LOCATIONS = CodegenProvider {
-			HashMap<VDFPrimitive, KtExpression>()
-		}
+		val CODEGEN_ATTRS = CodegenProvider { AttributesCodegenTraverser() }
 		
-		val CODEGEN_SCOPE = CodegenProvider<ScopeCodegen> {
-			TODO()
+		/**
+		 * New locations of named attributes in code can be added to [AttributesCodegenTraverser.IAttributeContainerCodegen.attributeLocations]
+		 */
+		val CODEGEN_SCOPE: CodegenProvider<AttributesCodegenTraverser.IAttributeContainerCodegen> = CodegenProvider {
+			CODEGEN_ATTRS.get().build()
 		}
 		
 		val CODEGEN_TYPE = CodegenProvider {
-			ValueDecoder<KtExpression> { obj ->
-				val subtreeToCfgScope = obj.asSubtree?.let { CODEGEN_SCOPE.get().decodeValue(it) }
-				              ?: return@ValueDecoder null;
-				listOf(KtFunctionCall(KtName(::AttributeContainer), listOf(subtreeToCfgScope)))
+			ValueDecoder<KtExpression> { obj, parent ->
+				val subtreeToCfgScope = CODEGEN_SCOPE.get().decodeToLambdaLines(obj.asSubtree ?: return@ValueDecoder null).ifNullOrEmpty { return@ValueDecoder null; }!!
+				listOf(KtFunctionCall(KtName(::AttributeContainer), listOf(KtLambda(lines=subtreeToCfgScope))))
 			}
-		}
-	}
-	
-	class ScopeCodegen : ValueDecoder<KtLambda> {
-		override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtLambda>? {
-			return value.asSubtree?.let { listOfNotNull(decodeValue(it)) }
-		}
-		
-		
-		fun decodeValue(subtree: VDFSubtree): KtLambda? {
-		
 		}
 	}
 }

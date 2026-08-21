@@ -3,19 +3,17 @@ package btpos.source.vdfdsl.tf2.itemattributes
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-open class ItemAttributeNamed<T : Any>(
-	val key: String,
-	val serializer: ((T) -> Any)? = null
+data class ItemAttributeNamed<T : Any>(
+	val key: VDFPrimitive,
+	val serializer: ((T) -> Any)? = null,
+	val type: KClass<T>
 ) : ItemAttribute<T> {
-	private val prim by lazy {
-		VDFPrimitive.Companion(key)
-	}
-	
 	override fun hashCode(): Int = key.hashCode()
 	
-	override fun equals(other: Any?) = key == other
+	override fun equals(other: Any?) = key == (other as? ItemAttributeNamed<*>)?.key
 	
 	operator fun getValue(_self: Any?, _prop: KProperty<*>): ItemAttributeNamed<T> = this
 	
@@ -23,7 +21,7 @@ open class ItemAttributeNamed<T : Any>(
 		if (value == null)
 			return IVDFRepresentableKeyValue {}
 		
-		return IVDFRepresentableValue.serializeDynamic(prim, serializer?.invoke(value) ?: value)
+		return IVDFRepresentableValue.serializeDynamic(key, serializer?.invoke(value) ?: value)
 	}
 	
 	context(attrs: IAttributeContainer)
@@ -36,4 +34,10 @@ open class ItemAttributeNamed<T : Any>(
 		attrs[this] = value
 	}
 	
+	
+	companion object {
+	    inline operator fun <reified T : Any> invoke(key: String, noinline serializer: ((T) -> Any)? = null): ItemAttributeNamed<T> {
+	        return ItemAttributeNamed(VDFPrimitive.notInterned(key), serializer, T::class)
+	    }
+	}
 }

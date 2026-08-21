@@ -1,5 +1,8 @@
 package btpos.source.vdfdsl.tf2.templates
 
+import btpos.source.vdfdsl.codegen.ConstantsCodegen
+import btpos.source.vdfdsl.codegen.ConstantsDecoder
+
 //  -- These attributes must attached to a weapon using ItemAttributes and then ItemName --
 
 //  "Blast radius decreased"
@@ -46,8 +49,9 @@ package btpos.source.vdfdsl.tf2.templates
 	//  }
 	//  }
 object RobotStandardTemplates {
+	val CODEGEN by ConstantsCodegen<PopFileTemplate>(PopFileTemplate::matches)
+	
 	private const val baseRef = "robot_standard.pop"
-
 	
 	object Sniper {
 		/**

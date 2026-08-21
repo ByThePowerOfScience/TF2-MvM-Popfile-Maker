@@ -11,6 +11,8 @@ import kotlin.reflect.KClass
  *
  * For example, when the key is `"TFBot"`, the value is always a `TFBot` instance.
  * There is no case where a `TFBot` instance can be keyed by anything other than the `"TFBot"` key.
+ *
+ * To add new subclasses, add their entries to [typeDecodersByKey].
  */
 class StructSubclassNavigator(
 	val typeDecodersByKey: MutableMap<VDFPrimitive, SelfNamedDecoder<KtExpression>> = mutableMapOf(),
@@ -39,8 +41,9 @@ class StructSubclassNavigator(
 			return when (any) {
 			is KClass<*> -> Decoders.getDecoderOrThrow(any)
 				is SelfNamedDecoder<*> -> any as SelfNamedDecoder<KtExpression>
+				is ValueDecoder<*> -> (any as ValueDecoder<KtExpression>).keyed(prim)
 				is CodegenProvider<*> -> parseAny(any.get(), prim)
-				else -> throw IllegalArgumentException("Expected KClass or Decoder, got ${any::class.qualifiedName} for $prim = $any")
+				else -> throw IllegalArgumentException("Expected KClass, SelfNamedDecoder, or ValueDecoder. Got ${any::class.qualifiedName} for $prim = $any")
 			}
 		}
 		

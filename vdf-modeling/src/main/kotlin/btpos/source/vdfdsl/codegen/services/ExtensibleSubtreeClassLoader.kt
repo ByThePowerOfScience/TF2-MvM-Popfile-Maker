@@ -5,7 +5,7 @@ interface ExtensibleSubtreeClassLoader {
 	/**
 	 * Register what factory methods should be invoked to generate each struct you made, or otherwise classload the places that register the struct factories.
 	 *
-	 * This function should call [btpos.source.vdfdsl.modeling.IExtensibleSubtree.Codegen._registerCodegen] for each struct it adds, to allow the code generator to automatically create something for that.
+	 * This function should call [btpos.source.vdfdsl.modeling.IExtensibleSubtree.Codegen.registerCodegen] for each struct it adds, to allow the code generator to automatically create something for that.
 	 */
 	fun registerStructFactoryMethods()
 	

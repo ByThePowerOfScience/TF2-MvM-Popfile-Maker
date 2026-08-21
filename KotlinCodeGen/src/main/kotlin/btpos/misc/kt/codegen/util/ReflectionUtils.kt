@@ -52,13 +52,14 @@ object ReflectionUtils {
 	fun <T : Any> KClass<T>.declaredMemberPropertiesGettable() = this.declaredMemberProperties as Collection<KProperty1<Any, Any>>
 	
 	/**
-	 * Turn a classifier that might be a type parameter into whatever upper bound has a real class if it is one, or null if nothing exists
+	 * Turn a classifier that might be a type parameter into whatever upper bounds have a real class, or empty if nothing exists
 	 */
-	fun KClassifier.toAbsoluteType(): KClass<*>? {
+	fun KClassifier.getUpperBounds(): Sequence<KClass<*>> {
 		return when (this) {
-			is KClass<*> -> this
-			is KTypeParameter -> upperBounds.firstNotNullOfOrNull { it.classifier }?.toAbsoluteType()
-			else -> error("Unrecognized KClassifier subclass '${this::class.qualifiedName}' for pseudo-sealed KClassifier class")
+			is KClass<*> -> sequenceOf(this)
+			is KTypeParameter -> upperBounds.asSequence()
+				.flatMap { it.classifier?.getUpperBounds().orEmpty() }
+			else -> error("Unrecognized KClassifier subclass '${this::class.qualifiedName}' for pseudo-sealed KClassifier class.")
 		}
 	}
 }

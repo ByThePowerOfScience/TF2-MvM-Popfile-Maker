@@ -1,5 +1,8 @@
 package btpos.source.vdfdsl.tf2.items
 
+import btpos.source.vdfdsl.backing.asPrimitive
+import btpos.source.vdfdsl.codegen.ConstantsCodegen
+import btpos.source.vdfdsl.tf2.itemattributes.ColorCodec
 import java.awt.Color
 
 
@@ -52,6 +55,8 @@ object PaintColors {
 		val b = i and EIGHT_BITMASK
 		return Color(r, g, b)
 	}
+	
+	val CODEGEN by ConstantsCodegen<Color> { obj, _ -> obj.asPrimitive?.stringValue?.toIntOrNull() == rgbToInt(red, green, blue) }
 }
 
 private const val EIGHT_BITMASK = 511

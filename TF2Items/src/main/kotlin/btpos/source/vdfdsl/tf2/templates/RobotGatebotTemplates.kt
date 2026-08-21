@@ -1,7 +1,11 @@
 package btpos.source.vdfdsl.tf2.templates
 
+import btpos.source.vdfdsl.codegen.ConstantsCodegen
+
 object RobotGatebotTemplates {
 	private const val baseRef = "robot_gatebot.pop"
+	
+	val CODEGEN by ConstantsCodegen<PopFileTemplate>(PopFileTemplate::matches)
 	
 	object Scout {
 		/**

@@ -38,3 +38,28 @@ inline fun <T, C : Collection<T>> C?.ifNullOrEmpty(action: () -> C?): C? {
 inline fun <T> ArrayList<T>.compacted(): ArrayList<T> = apply {
 	trimToSize()
 }
+
+/**
+ * Maps the thing in place, but uses either an empty list or single-element list if possible
+ */
+inline fun <T, U> Collection<T>.mapCompact(mapper: (T) -> U): List<U> {
+	return when (this.size) {
+		0 -> emptyList()
+		1 -> listOf(mapper(this.first()))
+		else -> mapTo(ArrayList(size), mapper)
+	}
+}
+
+/**
+ * Optimize a read-only list using the emptylist singleton or a single-item-optimized list object
+ */
+fun <T> List<T>.compactIfPossible(): List<T> {
+	return when (this.size) {
+		0 -> emptyList()
+		1 -> listOf(this[0])
+		else if this is ArrayList<T> -> this.compacted()
+		else -> this
+	}
+}
+
+fun Iterable<*>.collectionSizeOrDefault(default: Int) = if (this is Collection<*>) size else default

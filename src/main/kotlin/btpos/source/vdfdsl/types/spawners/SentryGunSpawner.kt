@@ -19,6 +19,6 @@ class SentryGunSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	@Suppress("DEPRECATION")
 	companion object {
 		
-		val CODEGEN = IExtensibleSubtree.Codegen._registerCodegen<SentryGunSpawner> { Codegen.basicApplyFactory<SentryGunSpawner>() }
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<SentryGunSpawner> { Codegen.basicApplyFactory<SentryGunSpawner>() }
 	}
 }

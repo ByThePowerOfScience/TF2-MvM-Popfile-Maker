@@ -1,7 +1,9 @@
 @file:Suppress("UNUSED")
 package btpos.source.vdfdsl.types.populators
 
+import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
@@ -82,6 +84,10 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	 */
 	fun initWaveOutput(configure: OutputAction.() -> Unit) {
 		this.initWaveOutput = OutputAction().apply(configure)
+	}
+	
+	companion object {
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<WavePopulator> { Codegen.basicBlockScope(::Wave) }
 	}
 }
 

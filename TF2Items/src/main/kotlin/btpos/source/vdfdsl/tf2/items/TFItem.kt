@@ -109,6 +109,7 @@ class TFItem<ATTR : Any>(
 	- find all `Item` keys, and do += thatItem
 	- for each one of those, find all `ItemAttributes { ItemName thatItemName }` blocks and combine them into the items
 	 */
+	// this should be a singleton
 	class Codegen : SelfNamedDecoder<KtExpression> {
 		val itemNameToTFItemInstance: MutableMap<VDFPrimitive, KtExpression> = HashMap()
 		
@@ -145,17 +146,18 @@ class TFItem<ATTR : Any>(
 			                                         ?: return@forEachWithIter;
 					
 					// make sure it can actually be decoded first before removing it from the subtree
-					val decoded = IAttributeContainer.CODEGEN_SCOPE.get()
-						.decodeValue(
+					val decoded = IAttributeContainer.CODEGEN_SCOPE.get().let {
+						it.decodeToLambdaLines(
 							attrSubtree.deepCopy().apply {
 								removeIf { it.key == key_itemName }
 							}
 						)
+					}
 					
-					if (decoded == null)
+					if (attrSubtree.isNotEmpty() && decoded.isEmpty())
 						return@forEachWithIter;
 					
-					itemsToAttributesSubtree[itemAttrsAreFor] = decoded
+					itemsToAttributesSubtree[itemAttrsAreFor] = KtLambda(lines=decoded)
 					
 					remove()
 				}

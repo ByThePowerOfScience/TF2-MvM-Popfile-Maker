@@ -17,9 +17,11 @@ import btpos.misc.kt.codegen.statements.KtAssignment
 import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.expressions.KtGetValueExpression
+import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtMemberReference
 import btpos.misc.kt.codegen.expressions.KtThis
 import btpos.misc.kt.codegen.identifiers.KtName
+import btpos.misc.kt.codegen.util.ReflectionUtils.getUpperBounds
 import btpos.misc.kt.codegen.util.ReflectionUtils.isExtension
 import btpos.source.vdfdsl.codegen.SelfNamedDecoder
 import btpos.source.vdfdsl.codegen.orElse
@@ -76,6 +78,10 @@ interface IExtensibleSubtree {
 	 * Implementers of this interface should always override this method to return their own type.  I wish there were a way to do this with generics.
 	 */
 	fun copy(): IExtensibleSubtree
+	
+	fun _copyInternal() = _rawEntries.mapValuesTo(HashMap(_rawEntries.size)) { (_, value) ->
+		(value as? IExtensibleSubtree)?.copy() as IVDFRepresentableKeyValue? ?: value
+	}
 	
 	/**
 	 * Serializes to multiple versions of the same key in the same subtree, like this:
@@ -404,6 +410,38 @@ interface IExtensibleSubtree {
 				}
 			}
 		}
+		
+		/**
+		 * Extend a subtree with another extensible subtree that will have all of its keyvalues merged into this subtree as though it never existed.
+		 *
+		 * Example:
+		 * ```
+		 * class WaveSchedule {
+		 *     val gameplay by merged(GameplaySettings())
+		 *
+		 *     class GameplaySettings : ExtensibleSubtreeImpl(), IBlockScoped {
+		 *        var startingCurrency: Int? by addField("StartingCurrency")
+		 *     }
+		 * }
+		 *
+		 * val waveSchedule = WaveSchedule()
+		 * waveSchedule.gameplay {
+		 *     startingCurrency = 2
+		 * }
+		 * println(waveSchedule.toFormattedString()) // WaveSchedule { StartingCurrency 2 }
+		 * ```
+		 */
+		fun <T : Merged> merged(instance: T): PropertyDelegateProvider<Any?, ReadOnlyProperty<IExtensibleSubtree, T>>
+		{
+			return PropertyDelegateProvider { thisRef, prop ->
+				if (IS_DOING_CODEGEN)
+					Codegen._registerCodegenMergedMapping(thisRef, prop)
+				
+				ReadOnlyProperty { extensibleSubtree, prop ->
+					(extensibleSubtree._rawEntries.computeIfAbsent(prop) { SelfNamedValue(instance) { it } } as SelfNamedValue<T>).item
+				}
+			}
+		}
 	}
 	
 	
@@ -417,6 +455,16 @@ interface IExtensibleSubtree {
 		inline fun <reified T : IExtensibleSubtree> forType() = forType(T::class)
 		
 		fun forType(kclass: KClass<*>) = CodegenProvider { getOrCreateStructDecoder(kclass) }
+		
+		fun getOrCreateStructDecoder(structType: KClass<*>): ExtensibleSubtreeDecoder {
+			if (!IS_DOING_CODEGEN)
+				error("Attempted to get struct decoder with type ${structType.qualifiedName} when not in codegen mode.\n" +
+				      "Ensure any codegen decoders are wrapped in a CodegenProvider so they're only created or accessed when in codegen mode.")
+			
+			typeHierarchy.add(structType)
+			
+			return _codegenFieldMappings.computeIfAbsent(structType) { ExtensibleSubtreeDecoder(it) }
+		}
 		
 		/**
 		 * Solely exists because the JVM freaked out with a security exception from referencing [_registerCodegenFieldMapping] from an inline-function's property delegate provider.
@@ -469,7 +517,7 @@ interface IExtensibleSubtree {
 			val receiverType: KClass<*> = prop.getExtensionReceiverType() ?: propOwner!!::class // must extend IExtensibleSubtree, thus must be the receiver of this property
 			
 			assert(prop.returnType.classifier as? KClass<*> == List::class) {
-				"Self-named-list property $prop type is not List."
+				"Failed sanity check: Self-named-list property $prop type is not List."
 			}
 			
 			val propType = prop.returnType.arguments.first().type?.classifier as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $prop")
@@ -479,31 +527,43 @@ interface IExtensibleSubtree {
 			}
 		}
 		
+		fun _registerCodegenMergedMapping(propOwner: Any?, prop: KProperty<*>) {
+			val receiverType = prop.getExtensionReceiverType() ?: propOwner!!::class
+			// TODO make this work with deeper nestings. I just can't think of it rn
+			getOrCreateStructDecoder(receiverType).apply {
+				selfNamedDecoders += StructFieldDecoderPropExt_Merged(prop)
+				/*
+				assume default factory method of:
+				
+				prop {
+					x = y
+					a = b
+				}
+				 */
+				factoryMethod = { x ->
+					KtFunctionCall(KtMemberReference(prop), mutableListOf(KtLambda(lines = x)))
+				}
+			}
+		}
+		
 		private fun KProperty<*>.getExtensionReceiverType(): KClass<*>? {
 			return this.extensionReceiverParameter?.type?.classifier?.let {
 				it as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $it for $this")
 			}
 		}
 		
-		fun getOrCreateStructDecoder(structType: KClass<*>): ExtensibleSubtreeDecoder {
-			if (!IS_DOING_CODEGEN)
-				error("Attempted to get struct decoder with type ${structType.qualifiedName} when not in codegen mode.\n" +
-				      "Ensure any codegen decoders are wrapped in a CodegenProvider so they're only created or accessed when in codegen mode.")
-			
-			typeHierarchy.add(structType)
-			
-			return _codegenFieldMappings.computeIfAbsent(structType) { ExtensibleSubtreeDecoder(it) }
-		}
+		
+		
 		
 		/**
 		 * @param dummyConstructor We need to create an instance of the struct to ensure any properties declared inside the struct are instantiated and have their field codegen entries autogenerated from the `addField` calls
 		 * @param factoryMethod What is used to generate the thing for the source code, like `MyStruct { ...assignments }`.
 		 */
-		inline fun <reified T : IExtensibleSubtree> _registerCodegen(noinline dummyConstructor: (() -> T)? = null, customFieldDecoders: () -> Map<String, CodegenProvider<ValueDecoder<KtExpression>>> = { emptyMap() }, factoryMethod: () -> StructFactoryMethod): CodegenProvider<ExtensibleSubtreeDecoder> {
-			return _registerCodegen(T::class, dummyConstructor, customFieldDecoders(), factoryMethod())
+		inline fun <reified T : IExtensibleSubtree> registerCodegen(noinline dummyConstructor: (() -> T)? = null, customFieldDecoders: () -> Map<String, CodegenProvider<ValueDecoder<KtExpression>>> = { emptyMap() }, factoryMethod: () -> StructFactoryMethod): CodegenProvider<ExtensibleSubtreeDecoder> {
+			return registerCodegen(T::class, dummyConstructor, customFieldDecoders(), factoryMethod())
 		}
 		
-		@PublishedApi internal fun <T : IExtensibleSubtree> _registerCodegen(cls: KClass<T>, dummyConstructor: (() -> T)?, customFieldDecoders: Map<String, CodegenProvider<ValueDecoder<KtExpression>>>, factoryMethod: StructFactoryMethod): CodegenProvider<ExtensibleSubtreeDecoder> {
+		@PublishedApi internal fun <T : IExtensibleSubtree> registerCodegen(cls: KClass<T>, dummyConstructor: (() -> T)?, customFieldDecoders: Map<String, CodegenProvider<ValueDecoder<KtExpression>>>, factoryMethod: StructFactoryMethod): CodegenProvider<ExtensibleSubtreeDecoder> {
 			if (!IS_DOING_CODEGEN)
 				return CodegenProvider.errorInstance();
 			
@@ -576,6 +636,22 @@ interface IExtensibleSubtree {
 				return x.map { KtAssignment(propAccess.copy(), it, operator) }
 			}
 		}
+		
+		class StructFieldDecoderPropExt_Merged(
+			val prop: KProperty<*>
+		) : SelfNamedDecoder<KtStatement> {
+			val valueDecoder = getOrCreateStructDecoder(prop.returnType.classifier?.getUpperBounds()?.firstOrNull { it != Any::class } ?: error("Cannot perform codegen for a property without a definite type: $prop"))
+			
+			override fun decode(subtree: VDFSubtree): List<KtStatement> {
+				return valueDecoder.decodeValue(subtree, subtree.parent ?: VDFSubtree(null))
+			}
+		}
+	}
+	
+	interface Merged : IExtensibleSubtree_VDFRepresentable, IVDFRepresentableKeyValue {
+		override fun _serializeInto(input: VDFSubtree) {
+			input.entries.addAll(this._vdfRepr(input.parent ?: VDFSubtree(null)))
+		}
 	}
 }
 
@@ -597,9 +673,22 @@ open class ExtensibleSubtreeImpl(
 		return ourSub
 	}
 	
-	protected fun copyEntries() = _rawEntries.toMutableMap()
 	
-	override fun copy() = ExtensibleSubtreeImpl(copyEntries())
+	override fun copy() = ExtensibleSubtreeImpl(_copyInternal())
+}
+
+open class ExtensibleSubtreeMergedImpl(protected val backing: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : IExtensibleSubtree.Merged, IExtensibleSubtree_VDFRepresentable by backing {
+	protected fun copyInternal() = backing.copy()
+	
+	final override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
+		return this
+	}
+	
+	final override fun _serializeInto(input: VDFSubtree) {
+		return super._serializeInto(input)
+	}
+	
+	override fun copy(): ExtensibleSubtreeMergedImpl = ExtensibleSubtreeMergedImpl(copyInternal())
 }
 
 /**

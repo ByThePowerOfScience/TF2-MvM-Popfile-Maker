@@ -1,6 +1,8 @@
 @file:Suppress("UNUSED")
 package btpos.source.vdfdsl.tf2.templates
 
+import btpos.source.vdfdsl.codegen.ConstantsCodegen
+
 //  -- These attributes must attached to a weapon using ItemAttributes and then ItemName --
 
 //  "Blast radius decreased"
@@ -35,7 +37,8 @@ package btpos.source.vdfdsl.tf2.templates
 	// //////////////////////////////////////////////////////////////////////////////////////////////////////////
 object RobotGiantTemplates {
 	private const val baseRef = "robot_giant.pop"
-
+	
+	val CODEGEN by ConstantsCodegen<PopFileTemplate>(PopFileTemplate::matches)
 	
 	object Scout {
 		/**
