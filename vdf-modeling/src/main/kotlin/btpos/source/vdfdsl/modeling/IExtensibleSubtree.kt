@@ -696,7 +696,12 @@ open class ExtensibleSubtreeMergedImpl(protected val backing: ExtensibleSubtreeI
  *
  * @return the copy with the configuration scope applied.
  */
-inline operator fun <reified T : IExtensibleSubtree> T.invoke(configure: T.() -> Unit): T {
-	return (this.copy() as? T)?.apply(configure)
-	       ?: error("Class ${T::class.java.simpleName} does not implement `IExtensibleSubtree#copy()` correctly. Implementers should always override this method to return their own type.")
+inline fun <reified T : IExtensibleSubtree> T.copy(configure: T.() -> Unit): T {
+	val copy = this.copy()
+	return (copy as? T)?.apply(configure) ?: onCopyError(T::class.java, copy.javaClass)
+}
+
+@PublishedApi
+internal fun onCopyError(expectedClass: Class<*>, actualClass: Class<*>): Nothing {
+	error("Class '${expectedClass.name}' does not implement `IExtensibleSubtree#copy()`, instead returning a '${actualClass}' instance. Implementers must ALWAYS override this method to return their own type.")
 }

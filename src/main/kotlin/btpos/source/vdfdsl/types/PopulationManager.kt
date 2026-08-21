@@ -1,16 +1,23 @@
 package btpos.source.vdfdsl.types
 
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.codegen.Codegen
+import btpos.source.vdfdsl.codegen.keyed
+import btpos.source.vdfdsl.codegen.map
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.merged
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.populators.AbstractPopulator
+import btpos.source.vdfdsl.utils.NestedScope
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
+import kotlin.reflect.KFunction
 
 @PopFileDSL
 class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractVDFStruct(_subtree) {
@@ -27,37 +34,65 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	var populators: List<AbstractPopulator> by selfNamedList()
 	
 	/**
-	 * Default: 0
+	 * Settings controlling details about the mission: starting currency, bots attacking inside the spawn room, etc.
 	 */
-	var startingCurrency: Int? by addField("StartingCurrency")
+	val settingsGeneral by merged(MissionSettings())
 	
-	/**
-	 * Default: 10
-	 */
-	var respawnWaveTime: Int? by addField("RespawnWaveTime")
+	val settingsRespawn by merged(RespawnSettings())
 	
-	/**
-	 * e.g. `"Halloween"`
-	 */
-	var eventPopFile: String? by addField("EventPopFile")
+	val settingsSentryBuster by merged(SentryBusterSettings())
 	
-	var fixedRespawnWaveTime: Boolean? by addField("FixedRespawnWaveTime")
+	open class MissionSettings(subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : NestedScope(subtree) {
+		/**
+		 * Default: 0
+		 */
+		var startingCurrency: Int? by addField("StartingCurrency")
+		
+		/**
+		 * e.g. `"Halloween"`
+		 */
+		var eventPopFile: String? by addField("EventPopFile")
+		
+		var advanced: Boolean? by addField("Advanced")
+		
+		var isEndless: Boolean? by addField("IsEndless")
+		
+		var canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (this) "yes" else "no" })
+		
+		
+		
+		override fun copy() = MissionSettings(copyInternal())
+	}
 	
-	/**
-	 * Default: 3000
-	 */
-	var addSentryBusterWhenDamageDealtExceeds: Int? by addField("AddSentryBusterWhenDamageDealtExceeds")
+	open class RespawnSettings(backing: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : NestedScope(backing) {
+		/**
+		 * Default: 10
+		 */
+		var respawnWaveTime: Int? by addField("RespawnWaveTime")
+		
+		var fixedRespawnWaveTime: Boolean? by addField("FixedRespawnWaveTime")
+		
+		
+		override fun copy() = RespawnSettings(backing.copy())
+	}
 	
-	/**
-	 * Default: 15
-	 */
-	var addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
+	open class SentryBusterSettings(backing: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : NestedScope(backing) {
+		
+		/**
+		 * Default: 3000
+		 */
+		var addSentryBusterWhenDamageDealtExceeds: Int? by addField("AddSentryBusterWhenDamageDealtExceeds")
+		
+		/**
+		 * Default: 15
+		 */
+		var addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
+		
+		
+		override fun copy() = SentryBusterSettings(backing.copy())
+	}
 	
-	var canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (this) "yes" else "no" })
 	
-	var advanced: Boolean? by addField("Advanced")
-	
-	var isEndless: Boolean? by addField("IsEndless")
 	
 	
 	companion object {

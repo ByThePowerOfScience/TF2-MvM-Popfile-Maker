@@ -4,8 +4,9 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.getString
 import btpos.source.vdfdsl.backing.toFormattedString
-import btpos.source.vdfdsl.modeling.invoke
+import btpos.source.vdfdsl.modeling.copy
 import btpos.source.vdfdsl.tf2.itemattributes.BuffItemAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.impl.invoke
 import btpos.source.vdfdsl.tf2.items.weapons.Weapons
 import btpos.source.vdfdsl.tf2.templates.RobotGiantTemplates
 import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
@@ -79,7 +80,7 @@ class mvm_coaltown_expert1 {
 			behaviorModifiers += BehaviorModifiers.Push
 		}
 	val PUSHING_SOLDIER_RIGHT
-		get() = PUSHING_SOLDIER_LEFT {
+		get() = PUSHING_SOLDIER_LEFT.copy().apply {
 			tags = listOf(tag_preferFlankRight)
 		}
 	
@@ -102,9 +103,12 @@ class mvm_coaltown_expert1 {
 	@Test
 	fun coaltownExpert1() {
 		val x = WaveSchedule {
-			startingCurrency = 400
-			respawnWaveTime = 7
-			canBotsAttackWhileInSpawnRoom = false
+			settingsGeneral {
+				startingCurrency = 400
+				canBotsAttackWhileInSpawnRoom = false
+			}
+			settingsRespawn.respawnWaveTime = 7
+			
 			
 			+Mission(1, 9) {
 				objective = Objective.DestroySentries
@@ -427,7 +431,7 @@ class mvm_coaltown_expert1 {
 				
 				support = Support.INFINITE
 				
-				+EASY_SCOUT {
+				+EASY_SCOUT.copy {
 					weaponRestriction = WeaponRestrictions.MeleeOnly
 					attributes += TFBotAttributes.AlwaysCrit
 				}
@@ -479,11 +483,11 @@ class mvm_coaltown_expert1 {
 	}
 	
 	val TFBotSpawner.fromRight
-		get() = this {
+		get() = this.copy {
 			tags += tag_preferFlankRight
 		}
 	val TFBotSpawner.fromLeft
-		get() = this {
+		get() = this.copy {
 			tags += tag_preferFlankLeft
 		}
 	
@@ -539,7 +543,7 @@ class mvm_coaltown_expert1 {
 		val wave04de by WaveSpawn_Multi(
 			WaveSpawn {
 				+Squad {
-					+heavy {
+					+heavy.copy {
 						tags += tag_specialmainright
 					}
 					+QUICKFIX_MEDIC
@@ -547,7 +551,7 @@ class mvm_coaltown_expert1 {
 			},
 			WaveSpawn {
 				+Squad {
-					+heavy {
+					+heavy.copy {
 						tags += tag_specialmainleft
 					}
 					+QUICKFIX_MEDIC
@@ -574,7 +578,7 @@ class mvm_coaltown_expert1 {
 			totalCurrency = 100
 			
 			+Squad {
-				+GIANT_HEAVY {
+				+GIANT_HEAVY.copy {
 					tags += tag_specialmainleft
 					behaviorModifiers += BehaviorModifiers.Push
 				}
@@ -594,7 +598,7 @@ class mvm_coaltown_expert1 {
 			totalCurrency = 100
 			
 			+Squad {
-				+GIANT_HEAVY {
+				+GIANT_HEAVY.copy {
 					tags += tag_specialmainright
 					behaviorModifiers += BehaviorModifiers.Push
 				}
@@ -769,7 +773,7 @@ fun wave7() = WaveBuilder {
 		totalCurrency = 300
 		
 		+Squad {
-			+EASY_SCOUT {
+			+EASY_SCOUT.copy {
 				skill = BotSkill.Hard
 			}
 			+QUICKFIX_MEDIC
@@ -792,7 +796,7 @@ fun wave7() = WaveBuilder {
 			+Squad {
 				formationSize = 225
 				
-				addMultiple(3, heavy {
+				addMultiple(3, heavy.copy {
 					tags += tag_specialmainleft
 				})
 				
@@ -802,7 +806,7 @@ fun wave7() = WaveBuilder {
 		+WaveSpawn {
 			+Squad {
 				formationSize = 175
-				addMultiple(3, heavy {
+				addMultiple(3, heavy.copy {
 					tags += tag_specialmainright
 				})
 				addMultiple(3, huntsmanSniper)
@@ -844,7 +848,7 @@ fun wave7() = WaveBuilder {
 		allAtOnce()
 		totalCurrency = 50
 		
-		+GIANT_HEAVY {
+		+GIANT_HEAVY.copy {
 			tags += tag
 			behaviorModifiers += BehaviorModifiers.Push
 		}
