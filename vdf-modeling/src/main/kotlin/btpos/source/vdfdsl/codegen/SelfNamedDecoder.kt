@@ -6,11 +6,11 @@ import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.misc.kt.codegen.KtStatement
 import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.identifiers.KtName
+import btpos.misc.kt.codegen.util.ReflectionUtils.getUpperBounds
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.util.ifNullOrEmpty
-import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -89,68 +89,65 @@ inline fun <reified T : Any> ConstantsCodegen(noinline equalsCheck: T.(value: VD
 }
 
 /**
- * Creates a CodegenProvider that will use reflection to identify any instances of class T in this object, its companion object, and any nested objects.
+ * Creates a CodegenProvider that will use reflection to identify any instances of class T in [lookIn], its companion object, and any nested objects.
  */
-fun <T : Any> ConstantsCodegen(cls: KClass<T>, equalsCheck: T.(value: VDFObject, parent: VDFSubtree) -> Boolean): ReadOnlyProperty<Any, CodegenProvider<ValueDecoderMulti<KtExpression>>> {
-	fun <C : Any> KClass<C>.findRecursive(lookingFor: KClass<T>, outItems: MutableList<ValueDecoder<KtExpression>>) {
-		val thisQual = this.qualifiedName ?: return;
-		val thisName = this.simpleName ?: return;
-		
-		this.objectInstance?.let { objInst ->
-			declaredMemberProperties.forEach { prop ->
-				if (prop.returnType.classifier.let { it != null && it is KClass<*> && it.isSubclassOf(lookingFor) }) {
-					@Suppress("UNCHECKED_CAST") val prop = prop as KProperty1<C, T>
-					val propGet = prop.get(objInst)
-					val propName = prop.name
-					outItems += ValueDecoder<KtExpression> { item, parent ->
-						if (propGet.equalsCheck(item, parent)) {
-							listOf(Codegen.code(thisName + "." + propName, thisQual))
-						} else {
-							null
-						}
-					}
+fun <T : Any> ConstantsCodegen(lookIn: KClass<*>, lookingFor: KClass<T>, equalsCheck: T.(value: VDFObject, parent: VDFSubtree) -> Boolean): CodegenProvider<ValueDecoderMulti<KtExpression>> {
+	return CodegenProvider {
+		val nav = ValueDecoderMulti<KtExpression>()
+		ConstantsFinder(lookIn, lookingFor) { owner, prop, objInst ->
+			val propGet = prop.get(objInst)
+			val propName = prop.name
+			
+			nav.decoders += ValueDecoder<KtExpression> { item, parent ->
+				val ownerSimpleName = owner.simpleName ?: return@ValueDecoder null
+				val ownerQualName = owner.qualifiedName ?: return@ValueDecoder null
+				
+				if (propGet.equalsCheck(item, parent)) {
+					listOf(Codegen.code(ownerSimpleName + "." + propName, ownerQualName))
+				} else {
+					null
 				}
 			}
 		}
+		nav
+	}
+}
+
+fun <T : Any> ConstantsFinder(lookingIn: KClass<*>, lookingFor: KClass<T>, onEnterClass: ((KClass<*>) -> Unit)? = null, action: (ownerClass: KClass<*>, property: KProperty1<Any, T>, objectInstance: Any) -> Unit) {
+	fun <C : Any> KClass<C>.findRecursive(lookingFor: KClass<T>) {
+		onEnterClass?.invoke(this)
 		
-		this.companionObject?.let { companion ->
-			val objInst = companion.objectInstance as Any
-			companion.declaredMemberProperties.forEach { prop ->
-				if (prop.returnType.classifier.let { it != null && it is KClass<*> && it.isSubclassOf(lookingFor) }) {
+		(this.objectInstance?.let { this to it }
+			?: this.companionObject?.let { it to it.objectInstance!! }
+            ?: return)
+		.let { (cls, inst) ->
+			cls.declaredMemberProperties.forEach { prop ->
+				if (prop.returnType.classifier.let { it != null && it.getUpperBounds().any { it.isSubclassOf(lookingFor) } }) {
 					@Suppress("UNCHECKED_CAST") val prop = prop as KProperty1<Any, T>
-					val propGet = prop.get(objInst)
-					val propName = prop.name
-					outItems += ValueDecoder<KtExpression> { item, parent ->
-						if (propGet.equalsCheck(item, parent)) {
-							listOf(Codegen.code(thisName + "." + propName, thisQual))
-						} else {
-							null
-						}
-					}
+					action(this@findRecursive, prop, inst)
 				}
 			}
-		}
-		
-		sequenceOf(this, companionObject).filterNotNull().flatMap { it.nestedClasses }.forEach {
-			it.findRecursive(lookingFor, outItems)
+			
+			cls.nestedClasses.forEach {
+				it.findRecursive(lookingFor)
+			}
 		}
 	}
 	
+	lookingIn.findRecursive(lookingFor)
+}
+/**
+ * Creates a delegate that will create CodegenProvider that will use reflection to identify any instances of class T in this object, its companion object, and any nested objects.
+ */
+fun <T : Any> ConstantsCodegen(cls: KClass<T>, equalsCheck: T.(value: VDFObject, parent: VDFSubtree) -> Boolean): ReadOnlyProperty<Any, CodegenProvider<ValueDecoderMulti<KtExpression>>> {
 	return object : ReadOnlyProperty<Any, CodegenProvider<ValueDecoderMulti<KtExpression>>> {
 		private var provider: CodegenProvider<ValueDecoderMulti<KtExpression>>? = null
 		
 		override fun getValue(thisRef: Any, property: KProperty<*>): CodegenProvider<ValueDecoderMulti<KtExpression>> {
-			return provider ?: run {
-				CodegenProvider {
-					val nav = ValueDecoderMulti<KtExpression>()
-					thisRef::class.findRecursive(cls, nav.decoders)
-					nav
-				}.also {
-					provider = it
-				}
+			return provider ?: ConstantsCodegen(thisRef::class, cls, equalsCheck).also {
+				provider = it
 			}
 		}
-		
 	}
 }
 /**

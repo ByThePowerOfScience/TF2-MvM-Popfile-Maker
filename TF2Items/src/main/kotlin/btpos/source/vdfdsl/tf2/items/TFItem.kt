@@ -5,6 +5,7 @@ import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.asPrimitive
@@ -12,6 +13,7 @@ import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.backing.getPrimitive
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.SelfNamedDecoder
+import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerImpl
@@ -131,12 +133,17 @@ class TFItem<ATTR : Any>(
 	- for each one of those, find all `ItemAttributes { ItemName thatItemName }` blocks and combine them into the items
 	 */
 	// this should be a singleton
-	class Codegen : SelfNamedDecoder<KtExpression> {
+	class Codegen : SelfNamedDecoder<KtExpression>, ValueDecoder<KtExpression> {
 		val itemNameToTFItemInstance: MutableMap<VDFPrimitive, KtExpression> = HashMap()
 		
 		private val key_item = VDFPrimitive("Item")
 		private val key_itemName = VDFPrimitive("ItemName")
 		private val key_itemAttributes = VDFPrimitive("ItemAttributes")
+		
+		override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtExpression>? {
+			return value.asPrimitive?.let { itemNameToTFItemInstance[it] }?.let { listOf(it) }
+		}
+		
 		
 		override fun decode(subtree: VDFSubtree): List<KtExpression> {
 			val itemsToAttributesSubtree = HashMap<VDFPrimitive, KtLambda?>()

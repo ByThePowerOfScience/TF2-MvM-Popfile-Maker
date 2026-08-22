@@ -1,35 +1,25 @@
 package btpos.source.vdfdsl.tf2.codegen
 
-import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.KtStatement
-import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.expressions.KtGetValueExpression
-import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtMemberReference
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.statements.KtAssignment
 import btpos.misc.kt.codegen.util.ReflectionUtils.declaredMemberPropertiesGettable
 import btpos.misc.kt.codegen.util.ReflectionUtils.getUpperBounds
-import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.asPrimitive
-import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.backing.intValue
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.Decoders
 import btpos.source.vdfdsl.codegen.ValueDecoder
-import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainer
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.itemattributes.impl.ItemAttributeLong
 import btpos.source.vdfdsl.util.forEachWithIter
-import btpos.source.vdfdsl.util.ifNullOrEmpty
 import btpos.source.vdfdsl.util.mapCompact
-import javax.management.Query.attr
-import kotlin.collections.set
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.extensionReceiverParameter
@@ -54,7 +44,7 @@ class AttributesCodegenTraverser {
 	/**
 	 * Extension properties that should be added to the codegen to be assembled
 	 */
-	val extensionProperties = mutableListOf<KProperty<*>>()
+	val extensionProperties = mutableListOf<KProperty1<*, *>>()
 	
 	/**
 	 * How each subclass of [ItemAttribute] should have its values decoded. TODO explain better
@@ -121,7 +111,8 @@ class AttributesCodegenTraverser {
 		
 		//region find the navigation from each property to each whatever the fuck
 		fun calcScopePropGetRecursive(cls: KClass<*>, inst: Any, getThisInst: KtGetValueExpression?) {
-			val nesteds = cls.nestedClasses.toSet()
+			val nesteds = cls.nestedClasses.filterNotTo(mutableSetOf()) { it.simpleName == "Inherited" }
+			
 			cls.declaredMemberPropertiesGettable().forEach { prop ->
 				// if prop returns an inner class, it's a scope that needs to be recorded.
 				(prop.returnType.classifier as? KClass<*>)?.takeIf { it in nesteds }?.let {
@@ -134,7 +125,13 @@ class AttributesCodegenTraverser {
 		}
 		
 		instancesToCheck.forEach { inst ->
-			calcScopePropGetRecursive(inst::class, inst, null)
+			val cls = inst::class.let {
+				if (it.simpleName == "Inherited") {
+					it.java.declaringClass?.kotlin ?: it
+				} else it
+			}
+			
+			calcScopePropGetRecursive(cls, inst, null)
 		}
 		//endregion
 		
@@ -190,7 +187,7 @@ class AttributesCodegenTraverser {
 			}
 		}
 		
-		val extPRops = extensionProperties.filterIsInstance<KProperty1<*, *>>() as List<KProperty1<Any, Any>>
+		val extPRops = extensionProperties as List<KProperty1<Any, Any>>
 		
 		handleExtensionProperties(extPRops, items)
 		// TODO test this shit 

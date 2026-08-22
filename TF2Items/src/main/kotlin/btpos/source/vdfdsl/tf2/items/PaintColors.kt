@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.tf2.items
 
 import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.source.vdfdsl.codegen.ConstantsCodegen
-import btpos.source.vdfdsl.tf2.itemattributes.ColorCodec
 import java.awt.Color
 
 

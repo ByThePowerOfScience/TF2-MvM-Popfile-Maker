@@ -5,7 +5,6 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 
 object WarPaintsAttributes : IBlockScoped {
-	
 	class Wear(val id: Double) : IVDFRepresentableValue_Trivial {
 		override val _vdfRepr: VDFPrimitive
 			get() = VDFPrimitive(id.toFloat())
@@ -19,5 +18,3 @@ object WarPaintsAttributes : IBlockScoped {
 		}
 	}
 }
-
-val WeaponBaseAttributes.WarPaints get() = WarPaintsAttributes

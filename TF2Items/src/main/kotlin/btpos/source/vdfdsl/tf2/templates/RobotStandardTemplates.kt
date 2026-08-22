@@ -1,7 +1,6 @@
 package btpos.source.vdfdsl.tf2.templates
 
 import btpos.source.vdfdsl.codegen.ConstantsCodegen
-import btpos.source.vdfdsl.codegen.ConstantsDecoder
 
 //  -- These attributes must attached to a weapon using ItemAttributes and then ItemName --
 

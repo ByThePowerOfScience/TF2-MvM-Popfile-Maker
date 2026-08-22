@@ -33,39 +33,54 @@ object Decoders {
 	/**
 	 * Return a decoder suitable for evaluating an already-identified type.
 	 */
-	fun getValueDecoder(type: KClass<*>): ValueDecoder<KtExpression>? {
-		if (services.none { type in it.valueDecoders })
-			return null;
+	fun getValueDecoder(type: KClass<*>): ValueDecoder<KtExpression> {
+		refreshHierarchy()
 		
 		return CompositeValueDecoder(type)
 	}
 	
 	private val allClassHierarchyGraph = ClassHierarchyGraph()
+	// TODO make subclasses automatically defer to superclasses
+	
 	
 	private class CompositeValueDecoder(val type: KClass<*>) : ValueDecoder<KtExpression> {
 		override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtExpression>? {
-			return services.firstNotNullOfOrNull {
-				it.valueDecoders[type]?.decodeValue(value, parentSubtree)
-					?.takeIf { it.isNotEmpty() }
-			}
+			return allClassHierarchyGraph.getParentsRecursive(type)
+				.firstNotNullOfOrNull { cls ->
+					services.firstNotNullOfOrNull {
+						it.valueDecoders[cls]
+							?.decodeValue(value, parentSubtree)
+							?.takeIf { it.isNotEmpty() }
+					}
+				}
 		}
 	}
 	
 	private class CompositeSelfNamedDecoder(val type: KClass<*>) : SelfNamedDecoder<KtExpression> {
 		override fun decode(subtree: VDFSubtree): List<KtExpression>? {
-			return services.firstNotNullOfOrNull {
-				it.selfNamedDecoders[type]?.decode(subtree)
-					?.takeIf { it.isNotEmpty() }
-			}
+			return allClassHierarchyGraph.getParentsRecursive(type)
+				.firstNotNullOfOrNull { cls ->
+					services.firstNotNullOfOrNull {
+						it.selfNamedDecoders[cls]
+							?.decode(subtree)
+							?.takeIf { it.isNotEmpty() }
+					}
+				}
+		}
+	}
+	
+	private fun refreshHierarchy() {
+		services.forEach {
+			it.selfNamedDecoders.keys.forEach(allClassHierarchyGraph::add)
+			it.valueDecoders.keys.forEach(allClassHierarchyGraph::add)
 		}
 	}
 	
 	/**
 	 * Return a decoder suitable for evaluating instances of this self-named type
 	 */
-	fun getDecoder(type: KClass<*>): SelfNamedDecoder<KtExpression>? {
-		if (services.none { type in it.selfNamedDecoders })
-			return null;
+	fun getDecoder(type: KClass<*>): SelfNamedDecoder<KtExpression> {
+		refreshHierarchy()
 		
 		return CompositeSelfNamedDecoder(type)
 	}
