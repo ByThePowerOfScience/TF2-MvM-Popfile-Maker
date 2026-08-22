@@ -255,10 +255,14 @@ interface IExtensibleSubtree {
 			return RegularFieldProperty(serializationKey.intern(), initialValue, conditional, serializer)
 		}
 		
-		private class RegularFieldProperty<T : Any>(val key: String, val initialValue: (() -> T)?, val conditional: String?, val serializer: ((T) -> Any?)?) : ReadWriteProperty<IExtensibleSubtree, T?> {
+		private class RegularFieldProperty<T : Any>(val key: String, initialValue: (() -> T)?, val conditional: String?, val serializer: ((T) -> Any?)?) : ReadWriteProperty<IExtensibleSubtree, T?> {
+			private val default by lazy(LazyThreadSafetyMode.NONE) {
+				initialValue?.invoke()
+			}
+			
 			override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
 				@Suppress("UNCHECKED_CAST")
-				return (thisRef._rawEntries[property] as NamedValue<T>?)?.value ?: initialValue?.invoke()
+				return (thisRef._rawEntries[property] as NamedValue<T>?)?.value ?: default
 			}
 			
 			override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
