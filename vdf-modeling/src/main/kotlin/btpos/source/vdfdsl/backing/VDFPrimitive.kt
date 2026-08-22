@@ -79,9 +79,17 @@ class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), I
 		}
 		
 		
-		val TRUE = VDFPrimitive(s="1")
-		val FALSE = VDFPrimitive(s="0")
 		val EMPTY = VDFPrimitive(s="")
+		
+		val ZERO = VDFPrimitive(s="0")
+		val ONE = VDFPrimitive(s="1")
+		val TWO = VDFPrimitive(s="2")
+		val THREE = VDFPrimitive(s="3")
+		val FOUR = VDFPrimitive(s="4")
+		
+		val TRUE get() = ONE
+		val FALSE get() = ZERO
+		
 		
 		operator fun invoke(bool: Boolean): VDFPrimitive {
 			return if (bool) TRUE else FALSE
