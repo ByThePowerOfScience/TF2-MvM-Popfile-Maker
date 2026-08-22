@@ -48,6 +48,13 @@ class TFItem<ATTR : Any>(
 	
 	/**
 	 * Create a new instance of this item with the provided attributes added.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * val myItem = Weapons.HUNTSMAN.withAttributes {
+	 *   damage.multDmg.bonus = 1.5
+	 * }
+	 * ```
 	 */
 	inline fun withAttributes(attributesScope: context(IAttributeContainer) ATTR.() -> Unit): TFItem<ATTR> {
 		val attrs = attributes?.copy() ?: AttributeContainerSubtreeSerializable()
@@ -65,7 +72,14 @@ class TFItem<ATTR : Any>(
 	 *
 	 * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
 	 *
-	 * @param configure A block scope to allow you to easily access the attributes defined in the items [ATTR] parameter.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * // Will have `ItemName "The Huntsman"`, along with the attributes.
+	 * val myHuntsmanAttributes: AttributeContainerImpl = Weapons.HUNTSMAN.configureAttributes(AttributeContainerImpl()) {
+	 *   damage.multDmg.bonus = 1.5
+	 * }
+	 * ```
 	 */
 	inline fun <MAP : IAttributeContainer> configureAttributes(map: MAP, configure: context(MAP) ATTR.() -> Unit): MAP {
 		return map.apply {
@@ -79,7 +93,14 @@ class TFItem<ATTR : Any>(
 	 *
 	 * This is generally only needed if you're using a template that already has an item set on it, and you just want to configure that item.
 	 *
-	 * @param configurationScope A block scope to allow you to easily access the attributes that are valid for this item.
+	 *
+	 * Example:
+	 * ```kotlin
+	 * // Will have `ItemName "The Huntsman"`, along with the attributes.
+	 * val myHuntsmanAttributes: AttributeContainerImpl = Weapons.HUNTSMAN.configureAttributes {
+	 *   damage.multDmg.bonus = 1.5
+	 * }
+	 * ```
 	 */
 	inline fun configureAttributes(configurationScope: context(AttributeContainerImpl) ATTR.() -> Unit): AttributeContainerImpl {
 		return configureAttributes(AttributeContainerImpl(), configurationScope)
