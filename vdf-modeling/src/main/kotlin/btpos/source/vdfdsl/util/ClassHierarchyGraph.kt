@@ -46,7 +46,6 @@ class ClassHierarchyGraph
 		fun recurse(currClass: KClass<*>): Node {
 			val newNode = Node(currClass)
 			navMap[currClass] = newNode
-			println(currClass.simpleName + " superclasses: " + currClass.superclasses.joinToString { it.simpleName!! })
 			
 			currClass.superclasses.forEach { sup ->
 				connect((navMap[sup] ?: recurse(sup)), newNode)
