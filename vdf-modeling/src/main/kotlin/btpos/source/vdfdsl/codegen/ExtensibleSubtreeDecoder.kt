@@ -14,6 +14,8 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import kotlin.reflect.KClass
 
 class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> {
+	var shouldCommentLeftovers: Boolean = true
+	
 	/**
 	 * Takes in the items being set on the struct and returns a function call
 	 * to some factory method, with any parameters being filled in and the rest being inside the scope block.
@@ -96,7 +98,10 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 					
 					if (!x.isNullOrEmpty()) {
 						out += x
-					} else {
+						return@forEach;
+					}
+					
+					if (shouldCommentLeftovers) {
 						val prev = out.lastOrNull()
 						if (prev is KtComment.Block) { // merge into previous block comment
 							prev.body += kv.toFormattedString()
