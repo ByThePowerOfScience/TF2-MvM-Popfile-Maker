@@ -21,7 +21,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.MvMBotAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.PlayerAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.ProjectileArrowAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.ProjectileFlareAttributes
-import btpos.source.vdfdsl.tf2.itemattributes.ProjectileStickybombAttributes
+import btpos.source.vdfdsl.tf2.itemattributes.ProjectilePipebombAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.RayGunAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.SapperAttributes
 import btpos.source.vdfdsl.tf2.itemattributes.WeaponBaseAttributes
@@ -457,14 +457,14 @@ object PotatoCustomAttributes {
 	 *
 	 * In-Game: "Stickbombs stick to enemies"
 	 */
-	val ProjectileStickybombAttributes.canStickToEnemies: ItemAttributeNamed<Boolean> by ItemAttributeNamed("stickybomb stick to enemies")
+	val ProjectilePipebombAttributes.canStickToEnemies: ItemAttributeNamed<Boolean> by ItemAttributeNamed("stickybomb stick to enemies")
 	
 	/**
 	 * Stickybombs do not stick to ground
 	 *
 	 * In-Game: "Stickbombs don't stick"
 	 */
-	val ProjectileStickybombAttributes.stickybombNoStick: ItemAttributeNamed<Boolean> by ItemAttributeNamed("stickybomb no stick")
+	val ProjectilePipebombAttributes.stickybombNoStick: ItemAttributeNamed<Boolean> by ItemAttributeNamed("stickybomb no stick")
 	
 	/**
 	 * Bots killed by the weapon distribute their currency, like with sniper kills (red money)
@@ -1623,7 +1623,7 @@ object PotatoCustomAttributes {
 	 * `Player immune to specific attributes, separated by |`
 	 *
 	 */
-	val PlayerAttributes.ResistanceAttributes.attributeImmunity: ItemAttributeNamed<Set<ItemAttributeNamed<*>>> by ItemAttributeNamed("attribute immunity", { it.joinToString("|") { it.key } })
+	val PlayerAttributes.ResistanceAttributes.attributeImmunity: ItemAttributeNamed<Set<ItemAttributeNamed<*>>> by ItemAttributeNamed("attribute immunity", { it.joinToString("|") { it.key.stringValue } })
 	
 	/**
 	 * Hold fire until full reload. Set to 2 to disable weapon switch if weapon is not fully loaded, even if not currently reloading
