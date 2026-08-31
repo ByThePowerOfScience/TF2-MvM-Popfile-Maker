@@ -29,6 +29,8 @@ import btpos.source.vdfdsl.tf2.templates.RobotGiantTemplates
 import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
 import java.awt.Color
 import kotlin.reflect.KClass
+import kotlin.reflect.jvm.javaField
+import kotlin.reflect.jvm.javaGetter
 
 class TF2ItemsTypeDecoderProvider : TypeDecoderProvider {
 	override val valueDecoders: Map<KClass<*>, ValueDecoder<KtExpression>> = java.util.Map.of(
@@ -65,7 +67,7 @@ class TF2ItemsTypeDecoderProvider : TypeDecoderProvider {
 			).forEach {
 				val getItsInstance = KtObjectReference(it)
 				ConstantsFinder(it, TFItem::class) { _, property, objectInstance ->
-					val item = property.get(objectInstance)
+					val item = (property.javaGetter!!.invoke(objectInstance) ?: property.javaField?.get(objectInstance)) as TFItem<*>
 					codegen.itemNameToTFItemInstance[item.namePrimitive] = KtGetValueExpression(KtMemberReference(KtName(property.name)), getItsInstance)
 				}
 			}
