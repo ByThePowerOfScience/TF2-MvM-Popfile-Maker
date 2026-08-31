@@ -103,7 +103,9 @@ object Codegen {
  *
  * Everything should stay hidden in a function that hopefully gets elided by the JIT since [Codegen.IS_DOING_CODEGEN] will never change.
  */
-class CodegenProvider<out D : Any> private constructor(private val getCodegen: () -> D) {
+class CodegenProvider<out D : Any> private constructor(getCodegen: () -> D) {
+	private var getCodegen: (() -> D)? = getCodegen
+	
 	private var codegen: D? = null
 	
 	private val toApply = ArrayList<(D) -> Unit>(0)
@@ -116,13 +118,16 @@ class CodegenProvider<out D : Any> private constructor(private val getCodegen: (
 			return it;
 		}
 		
-		val x = getCodegen()
+		val x = getCodegen!!()
 		toApply.forEach {
 			it(x)
 		}
 		
-		toApply.clear()
 		codegen = x
+		
+		getCodegen = null
+		
+		toApply.clear()
 		
 		return x
 	}
