@@ -57,7 +57,7 @@ object Decoders {
 	
 	private class CompositeValueDecoder(val type: KClass<*>) : ValueDecoder<KtExpression> {
 		override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtExpression>? {
-			return allClassHierarchyGraph.getParentsRecursive(type)
+			return (sequenceOf(type) + allClassHierarchyGraph.getParentsRecursive(type))
 				.firstNotNullOfOrNull { cls ->
 					services.firstNotNullOfOrNull {
 						it.valueDecoders[cls]
@@ -70,7 +70,7 @@ object Decoders {
 	
 	private class CompositeSelfNamedDecoder(val type: KClass<*>) : SelfNamedDecoder<KtExpression> {
 		override fun decode(subtree: VDFSubtree): List<KtExpression>? {
-			return allClassHierarchyGraph.getParentsRecursive(type)
+			return (sequenceOf(type) + allClassHierarchyGraph.getParentsRecursive(type))
 				.firstNotNullOfOrNull { cls ->
 					services.firstNotNullOfOrNull {
 						it.selfNamedDecoders[cls]
