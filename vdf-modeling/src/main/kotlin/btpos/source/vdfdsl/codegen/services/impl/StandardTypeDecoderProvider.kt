@@ -17,39 +17,34 @@ import kotlin.time.Duration
 class StandardTypeDecoderProvider : TypeDecoderProvider {
 	override val valueDecoders: Map<KClass<*>, ValueDecoder<KtExpression>> = buildMap {
 			setOf(
-				Integer.TYPE.kotlin, Integer::class,
-				java.lang.Long.TYPE.kotlin, java.lang.Long::class
+				Int::class, Integer.TYPE.kotlin, Integer::class,
+				Long::class, java.lang.Long.TYPE.kotlin, java.lang.Long::class,
 			).forEach {
 				put(it, INT)
 			}
 			setOf(
-				java.lang.Boolean.TYPE.kotlin, Boolean::class,
+				Boolean::class, java.lang.Boolean.TYPE.kotlin, java.lang.Boolean::class,
 			).forEach {
 				put(it, BOOLEAN)
 			}
 			
 			setOf(
-				java.lang.Double.TYPE.kotlin, java.lang.Double::class,
-				java.lang.Float.TYPE.kotlin, java.lang.Float::class,
+				Double::class, java.lang.Double.TYPE.kotlin, java.lang.Double::class,
+				Float::class, java.lang.Float.TYPE.kotlin, java.lang.Float::class,
 				Number::class, java.lang.Number::class,
 			).distinct().forEach {
 				put(it, NUMBER)
 			}
 			
 			sequenceOf(
-				Char::class, Character::class,
+				Char::class, Character::class, Character.TYPE.kotlin,
 				String::class, java.lang.String::class,
 				CharSequence::class, java.lang.CharSequence::class
 			).forEach {
 				put(it, StringDecoder.IDENTITY)
 			}
 			
-			this[Int::class] = INT
-			this[Double::class] = NUMBER
-			this[Float::class] = NUMBER
-			this[Number::class] = NUMBER
 			this[Duration::class] = DURATION
-			this[String::class] = StringDecoder.IDENTITY
 		}
 	
 }
