@@ -115,3 +115,6 @@ fun VDFSubtree.getRoot(): VDFSubtree {
 	}
 	return curr;
 }
+
+
+fun VDFSubtree.addSubtree(identifier: VDFPrimitive, conditional: String? = null) = VDFSubtree(this).also { this.add(VDFKeyValue(identifier, it, conditional)) }

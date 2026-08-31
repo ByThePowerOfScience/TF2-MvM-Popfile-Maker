@@ -40,13 +40,13 @@ open class WeaponResistBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Ext
 	 */
 	open var itemClassDamageMults: List<Pair<String, Number>> = listOf()
 	
-	override fun _serializeInto(input: VDFSubtree) {
-		super._serializeInto(input)
+	override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+		super._serializeInto(input, forcedConditional)
 		
 		val weaponResistBlock = input.getAll(WEAPON_RESIST_KEY).first().asSubtree!!
 		weaponResistBlock += (itemClassDamageMults.asSequence().map { VDFPrimitive(it.first) to VDFPrimitive(it.second) } + weaponDamageMults.asSequence().map { (item, mult) -> item.namePrimitive to VDFPrimitive(mult) })
 			.map { (name, mult) ->
-				VDFKeyValue(name, mult, null)
+				VDFKeyValue(name, mult, forcedConditional)
 			}
 	}
 }

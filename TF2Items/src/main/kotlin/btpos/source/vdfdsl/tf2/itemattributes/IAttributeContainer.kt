@@ -1,12 +1,9 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.misc.kt.codegen.KtExpression
-import btpos.misc.kt.codegen.KtStatement
 import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtName
-import btpos.source.vdfdsl.backing.VDFObject
-import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.codegen.CodegenProvider
@@ -14,7 +11,6 @@ import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.tf2.codegen.AttributesCodegenTraverser
 import btpos.source.vdfdsl.util.ifNullOrEmpty
-import kotlin.reflect.KClass
 
 interface IAttributeContainer {
 	operator fun <T : Any> get(key: ItemAttribute<T>): T?
@@ -68,7 +64,7 @@ inline fun AttributeContainer(configure: AttributeContainerImpl.() -> Unit) = At
 
 fun IAttributeContainer.collectToSubtree(subtree: VDFSubtree) {
 	iterator().forEach { (attr, value) ->
-		value?.let { attr.serialize(value)._serializeInto(subtree) }
+		value?.let { attr.serialize(value)._serializeInto(subtree, null) }
 	}
 }
 

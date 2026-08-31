@@ -19,9 +19,9 @@ data class ItemAttributeLong(
 		val lower = value?.and(INT_BITMASK)?.toInt()
 		val lowBits = lowBits.serialize(lower)
 		val highBits = highBits.serialize(higher)
-		return IVDFRepresentableKeyValue { parent ->
-			lowBits._serializeInto(parent)
-			highBits._serializeInto(parent)
+		return IVDFRepresentableKeyValue { parent, forcedCond ->
+			lowBits._serializeInto(parent, forcedCond)
+			highBits._serializeInto(parent, forcedCond)
 		}
 		
 	}

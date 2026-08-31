@@ -6,9 +6,6 @@ import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
-import btpos.source.vdfdsl.utils.ReadOnlyConstant
-import kotlin.properties.PropertyDelegateProvider
-import kotlin.properties.ReadOnlyProperty
 
 class MultiSubtreeMap(val items: List<MutableMap<Any, IVDFRepresentableKeyValue>>) : MutableMap<Any, IVDFRepresentableKeyValue> {
 	override val keys: MutableSet<Any>
@@ -77,10 +74,10 @@ class MultiSubwavePopulator(
 ) : WaveSpawnPopulator(_subtree) {
 	val items: MutableList<WaveSpawnPopulator> = mutableListOf()
 	
-	override fun _serializeInto(input: VDFSubtree) {
+	override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
 		return items.forEach {
 			// allow stuff set in this to overwrite stuff set in each item
-			VDFStructWithPrototype(it, this)._serializeInto(input)
+			VDFStructWithPrototype(it, this)._serializeInto(input, forcedConditional)
 		}
 	}
 	

@@ -63,7 +63,7 @@ class AttrContainerWithDuration(
 	override val _vdfRepr: VDFPrimitive
 		get() {
 			val addedKeysToDurations = attributes.entries.map { (attr, value) ->
-				VDFSubtree(null).apply { attr.serialize(value.first)._serializeInto(this) } to (value.second ?: run {
+				VDFSubtree(null).apply { attr.serialize(value.first)._serializeInto(this, null) } to (value.second ?: run {
 					defaultDuration ?: error("Attempted to set $attr = ${value.first} without a duration set, and with no default duration.\nAttributes Container: $this")
 				})
 			}

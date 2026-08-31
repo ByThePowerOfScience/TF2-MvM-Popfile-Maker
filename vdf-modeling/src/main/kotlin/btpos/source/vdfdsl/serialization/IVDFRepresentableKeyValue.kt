@@ -10,7 +10,7 @@ fun interface IVDFRepresentableKeyValue : IVDFRepresentable {
 	 *
 	 * @param input The current state of the map to be serialized.
 	 */
-	fun _serializeInto(input: VDFSubtree)
+	fun _serializeInto(input: VDFSubtree, forcedConditional: String?)
 	
 	companion object {
 		fun isKeyValueRepresentable(cls: Class<*>): Boolean {
@@ -26,11 +26,16 @@ fun interface IVDFRepresentableKeyValue : IVDFRepresentable {
 interface IVDFRepresentableKeyValueSingle : IVDFRepresentableKeyValue {
 	val vdfRepr: VDFKeyValue
 	
-	override fun _serializeInto(input: VDFSubtree) {
-		input += this.vdfRepr
+	override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+		input += this.vdfRepr.let {
+			if (forcedConditional != null)
+				it.copy(conditional = forcedConditional)
+			else
+				it
+		}
 	}
 }
 
 operator fun VDFSubtree.plusAssign(representableValue: IVDFRepresentableKeyValue) {
-	representableValue._serializeInto(this)
+	representableValue._serializeInto(this, null)
 }

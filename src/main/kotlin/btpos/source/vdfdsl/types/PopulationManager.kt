@@ -140,7 +140,7 @@ inline fun WaveSchedule(configure: PopulationManager.() -> Unit): PopulationMana
 
 fun PopulationManager.writeToFile(fileName: String) {
 	Path(fileName).createDirectories().bufferedWriter().use { writer ->
-		VDFSubtree(null).also { this._serializeInto(it) }.writeToVDF(writer)
+		VDFSubtree(null).also { this._serializeInto(it, null) }.writeToVDF(writer)
 	}
 }
 

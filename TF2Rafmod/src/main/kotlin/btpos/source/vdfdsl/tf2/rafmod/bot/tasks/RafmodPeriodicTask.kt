@@ -108,9 +108,9 @@ sealed class RafmodPeriodicTask(subtree: IExtensibleSubtree_VDFRepresentable = E
 			return TaskActivationCondition(_rawEntries.toMutableMap(), Throwable().stackTrace)
 		}
 		
-		override fun _serializeInto(input: VDFSubtree) {
+		override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
 			_rawEntries.values.forEach {
-				it._serializeInto(input)
+				it._serializeInto(input, forcedConditional)
 			}
 		}
 	}

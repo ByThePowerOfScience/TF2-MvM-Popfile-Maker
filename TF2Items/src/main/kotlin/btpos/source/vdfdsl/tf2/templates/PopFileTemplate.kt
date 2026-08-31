@@ -24,9 +24,9 @@ data class PopFileTemplate(
 	val base: String
 ) : IVDFRepresentableValue {
 	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
-		return IVDFRepresentableKeyValue { parent ->
+		return IVDFRepresentableKeyValue { parent, forcedCond ->
 			parent.addBase()
-			parent += VDFKeyValue(key, VDFPrimitive(name), conditional)
+			parent += VDFKeyValue(key, VDFPrimitive(name), forcedCond ?: conditional)
 		}
 	}
 	

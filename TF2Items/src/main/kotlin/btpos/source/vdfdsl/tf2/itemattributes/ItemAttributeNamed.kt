@@ -19,7 +19,7 @@ data class ItemAttributeNamed<T : Any>(
 	
 	override fun serialize(value: T?): IVDFRepresentableKeyValue {
 		if (value == null)
-			return IVDFRepresentableKeyValue {}
+			return IVDFRepresentableKeyValue { _, _ -> }
 		
 		return IVDFRepresentableValue.serializeDynamic(key, serializer?.invoke(value) ?: value)
 	}

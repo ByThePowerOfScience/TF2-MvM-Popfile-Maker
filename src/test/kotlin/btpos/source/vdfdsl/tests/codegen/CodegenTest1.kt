@@ -20,7 +20,7 @@ class CodegenTest1 {
 				skill = BotSkill.Hard
 				autoJumpMin = 100
 				autoJumpMax = 25
-			}._serializeInto(it)
+			}._serializeInto(it, null)
 		}
 		
 		val toCode = Decoders.getDecoder(AbstractSpawner::class)?.decode(spawner)

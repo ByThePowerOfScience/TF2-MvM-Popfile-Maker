@@ -36,14 +36,14 @@ class TFItem<ATTR : Any>(
 {
 	val namePrimitive = VDFPrimitive(name)
 	
-	override fun _serializeInto(input: VDFSubtree) {
+	override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
 		input +=
 			listOfNotNull(
-				VDFKeyValue(VDFPrimitive("Item"), namePrimitive, null),
+				VDFKeyValue(VDFPrimitive("Item"), namePrimitive, forcedConditional),
 				VDFKeyValue.orNull(
 					VDFPrimitive("ItemAttributes"),
 					attributes?._vdfRepr(input)?.withEntry(VDFKeyValue(VDFPrimitive("ItemName"), namePrimitive, null)),
-					conditional
+					forcedConditional ?: conditional
 				)
 		)
 	}

@@ -13,8 +13,13 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 data class VDFKeyValue(val key: VDFPrimitive, val value: VDFObject, val conditional: String? = null) : VDFObject(), IVDFRepresentableKeyValue {
 	constructor(key: String, value: String, conditional: String? = null) : this(VDFPrimitive(key), VDFPrimitive(value), conditional)
 	
-	override fun _serializeInto(input: VDFSubtree) {
-		input += this
+	override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+		input += this.let {
+			if (forcedConditional != null) {
+				it.copy(conditional = forcedConditional)
+			} else
+				it
+		}
 	}
 	
 	override fun writeToVDF(writer: Appendable, indent: Int) {

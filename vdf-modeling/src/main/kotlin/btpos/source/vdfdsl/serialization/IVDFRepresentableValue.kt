@@ -71,8 +71,8 @@ fun interface IVDFRepresentableValue_Subtree : IVDFRepresentableValue {
 	fun _vdfRepr(parent: VDFSubtree): VDFSubtree
 	
 	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
-		return { parent ->
-			parent += VDFKeyValue(key, _vdfRepr(parent), conditional)
+		return { parent, forcedConditional ->
+			parent += VDFKeyValue(key, _vdfRepr(parent), forcedConditional ?: conditional)
 		}
 	}
 }
@@ -94,7 +94,7 @@ interface IVDFRepresentableValue_Trivial : IVDFRepresentableValue {
 	val _vdfRepr: VDFPrimitive
 	
 	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
-		return { it += VDFKeyValue(key, _vdfRepr, conditional) }
+		return { it, forcedCond -> it += VDFKeyValue(key, _vdfRepr, forcedCond ?: conditional) }
 	}
 }
 

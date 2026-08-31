@@ -21,7 +21,6 @@ import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtMemberReference
 import btpos.misc.kt.codegen.expressions.KtThis
 import btpos.misc.kt.codegen.identifiers.KtName
-import btpos.misc.kt.codegen.util.ReflectionUtils.getUpperBounds
 import btpos.misc.kt.codegen.util.ReflectionUtils.isExtension
 import btpos.source.vdfdsl.codegen.SelfNamedDecoder
 import btpos.source.vdfdsl.codegen.orElse
@@ -43,6 +42,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
@@ -124,10 +124,10 @@ interface IExtensibleSubtree {
 		@PublishedApi
 		internal fun <T : Any> _flatListWithKey(): Serializer<Iterable<T>> = { iterable: Iterable<T> ->
 			IVDFRepresentableValue { key, conditional ->
-				IVDFRepresentableKeyValue { input: VDFSubtree ->
+				IVDFRepresentableKeyValue { input: VDFSubtree, forcedConditional ->
 					iterable.forEach {
 						IVDFRepresentableValue.serializeDynamic(key, it, conditional)
-							._serializeInto(input)
+							._serializeInto(input, forcedConditional)
 					}
 				}
 			}
@@ -164,15 +164,15 @@ interface IExtensibleSubtree {
 		internal fun <T : Any> _listAsMap(dummyValue: VDFPrimitive): Serializer<Iterable<T>> {
 			return { iterable ->
 				IVDFRepresentableValue { key, conditional ->
-					IVDFRepresentableKeyValue { parent ->
+					IVDFRepresentableKeyValue { parent, forcedConditional ->
 						parent += VDFKeyValue(
 							key,
 							VDFSubtree(parent).apply {
 								iterable.forEach {
-									this += VDFKeyValue(VDFPrimitive(it), dummyValue, null)
+									this += VDFKeyValue(VDFPrimitive(it), dummyValue, forcedConditional)
 								}
 							},
-							conditional
+							forcedConditional ?: conditional
 						)
 						
 					}
@@ -190,7 +190,7 @@ interface IExtensibleSubtree {
 			return { items ->
 				IVDFRepresentableValue_Subtree { parent ->
 					VDFSubtree(parent).also { newSubtree ->
-						items.forEach { it._serializeInto(newSubtree) }
+						items.forEach { it._serializeInto(newSubtree, null) }
 					}
 				}
 			}
@@ -377,7 +377,7 @@ interface IExtensibleSubtree {
 					if (value == null)
 						thisRef._rawEntries.remove(property)
 					else
-						thisRef._rawEntries[property] = SelfNamedValue(value, transformer)
+						thisRef._rawEntries[property] = SelfNamedValue(value, transformer = transformer)
 				}
 			}
 		}
@@ -406,13 +406,21 @@ interface IExtensibleSubtree {
 			@Suppress("UNCHECKED_CAST")
 			object : ReadWriteProperty<IExtensibleSubtree, List<T>> {
 				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): List<T> {
-					return (thisRef._rawEntries[property] as SelfNamedValueList<T>?)?.innerList ?: emptyList()
+					return thisRef._rawEntries[property] as SelfNamedValueList<T>? ?: emptyList()
 				}
 				
 				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: List<T>) {
 					thisRef._rawEntries[property] = SelfNamedValueList(value, transformer)
 				}
 			}
+		}
+		
+		fun <T : Any, EXT : IExtensibleSubtree> EXT.setConditionally(prop: KProperty1<EXT, T>, value: T, conditional: String) {
+			@Suppress("UNCHECKED_CAST")
+			val delegate = requireNotNull(prop.getDelegate(this) as? SetWithConditional<T>) {
+				"$prop is not a property created by `addField`, `selfNamed`, or `merged`."
+			}
+			delegate.setWithConditional(value, conditional)
 		}
 		
 		/**
@@ -441,10 +449,14 @@ interface IExtensibleSubtree {
 				if (IS_DOING_CODEGEN)
 					Codegen._registerCodegenMergedMapping(thisRef, prop)
 				
-				ReadOnlyProperty { extensibleSubtree, prop ->
-					(extensibleSubtree._rawEntries.computeIfAbsent(prop) { SelfNamedValue(instance) { it } } as SelfNamedValue<T>).item
+				ReadOnlyProperty { thisRef, property ->
+					(thisRef._rawEntries.computeIfAbsent(prop) { SelfNamedValue(instance) { it } } as SelfNamedValue<T>).item
 				}
 			}
+		}
+		
+		private interface SetWithConditional<T> {
+			fun setWithConditional(value: T, conditional: String)
 		}
 	}
 	
@@ -544,9 +556,12 @@ interface IExtensibleSubtree {
 					a = b
 				}
 				 */
+			}
+			getOrCreateStructDecoder(prop.returnType.classifier as KClass<*>).apply {
 				factoryMethod = { x ->
 					KtFunctionCall(KtMemberReference(prop), mutableListOf(KtLambda(lines = x)))
 				}
+				shouldCommentLeftovers = false
 			}
 		}
 		
@@ -642,9 +657,9 @@ interface IExtensibleSubtree {
 		}
 		
 		class StructFieldDecoderPropExt_Merged(
-			val prop: KProperty<*>
+			prop: KProperty<*>
 		) : SelfNamedDecoder<KtStatement> {
-			val valueDecoder = getOrCreateStructDecoder(prop.returnType.classifier?.getUpperBounds()?.firstOrNull { it != Any::class } ?: error("Cannot perform codegen for a property without a definite type: $prop"))
+			val valueDecoder = getOrCreateStructDecoder(prop.returnType.classifier as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $prop"))
 			
 			override fun decode(subtree: VDFSubtree): List<KtStatement> {
 				return valueDecoder.decodeValue(subtree, subtree.parent ?: VDFSubtree(null))
@@ -653,8 +668,16 @@ interface IExtensibleSubtree {
 	}
 	
 	interface Merged : IExtensibleSubtree_VDFRepresentable, IVDFRepresentableKeyValue {
-		override fun _serializeInto(input: VDFSubtree) {
-			input.entries.addAll(this._vdfRepr(input.parent ?: VDFSubtree(null)))
+		override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+			input.entries.addAll(
+				this._vdfRepr(input.parent ?: VDFSubtree(null))
+					.let {
+						if (forcedConditional != null)
+							it.map { it.copy(conditional=forcedConditional) }
+						else
+							it
+					}
+			)
 		}
 	}
 }
@@ -673,7 +696,7 @@ open class ExtensibleSubtreeImpl(
 ) : IExtensibleSubtree_VDFRepresentable {
 	override fun _vdfRepr(parent: VDFSubtree): VDFSubtree {
 		val ourSub = VDFSubtree(parent)
-		_rawEntries.values.forEach { it._serializeInto(ourSub) }
+		_rawEntries.values.forEach { it._serializeInto(ourSub, null) }
 		return ourSub
 	}
 	
@@ -688,8 +711,8 @@ open class ExtensibleSubtreeMergedImpl(protected val backing: ExtensibleSubtreeI
 		return this
 	}
 	
-	final override fun _serializeInto(input: VDFSubtree) {
-		return super._serializeInto(input)
+	final override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+		return super._serializeInto(input, forcedConditional)
 	}
 	
 	override fun copy(): ExtensibleSubtreeMergedImpl = ExtensibleSubtreeMergedImpl(copyInternal())

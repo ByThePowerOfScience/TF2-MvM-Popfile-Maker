@@ -79,8 +79,8 @@ interface PathNode : IVDFRepresentableKeyValue {
 	}
 
 	class Simple(val coord: Vec3) : PathNode {
-		override fun _serializeInto(input: VDFSubtree) {
-			input += VDFKeyValue("Node", RafmodSerializers.COORD3D(coord), SIGSEGV)
+		override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+			input += VDFKeyValue("Node", RafmodSerializers.COORD3D(coord), forcedConditional ?: SIGSEGV)
 		}
 	}
 

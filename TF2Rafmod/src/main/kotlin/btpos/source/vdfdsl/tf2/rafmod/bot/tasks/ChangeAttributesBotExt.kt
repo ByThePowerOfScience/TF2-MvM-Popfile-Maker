@@ -50,11 +50,14 @@ open class ChangeAttributesBotExt(subtree: IExtensibleSubtree_VDFRepresentable =
 	
 	override fun _serializeInto(input: VDFSubtree) {
 		super._serializeInto(input)
+	override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+		super._serializeInto(input, forcedConditional)
+		
+		
+		// add change to EventChangeAttributes if not already there
 		
 		val changeBlock = this.changes
 		                    ?: throw RequiredFieldNotFoundException(this._instantiationSite, IllegalStateException("`changes` block not present!"))
-		
-		// add change to EventChangeAttributes if not already there
 		
 		val botAppliedTo = input.parent?.takeIf { bot ->
 			bot.parent?.first { it.value == bot }?.key?.stringValue == "TFBot"
@@ -82,7 +85,7 @@ open class ChangeAttributesBotExt(subtree: IExtensibleSubtree_VDFRepresentable =
 		}
 		// TODO see if this is even WANTED, cause templates might add stuff that we aren't aware of
 		if (toAddTo != null) {
-			changeBlock._serializeInto(toAddTo)
+			changeBlock._serializeInto(toAddTo, SIGSEGV)
 		}
 	}
 }

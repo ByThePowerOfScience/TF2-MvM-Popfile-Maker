@@ -80,8 +80,8 @@ open class EventChangeAttributes(private val eventListeners: MutableMap<String, 
 	
 	override fun _vdfRepr(parent: VDFSubtree): VDFSubtree {
 		val out = VDFSubtree(parent)
-		this.eventListeners.forEach { (name, attrs) ->
-			out.add(VDFKeyValue(VDFPrimitive(name), attrs._vdfRepr(out), null))
+		this.eventListeners.values.forEach { attrs ->
+			attrs._serializeInto(out, null)
 		}
 		return out
 	}

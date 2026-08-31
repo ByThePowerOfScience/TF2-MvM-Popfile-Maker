@@ -167,7 +167,7 @@ class mvm_coaltown_expert1 {
 			+wave7()
 		}
 		
-		val asSubtree = VDFSubtree(null).also { x._serializeInto(it) }
+		val asSubtree = VDFSubtree(null).also { x._serializeInto(it, null) }
 		
 		compareSubtreesUnordered(emptyList(), ParseVDF.parse(Path("mvm_coaltown_expert1.pop").inputStream()), asSubtree)
 	}
