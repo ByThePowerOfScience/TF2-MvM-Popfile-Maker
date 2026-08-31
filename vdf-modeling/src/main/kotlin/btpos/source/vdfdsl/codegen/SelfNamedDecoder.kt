@@ -19,6 +19,8 @@ import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.javaField
 
 fun interface SelfNamedDecoder<out T : KtStatement> {
 	/**
@@ -122,6 +124,9 @@ fun <T : Any> ConstantsFinder(lookingIn: KClass<*>, lookingFor: KClass<T>, onEnt
             ?: return)
 		.let { (cls, inst) ->
 			cls.declaredMemberProperties.forEach { prop ->
+				if (!prop.isAccessible)
+					return@forEach;
+				
 				if (prop.returnType.classifier.let { it != null && it.getUpperBounds().any { it.isSubclassOf(lookingFor) } }) {
 					@Suppress("UNCHECKED_CAST") val prop = prop as KProperty1<Any, T>
 					action(this@findRecursive, prop, inst)
