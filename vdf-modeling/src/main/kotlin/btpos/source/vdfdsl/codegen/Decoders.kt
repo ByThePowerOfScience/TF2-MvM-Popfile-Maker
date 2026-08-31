@@ -3,7 +3,9 @@ package btpos.source.vdfdsl.codegen
 import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.KtStatement
 import btpos.source.vdfdsl.backing.VDFObject
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
 import btpos.source.vdfdsl.util.ClassHierarchyGraph
 import java.util.ServiceLoader
@@ -26,6 +28,16 @@ object Decoders {
 		str.stringValue.toIntOrNull()?.run {
 			Codegen.code(str.stringValue)
 		}
+	}
+	
+	val BOOLEAN = ValueDecoder<KtExpression> { it, _ ->
+		it.asPrimitive?.let {
+			when (it) {
+				VDFPrimitive.TRUE, VDFPrimitive.notInterned("yes") -> Codegen.code("true")
+				VDFPrimitive.FALSE, VDFPrimitive.notInterned("no") -> Codegen.code("false")
+				else -> null
+			}
+		}?.let { listOf(it) }
 	}
 	
 	private val services = ServiceLoader.load(TypeDecoderProvider::class.java)

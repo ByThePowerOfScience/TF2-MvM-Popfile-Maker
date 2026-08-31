@@ -7,6 +7,7 @@ import btpos.source.vdfdsl.codegen.Decoders.NUMBER
 import btpos.source.vdfdsl.codegen.StringDecoder
 import btpos.source.vdfdsl.codegen.StructSubclassNavigator
 import btpos.misc.kt.codegen.KtExpression
+import btpos.source.vdfdsl.codegen.Decoders.BOOLEAN
 import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
 import kotlin.collections.set
@@ -20,6 +21,11 @@ class StandardTypeDecoderProvider : TypeDecoderProvider {
 				java.lang.Long.TYPE.kotlin, java.lang.Long::class
 			).forEach {
 				put(it, INT)
+			}
+			setOf(
+				java.lang.Boolean.TYPE.kotlin, Boolean::class,
+			).forEach {
+				put(it, BOOLEAN)
 			}
 			
 			setOf(
