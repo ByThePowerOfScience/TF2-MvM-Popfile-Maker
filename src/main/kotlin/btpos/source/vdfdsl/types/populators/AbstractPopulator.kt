@@ -10,8 +10,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.PopulationManager
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
-import btpos.source.vdfdsl.utils.ReadOnlyConstant
-import kotlin.collections.plus
+import btpos.source.vdfdsl.utils.delegates.ReadOnlyConstant
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 

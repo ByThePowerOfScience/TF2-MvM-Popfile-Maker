@@ -8,7 +8,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.types.specifics.OutputAction
-import btpos.source.vdfdsl.utils.ReadOnlyConstant
+import btpos.source.vdfdsl.utils.delegates.ReadOnlyConstant
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 

@@ -12,7 +12,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
-import btpos.source.vdfdsl.utils.MutableImmutableMapView
+import btpos.source.vdfdsl.util.collectionviews.mutableimmutables.MutableImmutableMapView
 import java.awt.Color
 
 
