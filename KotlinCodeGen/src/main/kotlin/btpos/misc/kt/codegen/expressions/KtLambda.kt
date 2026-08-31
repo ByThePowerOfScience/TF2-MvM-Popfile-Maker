@@ -15,10 +15,7 @@ class KtLambda : KtExpression {
 	override fun toKotlinCode(): String {
 		val paramsString = if (namedParams.isEmpty() || (namedParams.size == 1 && namedParams[0].name == "it")) ""
 							else (" " + (namedParams.joinToString(", ") { it.toKotlinCode() } + " ->"))
-		val bodySep = if (lines.size > 1) "\n" else " "
-		val bodyIndent = if (lines.size > 1) { { it: String -> it.prependIndent("\t") } } else { { it } }
-		
-		return "{$paramsString$bodySep${bodyIndent(lines.joinToString("\n") { it.toKotlinCode() })}$bodySep}"
+		return "{$paramsString\n${lines.joinToString("\n") { it.toKotlinCode() }.prependIndent("\t")}\n}"
 	}
 	
 	companion object {
