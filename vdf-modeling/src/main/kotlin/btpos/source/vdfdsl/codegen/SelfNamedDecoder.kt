@@ -21,6 +21,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
+import kotlin.reflect.jvm.javaGetter
 
 fun interface SelfNamedDecoder<out T : KtStatement> {
 	/**
@@ -97,7 +98,7 @@ fun <T : Any> ConstantsCodegen(lookIn: KClass<*>, lookingFor: KClass<T>, equalsC
 	return CodegenProvider {
 		val nav = ValueDecoderMulti<KtExpression>()
 		ConstantsFinder(lookIn, lookingFor) { owner, prop, objInst ->
-			val propGet = prop.get(objInst)
+			val propGet = (prop.javaGetter?.invoke(objInst) ?: prop.javaField!!.get(objInst)) as T
 			val propName = prop.name
 			
 			nav.decoders += ValueDecoder<KtExpression> { item, parent ->
