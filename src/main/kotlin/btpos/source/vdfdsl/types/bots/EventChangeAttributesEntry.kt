@@ -11,9 +11,10 @@ import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ValueDecoder
+import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
-import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.tf2.itemattributes.impl.IBlockScoped
 import btpos.source.vdfdsl.types.spawners.ChangeableBotAttributes
@@ -22,8 +23,12 @@ import btpos.source.vdfdsl.types.spawners.ChangeableBotAttributes
  * A single named instance of EventChangeAttributes.  When the event named in [eventName] is fired, all changes defined in this object are applied to the bot this event is defined in.
  */
 open class EventChangeAttributesEntry(
-	subtree: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf()
-) : ExtensibleSubtreeImpl(subtree), ChangeableBotAttributes, IBlockScoped {
+	val eventName: String,
+	backing: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl(),
+) : AbstractVDFStruct(backing), ChangeableBotAttributes, IBlockScoped  {
+	override val _structIdentifier: String
+		get() = eventName
+	
 	companion object {
 		/**
 		 * The name of the event all bots start on when spawned.
@@ -36,9 +41,10 @@ open class EventChangeAttributesEntry(
 		const val ON_GATE_CAPTURE = "RevertGateBotsBehavior"
 		
 	    inline operator fun invoke(
+		    eventName: String,
 		    configure: EventChangeAttributesEntry.() -> Unit
 		): EventChangeAttributesEntry {
-	        return EventChangeAttributesEntry().apply(configure)
+	        return EventChangeAttributesEntry(eventName,).apply(configure)
 	    }
 		
 		
@@ -49,7 +55,9 @@ open class EventChangeAttributesEntry(
 		val CODEGEN = IExtensibleSubtree.Codegen.forType<EventChangeAttributesEntry>()
 	}
 	
-	override fun copy() = EventChangeAttributesEntry(_copyInternal())
+	override fun copy() = EventChangeAttributesEntry(eventName, copyInternal())
+	
+	fun copy(name: String) = EventChangeAttributesEntry(name, copyInternal())
 }
 
 
@@ -74,7 +82,7 @@ open class EventChangeAttributes(private val eventListeners: MutableMap<String, 
 	 */
 	inline operator fun String.invoke(onEvent: EventChangeAttributesEntry.() -> Unit) {
 		computeIfAbsent(this) {
-			EventChangeAttributesEntry()
+			EventChangeAttributesEntry(it,)
 		}.apply(onEvent)
 	}
 	
