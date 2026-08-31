@@ -4,11 +4,9 @@ import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.StructSubclassNavigator
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamed
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
-import btpos.source.vdfdsl.types.PopulationManager
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 import btpos.source.vdfdsl.utils.delegates.ReadOnlyConstant
 import kotlin.properties.PropertyDelegateProvider

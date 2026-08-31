@@ -7,7 +7,6 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.cacheData
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.compose
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
-import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.tf2.items.TFItem
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
