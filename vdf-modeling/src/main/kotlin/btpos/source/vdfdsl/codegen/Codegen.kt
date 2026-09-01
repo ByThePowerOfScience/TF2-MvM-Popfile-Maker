@@ -108,7 +108,7 @@ class CodegenProvider<out D : Any> private constructor(getCodegen: () -> D) {
 	
 	private var codegen: D? = null
 	
-	private val toApply = ArrayList<(D) -> Unit>(0)
+	private var toApply: ArrayList<(D) -> Unit>? = ArrayList<(D) -> Unit>(0)
 	
 	fun get(): D {
 		if (!Codegen.IS_DOING_CODEGEN)
@@ -119,7 +119,7 @@ class CodegenProvider<out D : Any> private constructor(getCodegen: () -> D) {
 		}
 		
 		val x = getCodegen!!()
-		toApply.forEach {
+		toApply!!.forEach {
 			it(x)
 		}
 		
@@ -127,7 +127,7 @@ class CodegenProvider<out D : Any> private constructor(getCodegen: () -> D) {
 		
 		getCodegen = null
 		
-		toApply.clear()
+		toApply = null
 		
 		return x
 	}
@@ -142,7 +142,7 @@ class CodegenProvider<out D : Any> private constructor(getCodegen: () -> D) {
 			return this;
 		}
 		
-		toApply += action
+		toApply!!.let { it += action }
 		
 		return this;
 	}
