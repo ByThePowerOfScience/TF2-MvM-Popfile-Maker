@@ -103,10 +103,12 @@ fun <T : Any> ConstantsCodegen(lookIn: KClass<*>, lookingFor: KClass<T>, equalsC
 			val propGet = (prop.javaGetter?.invoke(objInst) ?: prop.javaField!!.get(objInst)) as T
 			val propName = prop.name
 			
+			val ownerSimpleName = owner.simpleName
+			                      ?: return@ConstantsFinder
+			val ownerQualName = owner.qualifiedName
+			                    ?: return@ConstantsFinder
+			
 			nav.decoders += ValueDecoder<KtExpression> { item, parent ->
-				val ownerSimpleName = owner.simpleName ?: return@ValueDecoder null
-				val ownerQualName = owner.qualifiedName ?: return@ValueDecoder null
-				
 				if (propGet.equalsCheck(item, parent)) {
 					listOf(Codegen.code(ownerSimpleName + "." + propName, ownerQualName))
 				} else {
