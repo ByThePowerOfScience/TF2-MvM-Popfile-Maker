@@ -18,6 +18,7 @@ import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.itemattributes.impl.ItemAttributeLong
 import btpos.source.vdfdsl.util.forEachWithIter
+import btpos.source.vdfdsl.util.ReflectionUtils.actuallyGet
 import btpos.source.vdfdsl.util.mapCompact
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -117,7 +118,7 @@ class AttributesCodegenTraverser {
 				// if prop returns an inner class, it's a scope that needs to be recorded.
 				(prop.returnType.classifier as? KClass<*>)?.takeIf { it in nesteds }?.let {
 					val get = KtGetValueExpression(KtMemberReference(prop), getThisInst)
-					val propValue = prop.get(inst)
+					val propValue = prop.actuallyGet(inst)
 					mapOfClassToScopePath[it] = propValue to get
 					calcScopePropGetRecursive(it, propValue, get)
 				}
@@ -143,8 +144,8 @@ class AttributesCodegenTraverser {
 												?.firstNotNullOfOrNull { mapOfClassToScopePath[it] }
 					                                ?: return@forEach;
 			
-			attributeTypeInitializers[prop.returnType.classifier]?.invoke(prop.get(scopeInst) as ItemAttribute<*>, KtGetValueExpression(KtMemberReference(prop), getScopeVar), outMap)
-				?: defaultInitializer(prop.get(scopeInst), KtGetValueExpression(KtMemberReference(prop), getScopeVar), outMap)
+			attributeTypeInitializers[prop.returnType.classifier]?.invoke(prop.actuallyGet(scopeInst) as ItemAttribute<*>, KtGetValueExpression(KtMemberReference(prop), getScopeVar), outMap)
+				?: defaultInitializer(prop.actuallyGet(scopeInst), KtGetValueExpression(KtMemberReference(prop), getScopeVar), outMap)
 		}
 	}
 	
@@ -162,7 +163,7 @@ class AttributesCodegenTraverser {
 		
 		for (property in attr::class.declaredMemberProperties) {
 			@Suppress("UNCHECKED_CAST")
-			val inst = (property as KProperty1<Any, Any>).get(this)
+			val inst = (property as KProperty1<Any, Any>).actuallyGet(this)
 			inst.handleItemAttribute(getThisProp, property.name, items)
 		}
 	}
@@ -183,7 +184,7 @@ class AttributesCodegenTraverser {
 		
 		instancesToCheck.forEach { inst ->
 			inst::class.declaredMemberPropertiesGettable().forEach { prop ->
-				prop.get(inst).handleItemAttribute(null, prop.name, items)
+				prop.actuallyGet(inst).handleItemAttribute(null, prop.name, items)
 			}
 		}
 		

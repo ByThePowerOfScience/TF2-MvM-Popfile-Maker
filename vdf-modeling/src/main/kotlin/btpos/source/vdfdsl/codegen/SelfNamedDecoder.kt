@@ -11,6 +11,8 @@ import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
+import btpos.source.vdfdsl.util.ReflectionUtils.actuallyGet
+import btpos.source.vdfdsl.util.ReflectionUtils.canAccess
 import btpos.source.vdfdsl.util.ifNullOrEmpty
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
@@ -20,7 +22,6 @@ import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaGetter
 
@@ -126,7 +127,7 @@ fun <T : Any> ConstantsFinder(lookingIn: KClass<*>, lookingFor: KClass<T>, onEnt
             ?: return)
 		.let { (cls, inst) ->
 			cls.declaredMemberProperties.forEach { prop ->
-				if (!prop.isAccessible)
+				if (!prop.canAccess(inst))
 					return@forEach;
 				
 				if (prop.returnType.classifier.let { it != null && it.getUpperBounds().any { it.isSubclassOf(lookingFor) } }) {
@@ -173,7 +174,7 @@ fun <T : IVDFRepresentableValue_Trivial> ConstantsDecoder(cls: KClass<T>): Codeg
 				
 				val it = it as KProperty1<Any, T>
 				
-				it.get(companionInst)._vdfRepr to KtName(it.name, cls)
+				it.actuallyGet(companionInst)._vdfRepr to KtName(it.name, cls)
 			}
 		)
 	}

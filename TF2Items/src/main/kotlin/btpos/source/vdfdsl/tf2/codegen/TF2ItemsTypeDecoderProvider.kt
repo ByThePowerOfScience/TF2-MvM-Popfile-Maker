@@ -27,6 +27,7 @@ import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.tf2.templates.RobotGatebotTemplates
 import btpos.source.vdfdsl.tf2.templates.RobotGiantTemplates
 import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
+import btpos.source.vdfdsl.util.ReflectionUtils.actuallyGet
 import java.awt.Color
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.javaField
@@ -67,7 +68,8 @@ class TF2ItemsTypeDecoderProvider : TypeDecoderProvider {
 			).forEach {
 				val getItsInstance = KtObjectReference(it)
 				ConstantsFinder(it, TFItem::class) { _, property, objectInstance ->
-					val item = (property.javaGetter!!.invoke(objectInstance) ?: property.javaField?.get(objectInstance)) as TFItem<*>
+					val item = (property.javaGetter?.invoke(objectInstance)
+					            ?: property.javaField!!.get(objectInstance)) as TFItem<*>
 					codegen.itemNameToTFItemInstance[item.namePrimitive] = KtGetValueExpression(KtMemberReference(KtName(property.name)), getItsInstance)
 				}
 			}
@@ -86,7 +88,7 @@ class TF2ItemsTypeDecoderProvider : TypeDecoderProvider {
 			val itemFactory = TFItemFactory::class
 			TFItemFactories::class.declaredMemberPropertiesGettable().forEach {
 				if (it.returnType.classifier == itemFactory)
-					codegen.instancesToCheck += it.get(TFItemFactories)
+					codegen.instancesToCheck += it.actuallyGet(TFItemFactories)
 			}
 			
 			codegen.extensionProperties += arrayOf(
