@@ -27,4 +27,8 @@ class PopFileTypeDecoderProvider : TypeDecoderProvider {
 		AbstractSpawner::class to AbstractSpawner.CODEGEN_NAV.get(),
 		AbstractPopulator::class to AbstractPopulator.NAV.get()
 	)
+	
+	init {
+		Class.forName("btpos.source.vdfdsl.types.spawners.TFBotSpawnerKt")
+	}
 }
