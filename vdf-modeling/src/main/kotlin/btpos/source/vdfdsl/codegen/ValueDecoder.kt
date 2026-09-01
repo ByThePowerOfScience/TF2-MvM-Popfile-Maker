@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.util.compacted
-import btpos.source.vdfdsl.util.forEachWithIter
+import btpos.source.vdfdsl.util.forEachWithLazyIter
 
 /**
  * Decoder that transforms a single object into its deserialized type.
@@ -27,11 +27,11 @@ fun <T : KtStatement> ValueDecoder<T>.keyed(key: String) = keyed(VDFPrimitive(ke
 fun <T : KtStatement> ValueDecoder<T>.keyed(key: VDFPrimitive): SelfNamedDecoder<T> {
 	return SelfNamedDecoder { subtree ->
 		val out = ArrayList<T>()
-		subtree.forEachWithIter { kv ->
+		subtree.forEachWithLazyIter { kv ->
 			if (kv.key == key) {
 				val ret = this@keyed.decodeValue(kv.value, subtree)
 				if (ret.isNullOrEmpty())
-					return@forEachWithIter;
+					return@forEachWithLazyIter;
 				out += ret
 				remove()
 			}

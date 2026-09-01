@@ -17,8 +17,8 @@ import btpos.source.vdfdsl.codegen.ValueDecoder
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.itemattributes.impl.ItemAttributeLong
-import btpos.source.vdfdsl.util.forEachWithIter
 import btpos.source.vdfdsl.util.ReflectionUtils.actuallyGet
+import btpos.source.vdfdsl.util.forEachWithLazyIter
 import btpos.source.vdfdsl.util.mapCompact
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -70,12 +70,12 @@ class AttributesCodegenTraverser {
 			items[attr.lowBits.key] = ValueDecoder { value, parent ->
 				val lowbits = value.asPrimitive?.intValue ?: return@ValueDecoder null;
 				var highbits: Int? = null
-				parent.forEachWithIter {
+				parent.forEachWithLazyIter {
 					if (highbits != null)
-						return@forEachWithIter;
+						return@forEachWithLazyIter;
 					
 					if (it.key == attr.highBits.key) {
-						highbits = it.value.asPrimitive?.intValue ?: return@forEachWithIter;
+						highbits = it.value.asPrimitive?.intValue ?: return@forEachWithLazyIter;
 						remove()
 					}
 				}
@@ -87,12 +87,12 @@ class AttributesCodegenTraverser {
 			items[attr.highBits.key] = ValueDecoder { value, parent ->
 				val highbits = value.asPrimitive?.intValue ?: return@ValueDecoder null;
 				var lowbits: Int? = null
-				parent.forEachWithIter {
+				parent.forEachWithLazyIter {
 					if (lowbits != null)
-						return@forEachWithIter;
+						return@forEachWithLazyIter;
 					
 					if (it.key == attr.lowBits.key) {
-						lowbits = it.value.asPrimitive?.intValue ?: return@forEachWithIter;
+						lowbits = it.value.asPrimitive?.intValue ?: return@forEachWithLazyIter;
 						remove()
 					}
 				}
@@ -203,10 +203,10 @@ class AttributesCodegenTraverser {
 		fun decodeToLambdaLines(subtree: VDFSubtree): List<KtStatement> {
 			val out = mutableListOf<KtStatement>()
 			
-			subtree.forEachWithIter { (key, item) ->
+			subtree.forEachWithLazyIter { (key, item) ->
 				val it = attributeLocations[key]?.decodeValue(item, subtree)
 				if (it.isNullOrEmpty())
-					return@forEachWithIter;
+					return@forEachWithLazyIter;
 				
 				out += it
 				remove()

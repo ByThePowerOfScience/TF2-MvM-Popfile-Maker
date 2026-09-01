@@ -12,6 +12,33 @@ inline fun <T> MutableCollection<T>.forEachWithIter(action: MutableIterator<T>.(
 	}
 }
 
+/**
+ * [forEachWithIter] that doesn't brick on concurrent modification of items later on down the list
+ */
+inline fun <T> MutableList<T>.forEachWithLazyIter(action: MutableIterator<T>.(T) -> Unit) {
+	val liter = object : MutableIterator<T> {
+		var currentIndex = -1
+		
+		val backing = this@forEachWithLazyIter;
+		
+		override fun hasNext(): Boolean {
+			return currentIndex + 1 < backing.size
+		}
+		
+		override fun next(): T {
+			return backing[++currentIndex]
+		}
+		
+		override fun remove() {
+			backing.removeAt(currentIndex)
+		}
+	}
+	
+	for (el in liter) {
+		liter.action(el)
+	}
+}
+
 @OptIn(ExperimentalContracts::class)
 inline fun <T, C : Collection<T>> C.ifNotEmpty(action: (C) -> Unit): C {
 	contract {

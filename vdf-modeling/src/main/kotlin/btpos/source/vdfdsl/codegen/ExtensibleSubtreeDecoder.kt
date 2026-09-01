@@ -12,6 +12,7 @@ import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.backing.toFormattedString
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
+import btpos.source.vdfdsl.util.forEachWithIter
 import kotlin.reflect.KClass
 
 class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> {
@@ -82,7 +83,7 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 			// because they do weird and quirky things to the entire thing,
 			// possibly having multiple keys for a single object
 			run {
-				(selfNamedDecoders + inheritedFields.asSequence().flatMap { it.selfNamedDecoders })
+				(selfNamedDecoders + inheritedFields.flatMap { it.selfNamedDecoders })
 					.forEach { d ->
 						d.decode(remainingKeyValues)
 							?.let {
@@ -94,12 +95,15 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 					}
 				
 				// now just handle the ones that only care about their field and not whatever else is doing on.
-				remainingKeyValues.forEach { kv ->
+				remainingKeyValues.forEachWithIter { kv ->
 					val x = decodeByFieldName(kv, subtree)
 					
 					if (!x.isNullOrEmpty()) {
 						out += x
-						return@forEach;
+						remove()
+						return@forEachWithIter;
+					} else {
+						val y = decodeByFieldName(kv, subtree)
 					}
 					
 					if (shouldCommentLeftovers) {
