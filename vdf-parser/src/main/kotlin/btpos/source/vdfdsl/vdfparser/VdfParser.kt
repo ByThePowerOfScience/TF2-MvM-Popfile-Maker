@@ -3,8 +3,10 @@
 package btpos.source.vdfdsl.vdfparser
 
 import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.VDFVisitor
 import btpos.source.vdfdsl.vdfparser.antlr.VDFBaseVisitor
 import btpos.source.vdfdsl.vdfparser.antlr.VDFLexer
 import btpos.source.vdfdsl.vdfparser.antlr.VDFParser
@@ -230,10 +232,11 @@ object ParseVDF {
 	
 	object VDFVisitor_Data : VDFBaseVisitor<VDFSubtree>() {
 		override fun visitRoot(ctx: VDFParser.RootContext): VDFSubtree {
-			val lineVis = LineVisitor(null)
-			val items = ctx.lines.mapNotNull { it.accept(lineVis) }
+			val rootSubtree = VDFSubtree(null)
+			val lineVis = LineVisitor(rootSubtree)
+			ctx.lines.mapNotNullTo(rootSubtree.entries) { it.accept(lineVis) }
 			
-			return VDFSubtree(null, items.toMutableList())
+			return rootSubtree
 		}
 		
 		
