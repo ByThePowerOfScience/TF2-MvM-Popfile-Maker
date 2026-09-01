@@ -28,11 +28,11 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 	
 	val selfNamedDecoders = mutableListOf<SelfNamedDecoder<KtStatement>>()
 	
-	private val inheritedFields by lazy {
-		IExtensibleSubtree.Codegen.typeHierarchy.getParentsRecursive(cls)
-			.mapNotNull { IExtensibleSubtree.Codegen._codegenFieldMappings[it] }
-			.toList()
-	}
+	private val inheritedFields
+		get() = Decoders.allClassHierarchyGraph.getParentsRecursive(cls)
+			.mapNotNull {
+				IExtensibleSubtree.Codegen._codegenFieldMappings[it]
+			}
 	
 	/**
 	 * Set of decoders to be run on the input first, in case of a subclass overriding this one.

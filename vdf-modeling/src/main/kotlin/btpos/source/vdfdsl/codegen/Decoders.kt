@@ -58,7 +58,7 @@ object Decoders {
 		return CompositeValueDecoder(type)
 	}
 	
-	private val allClassHierarchyGraph = ClassHierarchyGraph()
+	val allClassHierarchyGraph = ClassHierarchyGraph()
 	
 	private inline fun <T : Any, U : Any> findXForTypeAndAllSupertypesInServices(type: KClass<*>, getter: TypeDecoderProvider.(KClass<*>) -> T?, runner: (T) -> U?): U? {
 		findXForTypeInServices(type, getter, runner)?.let {
