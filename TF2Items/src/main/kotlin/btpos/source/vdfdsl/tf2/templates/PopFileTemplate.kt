@@ -14,19 +14,27 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate.Companion.BASE_PRIM
 
 data class PopFileTemplate(
+	private val _name: VDFPrimitive,
+	private val _base: VDFPrimitive
+) : IVDFRepresentableValue {
+	constructor(name: String, base: String) : this(VDFPrimitive(name), VDFPrimitive(base))
+	
+	constructor(name: String, base: VDFPrimitive) : this(VDFPrimitive(name), base)
+	
 	/**
 	 * The name of this template, e.g. `T_TFBot_Jimothy`
 	 */
-	val name: String,
+	val name get() = _name.stringValue
+	
 	/**
 	 * The file this is from, e.g. `base.pop`
 	 */
-	val base: String
-) : IVDFRepresentableValue {
+	val base get() = _base.stringValue
+	
 	override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
 		return IVDFRepresentableKeyValue { parent, forcedCond ->
 			parent.addBase()
-			parent += VDFKeyValue(key, VDFPrimitive(name), forcedCond ?: conditional)
+			parent += VDFKeyValue(key, _name, forcedCond ?: conditional)
 		}
 	}
 	
@@ -34,9 +42,14 @@ data class PopFileTemplate(
 	private fun VDFSubtree.addBase() {
 		val rootEntries = this.getRoot().entries
 		
-		if (rootEntries.none { it.key == BASE_PRIM && it.value.asString == base }) {
-			rootEntries.add(0, VDFKeyValue(BASE_PRIM, VDFPrimitive(base), null))
+		if (rootEntries.none { it.key == BASE_PRIM && it.value == _base }) {
+			rootEntries.add(0, VDFKeyValue(BASE_PRIM, _base, null))
 		}
+	}
+	
+	fun matches(s: VDFObject, parentSubtree: VDFSubtree): Boolean {
+		return s is VDFPrimitive && s == _name
+		       && parentSubtree.getRoot().any { it.key == BASE_PRIM && it.value == this._base } // imports this base
 	}
 	
 	companion object {
@@ -51,7 +64,3 @@ data class PopFileTemplate(
 	}
 }
 
-fun PopFileTemplate.matches(s: VDFObject, parentSubtree: VDFSubtree): Boolean {
-	return s is VDFPrimitive && s == VDFPrimitive.notInterned(this.base)
-	       && parentSubtree.getRoot().any { it.key == BASE_PRIM && it.value.asString == this.base } // imports this base
-}

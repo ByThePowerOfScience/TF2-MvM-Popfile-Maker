@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.tf2.templates
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.codegen.ConstantsCodegen
 
 //  -- These attributes must attached to a weapon using ItemAttributes and then ItemName --
@@ -50,7 +51,7 @@ import btpos.source.vdfdsl.codegen.ConstantsCodegen
 object RobotStandardTemplates {
 	val CODEGEN by ConstantsCodegen<PopFileTemplate>(PopFileTemplate::matches)
 	
-	private const val baseRef = "robot_standard.pop"
+	private val baseRef = VDFPrimitive.notInterned("robot_standard.pop")
 	
 	object Sniper {
 		/**
