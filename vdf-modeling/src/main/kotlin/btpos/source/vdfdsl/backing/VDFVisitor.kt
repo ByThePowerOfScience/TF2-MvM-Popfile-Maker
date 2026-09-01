@@ -5,7 +5,9 @@ interface VDFVisitor<DATA, RET> {
 	
 	fun visitKeyValue(obj: VDFKeyValue, data: DATA): RET = visitObject(obj, data)
 	
-	fun visitPrimitive(obj: VDFPrimitive, data: DATA): RET = visitObject(obj, data)
+	fun visitNotKeyValue(value: VDFValue, data: DATA): RET = visitObject(value, data)
 	
-	fun visitSubtree(obj: VDFSubtree, data: DATA): RET = visitObject(obj, data)
+	fun visitPrimitive(obj: VDFPrimitive, data: DATA): RET = visitNotKeyValue(obj, data)
+	
+	fun visitSubtree(obj: VDFSubtree, data: DATA): RET = visitNotKeyValue(obj, data)
 }

@@ -1,8 +1,6 @@
 package btpos.source.vdfdsl.types.populators
 
-import btpos.misc.kt.codegen.KtExpression
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ValueDecoder
@@ -14,8 +12,6 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 import btpos.source.vdfdsl.types.specifics.Where
-import java.lang.ScopedValue.where
-import java.time.Period
 
 class PeriodicSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
 	override val _structIdentifier: String

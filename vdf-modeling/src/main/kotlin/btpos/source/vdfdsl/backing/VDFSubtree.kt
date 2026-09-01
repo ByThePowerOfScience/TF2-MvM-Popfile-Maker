@@ -5,7 +5,7 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 /**
  * A list of keyvalues, wrapped in braces when serialized.
  */
-open class VDFSubtree(val parent: VDFSubtree?, val entries: MutableList<VDFKeyValue> = mutableListOf()) : VDFObject(), IVDFRepresentableValue_Subtree, MutableList<VDFKeyValue> by entries {
+open class VDFSubtree(val parent: VDFSubtree?, val entries: MutableList<VDFKeyValue> = mutableListOf()) : VDFValue(), IVDFRepresentableValue_Subtree, MutableList<VDFKeyValue> by entries {
 	constructor(parent: VDFSubtree?, entries: Collection<VDFKeyValue>) : this(parent, entries.toMutableList())
 	
 	fun withEntry(entry: VDFKeyValue) = this.apply {
@@ -51,7 +51,7 @@ open class VDFSubtree(val parent: VDFSubtree?, val entries: MutableList<VDFKeyVa
 		}
 	}
 	
-	override fun deepCopy(parent: VDFSubtree?) = VDFSubtree(parent, ArrayList(this.entries.size)).also { newSubtree ->
+	override fun deepCopy(parent: VDFSubtree?) = VDFSubtree(parent ?: this.parent, ArrayList(this.entries.size)).also { newSubtree ->
 		for (entry in this.entries) {
 			newSubtree.entries += entry.deepCopy(newSubtree)
 		}

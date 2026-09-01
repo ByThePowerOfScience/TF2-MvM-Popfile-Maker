@@ -1,10 +1,9 @@
 package btpos.source.vdfdsl.codegen
 
 import btpos.misc.kt.codegen.KtExpression
-import btpos.misc.kt.codegen.KtStatement
-import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
 import btpos.source.vdfdsl.util.ClassHierarchyGraph
@@ -30,14 +29,22 @@ object Decoders {
 		}
 	}
 	
-	val BOOLEAN = ValueDecoder<KtExpression> { it, _ ->
-		it.asPrimitive?.let {
-			when (it) {
-				VDFPrimitive.TRUE, VDFPrimitive.notInterned("yes") -> Codegen.code("true")
-				VDFPrimitive.FALSE, VDFPrimitive.notInterned("no") -> Codegen.code("false")
-				else -> null
-			}
-		}?.let { listOf(it) }
+	val BOOLEAN = run {
+		val yes = VDFPrimitive("yes")
+		val no = VDFPrimitive("no")
+		
+		val tru = Codegen.code("true")
+		val fals = Codegen.code("false")
+		
+		ValueDecoder<KtExpression> { it, _ ->
+			it.asPrimitive?.let {
+				when (it) {
+					VDFPrimitive.TRUE, yes -> tru
+					VDFPrimitive.FALSE, no -> fals
+					else -> null
+				}
+			}?.let { listOf(it) }
+		}
 	}
 	
 	private val services = ServiceLoader.load(TypeDecoderProvider::class.java)
@@ -52,32 +59,49 @@ object Decoders {
 	}
 	
 	private val allClassHierarchyGraph = ClassHierarchyGraph()
-	// TODO make subclasses automatically defer to superclasses
 	
+	private inline fun <T : Any, U : Any> findXForTypeAndAllSupertypesInServices(type: KClass<*>, getter: TypeDecoderProvider.(KClass<*>) -> T?, runner: (T) -> U?): U? {
+		findXForTypeInServices(type, getter, runner)?.let {
+			return it;
+		}
+		
+		for (sup in allClassHierarchyGraph.getParentsRecursive(type)) {
+			findXForTypeInServices(sup, getter, runner)?.let {
+				return it;
+			}
+		}
+		return null;
+	}
+	
+	private inline fun <T : Any, U : Any> findXForTypeInServices(type: KClass<*>, getter: TypeDecoderProvider.(KClass<*>) -> T?, runner: (T) -> U?): U? {
+		var haveFoundMatching = false
+		for (el in services) {
+			val gotten = el.getter(type) ?: continue;
+			haveFoundMatching = true
+			val afterRun = runner(gotten) ?: continue;
+			return afterRun;
+		}
+		
+		if (!haveFoundMatching)
+			System.err.println("No such decoder found for $type")
+		else
+			System.err.println("No decoder for $type could successfully parse the input")
+		
+		return null;
+	}
 	
 	private class CompositeValueDecoder(val type: KClass<*>) : ValueDecoder<KtExpression> {
-		override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtExpression>? {
-			return (sequenceOf(type) + allClassHierarchyGraph.getParentsRecursive(type))
-				.firstNotNullOfOrNull { cls ->
-					services.firstNotNullOfOrNull {
-						it.valueDecoders[cls]
-							?.decodeValue(value, parentSubtree)
-							?.takeIf { it.isNotEmpty() }
-					}
-				}
+		override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression>? {
+			return findXForTypeAndAllSupertypesInServices(type, { valueDecoders[it] }, { it.decodeValue(value, parentSubtree)?.takeIf { it.isNotEmpty() } }) ?: run {
+				System.err.println("Failed to parse input $value of type $type")
+				null
+			}
 		}
 	}
 	
 	private class CompositeSelfNamedDecoder(val type: KClass<*>) : SelfNamedDecoder<KtExpression> {
 		override fun decode(subtree: VDFSubtree): List<KtExpression>? {
-			return (sequenceOf(type) + allClassHierarchyGraph.getParentsRecursive(type))
-				.firstNotNullOfOrNull { cls ->
-					services.firstNotNullOfOrNull {
-						it.selfNamedDecoders[cls]
-							?.decode(subtree)
-							?.takeIf { it.isNotEmpty() }
-					}
-				}
+			return findXForTypeAndAllSupertypesInServices(type, { selfNamedDecoders[it] }, { it.decode(subtree)?.takeIf { it.isNotEmpty() } })
 		}
 	}
 	

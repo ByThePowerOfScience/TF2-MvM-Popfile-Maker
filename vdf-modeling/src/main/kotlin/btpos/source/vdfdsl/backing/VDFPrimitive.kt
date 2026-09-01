@@ -2,7 +2,7 @@ package btpos.source.vdfdsl.backing
 
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 
-class VDFPrimitive private constructor(val stringValue: String) : VDFObject(), IVDFRepresentableValue_Trivial {
+class VDFPrimitive private constructor(val stringValue: String) : VDFValue(), IVDFRepresentableValue_Trivial {
 	constructor(i: Int) : this(i.toString())
 	
 	constructor(i: Float) : this(i.toString())

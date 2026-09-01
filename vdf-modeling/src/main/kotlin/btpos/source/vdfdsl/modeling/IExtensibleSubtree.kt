@@ -22,6 +22,7 @@ import btpos.misc.kt.codegen.identifiers.KtMemberReference
 import btpos.misc.kt.codegen.expressions.KtThis
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.util.ReflectionUtils.isExtension
+import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.codegen.SelfNamedDecoder
 import btpos.source.vdfdsl.codegen.orElse
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
@@ -619,7 +620,7 @@ interface IExtensibleSubtree {
 				}
 			}
 			
-			override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtStatement>? {
+			override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtStatement>? {
 				val x = valueDecoder.decodeValue(value, parentSubtree)
 				if (x.isNullOrEmpty())
 					return null;

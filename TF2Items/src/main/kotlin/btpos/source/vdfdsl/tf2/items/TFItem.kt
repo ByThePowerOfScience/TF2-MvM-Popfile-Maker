@@ -5,9 +5,9 @@ import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.backing.VDFKeyValue
-import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.backing.getPrimitive
@@ -140,7 +140,7 @@ class TFItem<ATTR : Any>(
 		private val key_itemName = VDFPrimitive("ItemName")
 		private val key_itemAttributes = VDFPrimitive("ItemAttributes")
 		
-		override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtExpression>? {
+		override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression>? {
 			return value.asPrimitive?.let { itemNameToTFItemInstance[it] }?.let { listOf(it) }
 		}
 		

@@ -4,6 +4,7 @@ import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.VDFValue
 import kotlin.jvm.java
 
 /**
@@ -40,7 +41,7 @@ fun interface IVDFRepresentableValue : IVDFRepresentable {
 		 */
 		fun serializeDynamic(key: VDFPrimitive, value: Any, conditional: String? = null): IVDFRepresentableKeyValue {
 			return when (value) {
-				is VDFObject -> VDFKeyValue(key, value, conditional)
+				is VDFValue -> VDFKeyValue(key, value, conditional)
 				is IVDFRepresentable -> when (value) {
 					is IVDFRepresentableValue -> value._toKeyValueRepresentable(key, conditional)
 					is IVDFRepresentableKeyValue -> throw IllegalArgumentException("Error serializing dynamic keyvalue with '$key': Cannot give keyvalue '$value' a key as it has one already.")

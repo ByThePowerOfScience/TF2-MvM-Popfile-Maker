@@ -9,6 +9,7 @@ import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.statements.KtComment
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.backing.toFormattedString
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import kotlin.reflect.KClass
@@ -51,12 +52,12 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 		              ?: inheritedFields.firstNotNullOfOrNull { it.fieldDecoders[keyvalue.key] }
 		              ?: return null;
 		
-		return decoder.decodeValue(keyvalue, subtree)
+		return decoder.decodeValue(keyvalue.value, subtree)
 	}
 	
 	
 	
-	override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtExpression> {
+	override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression> {
 		return listOfNotNull(decode(value, parentSubtree))
 	}
 	

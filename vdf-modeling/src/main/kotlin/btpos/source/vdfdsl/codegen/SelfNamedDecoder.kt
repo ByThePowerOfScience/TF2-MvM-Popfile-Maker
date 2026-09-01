@@ -9,6 +9,7 @@ import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.util.ReflectionUtils.getUpperBounds
 import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.util.ifNullOrEmpty
 import kotlin.properties.ReadOnlyProperty
@@ -65,7 +66,7 @@ fun <T : KtStatement> ValueDecoder<T>.orElse(other: ValueDecoder<T>): ValueDecod
  * A helper that only calls [decodePrimitive] if the value of the keyvalue given is a [VDFPrimitive].
  */
 fun interface StringDecoder : ValueDecoder<KtExpression> {
-	override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<KtExpression> {
+	override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression> {
 		return value.asPrimitive?.let { listOfNotNull(decodePrimitive(it)) }.orEmpty()
 	}
 	
@@ -227,7 +228,7 @@ class ValueDecoderMulti<T : KtStatement>(val decoders: MutableList<ValueDecoder<
 	
 	constructor(decoders: Iterable<ValueDecoder<T>>) : this(decoders.toMutableList())
 	
-	override fun decodeValue(value: VDFObject, parentSubtree: VDFSubtree): List<T>? {
+	override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<T>? {
 		for (decoder in decoders) {
 			val x = decoder.decodeValue(value, parentSubtree)
 			if (!x.isNullOrEmpty())

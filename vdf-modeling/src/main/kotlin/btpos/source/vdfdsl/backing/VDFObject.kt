@@ -22,6 +22,13 @@ sealed class VDFObject {
 	abstract fun deepCopy(parent: VDFSubtree? = null): VDFObject
 }
 
+/**
+ * Anything that isn't a VDFKeyValue.
+ */
+sealed class VDFValue : VDFObject() {
+	abstract override fun deepCopy(parent: VDFSubtree?): VDFValue
+}
+
 val VDFObject.asSubtree get() = this as? VDFSubtree
 
 val VDFObject.asPrimitive get() = this as? VDFPrimitive
