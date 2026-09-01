@@ -1,8 +1,16 @@
 package btpos.source.vdfdsl.types.populators
 
+import btpos.misc.kt.codegen.KtExpression
+import btpos.misc.kt.codegen.expressions.KtFunctionCall
+import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.backing.VDFPrimitive
+import btpos.source.vdfdsl.backing.asString
 import btpos.source.vdfdsl.codegen.Codegen
+import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ConstantsDecoder
+import btpos.source.vdfdsl.codegen.ValueDecoder
+import btpos.source.vdfdsl.codegen.map
+import btpos.source.vdfdsl.codegen.orElse
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
@@ -11,6 +19,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.types.specifics.OutputAction
+import kotlin.to
 
 class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractPopulator(_subtree) {
 	override val _structIdentifier: String
@@ -73,7 +82,22 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	
 	
 	companion object {
-		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<WaveSpawnPopulator> { Codegen.basicBlockScope(::WaveSpawn, mapOf(WaveSpawnPopulator::name.name to "name")) }
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<WaveSpawnPopulator>(customFieldDecoders = {
+			val todo = CodegenProvider {
+				ValueDecoder<KtExpression> { value, _ ->
+					if (value.asString == null)
+						null
+					else
+						listOf(KtFunctionCall(KtName("TODO"), mutableListOf(Codegen.string("Reference the WaveSpawn '${value.asString}' variable here."))))
+				}
+			}
+			mapOf(
+				WaveSpawnPopulator::waitForAllDead.name to todo,
+				WaveSpawnPopulator::waitForAllSpawned.name to todo,
+			)
+		}) {
+			Codegen.basicBlockScope(::WaveSpawn, mapOf(WaveSpawnPopulator::name.name to "name"))
+		}
 	}
 	
 	open class Support(val name: String) : IVDFRepresentableValue_Trivial {
