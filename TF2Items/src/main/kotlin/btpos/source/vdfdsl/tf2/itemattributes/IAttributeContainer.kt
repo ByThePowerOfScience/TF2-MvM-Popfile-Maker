@@ -5,6 +5,7 @@ import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.backing.VDFSubtree
+import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ValueDecoder
@@ -32,9 +33,11 @@ interface IAttributeContainer {
 		}
 		
 		val CODEGEN_TYPE = CodegenProvider {
-			ValueDecoder<KtExpression> { obj, parent ->
-				val subtreeToCfgScope = CODEGEN_SCOPE.get().decodeToLambdaLines(obj.asSubtree ?: return@ValueDecoder null).ifNullOrEmpty { return@ValueDecoder null; }!!
-				listOf(KtFunctionCall(KtName(::AttributeContainer), listOf(KtLambda(lines=subtreeToCfgScope))))
+			object : ValueDecoder<KtExpression> {
+				override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression>? {
+					val subtreeToCfgScope = CODEGEN_SCOPE.get().decodeToLambdaLines(value.asSubtree ?: return null).ifNullOrEmpty { return null; }!!
+					return listOf(KtFunctionCall(KtName(::AttributeContainer), listOf(KtLambda(lines=subtreeToCfgScope))))
+				}
 			}
 		}
 	}
