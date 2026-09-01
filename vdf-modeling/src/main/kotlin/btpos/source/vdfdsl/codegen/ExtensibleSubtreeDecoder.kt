@@ -50,7 +50,9 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 	
 	private fun decodeByFieldName(keyvalue: VDFKeyValue, subtree: VDFSubtree): List<KtStatement>? {
 		val decoder = this.fieldDecoders[keyvalue.key]
-		              ?: inheritedFields.firstNotNullOfOrNull { it.fieldDecoders[keyvalue.key] }
+		              ?: inheritedFields.firstNotNullOfOrNull {
+						  it.fieldDecoders[keyvalue.key]
+					  }
 		              ?: return null;
 		
 		return decoder.decodeValue(keyvalue.value, subtree)
@@ -85,10 +87,11 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 			run {
 				(selfNamedDecoders + inheritedFields.flatMap { it.selfNamedDecoders })
 					.forEach { d ->
-						d.decode(remainingKeyValues)
-							?.let {
-								out += it
-							}
+						val decoded = d.decode(remainingKeyValues)
+						
+						if (!decoded.isNullOrEmpty()) {
+							out += decoded
+						}
 						
 						if (remainingKeyValues.isEmpty())
 							return@run;

@@ -76,9 +76,11 @@ object Decoders {
 	private inline fun <T : Any, U : Any> findXForTypeInServices(type: KClass<*>, getter: TypeDecoderProvider.(KClass<*>) -> T?, runner: (T) -> U?): U? {
 		var haveFoundMatching = false
 		for (el in services) {
-			val gotten = el.getter(type) ?: continue;
+			val gotten = el.getter(type)
+			             ?: continue;
 			haveFoundMatching = true
-			val afterRun = runner(gotten) ?: continue;
+			val afterRun = runner(gotten)
+			               ?: continue;
 			return afterRun;
 		}
 		
@@ -92,7 +94,11 @@ object Decoders {
 	
 	private class CompositeValueDecoder(val type: KClass<*>) : ValueDecoder<KtExpression> {
 		override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression>? {
-			return findXForTypeAndAllSupertypesInServices(type, { valueDecoders[it] }, { it.decodeValue(value, parentSubtree)?.takeIf { it.isNotEmpty() } }) ?: run {
+			return findXForTypeAndAllSupertypesInServices(
+				type,
+				{ valueDecoders[it] },
+				{ it.decodeValue(value, parentSubtree)?.takeIf { it.isNotEmpty() } }
+			) ?: run {
 				System.err.println("Failed to parse input $value of type $type")
 				null
 			}
