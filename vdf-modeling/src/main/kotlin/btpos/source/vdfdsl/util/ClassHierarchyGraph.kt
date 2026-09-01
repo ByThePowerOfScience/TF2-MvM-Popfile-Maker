@@ -155,7 +155,7 @@ class ClassHierarchyGraph
 	 * Returns all parent classes of this class in a breadth-first search.
 	 */
 	fun getParentsRecursive(cls: KClass<*>): Sequence<KClass<*>> {
-		return getOrCreateNode(cls).getAllParents()
+		return getOrCreateNode(cls).getAllParents().distinct()
 	}
 	
 	fun getChildren(cls: KClass<*>): Sequence<KClass<*>> {
