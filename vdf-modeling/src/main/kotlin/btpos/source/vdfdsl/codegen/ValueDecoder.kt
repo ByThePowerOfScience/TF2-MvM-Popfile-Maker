@@ -29,10 +29,11 @@ fun <T : KtStatement> ValueDecoder<T>.keyed(key: VDFPrimitive): SelfNamedDecoder
 		subtree.forEachWithLazyIter { kv ->
 			if (kv.key == key) {
 				val ret = this@keyed.decodeValue(kv.value, subtree)
-				if (ret.isNullOrEmpty())
-					return@forEachWithLazyIter;
-				out += ret
-				remove()
+				
+				if (!ret.isNullOrEmpty()) {
+					out += ret
+					remove()
+				}
 			}
 		}
 		out.compacted()
