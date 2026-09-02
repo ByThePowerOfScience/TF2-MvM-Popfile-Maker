@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.codegen
 
 import btpos.misc.kt.codegen.KtStatement
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.util.compacted
 import btpos.source.vdfdsl.util.forEachWithLazyIter
@@ -19,7 +18,7 @@ import btpos.source.vdfdsl.util.forEachWithLazyIter
  * Any failures must leave the parent unchanged, so cache anything you're evaluating and only remove from it if it worked.
  */
 fun interface ValueDecoder<out T : KtStatement> {
-	fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<T>?
+	fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<T>?
 }
 
 

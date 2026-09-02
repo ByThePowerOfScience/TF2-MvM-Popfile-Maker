@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.codegen
 
 import btpos.misc.kt.codegen.KtExpression
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.source.vdfdsl.codegen.services.TypeDecoderProvider
@@ -84,16 +83,11 @@ object Decoders {
 			return afterRun;
 		}
 		
-		if (!haveFoundMatching)
-			System.err.println("No such decoder found for $type")
-		else
-			System.err.println("No decoder for $type could successfully parse the input")
-		
 		return null;
 	}
 	
 	private class CompositeValueDecoder(val type: KClass<*>) : ValueDecoder<KtExpression> {
-		override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression>? {
+		override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtExpression>? {
 			return findXForTypeAndAllSupertypesInServices(
 				type,
 				{ valueDecoders[it] },
@@ -106,8 +100,12 @@ object Decoders {
 	}
 	
 	private class CompositeSelfNamedDecoder(val type: KClass<*>) : SelfNamedDecoder<KtExpression> {
-		override fun decode(subtree: VDFSubtree): List<KtExpression>? {
-			return findXForTypeAndAllSupertypesInServices(type, { selfNamedDecoders[it] }, { it.decode(subtree)?.takeIf { it.isNotEmpty() } })
+		override fun decode(subtree: WeirdMutableIterableSubtree): List<KtExpression>? {
+			return findXForTypeAndAllSupertypesInServices(
+				type,
+				{ selfNamedDecoders[it] },
+				{ it.decode(subtree)?.takeIf { it.isNotEmpty() } }
+			)
 		}
 	}
 	

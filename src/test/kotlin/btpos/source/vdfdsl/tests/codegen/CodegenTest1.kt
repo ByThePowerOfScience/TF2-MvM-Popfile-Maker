@@ -2,6 +2,7 @@ package btpos.source.vdfdsl.tests.codegen
 
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.codegen.Decoders
+import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
 import btpos.source.vdfdsl.types.bots.BotSkill
 import btpos.source.vdfdsl.types.bots.TFClass
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
@@ -23,7 +24,7 @@ class CodegenTest1 {
 			}._serializeInto(it, null)
 		}
 		
-		val toCode = Decoders.getDecoder(AbstractSpawner::class)?.decode(spawner)
+//		val toCode = Decoders.getDecoder(AbstractSpawner::class)?.decode(WeirdMutableIterableSubtree(null, spawner))
 //		assertEquals(
 //			KtFunctionCall(
 //				KtName(Spawners::TFBot),
@@ -34,7 +35,7 @@ class CodegenTest1 {
 //			toCode.first())
 		
 		
-		println(AbstractSpawner.CODEGEN_NAV.get().decode(spawner).forEach {
+		println(AbstractSpawner.CODEGEN_NAV.get().decode(WeirdMutableIterableSubtree(null, spawner)).forEach {
 			println(it.toKotlinCode())
 		})
 	}

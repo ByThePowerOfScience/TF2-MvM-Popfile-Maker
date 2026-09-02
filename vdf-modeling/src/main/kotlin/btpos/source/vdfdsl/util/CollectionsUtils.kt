@@ -11,7 +11,7 @@ inline fun <T> MutableCollection<T>.forEachWithIter(action: MutableIterator<T>.(
 		liter.action(el)
 	}
 }
-
+//FIXME this just doesn't work with removing from the list it's in.
 /**
  * [forEachWithIter] that doesn't brick on concurrent modification of items later on down the list
  */

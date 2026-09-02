@@ -48,7 +48,7 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 		Codegen.basicApplyFactory(cls)
 	}
 	
-	private fun decodeByFieldName(keyvalue: VDFKeyValue, subtree: VDFSubtree): List<KtStatement>? {
+	private fun decodeByFieldName(keyvalue: VDFKeyValue, subtree: WeirdMutableIterableSubtree): List<KtStatement>? {
 		val decoder = this.fieldDecoders[keyvalue.key]
 		              ?: inheritedFields.firstNotNullOfOrNull {
 						  it.fieldDecoders[keyvalue.key]
@@ -60,26 +60,23 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 	
 	
 	
-	override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression> {
+	override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtExpression> {
 		return listOfNotNull(decode(value, parentSubtree))
 	}
 	
 	
-	fun decode(value: VDFObject, parentSubtree: VDFSubtree): KtFunctionCall? {
+	fun decode(value: VDFObject, parentSubtree: WeirdMutableIterableSubtree): KtFunctionCall? {
 		runFirst.forEach {
 			val x = it.decode(value, parentSubtree)
 			if (x != null)
 				return x;
 		}
 		
-		return value.asSubtree?.let { subtree ->
+		return value.asSubtree?.let { WeirdMutableIterableSubtree(parentSubtree, it) }?.let { remainingKeyValues ->
 			val factoryMethod = factoryMethod ?: dummyFactoryMethod
 			
 			val out = ArrayList<KtStatement>()
 			val failedParses = mutableListOf<String>()
-			
-			
-			val remainingKeyValues = subtree.deepCopy()
 			
 			// first, let the self-named ones have a go at the whole subtree,
 			// because they do weird and quirky things to the entire thing,
@@ -98,15 +95,15 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 					}
 				
 				// now just handle the ones that only care about their field and not whatever else is doing on.
-				remainingKeyValues.forEachWithIter { kv ->
-					val x = decodeByFieldName(kv, subtree)
+				remainingKeyValues.forEachWithLazyIter { kv ->
+					val x = decodeByFieldName(kv, remainingKeyValues)
 					
 					if (!x.isNullOrEmpty()) {
 						out += x
 						remove()
-						return@forEachWithIter;
+						return@forEachWithLazyIter;
 					} else {
-						val y = decodeByFieldName(kv, subtree)
+						val y = decodeByFieldName(kv, remainingKeyValues)
 					}
 					
 					if (shouldCommentLeftovers) {

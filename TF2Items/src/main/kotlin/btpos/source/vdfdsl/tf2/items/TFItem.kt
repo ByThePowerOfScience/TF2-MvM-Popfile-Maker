@@ -14,6 +14,7 @@ import btpos.source.vdfdsl.backing.getPrimitive
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.SelfNamedDecoder
 import btpos.source.vdfdsl.codegen.ValueDecoder
+import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerImpl
@@ -22,7 +23,6 @@ import btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.items.weapons.Weapons
 import btpos.source.vdfdsl.tf2.items.weapons.WeaponsMelee
-import btpos.source.vdfdsl.util.forEachWithIter
 
 typealias AttributeConfigurationScope<T> = context(IAttributeContainer) T.() -> Unit
 
@@ -140,20 +140,20 @@ class TFItem<ATTR : Any>(
 		private val key_itemName = VDFPrimitive("ItemName")
 		private val key_itemAttributes = VDFPrimitive("ItemAttributes")
 		
-		override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression>? {
+		override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtExpression>? {
 			return value.asPrimitive?.let { itemNameToTFItemInstance[it] }?.let { listOf(it) }
 		}
 		
 		
-		override fun decode(subtree: VDFSubtree): List<KtExpression> {
+		override fun decode(subtree: WeirdMutableIterableSubtree): List<KtExpression> {
 			val itemsToAttributesSubtree = HashMap<VDFPrimitive, KtLambda?>()
 			
 			fun findAllItemKeys() {
-				subtree.forEachWithIter { kv ->
+				subtree.forEachWithLazyIter { kv ->
 					if (kv.key == key_item) {
 						val itemPrim = kv.value.asPrimitive
 											   ?.takeIf { it in itemNameToTFItemInstance }
-								               ?: return@forEachWithIter;
+								               ?: return@forEachWithLazyIter;
 						
 						itemsToAttributesSubtree[itemPrim] = null // add it to the keyset
 						
@@ -163,27 +163,27 @@ class TFItem<ATTR : Any>(
 			}
 			
 			fun findAssociatedItemAttributes() {
-				subtree.forEachWithIter { kv ->
+				subtree.forEachWithLazyIter { kv ->
 					if (kv.key != key_itemAttributes)
-						return@forEachWithIter;
+						return@forEachWithLazyIter;
 					
-					val attrSubtree = kv.value.asSubtree ?: return@forEachWithIter;
+					val attrSubtree = kv.value.asSubtree ?: return@forEachWithLazyIter;
 					
 					val itemAttrsAreFor = attrSubtree.getPrimitive(key_itemName)
 													 ?.takeIf { it in itemsToAttributesSubtree }
-			                                         ?: return@forEachWithIter;
+			                                         ?: return@forEachWithLazyIter;
 					
 					// make sure it can actually be decoded first before removing it from the subtree
 					val decoded = IAttributeContainer.CODEGEN_SCOPE.get().let {
 						it.decodeToLambdaLines(
-							attrSubtree.deepCopy().apply {
+							WeirdMutableIterableSubtree(subtree, attrSubtree.deepCopy().apply {
 								removeIf { it.key == key_itemName }
-							}
+							})
 						)
 					}
 					
 					if (attrSubtree.isNotEmpty() && decoded.isEmpty())
-						return@forEachWithIter;
+						return@forEachWithLazyIter;
 					
 					itemsToAttributesSubtree[itemAttrsAreFor] = KtLambda(lines=decoded)
 					

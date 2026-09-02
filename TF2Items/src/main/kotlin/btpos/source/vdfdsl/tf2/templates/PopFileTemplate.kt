@@ -9,6 +9,7 @@ import btpos.source.vdfdsl.backing.asString
 import btpos.source.vdfdsl.backing.getRoot
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ValueDecoderMulti
+import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
 import btpos.source.vdfdsl.tf2.templates.PopFileTemplate.Companion.BASE_PRIM
@@ -47,7 +48,7 @@ data class PopFileTemplate(
 		}
 	}
 	
-	fun matches(s: VDFObject, parentSubtree: VDFSubtree): Boolean {
+	fun matches(s: VDFObject, parentSubtree: WeirdMutableIterableSubtree): Boolean {
 		return s is VDFPrimitive && s == _name
 		       && parentSubtree.getRoot().any { it.key == BASE_PRIM && it.value == this._base } // imports this base
 	}

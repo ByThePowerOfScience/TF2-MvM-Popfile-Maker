@@ -9,6 +9,7 @@ import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ValueDecoder
+import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.tf2.codegen.AttributesCodegenTraverser
 import btpos.source.vdfdsl.util.ifNullOrEmpty
@@ -34,8 +35,15 @@ interface IAttributeContainer {
 		
 		val CODEGEN_TYPE = CodegenProvider {
 			object : ValueDecoder<KtExpression> {
-				override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression>? {
-					val subtreeToCfgScope = CODEGEN_SCOPE.get().decodeToLambdaLines(value.asSubtree ?: return null).ifNullOrEmpty { return null; }!!
+				override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtExpression>? {
+					val subtreeToCfgScope = CODEGEN_SCOPE.get()
+						.decodeToLambdaLines(
+							value.asSubtree?.let { WeirdMutableIterableSubtree(parentSubtree, it) }
+							?: return null
+						)
+						.ifNullOrEmpty {
+							return null;
+						}!!
 					return listOf(KtFunctionCall(KtName(::AttributeContainer), listOf(KtLambda(lines=subtreeToCfgScope))))
 				}
 			}

@@ -2,7 +2,6 @@ package btpos.source.vdfdsl.codegen
 
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.misc.kt.codegen.KtExpression
-import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.util.forEachWithLazyIter
 import kotlin.reflect.KClass
 
@@ -18,7 +17,7 @@ class StructSubclassNavigator(
 	val typeDecodersByKey: MutableMap<VDFPrimitive, SelfNamedDecoder<KtExpression>> = mutableMapOf(),
 ) : SelfNamedDecoder<KtExpression> {
 	
-	override fun decode(subtree: VDFSubtree): List<KtExpression> {
+	override fun decode(subtree: WeirdMutableIterableSubtree): List<KtExpression> {
 		return buildList {
 			subtree.forEachWithLazyIter { kv ->
 				typeDecodersByKey[kv.key]?.decode(subtree)?.let {

@@ -14,6 +14,7 @@ import btpos.source.vdfdsl.backing.intValue
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.Decoders
 import btpos.source.vdfdsl.codegen.ValueDecoder
+import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.itemattributes.impl.ItemAttributeLong
@@ -200,7 +201,7 @@ class AttributesCodegenTraverser {
 	 * Decodes [btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer] subtrees
 	 */
 	class IAttributeContainerCodegen(val attributeLocations: MutableMap<VDFPrimitive, ValueDecoder<KtStatement>> = HashMap()) {
-		fun decodeToLambdaLines(subtree: VDFSubtree): List<KtStatement> {
+		fun decodeToLambdaLines(subtree: WeirdMutableIterableSubtree): List<KtStatement> {
 			val out = mutableListOf<KtStatement>()
 			
 			subtree.forEachWithLazyIter { (key, item) ->

@@ -46,7 +46,7 @@ fun interface SelfNamedDecoder<out T : KtStatement> {
 	 * this decoder just didn't find anything it could act on, as some other decoder may be able to
 	 * process an entry that was considered "malformed" to this decoder.
 	 */
-	fun decode(subtree: VDFSubtree): List<T>?
+	fun decode(subtree: WeirdMutableIterableSubtree): List<T>?
 }
 
 fun <T : KtStatement> SelfNamedDecoder<T>.orElse(other: SelfNamedDecoder<T>): SelfNamedDecoder<T> {
@@ -67,7 +67,7 @@ fun <T : KtStatement> ValueDecoder<T>.orElse(other: ValueDecoder<T>): ValueDecod
  * A helper that only calls [decodePrimitive] if the value of the keyvalue given is a [VDFPrimitive].
  */
 fun interface StringDecoder : ValueDecoder<KtExpression> {
-	override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<KtExpression> {
+	override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtExpression> {
 		return value.asPrimitive?.let { listOfNotNull(decodePrimitive(it)) }.orEmpty()
 	}
 	
@@ -89,14 +89,14 @@ inline fun <reified T : IVDFRepresentableValue_Trivial> ConstantsDecoder(): Code
 	return ConstantsDecoder(T::class)
 }
 
-inline fun <reified T : Any> ConstantsCodegen(noinline equalsCheck: T.(value: VDFObject, parent: VDFSubtree) -> Boolean): ReadOnlyProperty<Any, CodegenProvider<ValueDecoderMulti<KtExpression>>> {
+inline fun <reified T : Any> ConstantsCodegen(noinline equalsCheck: T.(value: VDFObject, parent: WeirdMutableIterableSubtree) -> Boolean): ReadOnlyProperty<Any, CodegenProvider<ValueDecoderMulti<KtExpression>>> {
 	return ConstantsCodegen(T::class, equalsCheck)
 }
 
 /**
  * Creates a CodegenProvider that will use reflection to identify any instances of class T in [lookIn], its companion object, and any nested objects.
  */
-fun <T : Any> ConstantsCodegen(lookIn: KClass<*>, lookingFor: KClass<T>, equalsCheck: T.(value: VDFObject, parent: VDFSubtree) -> Boolean): CodegenProvider<ValueDecoderMulti<KtExpression>> {
+fun <T : Any> ConstantsCodegen(lookIn: KClass<*>, lookingFor: KClass<T>, equalsCheck: T.(value: VDFObject, parent: WeirdMutableIterableSubtree) -> Boolean): CodegenProvider<ValueDecoderMulti<KtExpression>> {
 	return CodegenProvider {
 		val nav = ValueDecoderMulti<KtExpression>()
 		ConstantsFinder(lookIn, lookingFor) { owner, prop, objInst ->
@@ -149,7 +149,7 @@ fun <T : Any> ConstantsFinder(lookingIn: KClass<*>, lookingFor: KClass<T>, onEnt
 /**
  * Creates a delegate that will create CodegenProvider that will use reflection to identify any instances of class T in this object, its companion object, and any nested objects.
  */
-fun <T : Any> ConstantsCodegen(cls: KClass<T>, equalsCheck: T.(value: VDFObject, parent: VDFSubtree) -> Boolean): ReadOnlyProperty<Any, CodegenProvider<ValueDecoderMulti<KtExpression>>> {
+fun <T : Any> ConstantsCodegen(cls: KClass<T>, equalsCheck: T.(value: VDFObject, parent: WeirdMutableIterableSubtree) -> Boolean): ReadOnlyProperty<Any, CodegenProvider<ValueDecoderMulti<KtExpression>>> {
 	return object : ReadOnlyProperty<Any, CodegenProvider<ValueDecoderMulti<KtExpression>>> {
 		private var provider: CodegenProvider<ValueDecoderMulti<KtExpression>>? = null
 		
@@ -209,7 +209,7 @@ class DecoderMulti<T : KtStatement>(val decoders: MutableList<SelfNamedDecoder<T
 	
 	constructor(decoders: Iterable<SelfNamedDecoder<T>>) : this(decoders.toMutableList())
 	
-	override fun decode(subtree: VDFSubtree): List<T>? {
+	override fun decode(subtree: WeirdMutableIterableSubtree): List<T>? {
 		for (decoder in decoders) {
 			val x = decoder.decode(subtree)
 			if (!x.isNullOrEmpty())
@@ -231,7 +231,7 @@ class ValueDecoderMulti<T : KtStatement>(val decoders: MutableList<ValueDecoder<
 	
 	constructor(decoders: Iterable<ValueDecoder<T>>) : this(decoders.toMutableList())
 	
-	override fun decodeValue(value: VDFValue, parentSubtree: VDFSubtree): List<T>? {
+	override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<T>? {
 		for (decoder in decoders) {
 			val x = decoder.decodeValue(value, parentSubtree)
 			if (!x.isNullOrEmpty())
