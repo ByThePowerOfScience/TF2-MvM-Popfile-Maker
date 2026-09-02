@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 object Decoders {
 	val DURATION = StringDecoder { str ->
 		str.stringValue.toDoubleOrNull()?.let {
-			Codegen.code("$str.seconds", "kotlin.time.Duration")
+			Codegen.code("${str.stringValue}.seconds", "kotlin.time.Duration")
 		}
 	}
 	
