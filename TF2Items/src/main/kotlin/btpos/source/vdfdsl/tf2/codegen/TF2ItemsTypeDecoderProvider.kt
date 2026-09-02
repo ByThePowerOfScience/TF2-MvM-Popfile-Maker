@@ -27,7 +27,7 @@ import btpos.source.vdfdsl.tf2.templates.PopFileTemplate
 import btpos.source.vdfdsl.tf2.templates.RobotGatebotTemplates
 import btpos.source.vdfdsl.tf2.templates.RobotGiantTemplates
 import btpos.source.vdfdsl.tf2.templates.RobotStandardTemplates
-import btpos.source.vdfdsl.util.ReflectionUtils.actuallyGet
+import btpos.misc.kt.codegen.util.ReflectionUtils.actuallyGet
 import java.awt.Color
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.javaField

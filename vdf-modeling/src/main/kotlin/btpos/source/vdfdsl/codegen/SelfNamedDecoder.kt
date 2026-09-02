@@ -11,8 +11,8 @@ import btpos.source.vdfdsl.backing.VDFObject
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
-import btpos.source.vdfdsl.util.ReflectionUtils.actuallyGet
-import btpos.source.vdfdsl.util.ReflectionUtils.canAccess
+import btpos.misc.kt.codegen.util.ReflectionUtils.actuallyGet
+import btpos.misc.kt.codegen.util.ReflectionUtils.canAccess
 import btpos.source.vdfdsl.util.ifNullOrEmpty
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass

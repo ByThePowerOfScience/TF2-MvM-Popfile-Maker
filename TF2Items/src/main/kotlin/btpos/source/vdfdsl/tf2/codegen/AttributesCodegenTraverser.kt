@@ -18,7 +18,7 @@ import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.itemattributes.impl.ItemAttributeLong
-import btpos.source.vdfdsl.util.ReflectionUtils.actuallyGet
+import btpos.misc.kt.codegen.util.ReflectionUtils.actuallyGet
 import btpos.source.vdfdsl.util.forEachWithLazyIter
 import btpos.source.vdfdsl.util.mapCompact
 import kotlin.reflect.KClass
