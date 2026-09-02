@@ -509,12 +509,9 @@ interface IExtensibleSubtree {
 				"="
 			}
 			
-			getOrCreateStructDecoder(receiverType).let {
-				it.fieldDecoders.merge(
-					VDFPrimitive(serializationKey),
+			getOrCreateStructDecoder(receiverType).apply {
+				fieldDecoders.computeIfAbsent(VDFPrimitive.notInterned(serializationKey)) {
 					StructFieldDecoderPropExt_Keyed(prop, valueType.jvmErasure, operator)
-				) { first, second ->
-					first.orElse(second)
 				}
 			}
 		}
@@ -597,7 +594,7 @@ interface IExtensibleSubtree {
 				this.factoryMethod = factoryMethod
 				
 				customFieldDecoders.forEach {
-					this.fieldDecoders[VDFPrimitive(it.key)] = it.value.get()
+					this.fieldDecoders[VDFPrimitive(it.key)]!!.override = it.value.get()
 				}
 			}
 			return CodegenProvider { x }
@@ -610,11 +607,13 @@ interface IExtensibleSubtree {
 			val valueType: KClass<*>,
 			val operator: String
 		) : ValueDecoder<KtStatement> {
-			private val valueDecoder by lazy {
+			private val valueDecoder by lazy(LazyThreadSafetyMode.NONE) {
 				Decoders.getValueDecoder(valueType) ?: error("No value decoder found for type $valueType")
 			}
 			
-			private val propAccess by lazy {
+			var override: ValueDecoder<KtExpression>? = null
+			
+			private val propAccess by lazy(LazyThreadSafetyMode.NONE) {
 				KtGetValueExpression(KtMemberReference(KtName(prop), prop.isExtension)).apply {
 					receiver = KtThis()
 				}
@@ -638,11 +637,11 @@ interface IExtensibleSubtree {
 			val valueType: KClass<*>,
 			val operator: String
 		) : SelfNamedDecoder<KtStatement> {
-			private val valueDecoder by lazy {
+			private val valueDecoder by lazy(LazyThreadSafetyMode.NONE) {
 				Decoders.getDecoder(valueType) ?: error("No decoder found for type $valueType")
 			}
 			
-			private val propAccess by lazy {
+			private val propAccess by lazy(LazyThreadSafetyMode.NONE) {
 				KtGetValueExpression(KtMemberReference(KtName(prop), prop.isExtension)).apply {
 					receiver = KtThis()
 				}

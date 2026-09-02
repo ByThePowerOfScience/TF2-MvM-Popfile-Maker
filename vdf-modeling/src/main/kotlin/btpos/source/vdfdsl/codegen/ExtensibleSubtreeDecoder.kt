@@ -24,7 +24,7 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 	 */
 	var factoryMethod: IExtensibleSubtree.Codegen.StructFactoryMethod? = null
 	
-	val fieldDecoders = mutableMapOf<VDFPrimitive, ValueDecoder<KtStatement>>()
+	val fieldDecoders = mutableMapOf<VDFPrimitive, IExtensibleSubtree.Codegen.StructFieldDecoderPropExt_Keyed>()
 	
 	val selfNamedDecoders = mutableListOf<SelfNamedDecoder<KtStatement>>()
 	
