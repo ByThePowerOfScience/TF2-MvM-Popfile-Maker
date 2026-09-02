@@ -72,7 +72,11 @@ object Codegen {
 		
 		if (fieldsToArgNames.isEmpty()) {
 			return {
-				KtFunctionCall(funcName, listOf(KtLambda(lines=it)))
+				if (it.isEmpty()) {
+					KtFunctionCall(funcName)
+				} else {
+					KtFunctionCall(funcName, listOf(KtLambda(lines=it)))
+				}
 			}
 		}
 		
@@ -92,7 +96,8 @@ object Codegen {
 			
 			KtFunctionCall(funcName).apply {
 				args += namedArguments
-				args += KtLambda(lines=assignments)
+				if (assignments.isNotEmpty())
+					args += KtLambda(lines=assignments)
 			}
 		}
 	}
