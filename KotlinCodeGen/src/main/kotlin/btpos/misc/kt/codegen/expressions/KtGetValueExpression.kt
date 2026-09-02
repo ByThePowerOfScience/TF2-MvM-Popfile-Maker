@@ -9,6 +9,6 @@ data class KtGetValueExpression(var callee: KtCallable, var receiver: KtExpressi
 		get() = callee.importsNeeded + receiver?.importsNeeded.orEmpty()
 	
 	override fun toKotlinCode(): String {
-		return receiver?.run { toKotlinCode() + "." }.orEmpty() + callee.toKotlinCode()
+		return receiver?.takeIf { !(it is KtThis && it.target == null) }?.run { toKotlinCode() + "." }.orEmpty() + callee.toKotlinCode()
 	}
 }
