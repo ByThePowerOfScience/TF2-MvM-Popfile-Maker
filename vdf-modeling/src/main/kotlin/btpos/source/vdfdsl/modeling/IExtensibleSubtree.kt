@@ -835,7 +835,7 @@ interface IExtensibleSubtree {
 		inline fun <T : Any, reified S : Any> addField(serializationKey: String, conditional: String? = null, noinline serializer: (T.() -> S?)): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T?>> {
 			return addField_serializer(serializationKey, conditional, serializer, null, S::class.java).let {
 				if (IS_DOING_CODEGEN)
-					Codegen._CodegenDelegateProvider(it, serializationKey, conditional)
+					Codegen._CodegenDelegateProvider(it, serializationKey, conditional, T::class)
 				else
 					TrivialDelegateProvider(it)
 			}
@@ -863,7 +863,7 @@ interface IExtensibleSubtree {
 			@Suppress("UNCHECKED_CAST")
 			return (addFieldInternal_initialValue(serializationKey, conditional, serializer, initialValue, S::class.java)).let {
 				if (IS_DOING_CODEGEN)
-					Codegen._CodegenDelegateProvider(it, serializationKey, conditional)
+					Codegen._CodegenDelegateProvider(it, serializationKey, conditional, T::class)
 				else
 					TrivialDelegateProvider(it)
 			}
@@ -921,7 +921,7 @@ interface IExtensibleSubtree {
 		inline fun <reified T : Any> addField(key: String, conditional: String? = null): PropertyDelegateProvider<Any?, NamedFieldImpl<T>> {
 			return addFieldInternal_nullable<T>(key, conditional, serializer=null, serClass= T::class.java).let {
 				if (IS_DOING_CODEGEN)
-					Codegen._CodegenDelegateProvider(it, key, conditional)
+					Codegen._CodegenDelegateProvider(it, key, conditional, T::class)
 				else
 					TrivialDelegateProvider(it)
 			}
@@ -941,7 +941,7 @@ interface IExtensibleSubtree {
 			@Suppress("UNCHECKED_CAST")
 			return (addFieldInternal_initialValue(key, conditional, null, initialValue, T::class.java)).let {
 				if (IS_DOING_CODEGEN)
-					Codegen._CodegenDelegateProvider(it, key, conditional)
+					Codegen._CodegenDelegateProvider(it, key, conditional, T::class)
 				else
 					TrivialDelegateProvider(it)
 			}
@@ -950,7 +950,7 @@ interface IExtensibleSubtree {
 		inline fun <reified T : Any> addFieldList(key: String, conditional: String? = null, noinline serializer: Serializers.Serializer<ConditionalList<T>> = Serializers.flatListWithKey()): PropertyDelegateProvider<Any?, NamedListField<T>> {
 			return NamedListField(key, conditional, serializer).let {
 				if (IS_DOING_CODEGEN)
-					Codegen._CodegenDelegateProvider(it, key, conditional, T::class)
+					Codegen._CodegenDelegateProvider(it, key, conditional, T::class, true)
 				else
 					TrivialDelegateProvider(it)
 			}
@@ -1105,8 +1105,6 @@ interface IExtensibleSubtree {
 			// this is what the field is filed under
 			val receiverType: KClass<*> = prop.getExtensionReceiverType() ?: propOwner!!::class
 			
-			val valueType = prop.returnType
-			
 			val operator = if (!valueType.isMarkedNullable && valueType.jvmErasure.isSubclassOf(Collection::class)) {
 				"+="
 			} else {
@@ -1115,7 +1113,7 @@ interface IExtensibleSubtree {
 			
 			getOrCreateStructDecoder(receiverType).apply {
 				fieldDecoders.computeIfAbsent(VDFPrimitive.notInterned(serializationKey)) {
-					StructFieldDecoderPropExt_Keyed(prop, valueType.jvmErasure, operator)
+					StructFieldDecoderPropExt_Keyed(prop, valueType, operator)
 				}
 			}
 		}
