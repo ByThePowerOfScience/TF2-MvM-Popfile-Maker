@@ -6,9 +6,10 @@ import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.map
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.types.specifics.OutputAction
-import btpos.source.vdfdsl.utils.delegates.ReadOnlyConstant
+import btpos.source.vdfdsl.util.ReadOnlyConstant
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -23,16 +24,16 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	}
 	
 	
-	var waveSpawns: List<WaveSpawnPopulator> by selfNamedList()
+	val waveSpawns by selfNamedList<WaveSpawnPopulator>()
 	
-	var sound: String? by addField("Sound")
+	val sound by addField<String>("Sound")
 	
-	var description: String? by addField("Description")
+	val description by addField<String>("Description")
 	
-	var waitWhenDone: Number? by addField("WaitWhenDone")
+	val waitWhenDone by addField<Number>("WaitWhenDone")
 	
 	@Deprecated("According to sigsegv, doesn't do anything.")
-	var checkpoint: Boolean? by addField("Checkpoint", serializer = { if (this) "yes" else "no" })
+	val checkpoint by addField<Boolean>("Checkpoint", serializer = map({ if (it) "yes" else "no" }))
 	
 	/**
 	 * The action that should be triggered once the bots start spawning.
@@ -40,7 +41,7 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	 * @see initWaveOutput
 	 * @see OutputAction
 	 */
-	var startWaveOutput: OutputAction? by addField("StartWaveOutput")
+	val startWaveOutput by addField<OutputAction>("StartWaveOutput")
 	
 	/**
 	 * Define the action that should be triggered once the bots start spawning.
@@ -57,7 +58,7 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	 *
 	 * @see OutputAction
 	 */
-	var doneOutput: OutputAction? by addField("DoneOutput")
+	val doneOutput by addField<OutputAction>("DoneOutput")
 	
 	/**
 	 * Define the action that should be triggered when a wave is completed.
@@ -74,7 +75,7 @@ class WavePopulator(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	 * @see startWaveOutput
 	 * @see OutputAction
 	 */
-	var initWaveOutput: OutputAction? by addField("InitWaveOutput")
+	val initWaveOutput by addField<OutputAction>("InitWaveOutput")
 	
 	/**
 	 * Define the action that should be triggered when a wave is first started.

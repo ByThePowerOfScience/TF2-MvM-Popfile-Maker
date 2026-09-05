@@ -78,5 +78,5 @@ class RafmodBotAction(override val _vdfRepr: VDFPrimitive) : IVDFRepresentableVa
  * action = RafmodBotAction.IDLE
  * ```
  */
-var TFBotSpawner.action: RafmodBotAction? by addField("Action", conditional = SIGSEGV)
+val TFBotSpawner.action by addField<RafmodBotAction>("Action", conditional = SIGSEGV)
 

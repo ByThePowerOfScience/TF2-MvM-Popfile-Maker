@@ -14,6 +14,8 @@ import btpos.source.vdfdsl.codegen.orElse
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.getField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.map
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.notNull
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
@@ -27,15 +29,15 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	
 	override fun copy() = WaveSpawnPopulator(this.copyInternal())
 	
-	var template: PopFileTemplate? by addField("Template")
+	val template by addField<PopFileTemplate>("Template")
 	
-	var where: String? by addField("Where")
+	val where by addField<String>("Where")
 	
-	var totalCount: Int? by addField("TotalCount")
+	val totalCount by addField<Int>("TotalCount")
 	
-	var maxActive: Int? by addField("MaxActive")
+	val maxActive by addField<Int>("MaxActive")
 	
-	var spawnCount: Int? by addField("SpawnCount")
+	val spawnCount by addField<Int>("SpawnCount")
 	
 	/**
 	 * How many seconds after its spawning condition is fulfilled (if unspecified, that's the start of the wave) that these bots should start spawning.
@@ -43,42 +45,42 @@ class WaveSpawnPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	 * @see waitForAllSpawned
 	 * @see waitForAllDead
 	 */
-	var waitBeforeStarting: Number? by addField("WaitBeforeStarting")
+	val waitBeforeStarting by addField<Number>("WaitBeforeStarting")
 	
-	var waitBetweenSpawns: Number? by addField("WaitBetweenSpawns")
+	val waitBetweenSpawns by addField<Number>("WaitBetweenSpawns")
 	
-	var waitBetweenSpawnsAfterDeath: Number? by addField("WaitBetweenSpawnsAfterDeath")
+	val waitBetweenSpawnsAfterDeath by addField<Number>("WaitBetweenSpawnsAfterDeath")
 	
-	var startWaveWarningSound: String? by addField("StartWaveWarningSound")
+	val startWaveWarningSound by addField<String>("StartWaveWarningSound")
 	
-	var startWaveOutput: OutputAction? by addField("StartWaveOutput")
+	val startWaveOutput by addField<OutputAction>("StartWaveOutput")
 	
-	var firstSpawnWarningSound: String? by addField("FirstSpawnWarningSound")
+	val firstSpawnWarningSound by addField<String>("FirstSpawnWarningSound")
 	
-	var firstSpawnOutput: OutputAction? by addField("FirstSpawnOutput")
+	val firstSpawnOutput by addField<OutputAction>("FirstSpawnOutput")
 	
-	var lastSpawnWarningSound: String? by addField("LastSpawnWarningSound")
+	val lastSpawnWarningSound by addField<String>("LastSpawnWarningSound")
 	
-	var lastSpawnOutput: OutputAction? by addField("LastSpawnOutput")
+	val lastSpawnOutput by addField<OutputAction>("LastSpawnOutput")
 	
-	var doneWarningSound: String? by addField("DoneWarningSound")
+	val doneWarningSound by addField<String>("DoneWarningSound")
 	
-	var doneOutput: OutputAction? by addField("DoneOutput")
+	val doneOutput by addField<OutputAction>("DoneOutput")
 	
-	var totalCurrency: Int? by addField("TotalCurrency")
+	val totalCurrency by addField<Int>("TotalCurrency")
 	
-	var name: String? by addField("Name")
+	val name by addField<String>("Name")
 	
-	var waitForAllSpawned: WaveSpawnPopulator? by addField("WaitForAllSpawned", serializer = notNull(WaveSpawnPopulator::name))
+	val waitForAllSpawned by addField<WaveSpawnPopulator>("WaitForAllSpawned", serializer = getField(WaveSpawnPopulator::name))
 	
-	var waitForAllDead: WaveSpawnPopulator? by addField("WaitForAllDead", serializer = notNull(WaveSpawnPopulator::name))
+	val waitForAllDead by addField<WaveSpawnPopulator>("WaitForAllDead", serializer = getField(WaveSpawnPopulator::name))
 	
-	var randomSpawn: Boolean? by addField("RandomSpawn")
+	val randomSpawn by addField<Boolean>("RandomSpawn")
 	
 	/**
 	 * { enables support; "Limited" => TotalCount enforced, else => TotalCount ignored }
 	 */
-	var support: Support? by addField("Support")
+	val support by addField<Support>("Support")
 	
 	
 	companion object {

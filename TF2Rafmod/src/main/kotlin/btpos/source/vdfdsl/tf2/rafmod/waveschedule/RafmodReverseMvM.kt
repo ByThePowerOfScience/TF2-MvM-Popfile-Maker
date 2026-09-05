@@ -17,33 +17,33 @@ abstract class RafmodReverseMvM : IBlockScoped {
 	/**
 	 * If true, the player team wins if the bomb is delivered to the hatch.
 	 */
-	open var WaveSchedule.enable: Boolean? by addField("ReverseWinConditions", conditional = SIGSEGV)
+	val enable by addField<Boolean>("ReverseWinConditions", conditional = SIGSEGV)
 	
 	/**
 	 * If `TFTeam.BLU`, only the BLU team can pick up money instead of the RED team.
 	 */
-	open var WaveSchedule.teamThatCanPickUpMoney: TFTeam? by addField("SetCreditTeam", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NUMBER)
+	val teamThatCanPickUpMoney by addField<TFTeam>("SetCreditTeam", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NUMBER)
 	
 	
 	/**
 	 * If true, blu humans can capture the flag/bomb.
 	 */
-	open var WaveSchedule.canHumansCaptureBomb: Boolean? by addField("BluHumanFlagCapture", conditional = SIGSEGV)
+	val canHumansCaptureBomb by addField<Boolean>("BluHumanFlagCapture", conditional = SIGSEGV)
 	
 	/**
 	 * If true, BLU players can pick up the bomb.
 	 */
-	open var WaveSchedule.canHumansPickupBomb: Boolean? by addField("BluHumanFlagPickup", conditional = SIGSEGV)
+	val canHumansPickupBomb by addField<Boolean>("BluHumanFlagPickup", conditional = SIGSEGV)
 	
 	/**
 	 * If true, BLU players have infinite ammo. (Default: true)
 	 */
-	open var WaveSchedule.bluHasInfiniteAmmo: Boolean? by addField("BluHumanInfiniteAmmo", conditional = SIGSEGV)
+	val bluHasInfiniteAmmo by addField<Boolean>("BluHumanInfiniteAmmo", conditional = SIGSEGV)
 	
 	/**
 	 * If true, BLU players have infinite cloak. (Default: true)
 	 */
-	open var WaveSchedule.bluHasInfiniteCloak: Boolean? by addField("BluHumanInfiniteCloak", conditional = SIGSEGV)
+	val bluHasInfiniteCloak by addField<Boolean>("BluHumanInfiniteCloak", conditional = SIGSEGV)
 	
 	/**
 	 * Sets the maximum number of players that can exist on the BLU team at any given time.
@@ -53,25 +53,63 @@ abstract class RafmodReverseMvM : IBlockScoped {
 	 * maxAllowedOnBlu = 4
 	 * ```
 	 */
-	open var WaveSchedule.maxAllowedOnBlu: Int? by addField("AllowJoinTeamBlueMax", conditional = SIGSEGV)
+	val maxAllowedOnBlu by addField<Int>("AllowJoinTeamBlueMax", conditional = SIGSEGV)
 	
 	/**
 	 * If true, human players can join the BLU team.
 	 */
-	open var WaveSchedule.canPlayersJoinBluTeam: Boolean? by addField("AllowJoinTeamBlue", conditional = SIGSEGV)
+	val canPlayersJoinBluTeam by addField<Boolean>("AllowJoinTeamBlue", conditional = SIGSEGV)
 	
 	/**
 	 * If true, human players are forcibly assigned to BLU upon joining.
 	 *
 	 * Also sets [teamThatCanPickUpMoney] to true and, if not already set, sets [maxAllowedOnBlu] to 6.
 	 */
-	open var WaveSchedule.playersMustJoinBlu: Boolean? by addField("HumansMustJoinTeam", conditional = SIGSEGV)
+	val playersMustJoinBlu by addField<Boolean>("HumansMustJoinTeam", conditional = SIGSEGV)
 	
 	
 	/**
 	 * If true, BLU players use robot models, regardless of if they are human or not.
 	 */
-	open var WaveSchedule.bluPlayersUseRobotModels: Boolean? by addField("BluPlayersAreRobots", conditional = SIGSEGV)
+	val bluPlayersUseRobotModels by addField<Boolean>("BluPlayersAreRobots", conditional = SIGSEGV)
+	
+	/**
+	 * If true, reanimators will drop when a BLU player dies, allowing them to be revived by a Medic. (Default: false)
+	 */
+	val allowBluPlayerReanimators by addField<Boolean>("AllowBluPlayerReanimators", conditional = SIGSEGV)
+	
+	/**
+	 * If true, removes the 1000 HU/s velocity limit for BLU team members. (Default: false)
+	 */
+	val removeBluVelocityLimit by addField<Boolean>("RemoveBluVelocityLimit", conditional = SIGSEGV)
+	
+	
+	/**
+	 * If true, BLU players can shoot while in spawn. (Default: false)
+	 */
+	val canBluShootInSpawn by addField<Boolean>("BluHumanSpawnNoShoot", conditional = SIGSEGV, serializer = BOOL_SER_INVERT)
+	
+	/**
+	 * If true, BLU players are invincible in spawn. (Default: true)
+	 */
+	val bluHumanSpawnProtection by addField<Boolean>("BluHumanSpawnProtection", conditional = SIGSEGV)
+	
+	/**
+	 * If true, disables robot footsteps for BLU humans (default: false)
+	 */
+	val noBluHumanFootsteps by addField<Boolean>("NoBluHumanFootsteps", conditional = SIGSEGV)
+	
+	/**
+	 * When [Reverse MvM win conditions are enabled][enable], enemy bots will be spawned on this team instead of BLU. (Default: [TFTeam.RED])
+	 *
+	 * Example:
+	 * ```kotlin
+	 * enemyTeamForReverse = TFTeam.RED
+	 * ```
+	 */
+	val enemyTeamForReverse by addField<TFTeam>("EnemyTeamForReverse", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NAME)
+	
+	
 	
 	/**
 	 * How many seconds the "stock ubercharge" invincibility effect should be applied to BLU entities exiting a BLU teleporter. (Default: 5)
@@ -81,17 +119,17 @@ abstract class RafmodReverseMvM : IBlockScoped {
 	 * botPostTeleportUberDuration = 5.seconds
 	 * ```
 	 */
-	open var WaveSchedule.botPostTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = IExtensibleSubtree.Serializers.durationInSeconds())
+	val botPostTeleportUberDuration by addField<Duration>("BotTeleportUberDuration", conditional = SIGSEGV, serializer = IExtensibleSubtree.Serializers.durationInSeconds())
 	
 	/**
 	 * If true, humans should be teleported to an Engineer-bot's teleporter when spawning instead of their default spawn location. (Default: false)
 	 */
-	open var WaveSchedule.spawnOnBotTeleporter: Boolean? by addField("BluHumanTeleportOnSpawn", conditional = SIGSEGV)
+	val spawnOnBotTeleporter by addField<Boolean>("BluHumanTeleportOnSpawn", conditional = SIGSEGV)
 	
 	/**
 	 * If true, player-built teleporters teleport players and robots on spawn.
 	 */
-	open var WaveSchedule.spawnOnHumanTeleporter: Boolean? by addField("BluHumanBotTeleporter", conditional = SIGSEGV)
+	val spawnOnHumanTeleporter by addField<Boolean>("BluHumanBotTeleporter", conditional = SIGSEGV)
 	
 	
 }

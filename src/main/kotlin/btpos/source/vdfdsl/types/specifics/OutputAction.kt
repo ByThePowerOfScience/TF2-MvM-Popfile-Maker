@@ -8,11 +8,11 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import org.intellij.lang.annotations.Language
 
 open class OutputAction : ExtensibleSubtreeImpl() {
-	open var target: String? by addField("Target")
+	open val target by addField<String>("Target")
 	
-	open var action: String? by addField("Action")
+	open val action by addField<String>("Action")
 	
-	open var param: String? by addField("Param")
+	open val param by addField<String>("Param")
 	
 	open fun trigger(target: String) {
 		this.target = target

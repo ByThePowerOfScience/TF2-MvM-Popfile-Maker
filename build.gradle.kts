@@ -51,7 +51,7 @@ allOpen {
 }
 
 assignment {
-	annotation("btpos.source.vdfdsl.tf2.itemattributes.SupportsCustomAssignment")
+	annotation("btpos.source.vdfdsl.util.SupportsCustomAssignment")
 }
 //
 //publishing {

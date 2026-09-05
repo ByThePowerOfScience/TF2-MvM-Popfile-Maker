@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class ExtensibleSubtreeImplTest {
 	
-	private var ExtensibleSubtreeImpl.thing: String? by addField("Thing")
+	private val ExtensibleSubtreeImpl.thing by addField<String>("Thing")
 	
 	
 	

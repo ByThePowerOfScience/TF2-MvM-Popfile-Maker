@@ -1,5 +1,6 @@
 package btpos.source.vdfdsl.types
 
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.keyed
@@ -10,9 +11,11 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.merged
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.map
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.populators.AbstractPopulator
+import btpos.source.vdfdsl.types.populators.Populators
 import btpos.source.vdfdsl.utils.NestedScope
 import kotlin.io.path.Path
 import kotlin.io.path.bufferedWriter
@@ -31,7 +34,8 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	}
 	
 	
-	var populators: List<AbstractPopulator> by selfNamedList()
+	val populators by selfNamedList<AbstractPopulator>()
+	
 	
 	/**
 	 * Settings controlling details about the mission: starting currency, bots attacking inside the spawn room, etc.
@@ -46,20 +50,18 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 		/**
 		 * Default: 0
 		 */
-		var startingCurrency: Int? by addField("StartingCurrency")
+		val startingCurrency by addField<Int>("StartingCurrency")
 		
 		/**
 		 * e.g. `"Halloween"`
 		 */
-		var eventPopFile: String? by addField("EventPopFile")
+		val eventPopFile by addField<String>("EventPopFile")
 		
-		var advanced: Boolean? by addField("Advanced")
+		val advanced by addField<Boolean>("Advanced")
 		
-		var isEndless: Boolean? by addField("IsEndless")
+		val isEndless by addField<Boolean>("IsEndless")
 		
-		var canBotsAttackWhileInSpawnRoom: Boolean? by addField("CanBotsAttackWhileInSpawnRoom", serializer = { if (this) "yes" else "no" })
-		
-		
+		val canBotsAttackWhileInSpawnRoom by addField<Boolean>("CanBotsAttackWhileInSpawnRoom", serializer = map({ if (it) "yes" else "no" }, VDFPrimitive::invoke))
 		
 		override fun copy() = MissionSettings(copyInternal())
 	}
@@ -68,9 +70,9 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 		/**
 		 * Default: 10
 		 */
-		var respawnWaveTime: Int? by addField("RespawnWaveTime")
+		val respawnWaveTime by addField<Int>("RespawnWaveTime")
 		
-		var fixedRespawnWaveTime: Boolean? by addField("FixedRespawnWaveTime")
+		val fixedRespawnWaveTime by addField<Boolean>("FixedRespawnWaveTime")
 		
 		
 		override fun copy() = RespawnSettings(backing.copy())
@@ -81,12 +83,12 @@ class PopulationManager(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 		/**
 		 * Default: 3000
 		 */
-		var addSentryBusterWhenDamageDealtExceeds: Int? by addField("AddSentryBusterWhenDamageDealtExceeds")
+		val addSentryBusterWhenDamageDealtExceeds by addField<Int>("AddSentryBusterWhenDamageDealtExceeds")
 		
 		/**
 		 * Default: 15
 		 */
-		var addSentryBusterWhenKillCountExceeds: Int? by addField("AddSentryBusterWhenKillCountExceeds")
+		val addSentryBusterWhenKillCountExceeds by addField<Int>("AddSentryBusterWhenKillCountExceeds")
 		
 		
 		override fun copy() = SentryBusterSettings(backing.copy())

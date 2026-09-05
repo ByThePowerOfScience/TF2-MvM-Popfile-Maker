@@ -29,12 +29,17 @@ abstract class RafmodBomb : IBlockScoped {
 	 * flagEscortCountOffset = 5 // makes there be 6 bombs on the field
 	 * ```
 	 */
-	open var WaveSchedule.additionalEscorts: Int? by addField("FlagEscortCountOffset", conditional = SIGSEGV)
-	
-	
+	val numBombEscorts by addField<Int>("FlagEscortCountOffset", conditional = SIGSEGV, serializer = { this - 1 })
 	
 	/**
 	 * If false, the bomb carrier cannot fire or swing their weapon. (Default: true)
 	 */
-	open var WaveSchedule.canBombCarrierFight: Boolean? by addField("AllowFlagCarrierToFight", conditional = SIGSEGV)
+	val canBombCarrierAttack by addField<Boolean>("AllowFlagCarrierToFight", conditional = SIGSEGV)
+	
+	/**
+	 * If true, players carrying the bomb for enough time will gain the same defense, health regen, and eventually crits that bots do. (Default: false)
+	 */
+	val allowBombBuffsForPlayerCarriers by addField<Boolean>("AllowBombBuffsForPlayerCarriers", conditional = SIGSEGV)
+	
+	
 }

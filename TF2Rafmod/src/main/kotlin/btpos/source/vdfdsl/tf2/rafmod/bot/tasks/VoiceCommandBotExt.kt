@@ -20,7 +20,7 @@ open class VoiceCommandBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Ext
 	 * voiceCommand = TFVoiceCommand.MEDIC
 	 * ```
 	 */
-	open var voiceCommand: TFVoiceCommand? by addField("Type", conditional = SIGSEGV)
+	open val voiceCommand by addField<TFVoiceCommand>("Type", conditional = SIGSEGV)
 	
 	
 }

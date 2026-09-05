@@ -8,10 +8,19 @@ import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
 import btpos.source.vdfdsl.types.WaveSchedule
 import kotlin.time.Duration
 
-abstract class RafmodGameplay : IBlockScoped {
-	companion object {
-		@PublishedApi @JvmField internal val INSTANCE = object : RafmodGameplay() {}
-	}
+class RafmodGameplay(subtree: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : NestedScope(subtree) {
+	override fun copy() = RafmodGameplay(copyInternal())
+	
+	/**
+	 * If true, minibosses only count as a single kill on a sentry gun instead of multiple.
+	 */
+	val minibossSentrySingleKill by addField<Boolean>("MinibossSentrySingleKill", conditional = SIGSEGV)
+	
+	
+	/**
+	 * If true, hitting a target for negative damage will heal them. (Default: true)
+	 */
+	val negativeDamageHealsTargets by addField<Boolean>("RestoreNegativeDamageHealing", conditional = SIGSEGV)
 	
 	/**
 	 * Proportion of damage dealt returned as healing while the Concheror effect is active. (Default: 0.35)
@@ -21,7 +30,7 @@ abstract class RafmodGameplay : IBlockScoped {
 	 * conchHealthOnHit = 0.77
 	 * ```
 	 */
-	open var WaveSchedule.conchHealthOnHit: Double? by addField("ConchHealthOnHit", conditional = SIGSEGV)
+	val negativeDamageOverhealsTargets by addField<Boolean>("RestoreNegativeDamageOverheal", conditional = SIGSEGV)
 	
 	/**
 	 * Number of seconds the "Marked for Death" status lasts on a target.
@@ -33,7 +42,8 @@ abstract class RafmodGameplay : IBlockScoped {
 	 * markedForDeathLifetime = 1
 	 * ```
 	 */
-	open var WaveSchedule.markedForDeathLifetime: Duration? by addField("MarkedForDeathLifetime", conditional = SIGSEGV, serializer = IExtensibleSubtree.Serializers.durationInSeconds())
+	val allowMultipleSappers by addField<Boolean>("AllowMultipleSappers", conditional = SIGSEGV)
+	
 	
 	/**
 	 * Number of ubercharges the Vaccinator can hold. (Default: 4)
@@ -63,28 +73,7 @@ abstract class RafmodGameplay : IBlockScoped {
 	 * conchSpeedBoost = 10
 	 * ```
 	 */
-	open var WaveSchedule.conchSpeedBoost: Number? by addField("ConchSpeedBoost", conditional = SIGSEGV)
-	
-	/**
-	 * Multiplier to damage received while cloaked. (Default: 0.8)
-	 *
-	 * Example:
-	 * ```kotlin
-	 * stealthDamageReduction = 0.1
-	 * ```
-	 */
-	open var WaveSchedule.cloakedDamageMultiplier: Double? by addField("StealthDamageReduction", conditional = SIGSEGV)
-	
-	/**
-	 * If true, heal-on-kill - when proc'd by melee weapons - can overheal the user.
-	 */
-	open var WaveSchedule.healOnKillOverhealMelee: Boolean? by addField("HealOnKillOverhealMelee", conditional = SIGSEGV)
-	
-	/**
-	 * If true, fixes the Huntsman's "damage bonus" upgrade so it is applied properly. (Default: false)
-	 */
-	open var WaveSchedule.fixHuntsmanDamageBonus: Boolean? by addField("FixHuntsmanDamageBonus", conditional = SIGSEGV)
-	
+	val grapplingHooksDisconnectAfter by addField<Duration>("RemoveGrapplingHooks", conditional = SIGSEGV, serializer = durationInSeconds())
 	
 	
 }

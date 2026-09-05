@@ -6,9 +6,10 @@ import btpos.source.vdfdsl.codegen.map
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addFieldList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEachCond
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerImpl
 import btpos.source.vdfdsl.tf2.itemattributes.AttributeContainerSubtreeSerializable
@@ -26,16 +27,16 @@ import btpos.source.vdfdsl.types.bots.WeaponRestrictions
 interface ChangeableBotAttributes : IExtensibleSubtree
 
 
-var ChangeableBotAttributes.skill: BotSkill? by addField("Skill")
+val ChangeableBotAttributes.skill by addField<BotSkill>("Skill")
 
 
-var ChangeableBotAttributes.items: List<TFItem<*>> by selfNamedList()
+val ChangeableBotAttributes.items by selfNamedList<TFItem<*>>()
 
-var ChangeableBotAttributes.weaponRestriction: WeaponRestrictions? by addField("WeaponRestrictions")
+val ChangeableBotAttributes.weaponRestriction by addField<WeaponRestrictions>("WeaponRestrictions")
 
-var ChangeableBotAttributes.behaviorModifiers: List<BehaviorModifiers> by addField("BehaviorModifiers", serializer = flatListWithKey()) { listOf() }
+val ChangeableBotAttributes.behaviorModifiers by addFieldList<BehaviorModifiers>("BehaviorModifiers")
 
-var ChangeableBotAttributes.maxVisionRange: Number? by addField("MaxVisionRange")
+val ChangeableBotAttributes.maxVisionRange by addField<Number>("MaxVisionRange")
 
 
 /**
@@ -45,19 +46,19 @@ var ChangeableBotAttributes.maxVisionRange: Number? by addField("MaxVisionRange"
  *
  * @see addAttributesForExisting
  */
-var ChangeableBotAttributes.itemAttributes: List<IAttributeContainer> by addField("ItemAttributes", serializer=flatListWithKey<AttributeContainerSubtreeSerializable>().mapEach(::AttributeContainerSubtreeSerializable)) { listOf() }
+val ChangeableBotAttributes.itemAttributes by addFieldList<IAttributeContainer>("ItemAttributes", serializer=mapEachCond(::AttributeContainerSubtreeSerializable, flatListWithKey()))
 
 
-var ChangeableBotAttributes.attributes: List<TFBotAttributes> by addField("Attributes", serializer = flatListWithKey()) { listOf() }
+val ChangeableBotAttributes.attributes by addFieldList<TFBotAttributes>("Attributes", serializer = flatListWithKey())
 
-var ChangeableBotAttributes.characterAttributes: IAttributeContainer? by addField("CharacterAttributes", serializer=::AttributeContainerSubtreeSerializable)
+val ChangeableBotAttributes.characterAttributes by addField<IAttributeContainer>("CharacterAttributes", serializer=::AttributeContainerSubtreeSerializable)
 
 inline fun ChangeableBotAttributes.characterAttributes(configure: IAttributeContainer.() -> Unit) {
-	characterAttributes = AttributeContainerImpl().apply(configure)
+	this.characterAttributes = AttributeContainerImpl().apply(configure)
 }
 
 
-var ChangeableBotAttributes.tags: List<String> by addField("Tag", serializer = flatListWithKey()) { listOf() }
+val ChangeableBotAttributes.tags by addFieldList<String>("Tag", serializer = flatListWithKey())
 
 
 /**
@@ -66,7 +67,7 @@ var ChangeableBotAttributes.tags: List<String> by addField("Tag", serializer = f
  * This is only needed if you're using a template that already has an item set on it, and you just want to configure that item.
  */
 inline fun <ATTR : Any> ChangeableBotAttributes.addAttributesForExisting(item: TFItem<ATTR>, attrScope: context(AttributeContainerImpl) ATTR.() -> Unit) {
-	itemAttributes = (itemAttributes + item.configureAttributes(AttributeContainerImpl(), attrScope) as IAttributeContainer) as List<IAttributeContainer>
+	itemAttributes += item.configureAttributes(AttributeContainerImpl(), attrScope)
 }
 
 
@@ -79,29 +80,29 @@ open class TFBotSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensib
 	override fun copy() = TFBotSpawner(copyInternal())
 	
 	
-	var template: PopFileTemplate? by addField("Template")
+	val template by addField<PopFileTemplate>("Template")
 	
-	var `class`: TFClass? by addField("Class")
+	val `class` by addField<TFClass>("Class")
 	
-	var classIcon: String? by addField("ClassIcon")
+	val classIcon by addField<String>("ClassIcon")
 	
-	var health: Int? by addField("Health")
+	val health by addField<Int>("Health")
 	
-	var scale: Number? by addField("Scale")
+	val scale by addField<Number>("Scale")
 	
-	var name: String? by addField("Name")
+	val name by addField<String>("Name")
 	
 	/**
 	 * (name of info_teamspawn entity)
 	 */
-	var teleportWhere: List<String> by addField("TeleportWhere", serializer = flatListWithKey()) { listOf() }
+	val teleportWhere by addFieldList<String>("TeleportWhere", serializer = flatListWithKey())
 	
-	var autoJumpMin: Number? by addField("AutoJumpMin")
+	val autoJumpMin by addField<Number>("AutoJumpMin")
 	
-	var autoJumpMax: Number? by addField("AutoJumpMax")
+	val autoJumpMax by addField<Number>("AutoJumpMax")
 	
 	// TODO document these, also make sure I understand EventChangeAttributes
-	var eventChangeAttributes: EventChangeAttributes by addField("EventChangeAttributes", initialValue = ::EventChangeAttributes)
+	val eventChangeAttributes by addField<EventChangeAttributes>("EventChangeAttributes", initialValue = ::EventChangeAttributes)
 	
 	
 	companion object {

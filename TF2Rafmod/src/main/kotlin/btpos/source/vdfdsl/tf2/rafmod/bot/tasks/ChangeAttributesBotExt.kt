@@ -46,7 +46,7 @@ open class ChangeAttributesBotExt(subtree: IExtensibleSubtree_VDFRepresentable =
 	 *
 	 * ```
 	 */
-	open var changes: EventChangeAttributesEntry? by addField("Name", conditional = SIGSEGV, serializer = selector(EventChangeAttributesEntry::eventName))
+	open val changes by addField<EventChangeAttributesEntry>("Name", conditional = SIGSEGV, serializer = selector(EventChangeAttributesEntry::eventName))
 	
 	override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
 		super._serializeInto(input, forcedConditional)

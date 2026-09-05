@@ -24,7 +24,7 @@ dependencies {
 }
 
 assignment {
-	annotations("btpos.source.vdfdsl.tf2.itemattributes.SupportsCustomAssignment")
+	annotations("btpos.source.vdfdsl.util.SupportsCustomAssignment")
 }
 
 sourceSets.main {

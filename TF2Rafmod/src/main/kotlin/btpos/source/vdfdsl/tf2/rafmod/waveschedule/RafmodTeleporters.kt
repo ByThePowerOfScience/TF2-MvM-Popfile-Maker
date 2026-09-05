@@ -20,10 +20,10 @@ abstract class RafmodTeleporters : IBlockScoped {
 	 * botTeleportUberDuration = 2.seconds
 	 * ```
 	 */
-	open var WaveSchedule.botTeleportUberDuration: Duration? by addField("BotTeleportUberDuration", conditional = SIGSEGV, serializer = durationInSeconds())
+	val botTeleportUberDuration by addField<Duration>("BotTeleportUberDuration", conditional = SIGSEGV, serializer = durationInSeconds())
 	
 	/**
 	 * If true, robots can use players' teleporter entrances. (Default: true)
 	 */
-	open var WaveSchedule.canBotsUsePlayerTeleporters: Boolean? by addField("BotsUsePlayerTeleporters", conditional = SIGSEGV)
+	val canBotsUsePlayerTeleporters by addField<Boolean>("BotsUsePlayerTeleporters", conditional = SIGSEGV)
 }

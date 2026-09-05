@@ -30,7 +30,7 @@ open class CustomWeaponModelBotExt protected constructor(subtree: IExtensibleSub
 	 * slot = ItemSlot.PRIMARY
 	 * ```
 	 */
-	open var slot: ItemSlot? by addField("Slot", conditional = SIGSEGV)
+	open val slot by addField<ItemSlot>("Slot", conditional = SIGSEGV)
 	
 	/**
 	 * The model to replace the item in the given [slot] with.
@@ -42,7 +42,7 @@ open class CustomWeaponModelBotExt protected constructor(subtree: IExtensibleSub
 	 * model = "models/weapons/w_models/w_minigun.mdl"
 	 * ```
 	 */
-	open var model: String? by addField("Model", conditional = SIGSEGV)
+	open val model by addField<String>("Model", conditional = SIGSEGV)
 }
 
 /**

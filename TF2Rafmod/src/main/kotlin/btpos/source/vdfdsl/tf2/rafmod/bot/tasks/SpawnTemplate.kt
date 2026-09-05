@@ -28,7 +28,7 @@ open class SpawnTemplate(sub: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	 * template = MyPointTemplates.Sentry
 	 * ```
 	 */
-	open var template: PointTemplate? by addField("Name", conditional = SIGSEGV)
+	open val template by addField<PointTemplate>("Name", conditional = SIGSEGV)
 	
 	/**
 	 * The name of the bone this template should be attached to.
@@ -40,7 +40,7 @@ open class SpawnTemplate(sub: IExtensibleSubtree_VDFRepresentable = ExtensibleSu
 	 *
 	 * @see CommonBones
 	 */
-	open var bone: String? by addField("Bone", conditional = SIGSEGV)
+	open val bone by addField<String>("Bone", conditional = SIGSEGV)
 	
 	
 	object CommonBones {

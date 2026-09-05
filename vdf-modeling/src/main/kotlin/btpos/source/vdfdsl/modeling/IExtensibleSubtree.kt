@@ -1,4 +1,5 @@
 @file:Suppress("unused")
+@file:OptIn(ExperimentalTypeInference::class)
 
 package btpos.source.vdfdsl.modeling
 
@@ -32,18 +33,19 @@ import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.serialization.plusAssign
 import btpos.source.vdfdsl.util.ClassHierarchyGraph
+import btpos.source.vdfdsl.util.SupportsCustomAssignment
 import btpos.source.vdfdsl.util.TrivialDelegateProvider
-import java.util.Collections.emptyList
+import btpos.source.vdfdsl.util.forEachWithIter
 import kotlin.collections.forEach
+import kotlin.collections.map
 import kotlin.error
+import kotlin.experimental.ExperimentalTypeInference
 import kotlin.jvm.java
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty1
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.jvm.jvmErasure
@@ -61,28 +63,91 @@ import kotlin.time.DurationUnit
  */
 interface IExtensibleSubtree {
 	/**
-	 * A bunch of raw items, keyed by whatever arbitrary value is used to retrieve them for user use.
-	 *
-	 * All keys will be ignored when serializing the entries to a popfile. Values are expected to provide their own keys.
+	 * @param T the type of the data being stored under this key in the subtree's [DataStorage]
 	 */
-	val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue>
+	interface IDataKey<T : Any>
+	
+	@JvmRecord
+	data class FieldKey<T : Any>(val field: ExtField<*>, val conditional: String?) : IDataKey<T>
 	
 	/**
-	 * Keep a stacktrace log of where the object was created,
-	 * so we can throw it if a required field isn't set and it gives the line where it was set.
+	 * Used for user-defined keys that take a trivial value, like `"custom jump height modifier" "4"`
 	 */
-	val _instantiationSite: Array<StackTraceElement>
+	@JvmRecord
+	data class PrimitiveKey<T : Any>(val key: VDFPrimitive, val conditional: String? = null) : IDataKey<T>
 	
+	@JvmRecord
+	data class PropertyKey<T : Any>(val prop: KProperty<*>) : IDataKey<T>
+	
+	
+	interface DataStorage<D : Any> {
+		operator fun <T : D> get(key: IDataKey<T>): T?
+		
+		operator fun <T : D> set(key: IDataKey<T>, data: T)
+		
+		fun <T : D> remove(key: IDataKey<T>)
+		
+		fun removeIf(predicate: (IDataKey<*>) -> Boolean)
+		
+		fun copy(): DataStorage<D>
+		
+		fun entries(): Iterable<Pair<IDataKey<*>, D>>
+		
+		fun <T : D> computeIfAbsent(key: IDataKey<T>, initializer: () -> T): T {
+			return get(key) ?: initializer().also {
+				set(key, it)
+			}
+		}
+	}
+	
+	val _dataStorage: DataStorageVDFRepresentable
+	
+	open class DataStorageImpl : DataStorageVDFRepresentable {
+		protected val backingMap = LinkedHashMap<IDataKey<out IVDFRepresentableKeyValue>, IVDFRepresentableKeyValue>()
+		
+		override fun <T : IVDFRepresentableKeyValue> get(key: IDataKey<T>): T? {
+			@Suppress("UNCHECKED_CAST")
+			return backingMap[key] as T?
+		}
+		
+		override fun <T : IVDFRepresentableKeyValue> set(key: IDataKey<T>, data: T) {
+			backingMap[key] = data
+		}
+		
+		override fun <T : IVDFRepresentableKeyValue> remove(key: IDataKey<T>) {
+			backingMap.remove(key)
+		}
+		
+		override fun removeIf(predicate: (IDataKey<*>) -> Boolean) {
+			backingMap.entries.forEachWithIter {
+				if (predicate(it.key)) {
+					remove()
+				}
+			}
+		}
+		
+		override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+			this.backingMap.values.forEach {
+				it._serializeInto(input, null)
+			}
+		}
+		
+		override fun copy(): DataStorageImpl = DataStorageImpl().also {
+			this.backingMap.forEach { (k, v) ->
+				it.backingMap[k] = v
+			}
+		}
+		
+		override fun entries(): Iterable<Pair<IDataKey<*>, IVDFRepresentableKeyValue>> {
+			return backingMap.entries.asSequence().map { it.key to it.value }.asIterable()
+		}
+	}
 	/**
 	 * Create a deep copy of this subtree.
 	 *
 	 * Implementers of this interface should always override this method to return their own type.  I wish there were a way to do this with generics.
 	 */
 	fun copy(): IExtensibleSubtree
-	
-	fun _copyInternal() = _rawEntries.mapValuesTo(HashMap(_rawEntries.size)) { (_, value) ->
-		(value as? IExtensibleSubtree)?.copy() as IVDFRepresentableKeyValue? ?: value
-	}
 	
 	/**
 	 * Serializes to multiple versions of the same key in the same subtree, like this:
@@ -105,16 +170,32 @@ interface IExtensibleSubtree {
 			}
 		}
 		
-		fun <T, U> Serializer<Iterable<U>>.mapEach(transformer: (T) -> U): Serializer<Iterable<T>> {
-			return { it: Iterable<T> ->
-				this(it.map(transformer))
+		fun <T : Any> string(toString: (T) -> String): Serializer<T> {
+			return {
+				VDFPrimitive(toString(it))
 			}
 		}
 		
-		fun durationInSeconds(): Serializer<Duration> = { it: Duration ->
-			IVDFRepresentableValue_Trivial {
-				VDFPrimitive(it.toDouble(DurationUnit.SECONDS))
+		fun <T, U : Any> map(mapper: (T) -> U, then: Serializer<U> = IVDFRepresentableValue::serializeDynamic): Serializer<T> {
+			return {
+				then(mapper(it))
 			}
+		}
+		
+		fun <T, U> mapEach(mapper: (T) -> U, then: Serializer<Iterable<U>>): Serializer<Iterable<T>> {
+			return {
+				then(it.asSequence().map(mapper).asIterable())
+			}
+		}
+		
+		fun <T : Any, U : Any> mapEachCond(mapper: (T) -> U, then: Serializer<Iterable<ConditionalValue<U>>>): Serializer<Iterable<ConditionalValue<T>>> {
+			return {
+				then(it.asSequence().map { ConditionalValue(mapper(it.value), it.conditional) }.asIterable())
+			}
+		}
+		
+		fun durationInSeconds(then: Serializer<Double> = VDFPrimitive::invoke): Serializer<Duration> = { it: Duration ->
+			then(it.toDouble(DurationUnit.SECONDS))
 		}
 		
 		inline fun <reified T : Any> flatListWithKey(): Serializer<Iterable<T>> {
@@ -187,6 +268,25 @@ interface IExtensibleSubtree {
 			}
 		}
 		
+		@OverloadResolutionByLambdaReturnType
+		fun <OWNER : IExtensibleSubtree, FIELDTYPE : Any> getField(getter: (OWNER) -> ExtField<FIELDTYPE>, then: (FIELDTYPE) -> IVDFRepresentableValue = IVDFRepresentableValue::serializeDynamic): Serializer<OWNER> {
+			return { owner: OWNER ->
+				IVDFRepresentableValue { key, setCond ->
+					context(owner) {
+						getter(owner)[setCond]?.let(then)?._toKeyValueRepresentable(key, setCond)
+							?: error("Expected $getter to be set.")
+					}
+				}
+			}
+		}
+		
+		@JvmName("getBound")
+		@OverloadResolutionByLambdaReturnType
+		fun <OWNER : IExtensibleSubtree, FIELDTYPE : Any> getField(getter: (OWNER) -> ExtField.Bound<FIELDTYPE>, then: (FIELDTYPE) -> IVDFRepresentableValue = IVDFRepresentableValue::serializeDynamic): Serializer<OWNER> {
+			return getField({ owner: OWNER -> getter(owner).field }, then)
+		}
+		
+		
 		fun <T : IVDFRepresentableKeyValue> subtreeOfSubtrees(): Serializer<Iterable<T>> {
 			return { items ->
 				IVDFRepresentableValue_Subtree { parent ->
@@ -198,6 +298,528 @@ interface IExtensibleSubtree {
 		}
 	}
 	
+	/**
+	 * @param T The data being gotten and set through this object, visible to the user.
+	 */
+	@SupportsCustomAssignment
+	interface ExtField<T : Any> {
+		context(subtree: IExtensibleSubtree)
+		fun set(value: T, conditional: String? = null)
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun set(conditional: String?, value: T) = set(value, conditional)
+		
+		context(subtree: IExtensibleSubtree)
+		fun set(other: ExtField<T>) = other.getAll().forEach { (value, conditional) -> set(value, conditional) }
+		
+		context(subtree: IExtensibleSubtree)
+		fun set(other: Bound<T>) = other.field.getAll().forEach { (value, conditional) -> set(value, conditional) }
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun get(conditional: String? = null): T?
+		
+		/**
+		 * Get the value this is set with for each platform.
+		 *
+		 * Generally only needed for copying the value of one field to another.
+		 */
+		context(subtree: IExtensibleSubtree)
+		fun getAll(): Iterable<ConditionalValue<T>>
+		
+		context(subtree: IExtensibleSubtree)
+		fun clear()
+		
+		context(subtree: IExtensibleSubtree)
+		fun assign(value: T?) = if (value == null) clear() else set(value)
+		
+		context(subtree: IExtensibleSubtree)
+		fun assign(other: ExtField<T>) = set(other)
+		
+		context(subtree: IExtensibleSubtree)
+		fun assign(other: Bound<T>) = set(other)
+		
+		
+		operator fun getValue(subtree: IExtensibleSubtree, property: KProperty<*>): Bound<T>
+		
+		/**
+		 * A way to interact with a given field without needing to give the owner to it each and every time.
+		 */
+		@SupportsCustomAssignment
+		interface Bound<T : Any> {
+			val _subtree: IExtensibleSubtree
+			
+			val field: ExtField<T>
+			
+			/**
+			 * Get the value stored in this field.
+			 *
+			 * @param conditional If the value was set only for a specific platform, TODO
+			 */
+			operator fun get(conditional: String? = null): T? {
+				return context(_subtree) {
+					field.get(conditional)
+				}
+			}
+			
+			fun getAll(): Iterable<ConditionalValue<T>> = context(_subtree) { field.getAll() }
+			
+			val isSet get() = getAll().count() != 0
+			
+			operator fun set(conditional: String?, value: T) = set(value, conditional)
+			
+			fun set(value: T, conditional: String?) {
+				context(_subtree) {
+					field.set(value, conditional)
+				}
+			}
+			
+			fun set(other: ExtField<T>) = context(_subtree) { field.set(other) }
+			
+			fun set(other: Bound<T>) = context(_subtree) { field.set(other) }
+			
+			fun clear() {
+				context(_subtree) {
+					field.clear()
+				}
+			}
+			
+			fun assign(value: T?) = context(_subtree) { field.assign(value) }
+			
+			fun assign(other: ExtField<T>) = context(_subtree) { field.assign(other) }
+			
+			fun assign(other: Bound<T>) = context(_subtree) { field.assign(other) }
+		}
+	}
+	
+	interface NonNullExtField<T : Any> : ExtField<T> {
+		context(subtree: IExtensibleSubtree)
+		override operator fun get(conditional: String?): T
+		
+		interface Bound<T : Any> : ExtField.Bound<T> {
+			override operator fun get(conditional: String?): T
+		}
+		
+		override fun getValue(subtree: IExtensibleSubtree, property: KProperty<*>): Bound<T>
+	}
+	
+	/*
+	What are our requirements?
+	- Entries must be placed in sequential order
+	- Entries must be unique
+	- How do we distinguish between setting and overwriting?
+	- Anything that isn't a collection should be overwritten when set, but collections are appended to
+	- Collections need to support each element having its own conditional
+	- Single-element fields need to support being set multiple times with different conditionals
+	- Fields must be able to be set with assignment operators
+	- Fields must be serialized into a VDF
+	- Fields must not conflict with one another.
+	- Collection fields may have a conditional applied to its definition that will be applied to any elements that do not have a user-specified conditional
+	- Self-named fields must be able to be set with conditionals, which should apply said conditional to anything it serializes at that level
+	
+	
+	Strategy:
+	- Objects that purely translate the user-defined data into what is stored in the subtree
+	- Data that is stored in the subtree, does not contain multiple values, but rather
+	- Key for said data in the map to be retrieved later
+		- Since the LinkedHashMap saves the insertion order, this should be the one that contains the conditional
+		  so we don't overwrite elements when the same field is set with multiple conditionals
+	 */
+	abstract class NamedField<T : Any>(serializationKey: String, val definitionConditional: String? = null)
+		: ExtField<T>
+	{
+		val serializationKey = VDFPrimitive(serializationKey)
+		
+		abstract override fun getValue(subtree: IExtensibleSubtree, property: KProperty<*>): Bound<T>
+		
+		interface Bound<T : Any> : ExtField.Bound<T> {
+			override val field: NamedField<T>
+		}
+	}
+	
+	// factory model: factory holds all the data, then instances of the interface are made on the fly
+	// to allow it to interact with the parent subtree
+	
+	open class NamedFieldImpl<T : Any>(
+		serializationKey: String,
+		definitionConditional: String? = null,
+		val serializer: ((T) -> Any?)? = null
+	) : NamedField<T>(serializationKey, definitionConditional)
+	{
+		private inner class Data(val item: T, val conditional: String?) : IVDFRepresentableKeyValue {
+			override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+				val out = if (serializer != null)
+					serializer(item) ?: return;
+				else
+					item
+				
+				return IVDFRepresentableValue.serializeDynamic(serializationKey, out, conditional)
+					._serializeInto(input, null)
+			}
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun get(conditional: String?): T? {
+			return subtree._dataStorage[FieldKey<Data>(this, conditional)]?.item
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun set(value: T, conditional: String?) {
+			subtree._dataStorage[FieldKey<Data>(this, conditional)] = Data(value, conditional)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun clear() {
+			subtree._dataStorage.removeIf { it is FieldKey && it.field === this }
+		}
+		
+		
+		context(subtree: IExtensibleSubtree)
+		override fun getAll(): Iterable<ConditionalValue<T>> {
+			return subtree._dataStorage.getAllForField(this).map { (k, v) ->
+				val cond = k.conditional
+				val value = (v as NamedFieldImpl<T>.Data).item
+				
+				ConditionalValue(value, cond)
+			}.asIterable()
+		}
+		
+		open class Bound<T : Any>(override val _subtree: IExtensibleSubtree, override val field: NamedField<T>) : NamedField.Bound<T>
+		
+		override fun getValue(subtree: IExtensibleSubtree, property: KProperty<*>): Bound<T> = Bound(subtree, this)
+	}
+	
+	open class NamedFieldWithInitialValue<T : Any>(
+		serializationKey: String,
+		definitionConditional: String? = null,
+		serializer: ((T) -> Any?)? = null,
+		initialValue: () -> T
+	) : NamedFieldImpl<T>(serializationKey, definitionConditional, serializer) {
+		private val initialValue by lazy(LazyThreadSafetyMode.NONE, initialValue)
+		
+		context(subtree: IExtensibleSubtree)
+		override fun get(conditional: String?): T {
+			return super.get(conditional) ?: initialValue
+		}
+		
+		open class Bound<T : Any>(subtree: IExtensibleSubtree, override val field: NamedFieldWithInitialValue<T>)
+			: NamedFieldImpl.Bound<T>(subtree, field), NonNullExtField.Bound<T>
+		{
+			override fun get(conditional: String?): T {
+				return context(_subtree) {
+					field.get(conditional)
+				}
+			}
+		}
+		
+		override operator fun getValue(subtree: IExtensibleSubtree, property: KProperty<*>): Bound<T> {
+			return Bound(subtree, this)
+		}
+	}
+	
+	
+	data class ConditionalValue<T : Any>(val value: T, val conditional: String?) : IVDFRepresentableValue {
+		override fun _toKeyValueRepresentable(key: VDFPrimitive, conditional: String?): IVDFRepresentableKeyValue {
+			return IVDFRepresentableValue.serializeDynamic(key, value, this.conditional ?: conditional)
+		}
+	}
+	
+	/**
+	 * A list of items of type [T] that can also contain conditionals (e.g. `"$WIN32"`) for each element.
+	 *
+	 * To add elements without using a conditional, use the `+` operator.
+	 */
+	data class ConditionalList<T : Any>(private val items: List<ConditionalValue<T>> = listOf()) : List<ConditionalValue<T>> by items {
+		operator fun plus(element: ConditionalValue<T>): ConditionalList<T> {
+			return ConditionalList(items + element)
+		}
+		
+		@JvmName("plusConditionalValues")
+		operator fun plus(elements: Iterable<ConditionalValue<T>>): ConditionalList<T> {
+			return ConditionalList(items + elements)
+		}
+		
+		operator fun plus(element: T): ConditionalList<T> {
+			return plus(ConditionalValue(element, null))
+		}
+		
+		operator fun plus(elements: Iterable<T>): ConditionalList<T> {
+			return plus(elements.asSequence().map { ConditionalValue(it, null) }.asIterable())
+		}
+		
+		operator fun plus(elements: Array<out T>): ConditionalList<T> {
+			return plus(elements.asSequence().map { ConditionalValue(it, null) }.asIterable())
+		}
+	}
+	
+	
+	interface ConditionalListField<T : Any> : NonNullExtField<ConditionalList<T>>{
+		context(subtree: IExtensibleSubtree)
+		operator fun plus(element: T): ConditionalList<T> {
+			return this.get(null) + element
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plusAssign(element: T) {
+			this.set(plus(element))
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plus(elements: Iterable<T>): ConditionalList<T> {
+			return this.get(null) + elements
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plusAssign(elements: Iterable<T>) {
+			this.set(plus(elements), null)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plus(elements: Array<out T>): ConditionalList<T> {
+			return this.get(null) + elements
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plusAssign(elements: Array<out T>) {
+			this.set(plus(elements), null)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plus(element: ConditionalValue<T>): ConditionalList<T> {
+			return this.get(null) + element
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plusAssign(element: ConditionalValue<T>) {
+			this.set(plus(element))
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plus(elements: Collection<ConditionalValue<T>>): ConditionalList<T> {
+			return this.get(null) + elements
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		operator fun plusAssign(elements: Collection<ConditionalValue<T>>) {
+			this.set(plus(elements), null)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		fun add(element: T, conditional: String? = null) {
+			add(ConditionalValue(element, conditional))
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		fun addAll(elements: Iterable<T>, conditional: String? = null) {
+			addAll(elements.map { ConditionalValue(it, conditional) })
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		fun addAll(vararg elements: T, conditional: String? = null) {
+			addAll(elements.map { ConditionalValue(it, conditional) })
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		fun add(element: ConditionalValue<T>) {
+			this.set(this.get(null) + element, null)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		fun addAll(elements: Collection<ConditionalValue<T>>, conditional: String? = null) {
+			this.set(this.get(null) + elements, null)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		fun assign(elements: Iterable<T>) {
+			this.set(ConditionalList(elements.map { ConditionalValue(it, null) }), null)
+		}
+		
+		interface Bound<T : Any> : NonNullExtField.Bound<ConditionalList<T>> {
+			override val field: ConditionalListField<T>
+			
+			operator fun plus(element: T): ConditionalList<T> = context(_subtree) { field.plus(element) }
+			
+			operator fun plusAssign(element: T) = context(_subtree) { field.plusAssign(element) }
+			
+			
+			operator fun plus(elements: Iterable<T>): ConditionalList<T> = context(_subtree) { field.plus(elements) }
+			
+			operator fun plusAssign(elements: Iterable<T>) = context(_subtree) { field.plusAssign(elements) }
+			
+			operator fun plus(elements: Array<out T>): ConditionalList<T> = context(_subtree) { field.plus(elements) }
+			
+			operator fun plusAssign(elements: Array<out T>) = context(_subtree) { field.plusAssign(elements) }
+			
+			
+			operator fun plus(element: ConditionalValue<T>): ConditionalList<T> = context(_subtree) { field.plus(element) }
+			
+			operator fun plusAssign(element: ConditionalValue<T>) = context(_subtree) { field.plusAssign(element) }
+			
+			
+			operator fun plus(elements: Collection<ConditionalValue<T>>): ConditionalList<T> = context(_subtree) { field.plus(elements) }
+			
+			operator fun plusAssign(elements: Collection<ConditionalValue<T>>) = context(_subtree) { field.plusAssign(elements) }
+			
+			
+			fun add(element: T, conditional: String? = null) = context(_subtree) { field.add(element) }
+			
+			fun addAll(elements: Iterable<T>, conditional: String? = null) = context(_subtree) { field.addAll(elements, conditional) }
+			
+			fun addAll(vararg elements: T, conditional: String? = null) = context(_subtree) { field.addAll(elements=elements, conditional=conditional) }
+			
+			
+			
+			fun add(element: ConditionalValue<T>) = context(_subtree) { field.add(element) }
+			
+			fun addAll(elements: Collection<ConditionalValue<T>>, conditional: String? = null) = context(_subtree) { field.addAll(elements, conditional) }
+			
+			fun assign(elements: Iterable<T>) = context(_subtree) { field.assign(elements) }
+		}
+	}
+	
+	open class NamedListField<T : Any>(
+		serializationKey: String, definitionConditional: String? = null,
+		val collectionSerializer: Serializers.Serializer<ConditionalList<T>> = Serializers.flatListWithKey()
+	) : NamedField<ConditionalList<T>>(serializationKey, definitionConditional), ConditionalListField<T>
+	{
+		private inner class Data(val items: ConditionalList<T>, val defaultConditional: String?) : IVDFRepresentableKeyValue {
+			override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+				collectionSerializer(items)
+					._toKeyValueRepresentable(serializationKey, defaultConditional ?: definitionConditional ?: forcedConditional)
+					._serializeInto(input, forcedConditional)
+			}
+		}
+		
+		private val dataKey = FieldKey<Data>(this, null)
+		
+		context(subtree: IExtensibleSubtree)
+		override fun get(conditional: String?): ConditionalList<T> {
+			return subtree._dataStorage[dataKey]?.items ?: ConditionalList()
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun set(value: ConditionalList<T>, conditional: String?) {
+			subtree._dataStorage[dataKey] = Data(value, conditional)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun clear() {
+			subtree._dataStorage.remove(dataKey)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun getAll(): Iterable<ConditionalValue<ConditionalList<T>>> {
+			return subtree._dataStorage.getAllForField(this).map { (k, v) ->
+				val cond = k.conditional
+				val value = (v as NamedListField<T>.Data).items
+				
+				ConditionalValue(value, cond)
+			}.asIterable()
+		}
+		
+		open class Bound<T : Any>(override val _subtree: IExtensibleSubtree, override val field: NamedListField<T>)
+			: NamedField.Bound<ConditionalList<T>>, ConditionalListField.Bound<T>
+		{
+			override fun get(conditional: String?): ConditionalList<T> = context(_subtree) { field.get(conditional) }
+			
+		}
+		
+		override fun getValue(subtree: IExtensibleSubtree, property: KProperty<*>) = Bound(subtree, this)
+		
+	}
+	
+	
+	open class SelfNamedField<T : Any>(val transformer: (T) -> IVDFRepresentableKeyValue) : ExtField<T> {
+		protected inner class Data(val item: T, val conditional: String?) : IVDFRepresentableKeyValue {
+			override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+				transformer(item)._serializeInto(input, conditional ?: forcedConditional)
+			}
+		}
+		
+		
+		context(subtree: IExtensibleSubtree)
+		override fun set(value: T, conditional: String?) {
+			subtree._dataStorage[FieldKey<Data>(this, conditional)] = Data(value, conditional)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun get(conditional: String?): T? {
+			return subtree._dataStorage[FieldKey<Data>(this, conditional)]?.item
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun clear() {
+			subtree._dataStorage.removeIf { it is FieldKey && it.field == this }
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun getAll(): Iterable<ConditionalValue<T>> {
+			return subtree._dataStorage.getAllForField(this).map { (k, v) ->
+				val cond = k.conditional
+				val value = (v as SelfNamedField<T>.Data).item
+				
+				ConditionalValue(value, cond)
+			}.asIterable()
+		}
+		
+		
+		open class Bound<T : Any>(override val _subtree: IExtensibleSubtree, override val field: SelfNamedField<T>) : ExtField.Bound<T>
+		
+		override fun getValue(subtree: IExtensibleSubtree, property: KProperty<*>) = Bound(subtree, this)
+	}
+	
+	open class SelfNamedListField<T : Any>(val itemTransformer: (T) -> IVDFRepresentableKeyValue)
+		: ExtField<ConditionalList<T>>, ConditionalListField<T>
+	{
+		protected inner class Data(val items: ConditionalList<T>, val wholeListConditional: String?) : IVDFRepresentableKeyValue {
+			override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+				items.forEach {
+					itemTransformer(it.value)._serializeInto(input, it.conditional ?: wholeListConditional ?: forcedConditional)
+				}
+			}
+		}
+		
+		protected val dataKey = FieldKey<Data>(this, null)
+		
+		context(subtree: IExtensibleSubtree)
+		override fun set(value: ConditionalList<T>, conditional: String?) {
+			subtree._dataStorage[dataKey] = Data(value, conditional)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun get(conditional: String?): ConditionalList<T> {
+			return subtree._dataStorage[dataKey]?.items ?: ConditionalList()
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun clear() {
+			subtree._dataStorage.remove(dataKey)
+		}
+		
+		context(subtree: IExtensibleSubtree)
+		override fun getAll(): Iterable<ConditionalValue<ConditionalList<T>>> {
+			return subtree._dataStorage.getAllForField(this).map { (k, v) ->
+				val cond = k.conditional
+				val value = (v as SelfNamedListField<T>.Data).items
+				
+				ConditionalValue(value, cond)
+			}.asIterable()
+		}
+		
+		open class Bound<T : Any>(override val _subtree: IExtensibleSubtree, override val field: ConditionalListField<T>) : ExtField.Bound<ConditionalList<T>>, ConditionalListField.Bound<T> {
+			override fun get(conditional: String?): ConditionalList<T> = context(_subtree) { field.get(conditional) }
+		}
+		
+		override fun getValue(subtree: IExtensibleSubtree, property: KProperty<*>) = Bound(subtree, this)
+	}
+	
+	open class MergedCategory<T : Merged>(val instance: T) : ReadOnlyProperty<IExtensibleSubtree, T> {
+		private val dataKey = object : IDataKey<T> {}
+		
+		override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T {
+			return thisRef._dataStorage.computeIfAbsent(dataKey) { instance } // instance is an IVDFRepresentableKeyValue already that adds all of its keys to the original struct.  All this does is tell the subtree it's attached to to call it as well.
+		}
+	}
+	
 	companion object {
 		/**
 		 * Extend a struct with a field that can only be in that subtree once. VALUES MUST BE **IMMUTABLE** FOR DEEP COPYING TO WORK CORRECTLY. (i.e. don't use `MutableList`, use `List`.)
@@ -206,7 +828,7 @@ interface IExtensibleSubtree {
 		 *
 		 * ## Example:
 		 * ```kotlin
-		 * var MyThing.destination: Coord3D? by addField("Destination", serializer={ "$x $y $z" }) // turns Coord3D(x=1, y=2, z=3) into the string "1 2 3"
+		 * var MyThing.destination by addField<Coord3D>("Destination", serializer={ "$x $y $z" }) // turns Coord3D(x=1, y=2, z=3) into the string "1 2 3"
 		 * ```
 		 */
 		@JvmName("addFieldSerializer")
@@ -239,7 +861,7 @@ interface IExtensibleSubtree {
 		 */
 		inline fun <reified T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: T.() -> S?, conditional: String? = null, noinline initialValue: () -> T): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T>> {
 			@Suppress("UNCHECKED_CAST")
-			return (addField_serializer(serializationKey, conditional, serializer, initialValue, S::class.java) as ReadWriteProperty<IExtensibleSubtree, T>).let {
+			return (addFieldInternal_initialValue(serializationKey, conditional, serializer, initialValue, S::class.java)).let {
 				if (IS_DOING_CODEGEN)
 					Codegen._CodegenDelegateProvider(it, serializationKey, conditional)
 				else
@@ -247,34 +869,47 @@ interface IExtensibleSubtree {
 			}
 		}
 		
-		@PublishedApi
-		internal fun <T : Any, S : Any> addField_serializer(serializationKey: String, conditional: String?, serializer: (T) -> S?, initialValue: (() -> T)?, serClass: Class<S>): ReadWriteProperty<IExtensibleSubtree, T?> {
-			require(IVDFRepresentableValue.isValueRepresentable(serClass) || IVDFRepresentableKeyValue.isKeyValueRepresentable(serClass)) {
-				"Post-serialized type ${serClass.simpleName} is neither a valid value or keyvalue."
+		/**
+		 * @param serializationKey The string that will be used to key this field in the VDF.
+		 * @param conditional The conditional (e.g. $WIN32) that should be put on any setting of this field that doesn't supply its own conditional.
+		 * @param serializer The function that converts the type the user interacts with - [T] - to something serializable to a VDF.
+		 * @param serClass Class for whatever type is being serialized.
+		 *                 If [serializer] is given, this will be the return type of that function.
+		 *                 Otherwise, it will be the class of type [T].
+		 */
+		@PublishedApi internal fun <T : Any> addFieldInternal_nullable(
+			serializationKey: String, conditional: String?,
+			serializer: ((T) -> Any?)?,
+			serClass: Class<*>
+		) : NamedFieldImpl<T> {
+			require(IVDFRepresentableValue.isValueRepresentable(serClass)) {
+				if (IVDFRepresentableKeyValue.isKeyValueRepresentable(serClass)) {
+					"Error adding field: ${serClass.simpleName} is not natively serializable to a keyable VDF value.\n" +
+					"As the item is an IVDFRepresentableKeyValue, this is likely an error. Use `selfNamed()` to add this item."
+				} else {
+					"Error adding field: ${serClass.simpleName} is not natively serializable to a VDF.\n" +
+					"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableValue."
+				}
 			}
 			
-			return RegularFieldProperty(serializationKey.intern(), initialValue, conditional, serializer)
+			return NamedFieldImpl(serializationKey, conditional, serializer)
 		}
 		
-		private class RegularFieldProperty<T : Any>(val key: String, initialValue: (() -> T)?, val conditional: String?, val serializer: ((T) -> Any?)?) : ReadWriteProperty<IExtensibleSubtree, T?> {
-			private val default by lazy(LazyThreadSafetyMode.NONE) {
-				initialValue?.invoke()
+		@PublishedApi internal fun <T : Any> addFieldInternal_initialValue(
+			serializationKey: String, conditional: String?,
+			serializer: ((T) -> Any?)?, initialValue: () -> T,
+			serClass: Class<*>
+		) : NamedFieldWithInitialValue<T> {
+			require(IVDFRepresentableValue.isValueRepresentable(serClass)) {
+				"Error adding field: ${serClass.simpleName} is not natively serializable to a VDF.\n" +
+				"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableValue."
 			}
 			
-			override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
-				@Suppress("UNCHECKED_CAST")
-				return (thisRef._rawEntries[property] as NamedValue<T>?)?.value ?: default
-			}
-			
-			override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
-				if (value == null) {
-					thisRef._rawEntries.remove(property)
-					return;
-				}
-				@Suppress("UNCHECKED_CAST")
-				thisRef._rawEntries[property] = NamedValue(key, ((value as? String)?.intern() ?: value) as T, conditional, serializer)
-			}
+			return NamedFieldWithInitialValue(serializationKey, conditional, serializer, initialValue)
 		}
+		
+		
+		
 		
 		/**
 		 * Extend a subtree with a field that can only exist a single time per subtree.
@@ -283,8 +918,8 @@ interface IExtensibleSubtree {
 		 *
 		 * @param key The key this item will be serialized under.
 		 */
-		inline fun <reified T : Any> addField(key: String, conditional: String? = null): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T?>> {
-			return addField_noSerializer(key, T::class.java, conditional, null).let {
+		inline fun <reified T : Any> addField(key: String, conditional: String? = null): PropertyDelegateProvider<Any?, NamedFieldImpl<T>> {
+			return addFieldInternal_nullable<T>(key, conditional, serializer=null, serClass= T::class.java).let {
 				if (IS_DOING_CODEGEN)
 					Codegen._CodegenDelegateProvider(it, key, conditional)
 				else
@@ -302,9 +937,9 @@ interface IExtensibleSubtree {
 		 * @param key The key this item will be serialized under.
 		 * @param initialValue Value that should be set before any setting takes place.  This is only called after the first "set", so it does not automatically make this value non-null in the serialized form if nothing ever uses this property.
 		 */
-		inline fun <reified T : Any> addField(key: String, conditional: String? = null, noinline initialValue: () -> T): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T>> {
+		inline fun <reified T : Any> addField(key: String, conditional: String? = null, noinline initialValue: () -> T): PropertyDelegateProvider<Any?, NamedFieldWithInitialValue<T>> {
 			@Suppress("UNCHECKED_CAST")
-			return (addField_noSerializer(key, T::class.java, conditional, initialValue) as ReadWriteProperty<IExtensibleSubtree, T>).let {
+			return (addFieldInternal_initialValue(key, conditional, null, initialValue, T::class.java)).let {
 				if (IS_DOING_CODEGEN)
 					Codegen._CodegenDelegateProvider(it, key, conditional)
 				else
@@ -312,18 +947,18 @@ interface IExtensibleSubtree {
 			}
 		}
 		
-		@PublishedApi
-		internal fun <T : Any> addField_noSerializer(key: String, subclass: Class<T>, conditional: String?, initialValue: (() -> T)?): ReadWriteProperty<IExtensibleSubtree, T?> {
-			require(!IVDFRepresentableKeyValue.isKeyValueRepresentable(subclass)) {
-				"Cannot give an IVDFRepresentableKeyValue a key, as it determines its own key.  This is likely an error.  Use the `selfNamed()` provider to declare this field."
+		inline fun <reified T : Any> addFieldList(key: String, conditional: String? = null, noinline serializer: Serializers.Serializer<ConditionalList<T>> = Serializers.flatListWithKey()): PropertyDelegateProvider<Any?, NamedListField<T>> {
+			return NamedListField(key, conditional, serializer).let {
+				if (IS_DOING_CODEGEN)
+					Codegen._CodegenDelegateProvider(it, key, conditional, T::class)
+				else
+					TrivialDelegateProvider(it)
 			}
-			
-			require(IVDFRepresentableValue.isValueRepresentable(subclass)) {
-				"${subclass.simpleName} is not natively serializable to a VDF.\n" +
-				"Callers must provide a serializer if the value is not a string, number, boolean, VDFObject, or does not implement IVDFRepresentableValue.\n"
-			}
-			
-			return RegularFieldProperty(key, initialValue, conditional, null)
+		}
+		
+		
+		private data class CachedData<T : Any>(val data: T) : IVDFRepresentableKeyValue {
+			override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {}
 		}
 		
 		/**
@@ -331,7 +966,14 @@ interface IExtensibleSubtree {
 		 */
 		fun <OWNER : IExtensibleSubtree, T : Any> cacheData(initializer: (OWNER, KProperty<*>) -> T): ReadOnlyProperty<OWNER, T> {
 			return ReadOnlyProperty { thisRef, property ->
-				(thisRef._rawEntries.computeIfAbsent(property) { UnserializedValue(initializer(thisRef, property)) } as UnserializedValue<T>).value
+				val dataKey = PropertyKey<CachedData<T>>(property)
+				val gotten = thisRef._dataStorage[dataKey]
+				if (gotten != null)
+					return@ReadOnlyProperty gotten.data;
+				
+				val newData = CachedData(initializer(thisRef, property))
+				thisRef._dataStorage[dataKey] = newData
+				return@ReadOnlyProperty newData.data
 			}
 		}
 		
@@ -347,7 +989,7 @@ interface IExtensibleSubtree {
 		 *
 		 * Note: Self-named values are expected to provide their own conditionals.
 		 */
-		fun <T : IVDFRepresentableKeyValue> selfNamed() = selfNamed<T> { it }
+		fun <T : IVDFRepresentableKeyValue> selfNamed(): PropertyDelegateProvider<Any?, SelfNamedField<T>> = selfNamed { it }
 		
 		/**
 		 * A struct that may only appear once in the subtree.
@@ -366,21 +1008,7 @@ interface IExtensibleSubtree {
 			if (IS_DOING_CODEGEN)
 				Codegen._registerCodegenSelfNamedMapping(owner, prop)
 			
-			object : ReadWriteProperty<IExtensibleSubtree, T?> {
-				@Suppress("UNCHECKED_CAST")
-				private fun getFromMap(thisRef: IExtensibleSubtree, prop: KProperty<*>) = thisRef._rawEntries[prop] as SelfNamedValue<T>?
-				
-				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): T? {
-					return getFromMap(thisRef, property)?.item
-				}
-				
-				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: T?) {
-					if (value == null)
-						thisRef._rawEntries.remove(property)
-					else
-						thisRef._rawEntries[property] = SelfNamedValue(value, transformer = transformer)
-				}
-			}
+			SelfNamedField(transformer)
 		}
 		
 		/**
@@ -398,30 +1026,12 @@ interface IExtensibleSubtree {
 		 *  ...
 		 * }
 		 * ```
-		 *
 		 */
-		fun <T : IVDFRepresentableKeyValue> selfNamedList(transformer: (T) -> IVDFRepresentableKeyValue = { it }): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, List<T>>> = { owner, prop ->
+		fun <T : IVDFRepresentableKeyValue> selfNamedList(transformer: (T) -> IVDFRepresentableKeyValue = { it }) = PropertyDelegateProvider<Any?, SelfNamedListField<T>> { owner, prop ->
 			if (IS_DOING_CODEGEN)
 				Codegen._registerCodegenSelfNamedListMapping(owner, prop)
 			
-			@Suppress("UNCHECKED_CAST")
-			object : ReadWriteProperty<IExtensibleSubtree, List<T>> {
-				override fun getValue(thisRef: IExtensibleSubtree, property: KProperty<*>): List<T> {
-					return thisRef._rawEntries[property] as SelfNamedValueList<T>? ?: emptyList()
-				}
-				
-				override fun setValue(thisRef: IExtensibleSubtree, property: KProperty<*>, value: List<T>) {
-					thisRef._rawEntries[property] = SelfNamedValueList(value, transformer)
-				}
-			}
-		}
-		
-		fun <T : Any, EXT : IExtensibleSubtree> EXT.setConditionally(prop: KProperty1<EXT, T>, value: T, conditional: String) {
-			@Suppress("UNCHECKED_CAST")
-			val delegate = requireNotNull(prop.getDelegate(this) as? SetWithConditional<T>) {
-				"$prop is not a property created by `addField`, `selfNamed`, or `merged`."
-			}
-			delegate.setWithConditional(value, conditional)
+			SelfNamedListField(transformer)
 		}
 		
 		/**
@@ -433,7 +1043,7 @@ interface IExtensibleSubtree {
 		 *     val gameplay by merged(GameplaySettings())
 		 *
 		 *     class GameplaySettings : ExtensibleSubtreeImpl(), IBlockScoped {
-		 *        var startingCurrency: Int? by addField("StartingCurrency")
+		 *        val startingCurrency by addField<Int>("StartingCurrency")
 		 *     }
 		 * }
 		 *
@@ -444,20 +1054,14 @@ interface IExtensibleSubtree {
 		 * println(waveSchedule.toFormattedString()) // WaveSchedule { StartingCurrency 2 }
 		 * ```
 		 */
-		fun <T : Merged> merged(instance: T): PropertyDelegateProvider<Any?, ReadOnlyProperty<IExtensibleSubtree, T>>
+		fun <T : Merged> merged(instance: T): PropertyDelegateProvider<Any?, MergedCategory<T>>
 		{
 			return PropertyDelegateProvider { thisRef, prop ->
 				if (IS_DOING_CODEGEN)
 					Codegen._registerCodegenMergedMapping(thisRef, prop)
 				
-				ReadOnlyProperty { thisRef, property ->
-					(thisRef._rawEntries.computeIfAbsent(prop) { SelfNamedValue(instance) { it } } as SelfNamedValue<T>).item
-				}
+				MergedCategory(instance)
 			}
-		}
-		
-		private interface SetWithConditional<T> {
-			fun setWithConditional(value: T, conditional: String)
 		}
 	}
 	
@@ -530,12 +1134,8 @@ interface IExtensibleSubtree {
 		fun _registerCodegenSelfNamedListMapping(propOwner: Any?, prop: KProperty<*>) {
 			val receiverType: KClass<*> = prop.getExtensionReceiverType() ?: propOwner!!::class // must extend IExtensibleSubtree, thus must be the receiver of this property
 			
-			assert(prop.returnType.classifier as? KClass<*> == List::class) {
-				"Failed sanity check: Self-named-list property $prop type is not List."
-			}
-			
 			val propType = prop.returnType.arguments.first().type?.classifier as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $prop")
-			
+			// TODO make this less strict
 			getOrCreateStructDecoder(receiverType).apply {
 				selfNamedDecoders += StructFieldDecoderPropExt_SelfNamed(prop, propType, "+=")
 			}
@@ -686,22 +1286,25 @@ interface IExtensibleSubtree_VDFRepresentable : IExtensibleSubtree, IVDFRepresen
 	override fun copy(): IExtensibleSubtree_VDFRepresentable
 }
 
+interface DataStorageVDFRepresentable : IExtensibleSubtree.DataStorage<IVDFRepresentableKeyValue>, IVDFRepresentableKeyValue {
+	override fun copy(): DataStorageVDFRepresentable
+}
+
+fun <D : Any> IExtensibleSubtree.DataStorage<D>.getAllForField(field: IExtensibleSubtree.ExtField<*>) = entries().asSequence().filter { it.first.let { it is IExtensibleSubtree.FieldKey<*> && it.field == field } } as Sequence<Pair<IExtensibleSubtree.FieldKey<*>, D>>
 
 /**
  * Just a subtree. See [AbstractVDFStruct] for a subtree with its own name.
  */
 open class ExtensibleSubtreeImpl(
-	override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyValue> = mutableMapOf(),
-	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
+	override val _dataStorage: DataStorageVDFRepresentable = IExtensibleSubtree.DataStorageImpl(),
 ) : IExtensibleSubtree_VDFRepresentable {
 	override fun _vdfRepr(parent: VDFSubtree): VDFSubtree {
 		val ourSub = VDFSubtree(parent)
-		_rawEntries.values.forEach { it._serializeInto(ourSub, null) }
+		_dataStorage._serializeInto(ourSub, null)
 		return ourSub
 	}
 	
-	
-	override fun copy() = ExtensibleSubtreeImpl(_copyInternal())
+	override fun copy() = ExtensibleSubtreeImpl(_dataStorage.copy())
 }
 
 open class ExtensibleSubtreeMergedImpl(protected val backing: ExtensibleSubtreeImpl = ExtensibleSubtreeImpl()) : IExtensibleSubtree.Merged, IExtensibleSubtree_VDFRepresentable by backing {

@@ -25,14 +25,14 @@ class SquadSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSub
 	}
 	
 	
-	var formationSize: Number? by addField("FormationSize")
+	val formationSize by addField<Number>("FormationSize")
 	
 	/**
 	 * Note: Squad.ShouldPreserveSquad is parsed correctly, but will cause a spurious error to show up in console; ignore the error
 	 */
-	var shouldPreserveSquad: Boolean? by addField("ShouldPreserveSquad")
+	val shouldPreserveSquad by addField<Boolean>("ShouldPreserveSquad")
 	
-	var spawners: List<AbstractSpawner> by selfNamedList()
+	val spawners by selfNamedList<AbstractSpawner>()
 	
 	/**
 	 * Add the same spawner multiple times.

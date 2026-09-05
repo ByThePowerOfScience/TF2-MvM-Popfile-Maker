@@ -22,7 +22,7 @@ open class ClientCommandBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Ex
 	 * command = "build 0"
 	 * ```
 	 */
-	open var command: String? by addField("Name", conditional = SIGSEGV)
+	open val command by addField<String>("Name", conditional = SIGSEGV)
 	
 	
 }

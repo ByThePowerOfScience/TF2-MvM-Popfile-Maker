@@ -19,12 +19,12 @@ abstract class RafmodUpgradeStation {
 	 * customUpgradesFile = "mvm_upgrades_sigsegv_extra_v19.txt"
 	 * ```
 	 */
-	open var WaveSchedule.customUpgradesFile: String? by addField("CustomUpgradesFile", conditional = SIGSEGV)
+	val customUpgradesFile by addField<String>("CustomUpgradesFile", conditional = SIGSEGV)
 	
 	/**
 	 * If true, upgrade station is permanently disabled for this mission.
 	 */
-	open var WaveSchedule.disableUpgradeStations: Boolean? by addField("DisableUpgradeStations", conditional = SIGSEGV)
+	val disableUpgradeStations by addField<Boolean>("DisableUpgradeStations", conditional = SIGSEGV)
 	
 	/**
 	 * Prevent players from gaining these upgrades.  You can also use the position on the upgrade list, starting from 1.
@@ -39,17 +39,17 @@ abstract class RafmodUpgradeStation {
 	/**
 	 * If true, prevents upgrades from changing the player's currently-equipped weapons to the items specified in their loadout.
 	 */
-	open var WaveSchedule.upgradeStationKeepWeapons: Boolean? by addField("UpgradeStationKeepWeapons", conditional = SIGSEGV)
+	val upgradeStationKeepWeapons by addField<Boolean>("UpgradeStationKeepWeapons", conditional = SIGSEGV)
 	
 	/**
 	 * If true, only shows the extended upgrade menu, and does not show the regular upgrade menu.
 	 */
-	open var WaveSchedule.extendedUpgradesOnly: Boolean? by addField("ExtendedUpgradesOnly", conditional = SIGSEGV)
+	val extendedUpgradesOnly by addField<Boolean>("ExtendedUpgradesOnly", conditional = SIGSEGV)
 	
 	/**
 	 * If true, prevents players from refunding their upgrades
 	 */
-	open var WaveSchedule.disableRespec: Boolean? by addField("RespecEnabled", conditional = SIGSEGV, serializer = BOOL_SER_INVERT)
+	val canRespec by addField<Boolean>("RespecEnabled", conditional = SIGSEGV)
 	
 	/**
 	 * How many times the player can refund their upgrades. If unset, there is no limit.
@@ -59,6 +59,14 @@ abstract class RafmodUpgradeStation {
 	 * respecLimit = 1
 	 * ```
 	 */
-	open var WaveSchedule.respecLimit: Int? by addField("RespecLimit", conditional = SIGSEGV)
+	val respecLimit by addField<Int>("RespecLimit", conditional = SIGSEGV)
+	
+	
+	/**
+	 * If true, the "Burn Time" upgrade on players increases afterburn _damage frequency_ (i.e. lowers the delay between afterburn ticks) instead of the total afterburn effect length. (Default: true)
+	 */
+	val burnTimeFasterBurn by addField<Boolean>("BurnTimeFasterBurn", conditional = SIGSEGV)
+	
+	
 }
 

@@ -41,7 +41,7 @@ class MyStruct(override val _rawEntries: MutableMap<Any, IVDFRepresentableKeyVal
 		}
 	}
 	
-	var insideStruct: String? by addField("insideStruct")
+	val insideStruct by addField<String>("insideStruct")
 	
 	override val _instantiationSite: Array<StackTraceElement> = Throwable().stackTrace
 	

@@ -24,7 +24,7 @@ open class WeaponSwitchBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Ext
 	 * type = WeaponType.Primary
 	 * ```
 	 */
-	open var type: Type? by addField("Type", conditional = SIGSEGV)
+	open val type by addField<Type>("Type", conditional = SIGSEGV)
 	
 	open class Type(val name: String) : IVDFRepresentableValue_Trivial {
 		companion object {

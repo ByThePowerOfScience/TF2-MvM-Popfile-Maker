@@ -51,7 +51,7 @@ open class SpellBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensible
 	 * numChargesGiven = 2
 	 * ```
 	 */
-	open var numChargesGiven: Int? by addField("Charges", conditional = SIGSEGV)
+	open val numChargesGiven by addField<Int>("Charges", conditional = SIGSEGV)
 	
 	/**
 	 * The maximum number of spell charges a bot can hold onto at any given time. (Default: [numChargesGiven])
@@ -61,7 +61,7 @@ open class SpellBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensible
 	 * maxChargesHeld = 1
 	 * ```
 	 */
-	open var maxChargesHeld: Int? by addField("Limit", conditional = SIGSEGV)
+	open val maxChargesHeld by addField<Int>("Limit", conditional = SIGSEGV)
 	
 	/**
 	 * Possible spells to give the bot when this task procs.
@@ -85,7 +85,7 @@ open class SpellBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensible
 	 * @see giveAnyCommonSpell
 	 * @see giveAnyRareSpell
 	 */
-	open var giveAnySpell: Boolean? by addField("Type", conditional = SIGSEGV, serializer = {
+	open val giveAnySpell by addField<Boolean>("Type", conditional = SIGSEGV, serializer = {
 		if (this) {
 			ALL_SPELLS
 		} else null
@@ -98,7 +98,7 @@ open class SpellBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensible
 	 * @see giveAnySpell
 	 * @see giveAnyRareSpell
 	 */
-	open var giveAnyCommonSpell: Boolean? by addField("Type", conditional = SIGSEGV, serializer = {
+	open val giveAnyCommonSpell by addField<Boolean>("Type", conditional = SIGSEGV, serializer = {
 		if (this) {
 			COMMON_SPELLS
 		} else null
@@ -110,7 +110,7 @@ open class SpellBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensible
 	 * @see giveAnySpell
 	 * @see giveAnyCommonSpell
 	 */
-	open var giveAnyRareSpell: Boolean? by addField("Type", conditional = SIGSEGV, serializer = {
+	open val giveAnyRareSpell by addField<Boolean>("Type", conditional = SIGSEGV, serializer = {
 		if (this) {
 			RARE_SPELLS
 		} else null

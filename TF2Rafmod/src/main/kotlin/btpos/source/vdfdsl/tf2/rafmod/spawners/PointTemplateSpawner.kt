@@ -42,17 +42,17 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * spawnAtEntity = "custom_spawn_entity"
 	 * ```
 	 */
-	open var spawnAtEntity: String? by addField("SpawnAtEntity", conditional = SIGSEGV)
+	open val spawnAtEntity by addField<String>("SpawnAtEntity", conditional = SIGSEGV)
 	
 	/**
 	 * If true, gives this bot's icon in the wave preview a "crit" outline.
 	 */
-	open var iconHasCritOutline: Boolean? by addField("IsCrit", conditional = SIGSEGV)
+	open val iconHasCritOutline by addField<Boolean>("IsCrit", conditional = SIGSEGV)
 	
 	/**
 	 * If true, gives this bot's icon in the wave preview a red background.
 	 */
-	open var iconHasMinibossBackground: Boolean? by addField("IsMiniboss", conditional = SIGSEGV)
+	open val iconHasMinibossBackground by addField<Boolean>("IsMiniboss", conditional = SIGSEGV)
 	
 	/**
 	 * The class icon to use for this bot.
@@ -62,7 +62,7 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * classIcon = TFClass.Soldier
 	 * ```
 	 */
-	open var classIcon: TFClass? by addField("ClassIcon", conditional = SIGSEGV)
+	open val classIcon by addField<TFClass>("ClassIcon", conditional = SIGSEGV)
 	
 	/**
 	 * The template to spawn with these parameters.  Automatically set by constructor.
@@ -72,7 +72,7 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * templateToSpawn = MyPointTemplates.SENTRY_STACK
 	 * ```
 	 */
-	open var templateToSpawn: PointTemplate? by addField("Name", conditional = SIGSEGV, serializer = RafmodSerializers.POINTTEMPLATE_NAME)
+	open val templateToSpawn by addField<PointTemplate>("Name", conditional = SIGSEGV, serializer = RafmodSerializers.POINTTEMPLATE_NAME)
 	
 	/**
 	 * The position to spawn the template.  If [spawnAtEntity] is set, this is a relative offset from that entity's position.
@@ -82,7 +82,7 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * startPos = Vec3(0, 1, 0)
 	 * ```
 	 */
-	open var startPos: Vec3? by addField("Origin", conditional = SIGSEGV)
+	open val startPos by addField<Vec3>("Origin", conditional = SIGSEGV)
 	
 	/**
 	 * The pitch, yaw, and roll that this template should have when spawned, relative to TODO figure out what direction
@@ -92,7 +92,7 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * direction = Rot3(0, 85, 0) // turn entities 85 degrees clockwise from TODO
 	 * ```
 	 */
-	open var direction: Rot3? by addField("Angles", conditional = SIGSEGV)
+	open val direction by addField<Rot3>("Angles", conditional = SIGSEGV)
 	
 	/**
 	 * The name of the entity that will drop money. If not specified, currency is distributed automatically when the template is removed.
@@ -102,7 +102,7 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * entityThatSpawnsCurrencyPack = "sentry3"
 	 * ```
 	 */
-	open var entityThatSpawnsCurrencyPack: String? by addField("SpawnCurrencyPack", conditional = SIGSEGV)
+	open val entityThatSpawnsCurrencyPack by addField<String>("SpawnCurrencyPack", conditional = SIGSEGV)
 	
 	
 	
@@ -114,7 +114,7 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * spawnRadius = Vec3(60, 60, 0) // No "z" (height) open variation,
 	 * ```
 	 */
-	open var spawnRadius: Vec3? by addField("SpreadRadius", conditional = SIGSEGV)
+	open val spawnRadius by addField<Vec3>("SpreadRadius", conditional = SIGSEGV)
 	
 	/**
 	 * Snap the spawned template to the ground, as long as it is within this many HU above the ground.
@@ -124,7 +124,7 @@ open class PointTemplateSpawner protected constructor(_subtree: IExtensibleSubtr
 	 * snapToGroundWithin = 6000
 	 * ```
 	 */
-	open var snapToGroundWithin: Int? by addField("StickToGround", conditional = SIGSEGV)
+	open val snapToGroundWithin by addField<Int>("StickToGround", conditional = SIGSEGV)
 	
 	
 }

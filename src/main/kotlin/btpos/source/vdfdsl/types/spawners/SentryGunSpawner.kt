@@ -11,7 +11,7 @@ class SentryGunSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	override val _structIdentifier: String
 		get() = "SentryGun"
 	
-	var level: Int? by addField("Level")
+	val level by addField<Int>("Level")
 	
 	@Suppress("DEPRECATION")
 	override fun copy() = SentryGunSpawner(copyInternal())

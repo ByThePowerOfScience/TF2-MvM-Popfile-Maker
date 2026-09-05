@@ -24,7 +24,7 @@ open class TauntBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensible
 	 * duration = 5.seconds
 	 * ```
 	 */
-	open var duration: Duration? by addField("Duration", conditional = SIGSEGV, serializer = durationInSeconds())
+	open val duration by addField<Duration>("Duration", conditional = SIGSEGV, serializer = durationInSeconds())
 	
 	/**
 	 * If set, uses this item taunt instead of the current weapon's taunt.
@@ -34,5 +34,5 @@ open class TauntBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensible
 	 * tauntName = "Taunt: Kazotsky Kick"
 	 * ```
 	 */
-	open var tauntName: String? by addField("Name", conditional = SIGSEGV)
+	open val tauntName by addField<String>("Name", conditional = SIGSEGV)
 }

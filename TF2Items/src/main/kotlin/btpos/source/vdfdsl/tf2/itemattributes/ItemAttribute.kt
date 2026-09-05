@@ -1,11 +1,7 @@
 package btpos.source.vdfdsl.tf2.itemattributes
 
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
-
-@MustBeDocumented
-@Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class SupportsCustomAssignment
+import btpos.source.vdfdsl.util.SupportsCustomAssignment
 
 @SupportsCustomAssignment
 interface ItemAttribute<T : Any> {

@@ -3,8 +3,9 @@ package btpos.source.vdfdsl.tf2.rafmod.spawners
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addFieldList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEachCond
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
 import btpos.source.vdfdsl.tf2.rafmod.RafmodSerializers
@@ -35,18 +36,18 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * boss = TFHalloweenBoss.MONOCULUS
 	 * ```
 	 */
-	open var boss: TFHalloweenBoss? by addField("BossType", conditional = SIGSEGV)
+	open val boss by addField<TFHalloweenBoss>("BossType", conditional = SIGSEGV)
 	
 	
 	/**
 	 * If true, gives this boss's icon in the wave preview a "crit" outline.
 	 */
-	open var iconHasCritOutline: Boolean? by addField("IsCrit", conditional = SIGSEGV)
+	open val iconHasCritOutline by addField<Boolean>("IsCrit", conditional = SIGSEGV)
 	
 	/**
 	 * If true, gives this boss's icon in the wave preview a red background.
 	 */
-	open var iconHasMinibossBackground: Boolean? by addField("IsMiniboss", conditional = SIGSEGV)
+	open val iconHasMinibossBackground by addField<Boolean>("IsMiniboss", conditional = SIGSEGV)
 	
 	/**
 	 * The class icon to use for this bot.
@@ -56,12 +57,12 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * classIcon = TFClass.Soldier
 	 * ```
 	 */
-	open var classIcon: TFClass? by addField("ClassIcon", conditional = SIGSEGV)
+	open val classIcon by addField<TFClass>("ClassIcon", conditional = SIGSEGV)
 	
 	/**
 	 * If true, the boss will drop money on death. If false, its money is distributed automatically upon death. (Default: true)
 	 */
-	open var spawnCurrencyPackOnDeath: Boolean? by addField("SpawnCurrencyPack", conditional = SIGSEGV)
+	open val spawnCurrencyPackOnDeath by addField<Boolean>("SpawnCurrencyPack", conditional = SIGSEGV)
 	
 	/**
 	 * Monoculus will not target this team.
@@ -71,7 +72,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * team = TFTeam.BLU
 	 * ```
 	 */
-	open var monoculusNoAttackTeam: TFTeam? by addField("TeamNum", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NUMBER)
+	open val monoculusNoAttackTeam by addField<TFTeam>("TeamNum", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NUMBER)
 	
 	/**
 	 * Boss' HP. If 0 (or unset), uses default health pool for the boss.
@@ -81,7 +82,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * health = 11111
 	 * ```
 	 */
-	open var health: Int? by addField("Health", conditional = SIGSEGV)
+	open val health by addField<Int>("Health", conditional = SIGSEGV)
 	
 	/**
 	 * Amount of time Monoculus, Merasmus, and Skeletons should remain before despawning/"going away".
@@ -91,7 +92,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * lifetime = 2.minute + 45.seconds
 	 * ```
 	 */
-	open var lifetime: Duration? by addField("Lifetime", conditional = SIGSEGV, serializer = IExtensibleSubtree.Serializers.durationInSeconds())
+	open val lifetime by addField<Duration>("Lifetime", conditional = SIGSEGV, serializer = IExtensibleSubtree.Serializers.durationInSeconds())
 	
 	/**
 	 * Overrides boss movespeed.
@@ -101,7 +102,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * moveSpeed = 0
 	 * ```
 	 */
-	open var moveSpeed: Number? by addField("Speed", conditional = SIGSEGV)
+	open val moveSpeed by addField<Number>("Speed", conditional = SIGSEGV)
 	
 	
 	/**
@@ -112,7 +113,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * startPos = Vec3(0, 1, 0)
 	 * ```
 	 */
-	open var startPos: Vec3? by addField("Origin", conditional = SIGSEGV)
+	open val startPos by addField<Vec3>("Origin", conditional = SIGSEGV)
 	
 	
 	/**
@@ -123,7 +124,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * spawnRadius = Vec3(60, 60, 0) // No "z" (height) open variation,
 	 * ```
 	 */
-	open var spawnRadius: Vec3? by addField("SpreadRadius", conditional = SIGSEGV)
+	open val spawnRadius by addField<Vec3>("SpreadRadius", conditional = SIGSEGV)
 	
 	/**
 	 * Snap the spawned template to the ground, as long as it is within this many HU above the ground.
@@ -133,7 +134,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * snapToGroundWithin = 6000
 	 * ```
 	 */
-	open var snapToGroundWithin: Int? by addField("StickToGround", conditional = SIGSEGV)
+	open val snapToGroundWithin by addField<Int>("StickToGround", conditional = SIGSEGV)
 	
 	/**
 	 * Multiplies the boss' damage by this amount.
@@ -143,7 +144,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * damageMultiplier = 2.5
 	 * ```
 	 */
-	open var damageMultiplier: Number? by addField("DamageMultiplier", conditional = SIGSEGV)
+	open val damageMultiplier by addField<Number>("DamageMultiplier", conditional = SIGSEGV)
 	
 	
 	/**
@@ -154,7 +155,7 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * spawnAtEntity = "custom_spawn_entity"
 	 * ```
 	 */
-	open var spawnAtEntity: String? by addField("SpawnAtEntity", conditional = SIGSEGV)
+	open val spawnAtEntity by addField<String>("SpawnAtEntity", conditional = SIGSEGV)
 	
 	/**
 	 * If set, also spawn these point templates on the boss's location when the boss spawns.
@@ -164,7 +165,10 @@ open class HalloweenBossSpawner protected constructor(subtree: IExtensibleSubtre
 	 * spawnedTemplates += MyPointTemplates.WEAPON_MIMIC
 	 * ```
 	 */
-	open var spawnedTemplates: List<PointTemplate> by addField("SpawnTemplate", conditional = SIGSEGV, serializer = flatListWithKey<String>().mapEach(RafmodSerializers.POINTTEMPLATE_NAME), initialValue = ::listOf)
+	open val spawnedTemplates by addFieldList<PointTemplate>(
+		"SpawnTemplate", conditional = SIGSEGV,
+		serializer = mapEachCond(RafmodSerializers.POINTTEMPLATE_NAME, flatListWithKey())
+	)
 	
 	
 	

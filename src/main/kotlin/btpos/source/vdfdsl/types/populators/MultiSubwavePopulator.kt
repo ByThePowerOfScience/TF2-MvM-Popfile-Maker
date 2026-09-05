@@ -2,6 +2,7 @@ package btpos.source.vdfdsl.types.populators
 
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
+import btpos.source.vdfdsl.modeling.DataStorageVDFRepresentable
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
@@ -90,27 +91,30 @@ class MultiSubwavePopulator(
 	}
 }
 
-class MapWithPrototype<K, V>(val prototype: Map<K, V>, val backingMap: MutableMap<K, V> = mutableMapOf()) : MutableMap<K, V> by backingMap {
-	override fun get(key: K): V? {
+class MapWithPrototype(val prototype: DataStorageVDFRepresentable, val backingMap: DataStorageVDFRepresentable) : DataStorageVDFRepresentable by backingMap {
+	override fun <T : IVDFRepresentableKeyValue> get(key: IExtensibleSubtree.IDataKey<T>): T? {
 		return backingMap[key] ?: prototype[key]
 	}
 	
-	override fun getOrDefault(key: K, defaultValue: V): V {
-		return backingMap[key] ?: prototype[key] ?: defaultValue
+	override fun _serializeInto(input: VDFSubtree, forcedConditional: String?) {
+		val setInChild = backingMap.entries().toMap(mutableMapOf())
+		prototype.entries().forEach { (k, v) ->
+			setInChild.putIfAbsent(k, v)
+		}
+		
+		setInChild.values.forEach {
+			it._serializeInto(input, forcedConditional)
+		}
 	}
 	
-	override val keys: MutableSet<K>
-		get() = backingMap.keys.toMutableSet().also { it.addAll(prototype.keys) }
-	
-	override val values: MutableCollection<V>
-		get() = this.keys.mapTo(mutableListOf()) { this[it]!! }
+	override fun copy() = MapWithPrototype(prototype, backingMap.copy())
 }
 
 
 class VDFStructWithPrototype(
 	proto: IExtensibleSubtree,
 	val struct: AbstractVDFStruct,
-) : AbstractVDFStruct(ExtensibleSubtreeImpl(MapWithPrototype(proto._rawEntries, struct._rawEntries), struct._instantiationSite)) {
+) : AbstractVDFStruct(ExtensibleSubtreeImpl(MapWithPrototype(proto._dataStorage, struct._dataStorage))) {
 	override val _structIdentifier: String
 		get() = struct._structIdentifier
 	

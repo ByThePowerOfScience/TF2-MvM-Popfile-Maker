@@ -71,7 +71,7 @@ abstract class RafmodHalloween : IBlockScoped {
 	 * spellDropRateGiant = 0.5
 	 * ```
 	 */
-	open var WaveSchedule.spellDropRateGiant: Number? by addField("SpellDropRateGiant", conditional = SIGSEGV)
+	val spellDropRateGiant by addField<Number>("SpellDropRateGiant", conditional = SIGSEGV)
 	
 	/**
 	 * When set, drop spells only if bots are from the given team.
@@ -81,7 +81,7 @@ abstract class RafmodHalloween : IBlockScoped {
 	 * spellDropForBotsInTeam = TFTeam.BLUE
 	 * ```
 	 */
-	open var WaveSchedule.teamThatDropsSpellsOnDeath: TFTeam? by addField("SpellDropForBotsInTeam", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NAME)
+	val teamThatDropsSpellsOnDeath by addField<TFTeam>("SpellDropForBotsInTeam", conditional = SIGSEGV, serializer = RafmodSerializers.TFTEAM_NAME)
 	
 	
 	private val SPELL_MAP_SERIALIZER = { list: Iterable<Pair<TFSpell, Int>> ->
@@ -131,5 +131,22 @@ abstract class RafmodHalloween : IBlockScoped {
 	 *
 	 * @see TFSpell
 	 */
-	open var WaveSchedule.spellBookRareRoll: List<Pair<TFSpell, Int>>? by addField("SpellBookNormalRoll", conditional = SIGSEGV, serializer = SPELL_MAP_SERIALIZER)
+	var spellBookRareRoll: List<Pair<TFSpell, Int>>? by addField("SpellBookNormalRoll", conditional = SIGSEGV, serializer = SPELL_MAP_SERIALIZER)
+	
+	
+	/**
+	 * The maximum number of Skeletons that may be alive at any given time. (Default: 30)
+	 *
+	 * Example:
+	 * ```kotlin
+	 * maxActiveSkeletons = 999
+	 * ```
+	 */
+	val maxActiveSkeletons by addField<Int>("MaxActiveSkeletons", conditional = SIGSEGV)
+	
+	/**
+	 * If true, medium Skeletons will not split into small skeletons on death. (Default: false)
+	 */
+	val noSkeletonSplit by addField<Boolean>("NoSkeletonSplit", conditional = SIGSEGV)
+	
 }

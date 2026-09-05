@@ -10,6 +10,7 @@ import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.durationInSeconds
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Trivial
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
@@ -26,47 +27,43 @@ class MissionPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = Extensibl
 	/**
 	 * What should be spawned to fulfill this mission.
 	 */
-	override var spawner: AbstractSpawner?
-		get() = super.spawner
-		set(value) {
-			super.spawner = value
-		}
+	override val spawner get() = super.spawner
 	
 	
 	/**
 	 * The name of the `info_teamspawn` entity the bots for this mission should spawn, or one of the [presets][Where].
 	 */
-	var where: String? by addField("Where")
+	val where by addField<String>("Where")
 	
 	/**
 	 * The objective of bots spawned by this mission.  See fields in [Objective].
 	 */
-	var objective: Objective? by addField("Objective")
+	val objective by addField<Objective>("Objective")
 	
 	/**
 	 * Delay this mission starting by this much time after the start of the [specified wave][beginAtWave].
 	 */
-	var initialCooldown: Duration? by addField("InitialCooldown", serializer = Duration::toSeconds)
+	val initialCooldown by addField<Duration>("InitialCooldown", serializer = durationInSeconds())
 	
 	/**
 	 * How long should elapse between procs of this mission.
 	 */
-	var cooldownTime: Duration? by addField("CooldownTime", serializer = Duration::toSeconds)
+	val cooldownTime by addField<Duration>("CooldownTime", serializer = durationInSeconds())
 	
 	/**
 	 * What wave this mission should start being activated on.
 	 */
-	var beginAtWave: Int? by addField("BeginAtWave")
+	val beginAtWave by addField<Int>("BeginAtWave")
 	
 	/**
 	 * How many waves after (and including) [beginAtWave] the mission should run for.
 	 */
-	var runForThisManyWaves: Int? by addField("RunForThisManyWaves")
+	val runForThisManyWaves by addField<Int>("RunForThisManyWaves")
 	
 	/**
 	 * How many of the [specified spawner][AbstractPopulator.spawner] should be spawned when this mission procs.
 	 */
-	var desiredCount: Number? by addField("DesiredCount")
+	val desiredCount by addField<Number>("DesiredCount")
 	
 	companion object {
 		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<MissionPopulator>(

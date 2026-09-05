@@ -24,7 +24,7 @@ open class SendChatMessageBotExt(subtree: IExtensibleSubtree_VDFRepresentable = 
 	 * name = "{red}Hello!" // sends a red `Hello!` to the chat
 	 * ```
 	 */
-	open var name: String? by addField("Name", conditional = SIGSEGV)
+	open val name by addField<String>("Name", conditional = SIGSEGV)
 	
 	
 }

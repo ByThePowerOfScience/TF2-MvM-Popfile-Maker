@@ -14,8 +14,9 @@ class MobSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 	override val _structIdentifier: String
 		get() = "Mob"
 	
-	var count: Int? by addField("Count")
-	var spawner: AbstractSpawner? by selfNamed()
+	val count by addField<Int>("Count")
+	
+	val spawner by selfNamed<AbstractSpawner>()
 	
 	
 	override fun copy() = MobSpawner(copyInternal())

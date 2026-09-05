@@ -14,19 +14,19 @@ class TankSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubt
 	override fun copy() = TankSpawner(copyInternal())
 	
 	
-	var health: Int? by addField("Health")
+	val health by addField<Int>("Health")
 	
-	var speed: Number? by addField("Speed")
+	val speed by addField<Number>("Speed")
 	
-	var name: String? by addField("Name")
+	val name by addField<String>("Name")
 	
-	var skin: Int? by addField("Skin")
+	val skin by addField<Int>("Skin")
 	
-	var startingPathTrackNode: String? by addField("StartingPathTrackNode")
+	val startingPathTrackNode by addField<String>("StartingPathTrackNode")
 	
-	var onKilledOutput: OutputAction? by addField("OnKilledOutput")
+	val onKilledOutput by addField<OutputAction>("OnKilledOutput")
 	
-	var onBombDroppedOutput: OutputAction? by addField("OnBombDroppedOutput")
+	val onBombDroppedOutput by addField<OutputAction>("OnBombDroppedOutput")
 	
 	companion object {
 		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<TankSpawner>(factoryMethod = { Codegen.basicBlockScope(Spawners::Tank) })

@@ -1,6 +1,7 @@
 package btpos.source.vdfdsl.serialization
 
 import btpos.source.vdfdsl.backing.VDFKeyValue
+import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import kotlin.jvm.java
 
@@ -16,6 +17,16 @@ fun interface IVDFRepresentableKeyValue : IVDFRepresentable {
 		fun isKeyValueRepresentable(cls: Class<*>): Boolean {
 			return IVDFRepresentableKeyValue::class.java.isAssignableFrom(cls)
 		}
+		
+		/**
+		 * Does nothing when invoked.
+		 */
+		val NOOP = IVDFRepresentableKeyValue { _, _ -> }
+		
+		/**
+		 * Returns the empty string when invoked. Useful for nullifying values set in a previous template.
+		 */
+		val EMPTY = IVDFRepresentableKeyValue { _, _ -> VDFPrimitive.EMPTY }
 	}
 }
 

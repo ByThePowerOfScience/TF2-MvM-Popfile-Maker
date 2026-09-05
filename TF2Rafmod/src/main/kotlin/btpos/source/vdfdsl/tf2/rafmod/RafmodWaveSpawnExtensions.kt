@@ -36,7 +36,7 @@ abstract class RafmodWaveSpawnExtensions {
 	 * @see lastSpawnMessage
 	 * @see doneMessage
 	 */
-	var WaveSpawnPopulator.firstSpawnMessage: String? by addField("FirstSpawnMessage", conditional = SIGSEGV)
+	val WaveSpawnPopulator.firstSpawnMessage by addField<String>("FirstSpawnMessage", conditional = SIGSEGV)
 	
 	
 	/**
@@ -51,7 +51,7 @@ abstract class RafmodWaveSpawnExtensions {
 	 * @see firstSpawnMessage
 	 * @see doneMessage
 	 */
-	var WaveSpawnPopulator.lastSpawnMessage: String? by addField("LastSpawnMessage", conditional = SIGSEGV)
+	val WaveSpawnPopulator.lastSpawnMessage by addField<String>("LastSpawnMessage", conditional = SIGSEGV)
 	
 	/**
 	 * Chat message displayed when all bots in the subwave have been defeated.
@@ -65,7 +65,7 @@ abstract class RafmodWaveSpawnExtensions {
 	 * @see firstSpawnMessage
 	 * @see lastSpawnMessage
 	 */
-	var WaveSpawnPopulator.doneMessage: String? by addField("DoneMessage", conditional = SIGSEGV)
+	val WaveSpawnPopulator.doneMessage by addField<String>("DoneMessage", conditional = SIGSEGV)
 }
 
 @Suppress("UnusedReceiverParameter")

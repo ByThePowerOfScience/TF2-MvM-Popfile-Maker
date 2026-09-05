@@ -1,4 +1,4 @@
-package btpos.source.vdfdsl.utils.delegates
+package btpos.source.vdfdsl.util
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty

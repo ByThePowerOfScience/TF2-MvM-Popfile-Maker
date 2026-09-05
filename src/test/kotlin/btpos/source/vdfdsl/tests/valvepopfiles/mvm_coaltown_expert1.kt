@@ -457,7 +457,7 @@ class mvm_coaltown_expert1 {
 			totalCount = 20
 			maxActive = 10
 			spawnCount = 10
-			waitBeforeStarting = wave03b.waitBeforeStarting!! + 8
+			waitBeforeStarting = wave03b.waitBeforeStarting.get()!! + 8
 			waitBetweenSpawns = 0
 			totalCurrency = 200
 			
@@ -469,7 +469,7 @@ class mvm_coaltown_expert1 {
 			totalCount = 3
 			maxActive = 3
 			spawnCount = 1
-			waitBeforeStarting = wave03c.waitBeforeStarting!! + 22
+			waitBeforeStarting = wave03c.waitBeforeStarting.get()!! + 22
 			waitBetweenSpawns = 25
 			totalCurrency = 100
 			

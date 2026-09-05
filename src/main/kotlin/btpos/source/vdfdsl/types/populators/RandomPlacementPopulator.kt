@@ -15,11 +15,11 @@ class RandomPlacementPopulator(_subtree: IExtensibleSubtree_VDFRepresentable = E
 	override fun copy() = RandomPlacementPopulator(copyInternal())
 	
 	
-	var count: Int? by addField("Count")
+	val count by addField<Int>("Count")
 	
-	var minimumSeparation: Int? by addField("MinimumSeparation")
+	val minimumSeparation by addField<Int>("MinimumSeparation")
 	
-	var navAreaFilter: NavArea? by addField("NavAreaFilter")
+	val navAreaFilter by addField<NavArea>("NavAreaFilter")
 	
 	
 	companion object {

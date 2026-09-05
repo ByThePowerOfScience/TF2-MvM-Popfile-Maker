@@ -22,8 +22,12 @@ fun WaveSpawnPopulator.individualGroupsOf(amount: Int) {
  * ```
  */
 fun WaveSpawnPopulator.allAtOnce() {
-	this.maxActive = this.totalCount!!
-	this.spawnCount = this.totalCount!!
+	requireNotNull(totalCount.isSet) {
+		"`totalCount` must be set before calling `allAtOnce`"
+	}
+	
+	this.maxActive = this.totalCount
+	this.spawnCount = this.totalCount
 	this.waitBetweenSpawns = 0
 }
 
@@ -36,6 +40,10 @@ fun WaveSpawnPopulator.allAtOnce() {
  * ```
  */
 fun WaveSpawnPopulator.trickleInEvery(delayBetweenSpawns: Duration, groupSize: Int = 1) {
+	require(totalCount.isSet) {
+		"`totalCount` must be set before calling `trickleInEvery`"
+	}
+	
 	maxActive = totalCount ?: error("Total count not set.")
 	spawnCount = groupSize
 	waitBetweenSpawns = delayBetweenSpawns.toSeconds()

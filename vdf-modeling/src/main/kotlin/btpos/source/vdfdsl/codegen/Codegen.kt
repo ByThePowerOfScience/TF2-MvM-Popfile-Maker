@@ -9,6 +9,7 @@ import btpos.misc.kt.codegen.expressions.KtLiteral
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.expressions.KtNamedFunctionCallArgument
 import btpos.misc.kt.codegen.expressions.KtString
+import btpos.misc.kt.codegen.identifiers.KtCallable
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.util.forEachWithIter
 import kotlin.collections.toMutableList
@@ -59,23 +60,25 @@ object Codegen {
 		}
 	}
 	
+	fun basicBlockScope(function: KFunction<*>, fieldsToArgNames: Map<String, String> = mapOf()): IExtensibleSubtree.Codegen.StructFactoryMethod {
+		return basicBlockScope(KtMemberReference(function), fieldsToArgNames)
+	}
+	
 	/**
-	 * Invokes the [function] that ends with a lambda that all of the remaining assignments will be put inside of.
+	 * Invokes the [factory method][factory] that ends with a lambda that all of the remaining assignments will be put inside of.
 	 *
 	 * Example: `basicBlockScope(Factories::myClass, mapOf(MyFactory::template.name to "thing1"))` -> `Factories.myClass(thing1=<template if present>) { ...remaining assignments }`
 	 */
-	fun basicBlockScope(function: KFunction<*>, fieldsToArgNames: Map<String, String> = mapOf()): IExtensibleSubtree.Codegen.StructFactoryMethod {
+	fun basicBlockScope(factory: KtCallable, fieldsToArgNames: Map<String, String> = mapOf()): IExtensibleSubtree.Codegen.StructFactoryMethod {
 		if (!IS_DOING_CODEGEN)
 			return { TODO("Error message for trying to make a block scope when codegen mode is disabled") }
-		
-		val funcName = KtMemberReference(function)
 		
 		if (fieldsToArgNames.isEmpty()) {
 			return {
 				if (it.isEmpty()) {
-					KtFunctionCall(funcName)
+					KtFunctionCall(factory)
 				} else {
-					KtFunctionCall(funcName, listOf(KtLambda(lines=it)))
+					KtFunctionCall(factory, listOf(KtLambda(lines=it)))
 				}
 			}
 		}
@@ -94,7 +97,7 @@ object Codegen {
 				}
 			}
 			
-			KtFunctionCall(funcName).apply {
+			KtFunctionCall(factory).apply {
 				args += namedArguments
 				if (assignments.isNotEmpty())
 					args += KtLambda(lines=assignments)

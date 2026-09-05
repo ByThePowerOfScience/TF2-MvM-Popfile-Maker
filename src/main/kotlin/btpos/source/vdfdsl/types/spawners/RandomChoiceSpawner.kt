@@ -7,7 +7,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamedList
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 
 class RandomChoiceSpawner(_subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtreeImpl()) : AbstractSpawner(_subtree) {
-	var spawners: List<AbstractSpawner> by selfNamedList()
+	val spawners by selfNamedList<AbstractSpawner>()
 	
 	override val _structIdentifier: String
 		get() = "RandomChoice"

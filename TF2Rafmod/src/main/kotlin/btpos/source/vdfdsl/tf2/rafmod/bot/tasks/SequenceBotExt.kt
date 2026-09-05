@@ -25,7 +25,7 @@ open class SequenceBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extensi
 	 * sequenceToRun = "Run_MELEE"
 	 * ```
 	 */
-	open var sequenceToRun: String? by addField("Name", conditional = SIGSEGV)
+	open val sequenceToRun by addField<String>("Name", conditional = SIGSEGV)
 	
 	
 }

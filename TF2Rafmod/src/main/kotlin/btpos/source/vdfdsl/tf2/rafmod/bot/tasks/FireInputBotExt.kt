@@ -19,7 +19,7 @@ open class FireInputBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extens
 	 * targetEntity = "random_color_case"
 	 * ```
 	 */
-	open var targetEntity: String? by addField("Target", conditional = SIGSEGV)
+	open val targetEntity by addField<String>("Target", conditional = SIGSEGV)
 	
 	/**
 	 * The input to fire on the [targeted entity][targetEntity].
@@ -29,7 +29,7 @@ open class FireInputBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Extens
 	 * action = "PickRandom"
 	 * ```
 	 */
-	open var action: String? by addField("Action", conditional = SIGSEGV)
+	open val action by addField<String>("Action", conditional = SIGSEGV)
 	
 	/**
 	 * How many times the bot should perform this task in total.

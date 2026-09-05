@@ -8,7 +8,7 @@ import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.selfNamed
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
 import btpos.source.vdfdsl.tf2.PopFileDSL
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
-import btpos.source.vdfdsl.utils.delegates.ReadOnlyConstant
+import btpos.source.vdfdsl.util.ReadOnlyConstant
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 
@@ -22,7 +22,7 @@ abstract class AbstractPopulator(_subtree: IExtensibleSubtree_VDFRepresentable =
 	 *
 	 * @see AbstractSpawner
 	 */
-	var spawner: AbstractSpawner? by selfNamed()
+	val spawner by selfNamed<AbstractSpawner>()
 	
 	abstract override fun copy(): AbstractPopulator
 	

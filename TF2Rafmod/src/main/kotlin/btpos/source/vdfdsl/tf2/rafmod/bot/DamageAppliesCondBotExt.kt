@@ -4,20 +4,15 @@ package btpos.source.vdfdsl.tf2.rafmod.bot
 import btpos.source.vdfdsl.backing.VDFKeyValue
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
-import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.compose
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.flatListWithKey
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.mapEach
-import btpos.source.vdfdsl.modeling.IExtensibleSubtree_VDFRepresentable
+import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Serializers.map
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue_Subtree
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.FIELD_NAME
 import btpos.source.vdfdsl.tf2.rafmod.RafmodConstants.SIGSEGV
-import btpos.source.vdfdsl.tf2.rafmod.bot.tasks.RafmodPeriodicTask
 import btpos.source.vdfdsl.tf2.tftypes.TFCondition
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 import btpos.source.vdfdsl.utils.toSeconds
-import java.util.Map.entry
 import kotlin.time.Duration
 
 /**
@@ -34,20 +29,26 @@ import kotlin.time.Duration
  *
  * @see Duration.INFINITE
  */
-var TFBotSpawner.damageAppliesConditions: Map<TFCondition, Duration> by addField(
+val TFBotSpawner.damageAppliesConditions by addField<Map<TFCondition, Duration>, _>(
 	"DamageAppliesCond",
 	conditional = SIGSEGV,
 	initialValue = { mapOf() },
-	serializer = flatListWithKey<IVDFRepresentableValue_Subtree>().mapEach { (cond, duration): Map.Entry<TFCondition, Duration> ->
-		val duration = if (duration.isInfinite()) {
-			-1
-		} else duration.toSeconds()
-		IVDFRepresentableValue_Subtree { parent ->
-			VDFSubtree(parent, mutableListOf(
-				VDFKeyValue(FIELD_NAME, cond.TF_COND_primitive),
-				VDFKeyValue(VDFPrimitive("Duration"), VDFPrimitive(duration))
-			))
-		}
-	}.compose { it.entries }
+	serializer = map(
+		{ it.entries },
+		mapEach (
+			{ (cond, duration): Map.Entry<TFCondition, Duration> ->
+				val duration = if (duration.isInfinite()) {
+					-1
+				} else duration.toSeconds()
+				IVDFRepresentableValue_Subtree { parent ->
+					VDFSubtree(parent, mutableListOf(
+						VDFKeyValue(FIELD_NAME, cond.TF_COND_primitive),
+						VDFKeyValue(VDFPrimitive("Duration"), VDFPrimitive(duration))
+					))
+				}
+			},
+			flatListWithKey<IVDFRepresentableValue_Subtree>()
+		)
+	)
 )
 

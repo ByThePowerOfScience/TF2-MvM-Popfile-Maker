@@ -25,7 +25,7 @@ open class FireWeaponBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Exten
 	 * duration = 0.5.seconds
 	 * ```
 	 */
-	open var duration: Duration? by addField("Duration", conditional = SIGSEGV, serializer = durationInSeconds())
+	open val duration by addField<Duration>("Duration", conditional = SIGSEGV, serializer = durationInSeconds())
 	
 	/**
 	 * What button should be pressed.
@@ -38,6 +38,6 @@ open class FireWeaponBotExt(subtree: IExtensibleSubtree_VDFRepresentable = Exten
 	 *
 	 * @see ButtonInputType.Companion
 	 */
-	open var type: ButtonInputType? by addField("Type", conditional = SIGSEGV)
+	open val type by addField<ButtonInputType>("Type", conditional = SIGSEGV)
 }
 
