@@ -5,6 +5,7 @@ import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.misc.kt.codegen.KtStatement
 import btpos.misc.kt.codegen.KtExpression
+import btpos.misc.kt.codegen.identifiers.KtMemberReference
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.util.ReflectionUtils.getUpperBounds
 import btpos.source.vdfdsl.backing.VDFObject
@@ -101,16 +102,10 @@ fun <T : Any> ConstantsCodegen(lookIn: KClass<*>, lookingFor: KClass<T>, equalsC
 		val nav = ValueDecoderMulti<KtExpression>()
 		ConstantsFinder(lookIn, lookingFor) { owner, prop, objInst ->
 			val propGet = (prop.javaGetter?.invoke(objInst) ?: prop.javaField!!.get(objInst)) as T
-			val propName = prop.name
-			
-			val ownerSimpleName = owner.simpleName
-			                      ?: return@ConstantsFinder
-			val ownerQualName = owner.qualifiedName
-			                    ?: return@ConstantsFinder
 			
 			nav.decoders += ValueDecoder<KtExpression> { item, parent ->
 				if (propGet.equalsCheck(item, parent)) {
-					listOf(Codegen.code(ownerSimpleName + "." + propName, ownerQualName))
+					listOf(KtMemberReference(prop))
 				} else {
 					null
 				}
