@@ -57,11 +57,11 @@ class WaveBuilder(subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 		class AllDead(val waitingOn: WaveSpawnPopulator) : WaitingFor {
 			object Detector : ConflictDetector {
 				override fun overwriteConflicts(waveSpawn: WaveSpawnPopulator) {
-					waveSpawn.waitForAllDead = null
+					waveSpawn.waitForAllDead.clear()
 				}
 				
 				override fun failConflicts(waveSpawn: WaveSpawnPopulator): Throwable? {
-					if (waveSpawn.waitForAllDead != null)
+					if (waveSpawn.waitForAllDead.isSet)
 						return IllegalArgumentException("waitForAllDead was already set on wavespawn.")
 					return null;
 				}
@@ -80,7 +80,7 @@ class WaveBuilder(subtree: IExtensibleSubtree_VDFRepresentable = ExtensibleSubtr
 				}
 				
 				override fun failConflicts(waveSpawn: WaveSpawnPopulator): Throwable? {
-					if (waveSpawn.waitForAllSpawned != null)
+					if (waveSpawn.waitForAllSpawned.isSet)
 						return IllegalArgumentException("waitForAllSpawned was already set")
 					return null;
 				}
