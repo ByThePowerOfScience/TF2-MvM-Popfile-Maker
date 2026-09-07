@@ -6,10 +6,13 @@ import btpos.source.vdfdsl.types.bots.BehaviorModifiers
 import btpos.source.vdfdsl.types.bots.BotSkill
 import btpos.source.vdfdsl.types.bots.TFBotAttributes
 import btpos.source.vdfdsl.types.bots.TFClass
+import btpos.source.vdfdsl.types.bots.WeaponRestrictions
 import btpos.source.vdfdsl.types.populators.AbstractPopulator
+import btpos.source.vdfdsl.types.populators.WaveSpawnPopulator.Support
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
 import btpos.source.vdfdsl.types.spawners.TFBotSpawner
 import btpos.source.vdfdsl.types.specifics.NavArea
+import btpos.source.vdfdsl.types.specifics.OutputAction
 import btpos.source.vdfdsl.types.specifics.Where
 import kotlin.reflect.KClass
 
@@ -20,7 +23,10 @@ class PopFileTypeDecoderProvider : TypeDecoderProvider {
 		BehaviorModifiers::class to BehaviorModifiers.CODEGEN.get(),
 		TFBotAttributes::class to TFBotAttributes.CODEGEN.get(),
 		NavArea::class to NavArea.CODEGEN.get(),
-		Where::class to Where.CODEGEN.get()
+		Where::class to Where.CODEGEN.get(),
+		OutputAction::class to OutputAction.CODEGEN.get(),
+		Support::class to Support.CODEGEN.get(),
+		WeaponRestrictions::class to WeaponRestrictions.CODEGEN.get()
 	)
 	// Subtypes of these are already registered as value decoders for their types through IExtensibleSubtree.Codegen
 	override val selfNamedDecoders: Map<KClass<*>, SelfNamedDecoder<KtExpression>> = mapOf(
