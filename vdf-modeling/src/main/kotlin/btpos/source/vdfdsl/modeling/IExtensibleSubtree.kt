@@ -48,7 +48,6 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.jvm.jvmErasure
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
@@ -893,7 +892,7 @@ interface IExtensibleSubtree {
 		 * @param T The actual type of the item the user can put in this property.
 		 * @param S Some [serializable type][IVDFRepresentableValue.serializeDynamic].
 		 */
-		inline fun <reified T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: T.() -> S?, conditional: String? = null, noinline initialValue: () -> T): PropertyDelegateProvider<Any?, ReadWriteProperty<IExtensibleSubtree, T>> {
+		inline fun <reified T : Any, reified S : Any> addField(serializationKey: String, noinline serializer: T.() -> S?, conditional: String? = null, noinline initialValue: () -> T): PropertyDelegateProvider<Any?, NamedFieldWithInitialValue<T>> {
 			@Suppress("UNCHECKED_CAST")
 			return addFieldInternal_initialValue(serializationKey, conditional, serializer, initialValue, S::class.java, T::class)
 		}
@@ -1032,7 +1031,7 @@ interface IExtensibleSubtree {
 		 *
 		 * Note: Self-named values are expected to provide their own conditionals.
 		 */
-		fun <T : IVDFRepresentableKeyValue> selfNamed(): PropertyDelegateProvider<Any?, SelfNamedField<T>> = selfNamed { it }
+		inline fun <reified T : IVDFRepresentableKeyValue> selfNamed(): PropertyDelegateProvider<Any?, SelfNamedField<T>> = selfNamed<T> { it }
 		
 		/**
 		 * A struct that may only appear once in the subtree.
@@ -1047,11 +1046,15 @@ interface IExtensibleSubtree {
 		 *
 		 * @param transformer Something to turn the item saved in this field into 1+ keyvalues, or otherwise postprocess the value (like adding a conditional if the struct doesn't have one already).
 		 */
-		fun <T : Any> selfNamed(transformer: (T) -> IVDFRepresentableKeyValue) = PropertyDelegateProvider<Any?, _> { owner, prop ->
-			if (IS_DOING_CODEGEN)
-				Codegen._registerCodegenSelfNamedMapping(owner, prop)
-			
-			SelfNamedField(transformer)
+		inline fun <reified T : Any> selfNamed(noinline transformer: (T) -> IVDFRepresentableKeyValue) = _selfNamed(T::class, transformer)
+		
+		@PublishedApi internal fun <T : Any> _selfNamed(valueType: KClass<*>, transformer: (T) -> IVDFRepresentableKeyValue): PropertyDelegateProvider<Any?, SelfNamedField<T>> {
+			return PropertyDelegateProvider<Any?, _> { owner, prop ->
+				if (IS_DOING_CODEGEN)
+					Codegen._registerCodegenSelfNamedMapping(owner, prop, valueType)
+				
+				IDMakingDelegateProvider(valueType) { SelfNamedField(transformer, it) }.provideDelegate(owner, prop)
+			}
 		}
 		
 		// detect instance properties and make sure they have something that lets them be equated properly
@@ -1075,7 +1078,10 @@ interface IExtensibleSubtree {
 		 * }
 		 * ```
 		 */
-		fun <T : IVDFRepresentableKeyValue> selfNamedList(transformer: (T) -> IVDFRepresentableKeyValue = { it }) = PropertyDelegateProvider<Any?, SelfNamedListField<T>> { owner, prop ->
+		inline fun <reified T : IVDFRepresentableKeyValue> selfNamedList(noinline transformer: (T) -> IVDFRepresentableKeyValue = { it }) = _selfNamedList(T::class, transformer)
+		
+		
+		@PublishedApi internal fun <T : IVDFRepresentableKeyValue> _selfNamedList(valueType: KClass<T>, transformer: (T) -> IVDFRepresentableKeyValue = { it }) = PropertyDelegateProvider<Any?, SelfNamedListField<T>> { owner, prop ->
 			if (IS_DOING_CODEGEN)
 				Codegen._registerCodegenSelfNamedListMapping(owner, prop, valueType)
 			
@@ -1106,7 +1112,7 @@ interface IExtensibleSubtree {
 		{
 			return PropertyDelegateProvider { thisRef, prop ->
 				if (IS_DOING_CODEGEN)
-					Codegen._registerCodegenMergedMapping(thisRef, prop)
+					Codegen._registerCodegenMergedMapping(thisRef, prop, instance::class)
 				
 				MergedCategory(instance)
 			}
@@ -1138,22 +1144,22 @@ interface IExtensibleSubtree {
 		/**
 		 * Solely exists because the JVM freaked out with a security exception from referencing [_registerCodegenFieldMapping] from an inline-function's property delegate provider.
 		 */
-		@PublishedApi internal class _CodegenDelegateProvider<T>(val thingToProvide: T, val key: String, val conditional: String?) : PropertyDelegateProvider<Any?, T> {
+		@PublishedApi internal class _CodegenDelegateProvider<T>(val thingToProvide: PropertyDelegateProvider<Any?, T>, val key: String, val conditional: String?, val valueType: KClass<*>, val isList: Boolean = false) : PropertyDelegateProvider<Any?, T> {
 			override fun provideDelegate(thisRef: Any?, property: KProperty<*>): T {
-				_registerCodegenFieldMapping(thisRef, property, key, conditional)
+				_registerCodegenFieldMapping(thisRef, property, key, conditional, valueType, isList)
 				
 				return thingToProvide.provideDelegate(thisRef, property)
 			}
 		}
 		
-		fun _registerCodegenFieldMapping(propOwner: Any?, prop: KProperty<*>, serializationKey: String, conditional: String?) {
+		fun _registerCodegenFieldMapping(propOwner: Any?, prop: KProperty<*>, serializationKey: String, conditional: String?, valueType: KClass<*>, isList: Boolean) {
 			if (!IS_DOING_CODEGEN)
 				return;
 			
 			// this is what the field is filed under
 			val receiverType: KClass<*> = prop.getExtensionReceiverType() ?: propOwner!!::class
 			
-			val operator = if (!valueType.isMarkedNullable && valueType.jvmErasure.isSubclassOf(Collection::class)) {
+			val operator = if (isList) {
 				"+="
 			} else {
 				"="
@@ -1167,27 +1173,25 @@ interface IExtensibleSubtree {
 		}
 		
 		
-		fun _registerCodegenSelfNamedMapping(propOwner: Any?, prop: KProperty<*>) {
+		fun _registerCodegenSelfNamedMapping(propOwner: Any?, prop: KProperty<*>, valueType: KClass<*>) {
 			val receiverType: KClass<*> = prop.getExtensionReceiverType() ?: propOwner!!::class // must extend IExtensibleSubtree, thus must be the receiver of this property
 			
-			val propType = prop.returnType.classifier as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $prop")
 			
 			getOrCreateStructDecoder(receiverType).apply {
-				selfNamedDecoders += StructFieldDecoderPropExt_SelfNamed(prop, propType, "=")
+				selfNamedDecoders += StructFieldDecoderPropExt_SelfNamed(prop, valueType, "=")
 			}
 		}
 		
-		fun _registerCodegenSelfNamedListMapping(propOwner: Any?, prop: KProperty<*>) {
+		fun _registerCodegenSelfNamedListMapping(propOwner: Any?, prop: KProperty<*>, valueType: KClass<*>) {
 			val receiverType: KClass<*> = prop.getExtensionReceiverType() ?: propOwner!!::class // must extend IExtensibleSubtree, thus must be the receiver of this property
 			
-			val propType = prop.returnType.arguments.first().type?.classifier as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $prop")
 			// TODO make this less strict
 			getOrCreateStructDecoder(receiverType).apply {
-				selfNamedDecoders += StructFieldDecoderPropExt_SelfNamed(prop, propType, "+=")
+				selfNamedDecoders += StructFieldDecoderPropExt_SelfNamed(prop, valueType, "+=")
 			}
 		}
 		
-		fun _registerCodegenMergedMapping(propOwner: Any?, prop: KProperty<*>) {
+		fun _registerCodegenMergedMapping(propOwner: Any?, prop: KProperty<*>, valueType: KClass<*>) {
 			val receiverType = prop.getExtensionReceiverType() ?: propOwner!!::class
 			// TODO make this work with deeper nestings. I just can't think of it rn
 			getOrCreateStructDecoder(receiverType).apply {
@@ -1201,7 +1205,7 @@ interface IExtensibleSubtree {
 				}
 				 */
 			}
-			getOrCreateStructDecoder(prop.returnType.classifier as KClass<*>).apply {
+			getOrCreateStructDecoder(valueType).apply {
 				factoryMethod = { x ->
 					KtFunctionCall(KtMemberReference(prop), mutableListOf(KtLambda(lines = x)))
 				}
@@ -1336,7 +1340,7 @@ interface DataStorageVDFRepresentable : IExtensibleSubtree.DataStorage<IVDFRepre
 	override fun copy(): DataStorageVDFRepresentable
 }
 
-fun <D : Any> IExtensibleSubtree.DataStorage<D>.getAllForField(field: IExtensibleSubtree.ExtField<*>) = entries().asSequence().filter { it.first.let { it is IExtensibleSubtree.FieldKey<*> && it.field == field } } as Sequence<Pair<IExtensibleSubtree.FieldKey<*>, D>>
+fun <D : Any> IExtensibleSubtree.DataStorage<D>.getAllForField(field: IExtensibleSubtree.ExtField<*>) = entries().filter { it.first.let { it is IExtensibleSubtree.FieldKey<*> && it.field == field } } as List<Pair<IExtensibleSubtree.FieldKey<*>, D>>
 
 /**
  * Just a subtree. See [AbstractVDFStruct] for a subtree with its own name.
