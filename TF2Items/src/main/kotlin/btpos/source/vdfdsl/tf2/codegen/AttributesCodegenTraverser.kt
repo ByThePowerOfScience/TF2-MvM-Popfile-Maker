@@ -164,7 +164,7 @@ class AttributesCodegenTraverser {
 		
 		for (property in attr::class.declaredMemberProperties) {
 			@Suppress("UNCHECKED_CAST")
-			val inst = (property as KProperty1<Any, Any>).actuallyGet(this)
+			val inst = (property as KProperty1<Any, Any>).actuallyGet(attr)
 			inst.handleItemAttribute(getThisProp, property.name, items)
 		}
 	}
