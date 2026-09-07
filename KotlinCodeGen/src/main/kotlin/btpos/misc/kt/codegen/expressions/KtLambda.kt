@@ -4,13 +4,10 @@ import btpos.misc.kt.codegen.KtExpression
 import btpos.misc.kt.codegen.identifiers.KtParameter
 import btpos.misc.kt.codegen.KtStatement
 
-class KtLambda : KtExpression {
+class KtLambda(val namedParams: MutableList<KtParameter> = mutableListOf<KtParameter>(), val lines: MutableList<KtStatement> = mutableListOf<KtStatement>()) : KtExpression {
+	
 	override val importsNeeded: Sequence<String>
 		get() = sequenceOf(namedParams, lines).flatten().flatMap { it.importsNeeded }
-	
-	val namedParams = mutableListOf<KtParameter>()
-	
-	val lines = mutableListOf<KtStatement>()
 	
 	override fun toKotlinCode(): String {
 		val paramsString = if (namedParams.isEmpty() || (namedParams.size == 1 && namedParams[0].name == "it")) ""
@@ -20,10 +17,7 @@ class KtLambda : KtExpression {
 	
 	companion object {
 	    operator fun invoke(namedParams: List<KtParameter> = listOf(), lines: List<KtStatement>): KtLambda {
-	        return KtLambda().apply {
-				this.namedParams += namedParams
-		        this.lines += lines
-	        }
+	        return KtLambda(namedParams.toMutableList(), lines.toMutableList())
 	    }
 	}
 }

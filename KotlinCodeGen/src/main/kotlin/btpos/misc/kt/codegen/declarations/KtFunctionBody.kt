@@ -7,7 +7,7 @@ import btpos.misc.kt.codegen.KtStatement
 sealed class KtFunctionBody : KtElement {
 	abstract override fun toKotlinCode(): String
 	
-	class Expression(var expression: KtExpression) : KtFunctionBody() {
+	data class Expression(var expression: KtExpression) : KtFunctionBody() {
 		override val importsNeeded: Sequence<String>
 			get() = expression.importsNeeded
 		
@@ -16,11 +16,11 @@ sealed class KtFunctionBody : KtElement {
 		}
 	}
 	
-	class Block : KtFunctionBody() {
+	data class Block(val statements: MutableList<KtStatement> = mutableListOf<KtStatement>()) : KtFunctionBody() {
 		override val importsNeeded: Sequence<String>
 			get() = statements.asSequence().flatMap { it.importsNeeded }
 		
-		val statements = mutableListOf<KtStatement>()
+		
 		
 		override fun toKotlinCode(): String {
 			return " {\n\t" +

@@ -170,6 +170,40 @@ class KtClassDeclaration(var name: String, var type: Type) : KtElement {
 		return "ClassBuilder($name, $type)"
 	}
 	
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+		
+		other as KtClassDeclaration
+		
+		if (isOpen != other.isOpen) return false
+		if (name != other.name) return false
+		if (type != other.type) return false
+		if (docComment != other.docComment) return false
+		if (baseClass != other.baseClass) return false
+		if (parentInterfaces != other.parentInterfaces) return false
+		if (properties != other.properties) return false
+		if (nestedClasses != other.nestedClasses) return false
+		if (companionObject != other.companionObject) return false
+		if (functions != other.functions) return false
+		
+		return true
+	}
+	
+	override fun hashCode(): Int {
+		var result = isOpen.hashCode()
+		result = 31 * result + name.hashCode()
+		result = 31 * result + type.hashCode()
+		result = 31 * result + docComment.hashCode()
+		result = 31 * result + (baseClass?.hashCode() ?: 0)
+		result = 31 * result + parentInterfaces.hashCode()
+		result = 31 * result + properties.hashCode()
+		result = 31 * result + nestedClasses.hashCode()
+		result = 31 * result + (companionObject?.hashCode() ?: 0)
+		result = 31 * result + functions.hashCode()
+		return result
+	}
+	
 	
 	override val importsNeeded: Sequence<String>
 		get() = sequenceOf(
@@ -180,6 +214,8 @@ class KtClassDeclaration(var name: String, var type: Type) : KtElement {
 			this.parentInterfaces.asSequence().flatMap { it.importsNeeded },
 			this.baseClass?.importsNeeded,
 		).filterNotNull().flatten()
+	
+	
 }
 
 

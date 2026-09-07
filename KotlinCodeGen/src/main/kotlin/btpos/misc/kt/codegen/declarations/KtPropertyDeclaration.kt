@@ -84,6 +84,42 @@ class KtPropertyDeclaration(var name: String, var rType: KtType): KtStatement {
 		return "PropertyBuilder($name, $rType)"
 	}
 	
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+		
+		other as KtPropertyDeclaration
+		
+		if (isVar != other.isVar) return false
+		if (name != other.name) return false
+		if (rType != other.rType) return false
+		if (backingFieldInitializer != other.backingFieldInitializer) return false
+		if (getter != other.getter) return false
+		if (setter != other.setter) return false
+		if (extensionOf != other.extensionOf) return false
+		if (access != other.access) return false
+		if (modality != other.modality) return false
+		if (contextParams != other.contextParams) return false
+		if (docComment != other.docComment) return false
+		
+		return true
+	}
+	
+	override fun hashCode(): Int {
+		var result = isVar.hashCode()
+		result = 31 * result + name.hashCode()
+		result = 31 * result + rType.hashCode()
+		result = 31 * result + (backingFieldInitializer?.hashCode() ?: 0)
+		result = 31 * result + (getter?.hashCode() ?: 0)
+		result = 31 * result + (setter?.hashCode() ?: 0)
+		result = 31 * result + (extensionOf?.hashCode() ?: 0)
+		result = 31 * result + access.hashCode()
+		result = 31 * result + modality.hashCode()
+		result = 31 * result + contextParams.hashCode()
+		result = 31 * result + docComment.hashCode()
+		return result
+	}
+	
 	override val importsNeeded: Sequence<String>
 		get() = sequenceOf(
 			rType.importsNeeded,
@@ -93,6 +129,9 @@ class KtPropertyDeclaration(var name: String, var rType: KtType): KtStatement {
 			extensionOf?.importsNeeded,
 			contextParams.asSequence().flatMap { it.importsNeeded },
 		).filterNotNull().flatten()
+	
+	
+	
 	
 	companion object {
 		inline operator fun invoke(name: String, rType: KtType, configure: KtPropertyDeclaration.() -> Unit): KtPropertyDeclaration {

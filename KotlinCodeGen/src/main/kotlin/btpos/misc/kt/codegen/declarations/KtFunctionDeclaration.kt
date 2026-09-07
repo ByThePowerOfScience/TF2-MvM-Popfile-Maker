@@ -48,6 +48,40 @@ class KtFunctionDeclaration(var name: String, var returnType: KtType = KtType.UN
 		       body.toKotlinCode()
 	}
 	
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+		
+		other as KtFunctionDeclaration
+		
+		if (isInline != other.isInline) return false
+		if (name != other.name) return false
+		if (returnType != other.returnType) return false
+		if (access != other.access) return false
+		if (modality != other.modality) return false
+		if (docCommentLines != other.docCommentLines) return false
+		if (valueParameters != other.valueParameters) return false
+		if (contextParameters != other.contextParameters) return false
+		if (extensionReceiver != other.extensionReceiver) return false
+		if (body != other.body) return false
+		
+		return true
+	}
+	
+	override fun hashCode(): Int {
+		var result = isInline.hashCode()
+		result = 31 * result + name.hashCode()
+		result = 31 * result + returnType.hashCode()
+		result = 31 * result + access.hashCode()
+		result = 31 * result + modality.hashCode()
+		result = 31 * result + docCommentLines.hashCode()
+		result = 31 * result + valueParameters.hashCode()
+		result = 31 * result + contextParameters.hashCode()
+		result = 31 * result + (extensionReceiver?.hashCode() ?: 0)
+		result = 31 * result + body.hashCode()
+		return result
+	}
+	
 	override val importsNeeded: Sequence<String>
 		get() = sequenceOf(
 			this.body.importsNeeded,
@@ -56,6 +90,8 @@ class KtFunctionDeclaration(var name: String, var returnType: KtType = KtType.UN
 			this.contextParameters.asSequence().flatMap { it.importsNeeded },
 			this.returnType.importsNeeded,
 		).filterNotNull().flatten()
+	
+	
 }
 
 val KtFunctionBody.statements: List<KtStatement> get() = when (this) {

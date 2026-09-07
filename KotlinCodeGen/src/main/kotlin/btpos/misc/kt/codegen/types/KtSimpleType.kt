@@ -2,7 +2,7 @@ package btpos.misc.kt.codegen.types
 
 import kotlin.reflect.KClass
 
-class KtSimpleType(
+data class KtSimpleType(
 	var classifier: KtClass,
 	var isNullable: Boolean,
 	val typeArguments: MutableList<KtType> = mutableListOf()

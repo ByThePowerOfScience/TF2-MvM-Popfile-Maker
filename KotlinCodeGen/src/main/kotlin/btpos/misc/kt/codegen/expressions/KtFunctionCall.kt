@@ -7,13 +7,15 @@ import btpos.misc.kt.codegen.identifiers.KtMemberReference
 import btpos.misc.kt.codegen.identifiers.StandardNames
 import kotlin.collections.plusAssign
 
-class KtFunctionCall(var callee: KtCallable, val args: MutableList<KtExpression> = mutableListOf()) : KtExpression {
+data class KtFunctionCall(
+	var callee: KtCallable,
+	val args: MutableList<KtExpression> = mutableListOf(),
+	var receiver: KtExpression? = null
+) : KtExpression {
 	constructor(callee: KtCallable, args: Iterable<KtExpression>) : this(callee, args.toMutableList())
 	
 	override val importsNeeded: Sequence<String>
 		get() = callee.importsNeeded + args.asSequence().flatMap { it.importsNeeded }
-	
-	var receiver: KtExpression? = null
 	
 	override fun toKotlinCode(): String {
 //		val operator = if (callee.target.name == "invoke" && callee.receiver != null) {
