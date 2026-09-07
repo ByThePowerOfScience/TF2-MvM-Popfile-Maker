@@ -1207,7 +1207,10 @@ interface IExtensibleSubtree {
 			}
 			getOrCreateStructDecoder(valueType).apply {
 				factoryMethod = { x ->
-					KtFunctionCall(KtMemberReference(prop), mutableListOf(KtLambda(lines = x)))
+					if (x.isEmpty())
+						null
+					else
+						KtFunctionCall(KtMemberReference(prop), mutableListOf(KtLambda(lines = x)))
 				}
 				shouldCommentLeftovers = false
 			}
@@ -1250,7 +1253,7 @@ interface IExtensibleSubtree {
 			return CodegenProvider { x }
 		}
 		
-		typealias StructFactoryMethod = (fields: List<KtStatement>) -> KtFunctionCall
+		typealias StructFactoryMethod = (fields: List<KtStatement>) -> KtFunctionCall?
 		
 		data class StructFieldDecoderPropExt_Keyed(
 			val prop: KProperty<*>,
