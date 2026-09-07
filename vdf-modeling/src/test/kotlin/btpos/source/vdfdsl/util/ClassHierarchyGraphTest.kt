@@ -27,7 +27,7 @@ class ClassHierarchyGraphTest {
 	Any->IUnrelated
 	IItf->IItf2
 	IItf->Bar
-	IItf2->Qux
+	IItf2->Bar, Qux
 	IUnrelated->Baz
 	Foo->Bar
 	Foo->Baz
@@ -98,7 +98,7 @@ class ClassHierarchyGraphTest {
 		)
 		x.checkChildren(
 			iitf2,
-			qux
+			bar, qux
 		)
 		x.checkChildren(
 			iunrelated,
@@ -136,7 +136,7 @@ class ClassHierarchyGraphTest {
 		)
 		x.checkParents(
 			bar,
-			foo, iitf
+			foo, iitf, iitf2
 		)
 		x.checkParents(
 			baz,

@@ -28,7 +28,7 @@ dependencies {
 	val vanniktech = libs.plugins.vanniktech.get()
 	implementation(vanniktech.asDep())
 	
-	
+	implementation("org.jetbrains.kotlin.plugin.assignment:org.jetbrains.kotlin.plugin.assignment.gradle.plugin:${libs.versions.kotlin.get()}")
 //	val clojure = libs.plugins.clojure.get()
 //	implementation("${clojure.pluginId}:${clojure.pluginId}.gradle.plugin:${clojure.version}")
 //

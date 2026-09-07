@@ -1,6 +1,6 @@
 plugins {
 	id("general-convention")
-	kotlin("plugin.assignment") version libs.versions.kotlin
+	id("assignment-convention")
 }
 
 group = Constants.Groups.TF2
@@ -22,11 +22,6 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation(kotlin("reflect"))
 }
-
-assignment {
-	annotations("btpos.source.vdfdsl.util.SupportsCustomAssignment")
-}
-
 sourceSets.main {
 	kotlin.srcDir("src/generated/kotlin")
 }

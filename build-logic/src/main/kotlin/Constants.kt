@@ -13,7 +13,7 @@ object Constants {
 		fun tf2(suffix: String) = TF2 + "." + suffix
 	}
 	
-	
+	const val ASSIGNMENT_ANNOTATION = "btpos.source.vdfdsl.util.SupportsCustomAssignment"
 	
 	const val PROJECT_VERSION = "1.0-SNAPSHOT"
 }

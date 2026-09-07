@@ -1,6 +1,6 @@
 plugins {
 	id("general-convention")
-	kotlin("plugin.assignment") version libs.versions.kotlin
+	id("assignment-convention")
 }
 
 group = "btpos.source.vdfdsl.vdf"
