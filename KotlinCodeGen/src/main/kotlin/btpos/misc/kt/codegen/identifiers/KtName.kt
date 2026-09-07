@@ -86,6 +86,10 @@ data class KtName(val name: String, val qualifier: String? = null) : KtCallable 
 			return invoke(ref, ref.javaGetter?.declaringClass ?: ref.javaField!!.declaringClass)
 	    }
 		
+		fun objectRef(cls: KClass<*>): KtName {
+			return qualified(cls.qualifiedName ?: throw IllegalArgumentException("$cls does not have a qualified name."))
+		}
+		
 		private operator fun invoke(ref: KCallable<*>, declaringClass: Class<*>): KtName {
 			val qualifier = if (ref.instanceParameter == null) { // top level
 				declaringClass.packageName

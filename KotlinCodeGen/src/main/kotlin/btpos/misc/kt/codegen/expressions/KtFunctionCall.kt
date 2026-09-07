@@ -30,7 +30,9 @@ class KtFunctionCall(var callee: KtCallable, val args: MutableList<KtExpression>
 			else -> "(${args.joinToString(", ") { it.toKotlinCode() }})"
 		}
 		
-		return callee.toKotlinCode() + operand
+		
+		
+		return receiver?.let { it.toKotlinCode() + "." }.orEmpty() + callee.toKotlinCode() + operand
 	}
 	
 	companion object {
