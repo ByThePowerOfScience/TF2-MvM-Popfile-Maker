@@ -1,5 +1,7 @@
 package btpos.source.vdfdsl.codegen
 
+import btpos.misc.kt.codegen.KtExpression
+import btpos.misc.kt.codegen.KtStatement
 import btpos.misc.kt.codegen.identifiers.KtMemberReference
 import btpos.misc.kt.codegen.statements.KtComment
 import btpos.misc.kt.codegen.statements.KtAssignment
@@ -10,6 +12,10 @@ import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.expressions.KtNamedFunctionCallArgument
 import btpos.misc.kt.codegen.expressions.KtString
 import btpos.misc.kt.codegen.identifiers.KtCallable
+import btpos.misc.kt.codegen.identifiers.KtObjectReference
+import btpos.misc.kt.codegen.types.KtSimpleType
+import btpos.misc.kt.codegen.types.KtType
+import btpos.misc.kt.codegen.util.ReflectionUtils.declaringClass
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
 import btpos.source.vdfdsl.util.forEachWithIter
 import kotlin.collections.toMutableList
@@ -60,16 +66,17 @@ object Codegen {
 		}
 	}
 	
-	fun basicBlockScope(function: KFunction<*>, fieldsToArgNames: Map<String, String> = mapOf()): IExtensibleSubtree.Codegen.StructFactoryMethod {
-		return basicBlockScope(KtMemberReference(function), fieldsToArgNames)
+	fun basicBlockScope(function: KFunction<*>, fieldsToArgNames: Map<String, String> = mapOf(), preprocessing: ((MutableList<KtStatement>) -> Unit)? = null): IExtensibleSubtree.Codegen.StructFactoryMethod {
+		val receiver = if (function.isOperator && function.name == "invoke") KtObjectReference(function.declaringClass) else null
+		return basicBlockScope(KtMemberReference(function), fieldsToArgNames, preprocessing, receiver)
 	}
 	
 	/**
-	 * Invokes the [factory method][factory] that ends with a lambda that all of the remaining assignments will be put inside of.
+	 * Invokes a [factory method][factory] that ends with a lambda that all of the remaining assignments will be put inside of.
 	 *
 	 * Example: `basicBlockScope(Factories::myClass, mapOf(MyFactory::template.name to "thing1"))` -> `Factories.myClass(thing1=<template if present>) { ...remaining assignments }`
 	 */
-	fun basicBlockScope(factory: KtCallable, fieldsToArgNames: Map<String, String> = mapOf()): IExtensibleSubtree.Codegen.StructFactoryMethod {
+	fun basicBlockScope(factory: KtCallable, fieldsToArgNames: Map<String, String> = mapOf(), preprocessing: ((MutableList<KtStatement>) -> Unit)? = null, receiver: KtExpression? = null): IExtensibleSubtree.Codegen.StructFactoryMethod {
 		if (!IS_DOING_CODEGEN)
 			return { TODO("Error message for trying to make a block scope when codegen mode is disabled") }
 		
@@ -84,7 +91,7 @@ object Codegen {
 		}
 		
 		return { assignments ->
-			val assignments = assignments.toMutableList()
+			val assignments = assignments.toMutableList().apply { preprocessing?.invoke(this) }
 			val namedArguments = mutableListOf<KtNamedFunctionCallArgument>()
 			
 			assignments.forEachWithIter { assignment ->
@@ -101,6 +108,8 @@ object Codegen {
 				args += namedArguments
 				if (assignments.isNotEmpty())
 					args += KtLambda(lines=assignments)
+				
+				this.receiver = receiver
 			}
 		}
 	}
