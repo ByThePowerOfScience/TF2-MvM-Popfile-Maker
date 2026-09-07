@@ -8,7 +8,6 @@ import btpos.misc.kt.codegen.statements.KtAssignment
 import btpos.misc.kt.codegen.util.ReflectionUtils.declaredMemberPropertiesGettable
 import btpos.misc.kt.codegen.util.ReflectionUtils.getUpperBounds
 import btpos.source.vdfdsl.backing.VDFPrimitive
-import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.asPrimitive
 import btpos.source.vdfdsl.backing.intValue
 import btpos.source.vdfdsl.codegen.Codegen
@@ -19,12 +18,12 @@ import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.itemattributes.impl.ItemAttributeLong
 import btpos.misc.kt.codegen.util.ReflectionUtils.actuallyGet
-import btpos.source.vdfdsl.util.forEachWithLazyIter
 import btpos.source.vdfdsl.util.mapCompact
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.extensionReceiverParameter
+import kotlin.reflect.full.superclasses
 
 typealias PutItemKeyWithDecoderForAttributeType = (ItemAttribute<*>, propertyAccessForThisAttribute: KtGetValueExpression, MutableMap<VDFPrimitive, ValueDecoder<KtStatement>>) -> Unit
 
@@ -184,7 +183,14 @@ class AttributesCodegenTraverser {
 		 */
 		
 		instancesToCheck.forEach { inst ->
-			inst::class.declaredMemberPropertiesGettable().forEach { prop ->
+			val instCls = inst::class.let {
+				if (it.simpleName == "Inherited")
+					it.superclasses.first { it.simpleName?.endsWith("Attributes") == true }
+				else
+					it
+			}
+			
+			instCls.declaredMemberPropertiesGettable().forEach { prop ->
 				prop.actuallyGet(inst).handleItemAttribute(null, prop.name, items)
 			}
 		}

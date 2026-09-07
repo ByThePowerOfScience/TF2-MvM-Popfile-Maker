@@ -36,11 +36,11 @@ interface IAttributeContainer {
 		val CODEGEN_TYPE = CodegenProvider {
 			object : ValueDecoder<KtExpression> {
 				override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtExpression>? {
+					if (value !is VDFSubtree)
+						return null;
+					
 					val subtreeToCfgScope = CODEGEN_SCOPE.get()
-						.decodeToLambdaLines(
-							value.asSubtree?.let { WeirdMutableIterableSubtree(parentSubtree, it) }
-							?: return null
-						)
+						.decodeToLambdaLines(WeirdMutableIterableSubtree(parentSubtree, value))
 						.ifNullOrEmpty {
 							return null;
 						}!!
