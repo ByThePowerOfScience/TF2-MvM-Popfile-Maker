@@ -88,7 +88,7 @@ class TF2ItemsTypeDecoderProvider : TypeDecoderProvider {
 			val itemFactory = TFItemFactory::class
 			TFItemFactories::class.declaredMemberPropertiesGettable().forEach {
 				if (it.returnType.classifier == itemFactory)
-					codegen.instancesToCheck += it.actuallyGet(TFItemFactories)
+					codegen.instancesToCheck += (it.actuallyGet(TFItemFactories) as TFItemFactory<Any>).scope
 			}
 			
 			codegen.extensionProperties += arrayOf(
