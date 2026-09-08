@@ -24,6 +24,6 @@ open class OutputAction : ExtensibleSubtreeImpl() {
 			return OutputAction().apply(configure)
 		}
 		
-		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<OutputAction> { Codegen.basicBlockScope(::invoke) }
+		val CODEGEN = IExtensibleSubtree.Codegen.registerCodegen<OutputAction> { Codegen.companionOperatorInvoke(OutputAction::class) }
 	}
 }

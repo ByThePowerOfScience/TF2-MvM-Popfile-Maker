@@ -67,8 +67,14 @@ object Codegen {
 	}
 	
 	fun basicBlockScope(function: KFunction<*>, fieldsToArgNames: Map<String, String> = mapOf(), preprocessing: ((MutableList<KtStatement>) -> Unit)? = null): IExtensibleSubtree.Codegen.StructFactoryMethod {
-		val receiver = if (function.isOperator && function.name == "invoke") KtObjectReference(function.declaringClass) else null
-		return basicBlockScope(KtMemberReference(function), fieldsToArgNames, preprocessing, receiver)
+		if (function.isOperator && function.name == "invoke") {
+			throw IllegalArgumentException("Use `companionOperatorInvoke()`. This method can't do it properly.")
+		}
+		return basicBlockScope(KtMemberReference(function), fieldsToArgNames, preprocessing)
+	}
+	
+	fun companionOperatorInvoke(receiverType: KClass<*>, fieldsToArgNames: Map<String, String> = mapOf(), preprocessing: ((MutableList<KtStatement>) -> Unit)? = null): IExtensibleSubtree.Codegen.StructFactoryMethod {
+		return basicBlockScope(KtName("invoke"), fieldsToArgNames, preprocessing, KtObjectReference(receiverType))
 	}
 	
 	/**

@@ -18,12 +18,12 @@ data class KtFunctionCall(
 		get() = callee.importsNeeded + args.asSequence().flatMap { it.importsNeeded }
 	
 	override fun toKotlinCode(): String {
-//		val operator = if (callee.target.name == "invoke" && callee.receiver != null) {
-//			callee.receiver!!.toKotlinCode()
-//		} else {
-//			callee.receiver?.let { "${it.toKotlinCode()}." }.orEmpty() + callee.toKotlinCode()
-//		}
-//
+		val operator = if (callee.callableName.name == "invoke" && receiver != null) {
+			receiver!!.toKotlinCode()
+		} else {
+			receiver?.let { "${it.toKotlinCode()}." }.orEmpty() + callee.toKotlinCode()
+		}
+
 		val operand = when {
 			args.size == 1 && args[0] is KtLambda -> " " + args[0].toKotlinCode()
 			args.isNotEmpty() && args.last() is KtLambda -> "(${
@@ -32,9 +32,7 @@ data class KtFunctionCall(
 			else -> "(${args.joinToString(", ") { it.toKotlinCode() }})"
 		}
 		
-		
-		
-		return receiver?.let { it.toKotlinCode() + "." }.orEmpty() + callee.toKotlinCode() + operand
+		return operator + operand
 	}
 	
 	companion object {
