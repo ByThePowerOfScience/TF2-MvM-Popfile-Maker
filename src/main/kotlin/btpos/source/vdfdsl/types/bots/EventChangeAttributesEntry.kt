@@ -5,13 +5,12 @@ import btpos.misc.kt.codegen.expressions.KtLambda
 import btpos.misc.kt.codegen.identifiers.KtName
 import btpos.misc.kt.codegen.identifiers.StandardNames
 import btpos.source.vdfdsl.backing.VDFKeyValue
-import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.asSubtree
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.CodegenProvider
 import btpos.source.vdfdsl.codegen.ValueDecoder
-import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
+import btpos.source.vdfdsl.codegen.SafeRemovalVDFSubtree
 import btpos.source.vdfdsl.modeling.AbstractVDFStruct
 import btpos.source.vdfdsl.modeling.ExtensibleSubtreeImpl
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
@@ -112,7 +111,7 @@ open class EventChangeAttributes(private val eventListeners: MutableMap<String, 
 				fun VDFKeyValue.toStringInvoke(subtree: VDFSubtree): KtFunctionCall {
 					// will be a block scope with "EventChangeAttributes.Companion" as the receiver and the lambda with the assignments as the arg.
 					// Just need to change the receiver to a string and keep the lambda the same
-					val eventChangeBlock = EventChangeAttributesEntry.CODEGEN.get().decode(this, WeirdMutableIterableSubtree(parent, subtree)) ?: error("Failed to parse event change attributes")
+					val eventChangeBlock = EventChangeAttributesEntry.CODEGEN.get().decode(this, SafeRemovalVDFSubtree(parent, subtree)) ?: error("Failed to parse event change attributes")
 					eventChangeBlock.callee = StandardNames.INVOKE
 					eventChangeBlock.receiver = Codegen.string(key.stringValue)
 					

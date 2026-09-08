@@ -1,8 +1,7 @@
 package btpos.source.vdfdsl.tests.codegen
 
 import btpos.source.vdfdsl.backing.VDFSubtree
-import btpos.source.vdfdsl.codegen.Decoders
-import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
+import btpos.source.vdfdsl.codegen.SafeRemovalVDFSubtree
 import btpos.source.vdfdsl.types.bots.BotSkill
 import btpos.source.vdfdsl.types.bots.TFClass
 import btpos.source.vdfdsl.types.spawners.AbstractSpawner
@@ -35,7 +34,7 @@ class CodegenTest1 {
 //			toCode.first())
 		
 		
-		println(AbstractSpawner.CODEGEN_NAV.get().decode(WeirdMutableIterableSubtree(null, spawner)).forEach {
+		println(AbstractSpawner.CODEGEN_NAV.get().decode(SafeRemovalVDFSubtree(null, spawner)).forEach {
 			println(it.toKotlinCode())
 		})
 	}

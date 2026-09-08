@@ -87,7 +87,7 @@ object Decoders {
 	}
 	
 	private class CompositeValueDecoder(val type: KClass<*>) : ValueDecoder<KtExpression> {
-		override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtExpression>? {
+		override fun decodeValue(value: VDFValue, parentSubtree: SafeRemovalVDFSubtree): List<KtExpression>? {
 			return findXForTypeAndAllSupertypesInServices(
 				type,
 				{ valueDecoders[it] },
@@ -100,7 +100,7 @@ object Decoders {
 	}
 	
 	private class CompositeSelfNamedDecoder(val type: KClass<*>) : SelfNamedDecoder<KtExpression> {
-		override fun decode(subtree: WeirdMutableIterableSubtree): List<KtExpression>? {
+		override fun decode(subtree: SafeRemovalVDFSubtree): List<KtExpression>? {
 			return findXForTypeAndAllSupertypesInServices(
 				type,
 				{ selfNamedDecoders[it] },
