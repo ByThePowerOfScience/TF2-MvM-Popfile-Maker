@@ -26,7 +26,7 @@ import btpos.misc.kt.codegen.util.ReflectionUtils.fqName
 import btpos.misc.kt.codegen.util.ReflectionUtils.isExtension
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.codegen.SelfNamedDecoder
-import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
+import btpos.source.vdfdsl.codegen.SafeRemovalVDFSubtree
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree.Companion.addField
 import btpos.source.vdfdsl.serialization.IVDFRepresentableKeyValue
 import btpos.source.vdfdsl.serialization.IVDFRepresentableValue
@@ -1272,7 +1272,7 @@ interface IExtensibleSubtree {
 				}
 			}
 			
-			override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtStatement>? {
+			override fun decodeValue(value: VDFValue, parentSubtree: SafeRemovalVDFSubtree): List<KtStatement>? {
 				val x = (override ?: valueDecoder).decodeValue(value, parentSubtree)
 				if (x.isNullOrEmpty())
 					return null;
@@ -1300,7 +1300,7 @@ interface IExtensibleSubtree {
 				}
 			}
 			
-			override fun decode(subtree: WeirdMutableIterableSubtree): List<KtStatement>? {
+			override fun decode(subtree: SafeRemovalVDFSubtree): List<KtStatement>? {
 				val x = valueDecoder.decode(subtree)
 				if (x.isNullOrEmpty())
 					return null;
@@ -1314,8 +1314,8 @@ interface IExtensibleSubtree {
 		) : SelfNamedDecoder<KtStatement> {
 			val valueDecoder = getOrCreateStructDecoder(prop.returnType.classifier as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $prop"))
 			
-			override fun decode(subtree: WeirdMutableIterableSubtree): List<KtStatement> {
-				return valueDecoder.decodeValue(subtree.toSubtree(), subtree.parent ?: WeirdMutableIterableSubtree(null, VDFSubtree(null)))
+			override fun decode(subtree: SafeRemovalVDFSubtree): List<KtStatement> {
+				return valueDecoder.decodeValue(subtree.asSubtree(), subtree.parent ?: SafeRemovalVDFSubtree(null, VDFSubtree(null)))
 			}
 		}
 	}

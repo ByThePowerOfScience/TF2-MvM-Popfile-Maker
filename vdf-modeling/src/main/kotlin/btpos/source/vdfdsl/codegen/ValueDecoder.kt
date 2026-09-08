@@ -4,7 +4,7 @@ import btpos.misc.kt.codegen.KtStatement
 import btpos.source.vdfdsl.backing.VDFPrimitive
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.util.compacted
-import btpos.source.vdfdsl.util.forEachWithLazyIter
+import btpos.source.vdfdsl.util.forEachWithIter
 
 /**
  * Decoder that transforms a single object into its deserialized type.
@@ -18,7 +18,7 @@ import btpos.source.vdfdsl.util.forEachWithLazyIter
  * Any failures must leave the parent unchanged, so cache anything you're evaluating and only remove from it if it worked.
  */
 fun interface ValueDecoder<out T : KtStatement> {
-	fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<T>?
+	fun decodeValue(value: VDFValue, parentSubtree: SafeRemovalVDFSubtree): List<T>?
 }
 
 
@@ -26,7 +26,7 @@ fun <T : KtStatement> ValueDecoder<T>.keyed(key: String) = keyed(VDFPrimitive(ke
 fun <T : KtStatement> ValueDecoder<T>.keyed(key: VDFPrimitive): SelfNamedDecoder<T> {
 	return SelfNamedDecoder { subtree ->
 		val out = ArrayList<T>()
-		subtree.forEachWithLazyIter { kv ->
+		subtree.forEachWithIter { kv ->
 			if (kv.key == key) {
 				val ret = this@keyed.decodeValue(kv.value, subtree)
 				

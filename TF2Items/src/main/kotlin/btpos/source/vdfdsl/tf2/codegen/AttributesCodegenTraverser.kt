@@ -13,11 +13,12 @@ import btpos.source.vdfdsl.backing.intValue
 import btpos.source.vdfdsl.codegen.Codegen
 import btpos.source.vdfdsl.codegen.Decoders
 import btpos.source.vdfdsl.codegen.ValueDecoder
-import btpos.source.vdfdsl.codegen.WeirdMutableIterableSubtree
+import btpos.source.vdfdsl.codegen.SafeRemovalVDFSubtree
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttribute
 import btpos.source.vdfdsl.tf2.itemattributes.ItemAttributeNamed
 import btpos.source.vdfdsl.tf2.itemattributes.impl.ItemAttributeLong
 import btpos.misc.kt.codegen.util.ReflectionUtils.actuallyGet
+import btpos.source.vdfdsl.util.forEachWithIter
 import btpos.source.vdfdsl.util.mapCompact
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -70,12 +71,12 @@ class AttributesCodegenTraverser {
 			items[attr.lowBits.key] = ValueDecoder { value, parent ->
 				val lowbits = value.asPrimitive?.intValue ?: return@ValueDecoder null;
 				var highbits: Int? = null
-				parent.forEachWithLazyIter {
+				parent.forEachWithIter {
 					if (highbits != null)
-						return@forEachWithLazyIter;
+						return@forEachWithIter;
 					
 					if (it.key == attr.highBits.key) {
-						highbits = it.value.asPrimitive?.intValue ?: return@forEachWithLazyIter;
+						highbits = it.value.asPrimitive?.intValue ?: return@forEachWithIter;
 						remove()
 					}
 				}
@@ -87,12 +88,12 @@ class AttributesCodegenTraverser {
 			items[attr.highBits.key] = ValueDecoder { value, parent ->
 				val highbits = value.asPrimitive?.intValue ?: return@ValueDecoder null;
 				var lowbits: Int? = null
-				parent.forEachWithLazyIter {
+				parent.forEachWithIter {
 					if (lowbits != null)
-						return@forEachWithLazyIter;
+						return@forEachWithIter;
 					
 					if (it.key == attr.lowBits.key) {
-						lowbits = it.value.asPrimitive?.intValue ?: return@forEachWithLazyIter;
+						lowbits = it.value.asPrimitive?.intValue ?: return@forEachWithIter;
 						remove()
 					}
 				}
@@ -207,13 +208,13 @@ class AttributesCodegenTraverser {
 	 * Decodes [btpos.source.vdfdsl.tf2.itemattributes.IAttributeContainer] subtrees
 	 */
 	class IAttributeContainerCodegen(val attributeLocations: MutableMap<VDFPrimitive, ValueDecoder<KtStatement>> = HashMap()) {
-		fun decodeToLambdaLines(subtree: WeirdMutableIterableSubtree): List<KtStatement> {
+		fun decodeToLambdaLines(subtree: SafeRemovalVDFSubtree): List<KtStatement> {
 			val out = mutableListOf<KtStatement>()
 			
-			subtree.forEachWithLazyIter { (key, item) ->
+			subtree.forEachWithIter { (key, item) ->
 				val it = attributeLocations[key]?.decodeValue(item, subtree)
 				if (it.isNullOrEmpty())
-					return@forEachWithLazyIter;
+					return@forEachWithIter;
 				
 				out += it
 				remove()

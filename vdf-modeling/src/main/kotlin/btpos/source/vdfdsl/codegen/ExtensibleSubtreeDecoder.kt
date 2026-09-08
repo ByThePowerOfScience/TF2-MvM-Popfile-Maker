@@ -8,7 +8,6 @@ import btpos.misc.kt.codegen.KtStatement
 import btpos.misc.kt.codegen.expressions.KtFunctionCall
 import btpos.misc.kt.codegen.statements.KtComment
 import btpos.source.vdfdsl.backing.VDFObject
-import btpos.source.vdfdsl.backing.VDFSubtree
 import btpos.source.vdfdsl.backing.VDFValue
 import btpos.source.vdfdsl.backing.toFormattedString
 import btpos.source.vdfdsl.modeling.IExtensibleSubtree
@@ -48,7 +47,7 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 		Codegen.basicApplyFactory(cls)
 	}
 	
-	private fun decodeByFieldName(keyvalue: VDFKeyValue, subtree: WeirdMutableIterableSubtree): List<KtStatement>? {
+	private fun decodeByFieldName(keyvalue: VDFKeyValue, subtree: SafeRemovalVDFSubtree): List<KtStatement>? {
 		val decoder = this.fieldDecoders[keyvalue.key]
 		              ?: inheritedFields.firstNotNullOfOrNull {
 						  it.fieldDecoders[keyvalue.key]
@@ -60,19 +59,19 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 	
 	
 	
-	override fun decodeValue(value: VDFValue, parentSubtree: WeirdMutableIterableSubtree): List<KtExpression> {
+	override fun decodeValue(value: VDFValue, parentSubtree: SafeRemovalVDFSubtree): List<KtExpression> {
 		return listOfNotNull(decode(value, parentSubtree))
 	}
 	
 	
-	fun decode(value: VDFObject, parentSubtree: WeirdMutableIterableSubtree): KtFunctionCall? {
+	fun decode(value: VDFObject, parentSubtree: SafeRemovalVDFSubtree): KtFunctionCall? {
 		runFirst.forEach {
 			val x = it.decode(value, parentSubtree)
 			if (x != null)
 				return x;
 		}
 		
-		return value.asSubtree?.let { WeirdMutableIterableSubtree(parentSubtree, it) }?.let { remainingKeyValues ->
+		return value.asSubtree?.let { SafeRemovalVDFSubtree(parentSubtree, it) }?.let { remainingKeyValues ->
 			val factoryMethod = factoryMethod ?: dummyFactoryMethod
 			
 			val out = ArrayList<KtStatement>()
@@ -95,13 +94,13 @@ class ExtensibleSubtreeDecoder(val cls: KClass<*>) : ValueDecoder<KtExpression> 
 					}
 				
 				// now just handle the ones that only care about their field and not whatever else is doing on.
-				remainingKeyValues.forEachWithLazyIter { kv ->
+				remainingKeyValues.forEachWithIter { kv ->
 					val x = decodeByFieldName(kv, remainingKeyValues)
 					
 					if (!x.isNullOrEmpty()) {
 						out += x
 						remove()
-						return@forEachWithLazyIter;
+						return@forEachWithIter;
 					} else {
 						val y = decodeByFieldName(kv, remainingKeyValues)
 					}
