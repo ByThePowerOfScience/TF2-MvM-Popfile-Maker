@@ -11,10 +11,14 @@ import btpos.source.vdfdsl.util.ConcurrentRemovalLinkedList
  * 	//      until we find the next item that's actually in the list and relink ourselves to that one
  *
  */
-class SafeRemovalVDFSubtree(
-	val parent: SafeRemovalVDFSubtree?,
-	original: VDFSubtree
-) : MutableCollection<VDFKeyValue> by ConcurrentRemovalLinkedList(original) {
+class SafeRemovalVDFSubtree private constructor(val parent: SafeRemovalVDFSubtree?, private val coll: MutableCollection<VDFKeyValue>) : MutableCollection<VDFKeyValue> by coll {
+	constructor(
+		parent: SafeRemovalVDFSubtree?,
+		original: VDFSubtree
+	) : this(parent, original.let {
+		it.entries as? SafeRemovalVDFSubtree ?: ConcurrentRemovalLinkedList(it.entries)
+	})
+	
 	/**
 	 * Returns this wrapped in a VDFSubtree instance.
 	 *

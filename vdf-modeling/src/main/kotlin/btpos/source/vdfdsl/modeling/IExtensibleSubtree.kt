@@ -1315,7 +1315,7 @@ interface IExtensibleSubtree {
 			val valueDecoder = getOrCreateStructDecoder(prop.returnType.classifier as? KClass<*> ?: error("Cannot perform codegen for a property without a definite type: $prop"))
 			
 			override fun decode(subtree: SafeRemovalVDFSubtree): List<KtStatement> {
-				return valueDecoder.decodeValue(subtree.asSubtree(), subtree.parent ?: SafeRemovalVDFSubtree(null, VDFSubtree(null)))
+				return valueDecoder.decodeValue(subtree.asSubtree(), subtree.parent!!)
 			}
 		}
 	}
